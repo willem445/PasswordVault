@@ -11,7 +11,9 @@ using System.Windows.Forms;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* 
+/* TODO - Add new form for adding password with validation, password strength etc
+ * TODO - Filter for passwords
+ * TODO - Edit passwords
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -37,6 +39,8 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private const float STANDARD_UI_FONT_SIZE = 9.0f;
+        private const float CLOSE_BUTTON_FONT_SIZE = 12.0f;
 
         /*=================================================================================================
 		FIELDS
@@ -44,11 +48,13 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private User _user;
-        private BindableList<Password> _passwordList;
-        private ContextMenu _cm;
-        private int _rowIndexCopy = 0;
-        IStorage storage;
+        private User _user;                           // Current user's username and password
+        private BindableList<Password> _passwordList; // stores the current users passwords and binds to datagridview
+        private IStorage _storage;                    // Method of storing the passwords (ie. csv file or database)
+        private ContextMenu _cm;                      // Context menu for right clicking on datagridview row
+        private int _rowIndexCopy = 0;                // Index of row being right clicked on
+        private bool _draggingWindow = false;         // Variable to track whether the form is being moved
+        private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         /*=================================================================================================
 		PROPERTIES
@@ -64,10 +70,107 @@ namespace PasswordVault
         {
             InitializeComponent();
 
-            storage = new CSVFactory().Get();
+            // Configure form UI
+            BackColor = DarkBackground();
+            FormBorderStyle = FormBorderStyle.None;
+
+            // Configure labels
+            label1.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label1.ForeColor = WhiteText();
+
+            label2.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label2.ForeColor = WhiteText();
+
+            label3.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label3.ForeColor = WhiteText();
+
+            label4.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label4.ForeColor = WhiteText();
+
+            label5.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label5.ForeColor = WhiteText();
+
+            // Configure menu stip
+            menuStrip.BackColor = DarkBackground();
+            menuStrip.ForeColor = WhiteText();
+            menuStrip.Font = UIFont(STANDARD_UI_FONT_SIZE);
+
+            // Configure buttons
+            addButton.BackColor = ControlBackground();
+            addButton.ForeColor = WhiteText();
+            addButton.FlatStyle = FlatStyle.Flat;
+
+            moveUpButton.BackColor = ControlBackground();
+            moveUpButton.ForeColor = WhiteText();
+            moveUpButton.FlatStyle = FlatStyle.Flat;
+
+            moveDownButton.BackColor = ControlBackground();
+            moveDownButton.ForeColor = WhiteText();
+            moveDownButton.FlatStyle = FlatStyle.Flat;
+
+            deleteButton.BackColor = ControlBackground();
+            deleteButton.ForeColor = WhiteText();
+            deleteButton.FlatStyle = FlatStyle.Flat;
+
+            editButton.BackColor = ControlBackground();
+            editButton.ForeColor = WhiteText();
+            editButton.FlatStyle = FlatStyle.Flat;
+
+            closeButton.BackColor = ControlBackground();
+            closeButton.ForeColor = WhiteText();
+            closeButton.Font = UIFont(CLOSE_BUTTON_FONT_SIZE);
+
+            // Configure textbox
+            applicationTextBox.BackColor = ControlBackground();
+            applicationTextBox.ForeColor = WhiteText();
+            applicationTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            usernameTextBox.BackColor = ControlBackground();
+            usernameTextBox.ForeColor = WhiteText();
+            usernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            descriptionTextBox.BackColor = ControlBackground();
+            descriptionTextBox.ForeColor = WhiteText();
+            descriptionTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            passphraseTextBox.BackColor = ControlBackground();
+            passphraseTextBox.ForeColor = WhiteText();
+            passphraseTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            websiteTextBox.BackColor = ControlBackground();
+            websiteTextBox.ForeColor = WhiteText();
+            websiteTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            // Configure status strip
+            statusStrip1.BackColor = DarkBackground();
+            statusStrip1.ForeColor = WhiteText();
+
+            // Confgiure data grid view
+            PasswordDataGridView.BorderStyle = BorderStyle.None;
+            PasswordDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            PasswordDataGridView.MultiSelect = false;
+            PasswordDataGridView.ReadOnly = true;
+            PasswordDataGridView.BackgroundColor = DarkBackground();
+            PasswordDataGridView.RowsDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            PasswordDataGridView.RowsDefaultCellStyle.ForeColor = WhiteText();
+            PasswordDataGridView.RowsDefaultCellStyle.BackColor = Color.FromArgb(65, 65, 65);
+            PasswordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
+            PasswordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
+            PasswordDataGridView.AllowUserToOrderColumns = true;
+            PasswordDataGridView.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
+            PasswordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+            PasswordDataGridView.EnableHeadersVisualStyles = false;
+            PasswordDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            PasswordDataGridView.ColumnHeadersDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            PasswordDataGridView.ColumnHeadersDefaultCellStyle.BackColor = DarkBackground();
+            PasswordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
+            PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
+            PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
+
+            _storage = new CSVFactory().Get();
 
             _user = new User();
-            welcomeLabel.Text = "";
+            userStatusLabel.Text = "";
 
             _passwordList = new BindableList<Password>();
             _passwordList.CreateBinding(PasswordDataGridView);
@@ -76,7 +179,7 @@ namespace PasswordVault
             _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
             _cm.MenuItems.Add("Copy Password", new EventHandler(CopyPass_Click));
             _cm.MenuItems.Add("Visit Website", new EventHandler(Website_Click));
-            
+            _cm.MenuItems.Add("View Password", new EventHandler(ShowPassword_Click));
         }
 
         /*=================================================================================================
@@ -96,7 +199,7 @@ namespace PasswordVault
                 if (loginForm.ShowDialog() == DialogResult.OK)
                 {
                     _user = loginForm.GetUser();
-                    welcomeLabel.Text = string.Format("Welcome: {0}", _user.UserID);
+                    userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
                     applicationTextBox.Enabled = true;
                     descriptionTextBox.Enabled = true;
                     websiteTextBox.Enabled = true;
@@ -108,13 +211,13 @@ namespace PasswordVault
                     deleteButton.Enabled = true;
                     editButton.Enabled = true;
 
-                    if (storage.GetType() == typeof(CSV))
+                    if (_storage.GetType() == typeof(CSV))
                     {
-                        ((CSV)storage).SetPasswordFileName(_user.UserID);
+                        ((CSV)_storage).SetPasswordFileName(_user.UserID);
                     }
 
                     _passwordList.Clear();
-                    foreach (var item in storage.GetPasswords())
+                    foreach (var item in _storage.GetPasswords())
                     {
                         Password password = new Password();
                         password.Application = EncryptDecrypt.Decrypt(item.Application, _user.Key);
@@ -136,7 +239,7 @@ namespace PasswordVault
                 _user.Hash = null;
                 _user.Key = null;
 
-                welcomeLabel.Text = "";
+                userStatusLabel.Text = "";
                 applicationTextBox.Enabled = false;
                 descriptionTextBox.Enabled = false;
                 websiteTextBox.Enabled = false;
@@ -148,16 +251,15 @@ namespace PasswordVault
                 deleteButton.Enabled = false;
                 editButton.Enabled = false;
 
-                if (storage.GetType() == typeof(CSV))
+                if (_storage.GetType() == typeof(CSV))
                 {
-                    ((CSV)storage).SetPasswordFileName("");
+                    ((CSV)_storage).SetPasswordFileName("");
                 }
 
                 _passwordList.Clear();
 
                 loginToolStripMenuItem.Text = "Login";
             }
-
         }
 
         /*************************************************************************************************/
@@ -178,7 +280,7 @@ namespace PasswordVault
             newPassword2.Website =     EncryptDecrypt.Encrypt(websiteTextBox.Text,     _user.Key);
             newPassword2.Username =    EncryptDecrypt.Encrypt(usernameTextBox.Text,    _user.Key);
             newPassword2.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text,  _user.Key);
-            storage.AddPassword(newPassword2);
+            _storage.AddPassword(newPassword2);
 
             applicationTextBox.Text = "";
             descriptionTextBox.Text = "";
@@ -237,6 +339,16 @@ namespace PasswordVault
             }
         }
 
+        /*************************************************************************************************/
+        private void ShowPassword_Click(object sender, EventArgs e)
+        {
+            if (_passwordList.Count != 0)
+            {
+                MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
+            }
+        }
+
+        /*************************************************************************************************/
         private void PasswordDataGridView_MouseUp(object sender, MouseEventArgs e)
         {
             // Load context menu on right mouse click
@@ -249,9 +361,75 @@ namespace PasswordVault
                 {
                     _cm.Show(PasswordDataGridView, new Point(e.X, e.Y));
                     _rowIndexCopy = hitTestInfo.RowIndex;
-                }
-                    
+                }                
             }
+        }
+
+        /*************************************************************************************************/
+        private void CloseButton_MouseClick(object sender, MouseEventArgs e)
+        {
+            this.Close();
+        }
+
+        /*************************************************************************************************/
+        private void CloseButton_MouseEnter(object sender, EventArgs e)
+        {
+            closeButton.BackColor = Color.FromArgb(107, 20, 3);
+            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
+        private void CloseButton_MouseLeave(object sender, EventArgs e)
+        {
+            closeButton.BackColor = Color.FromArgb(63, 63, 63);
+            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
+        private void MoveWindowPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            _draggingWindow = true;
+            _start_point = new Point(e.X, e.Y);
+        }
+
+        /*************************************************************************************************/
+        private void MoveWindowPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            _draggingWindow = false;
+        }
+
+        /*************************************************************************************************/
+        private void MoveWindowPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_draggingWindow)
+            {
+                Point p = PointToScreen(e.Location);
+                Location = new Point(p.X - this._start_point.X, p.Y - this._start_point.Y);
+            }
+        }
+
+        /*************************************************************************************************/
+        private Color WhiteText()
+        {
+            return Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
+        private Color DarkBackground()
+        {
+            return Color.FromArgb(35, 35, 35);
+        }
+
+        /*************************************************************************************************/
+        private Color ControlBackground()
+        {
+            return Color.FromArgb(63, 63, 63);
+        }
+
+        /*************************************************************************************************/
+        private Font UIFont(float fontSize)
+        {
+            return new Font("Segoe UI", fontSize, FontStyle.Bold);
         }
 
         /*=================================================================================================

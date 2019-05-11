@@ -41,6 +41,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.createLoginButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.Label();
+            this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +54,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.loginButton);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 34);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(256, 190);
             this.groupBox1.TabIndex = 0;
@@ -63,6 +65,7 @@
             // 
             this.loginPasswordTextBox.Location = new System.Drawing.Point(19, 100);
             this.loginPasswordTextBox.Name = "loginPasswordTextBox";
+            this.loginPasswordTextBox.PasswordChar = '•';
             this.loginPasswordTextBox.Size = new System.Drawing.Size(218, 20);
             this.loginPasswordTextBox.TabIndex = 4;
             // 
@@ -109,7 +112,7 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.createLoginButton);
-            this.groupBox2.Location = new System.Drawing.Point(274, 12);
+            this.groupBox2.Location = new System.Drawing.Point(274, 34);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(256, 190);
             this.groupBox2.TabIndex = 1;
@@ -169,14 +172,40 @@
             this.createLoginButton.UseVisualStyleBackColor = true;
             this.createLoginButton.Click += new System.EventHandler(this.CreateLoginButton_Click);
             // 
+            // closeButton
+            // 
+            this.closeButton.AutoSize = true;
+            this.closeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.closeButton.Location = new System.Drawing.Point(524, 9);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(14, 13);
+            this.closeButton.TabIndex = 28;
+            this.closeButton.Text = "X";
+            this.closeButton.Click += new System.EventHandler(this.CloseButton_Click);
+            this.closeButton.MouseEnter += new System.EventHandler(this.CloseButton_MouseEnter);
+            this.closeButton.MouseLeave += new System.EventHandler(this.CloseButton_MouseLeave);
+            // 
+            // moveWindowPanel
+            // 
+            this.moveWindowPanel.Location = new System.Drawing.Point(2, 1);
+            this.moveWindowPanel.Name = "moveWindowPanel";
+            this.moveWindowPanel.Size = new System.Drawing.Size(516, 27);
+            this.moveWindowPanel.TabIndex = 29;
+            this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
+            this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
+            this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(550, 218);
+            this.ClientSize = new System.Drawing.Size(550, 236);
+            this.Controls.Add(this.moveWindowPanel);
+            this.Controls.Add(this.closeButton);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "LoginForm";
             this.Text = "Login";
             this.groupBox1.ResumeLayout(false);
@@ -184,6 +213,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -202,5 +232,7 @@
         private System.Windows.Forms.TextBox createUsernameTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label closeButton;
+        private System.Windows.Forms.Panel moveWindowPanel;
     }
 }

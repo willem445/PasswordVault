@@ -105,6 +105,7 @@ namespace PasswordVault
             }
         }
 
+        /*************************************************************************************************/
         public static string Decrypt(string cipherText, string passPhrase)
         {
             // Get the complete stream of bytes that represent:
@@ -143,6 +144,7 @@ namespace PasswordVault
             }
         }
 
+        /*************************************************************************************************/
         public static string CreateKey(int keyLength)
         {
             RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
@@ -151,6 +153,7 @@ namespace PasswordVault
             return Convert.ToBase64String(randomBytes);
         }
 
+        /*************************************************************************************************/
         private static byte[] Generate256BitsOfRandomEntropy()
         {
             var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
