@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -25,7 +23,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public static class EncryptDecrypt
+    public class EncryptDecrypt : IEncryptDecrypt
     {
         /*=================================================================================================
 		CONSTANTS
@@ -33,8 +31,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private const int KEYSIZE = 256;
-        private const int DERIVATION_ITERATIONS = 1000;
 
         /*=================================================================================================
 		FIELDS
@@ -42,6 +38,8 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private int _keySize = 256;
+        private int _derivationIterations = 1000;
 
         /*=================================================================================================
 		PROPERTIES
@@ -53,31 +51,31 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
+        public EncryptDecrypt()
+        {
+            // Use defaults
+        }
 
+        /*************************************************************************************************/
+        public EncryptDecrypt(int keySize, int derivationIterations)
+        {
+            _keySize = keySize;
+            _derivationIterations = derivationIterations;
+        }
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-
-        /*=================================================================================================
-		PRIVATE METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-
-        /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-        public static string Encrypt(string plainText, string passPhrase)
+        public string Encrypt(string plainText, string passPhrase)
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
             var saltStringBytes = Generate256BitsOfRandomEntropy();
             var ivStringBytes = Generate256BitsOfRandomEntropy();
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATION_ITERATIONS))
+            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
             {
-                var keyBytes = password.GetBytes(KEYSIZE / 8);
+                var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
                     symmetricKey.BlockSize = 256;
@@ -106,21 +104,21 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public static string Decrypt(string cipherText, string passPhrase)
+        public string Decrypt(string cipherText, string passPhrase)
         {
             // Get the complete stream of bytes that represent:
             // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
             var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
             // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.
-            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(KEYSIZE / 8).ToArray();
+            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(_keySize / 8).ToArray();
             // Get the IV bytes by extracting the next 32 bytes from the supplied cipherText bytes.
-            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(KEYSIZE / 8).Take(KEYSIZE / 8).ToArray();
+            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
             // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
-            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((KEYSIZE / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((KEYSIZE / 8) * 2)).ToArray();
+            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((_keySize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((_keySize / 8) * 2)).ToArray();
 
-            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DERIVATION_ITERATIONS))
+            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
             {
-                var keyBytes = password.GetBytes(KEYSIZE / 8);
+                var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
                     symmetricKey.BlockSize = 256;
@@ -145,16 +143,18 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public static string CreateKey(int keyLength)
+        public string CreateKey(int keyLength)
         {
             RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             byte[] randomBytes = new byte[keyLength];
             rngCryptoServiceProvider.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes);
         }
-
+        /*=================================================================================================
+		PRIVATE METHODS
+		*================================================================================================*/
         /*************************************************************************************************/
-        private static byte[] Generate256BitsOfRandomEntropy()
+        private byte[] Generate256BitsOfRandomEntropy()
         {
             var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
             using (var rngCsp = new RNGCryptoServiceProvider())
@@ -164,6 +164,11 @@ namespace PasswordVault
             }
             return randomBytes;
         }
+
+        /*=================================================================================================
+		STATIC METHODS
+		*================================================================================================*/
+        /*************************************************************************************************/
 
     } // EncryptDecrypt CLASS
 } // PasswordHashTest NAMESPACE

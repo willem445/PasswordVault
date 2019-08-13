@@ -52,6 +52,9 @@
             this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.filterLabel = new System.Windows.Forms.Label();
+            this.filterComboBox = new System.Windows.Forms.ComboBox();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PasswordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -94,7 +97,7 @@
             // PasswordDataGridView
             // 
             this.PasswordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.PasswordDataGridView.Location = new System.Drawing.Point(12, 98);
+            this.PasswordDataGridView.Location = new System.Drawing.Point(12, 145);
             this.PasswordDataGridView.Name = "PasswordDataGridView";
             this.PasswordDataGridView.Size = new System.Drawing.Size(657, 290);
             this.PasswordDataGridView.TabIndex = 1;
@@ -114,7 +117,7 @@
             // moveUpButton
             // 
             this.moveUpButton.Enabled = false;
-            this.moveUpButton.Location = new System.Drawing.Point(680, 115);
+            this.moveUpButton.Location = new System.Drawing.Point(680, 162);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Size = new System.Drawing.Size(75, 23);
             this.moveUpButton.TabIndex = 3;
@@ -125,7 +128,7 @@
             // moveDownButton
             // 
             this.moveDownButton.Enabled = false;
-            this.moveDownButton.Location = new System.Drawing.Point(680, 144);
+            this.moveDownButton.Location = new System.Drawing.Point(680, 191);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Size = new System.Drawing.Size(75, 23);
             this.moveDownButton.TabIndex = 4;
@@ -136,7 +139,7 @@
             // editButton
             // 
             this.editButton.Enabled = false;
-            this.editButton.Location = new System.Drawing.Point(680, 173);
+            this.editButton.Location = new System.Drawing.Point(680, 220);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 5;
@@ -215,7 +218,7 @@
             // deleteButton
             // 
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(680, 202);
+            this.deleteButton.Location = new System.Drawing.Point(680, 249);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 15;
@@ -243,9 +246,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.userStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 402);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 444);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(777, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(775, 22);
             this.statusStrip1.TabIndex = 26;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -277,12 +280,43 @@
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
+            // filterTextBox
+            // 
+            this.filterTextBox.Enabled = false;
+            this.filterTextBox.Location = new System.Drawing.Point(12, 119);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(264, 20);
+            this.filterTextBox.TabIndex = 30;
+            // 
+            // filterLabel
+            // 
+            this.filterLabel.AutoSize = true;
+            this.filterLabel.Location = new System.Drawing.Point(12, 103);
+            this.filterLabel.Name = "filterLabel";
+            this.filterLabel.Size = new System.Drawing.Size(29, 13);
+            this.filterLabel.TabIndex = 29;
+            this.filterLabel.Text = "Filter";
+            // 
+            // filterComboBox
+            // 
+            this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.filterComboBox.Enabled = false;
+            this.filterComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.filterComboBox.FormattingEnabled = true;
+            this.filterComboBox.Location = new System.Drawing.Point(282, 119);
+            this.filterComboBox.Name = "filterComboBox";
+            this.filterComboBox.Size = new System.Drawing.Size(121, 21);
+            this.filterComboBox.TabIndex = 31;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(777, 424);
+            this.ClientSize = new System.Drawing.Size(775, 466);
+            this.Controls.Add(this.filterComboBox);
+            this.Controls.Add(this.filterTextBox);
+            this.Controls.Add(this.filterLabel);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.statusStrip1);
@@ -343,6 +377,9 @@
         private System.Windows.Forms.ToolStripStatusLabel userStatusLabel;
         private System.Windows.Forms.Label closeButton;
         private System.Windows.Forms.Panel moveWindowPanel;
+        private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.Label filterLabel;
+        private System.Windows.Forms.ComboBox filterComboBox;
     }
 }
 

@@ -142,7 +142,7 @@ namespace PasswordVault
                 return;
             }
 
-            UserPasswordHash hash = new UserPasswordHash();
+            MasterPassword hash = new MasterPassword();
             bool valid = hash.VerifyPassword(pass, userInfo.Salt, userInfo.Hash);
 
             if (!valid)
@@ -151,9 +151,9 @@ namespace PasswordVault
                 return;
             }
 
-            _user.UserID = user;
-            _user.Key = pass;
-            _user.ValidKey = true;
+            //_user.UserID = user;
+            //_user.Key = pass;
+            //_user.ValidKey = true;
 
             DialogResult = DialogResult.OK;
             this.Close();
@@ -162,7 +162,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void GeneratePasswordButton_Click(object sender, EventArgs e)
         {
-            createPasswordTextBox.Text = EncryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
+            //createPasswordTextBox.Text = EncryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
         }
 
         /*************************************************************************************************/
@@ -191,10 +191,10 @@ namespace PasswordVault
             }
 
             // Hash password 
-            UserPasswordHash hash = new UserPasswordHash();
+            MasterPassword hash = new MasterPassword();
             CryptData_S data = hash.HashPassword(newPass);
      
-            csv.AddUser(new User(newUser, data.Salt, data.Hash));
+            //csv.AddUser(new User(newUser, data.Salt, data.Hash));
 
             DialogResult = DialogResult.OK;
             this.Close();

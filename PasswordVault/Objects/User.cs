@@ -37,11 +37,6 @@ namespace PasswordVault
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public string UserID { get; set; }
-        public string Salt { get; set; }
-        public string Hash { get; set; }
-        public string Key { get; set; }
-        public bool ValidKey { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -49,22 +44,37 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public string UserID { get; }
+        public string Salt { get; }
+        public string Hash { get; }
+        public string Key { get; }
+        public bool ValidKey { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public User()
-        {
-
-        }
-
-        public User(string user, string salt, string hash)
+        public User(string user, string salt, string hash, string key, bool validKey = false)
         {
             UserID = user;
             Salt = salt;
             Hash = hash;
+            Key = key;
+            ValidKey = validKey;
+        }
+
+        public User(string user, string salt, string hash, bool validKey = false)
+        {
+            UserID = user;
+            Salt = salt;
+            Hash = hash;
+            ValidKey = validKey;
+        }
+
+        public User(bool validKey = false)
+        {
+            ValidKey = validKey;
         }
 
         /*=================================================================================================

@@ -23,15 +23,22 @@ namespace PasswordVault
 	*================================================================================================*/
     public struct CryptData_S
     {
-        public string Salt;
-        public string Hash;
-        public int Iterations;
+        public CryptData_S(string salt, string hash, int iterations)
+        {
+            Salt = salt;
+            Hash = hash;
+            Iterations = iterations;
+        }
+
+        public string Salt { get; }
+        public string Hash { get; }
+        public int Iterations { get; }
     }
 
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class UserPasswordHash
+    class MasterPassword : IMasterPassword
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,9 +46,7 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        const int HASH_ITERATION_COUNT = 1000;
-        const int SALT_ARRAY_SIZE = 24;
-        const int HASH_ARRAY_SIZE = 24;
+        
 
         /*=================================================================================================
 		FIELDS
@@ -49,21 +54,31 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        CryptData_S _cryptData;
+        private CryptData_S _cryptData;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public int _hashIterationCount { get; } = 1000;
+        public int _saltArraySize { get; } = 24;
+        public int _hashArraySize { get; } = 24;
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public UserPasswordHash()
+        public MasterPassword()
         {
+            // Use defaults
+        }
 
+        public MasterPassword(int iterations, int saltArraySize, int hashArraySize)
+        {
+            _hashIterationCount = iterations;
+            _saltArraySize = saltArraySize;
+            _hashArraySize = hashArraySize;
         }
 
         /*=================================================================================================
@@ -72,24 +87,22 @@ namespace PasswordVault
         /*************************************************************************************************/
         public CryptData_S HashPassword(string password)
         {
-            _cryptData = new CryptData_S();
-
             // SALT
             RNGCryptoServiceProvider saltCellar = new RNGCryptoServiceProvider();
-            byte[] salt = new byte[SALT_ARRAY_SIZE];
+            byte[] salt = new byte[_saltArraySize];
             saltCellar.GetBytes(salt);
 
-            _cryptData.Salt = Convert.ToBase64String(salt);
+            string saltString = Convert.ToBase64String(salt);
 
             // HASH
             Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, salt);
-            hashTool.IterationCount = HASH_ITERATION_COUNT;
-            byte[] hash = hashTool.GetBytes(HASH_ARRAY_SIZE);
+            hashTool.IterationCount = _hashIterationCount;
+            byte[] hash = hashTool.GetBytes(_hashArraySize);
 
-            _cryptData.Hash = Convert.ToBase64String(hash);
-            _cryptData.Iterations = HASH_ITERATION_COUNT;
+            string hashString = Convert.ToBase64String(hash);
+            int iterations = _hashIterationCount;
 
-            return _cryptData;
+            return new CryptData_S(saltString, hashString, iterations);
         }
 
         /*************************************************************************************************/
@@ -108,8 +121,8 @@ namespace PasswordVault
             byte[] originalSalt = Convert.FromBase64String(salt);
             byte[] originalHash = Convert.FromBase64String(hash);
             Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, originalSalt);
-            hashTool.IterationCount = HASH_ITERATION_COUNT;
-            byte[] newHash = hashTool.GetBytes(HASH_ARRAY_SIZE);
+            hashTool.IterationCount = _hashIterationCount;
+            byte[] newHash = hashTool.GetBytes(_hashArraySize);
 
             uint differences = (uint)originalHash.Length ^ (uint)newHash.Length;
             for (int position = 0; position < Math.Min(originalHash.Length,

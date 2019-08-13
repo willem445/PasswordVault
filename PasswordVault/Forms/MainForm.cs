@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 /*=================================================================================================
@@ -14,6 +8,9 @@ DESCRIPTION
 /* TODO - Add new form for adding password with validation, password strength etc
  * TODO - Filter for passwords
  * TODO - Edit passwords
+ * TODO - Sort _password binding list by application name
+ * TODO - Add category option to password object
+ * TODO - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -41,6 +38,7 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private const float STANDARD_UI_FONT_SIZE = 9.0f;
         private const float CLOSE_BUTTON_FONT_SIZE = 12.0f;
+        private const float TEXTBOX_FONT_SIZE = 7.0f;
 
         /*=================================================================================================
 		FIELDS
@@ -48,9 +46,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private User _user;                           // Current user's username and password
-        private BindableList<Password> _passwordList; // stores the current users passwords and binds to datagridview
-        private IStorage _storage;                    // Method of storing the passwords (ie. csv file or database)
         private ContextMenu _cm;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
@@ -70,6 +65,7 @@ namespace PasswordVault
         {
             InitializeComponent();
 
+            #region UI
             // Configure form UI
             BackColor = DarkBackground();
             FormBorderStyle = FormBorderStyle.None;
@@ -89,6 +85,9 @@ namespace PasswordVault
 
             label5.Font = UIFont(STANDARD_UI_FONT_SIZE);
             label5.ForeColor = WhiteText();
+
+            filterLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            filterLabel.ForeColor = WhiteText();
 
             // Configure menu stip
             menuStrip.BackColor = DarkBackground();
@@ -124,22 +123,39 @@ namespace PasswordVault
             applicationTextBox.BackColor = ControlBackground();
             applicationTextBox.ForeColor = WhiteText();
             applicationTextBox.BorderStyle = BorderStyle.FixedSingle;
+            applicationTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             usernameTextBox.BackColor = ControlBackground();
             usernameTextBox.ForeColor = WhiteText();
             usernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            usernameTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             descriptionTextBox.BackColor = ControlBackground();
             descriptionTextBox.ForeColor = WhiteText();
             descriptionTextBox.BorderStyle = BorderStyle.FixedSingle;
+            descriptionTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             passphraseTextBox.BackColor = ControlBackground();
             passphraseTextBox.ForeColor = WhiteText();
             passphraseTextBox.BorderStyle = BorderStyle.FixedSingle;
+            passphraseTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             websiteTextBox.BackColor = ControlBackground();
             websiteTextBox.ForeColor = WhiteText();
             websiteTextBox.BorderStyle = BorderStyle.FixedSingle;
+            websiteTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+
+            filterTextBox.BackColor = ControlBackground();
+            filterTextBox.ForeColor = WhiteText();
+            filterTextBox.BorderStyle = BorderStyle.FixedSingle;
+            filterTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+
+            // Configure combo box
+            filterComboBox.BackColor = ControlBackground();
+            filterComboBox.ForeColor = WhiteText();
+            filterComboBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            filterComboBox.Items.Add("Name");
+            filterComboBox.Items.Add("Description");
 
             // Configure status strip
             statusStrip1.BackColor = DarkBackground();
@@ -166,14 +182,16 @@ namespace PasswordVault
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
+            #endregion
 
-            _storage = new CSVFactory().Get();
+            // Set storage to use CSV data
+            IStorage _storage = new CSVFactory().Get();
 
-            _user = new User();
-            userStatusLabel.Text = "";
+            //_user = new User();
+            //userStatusLabel.Text = "";
 
-            _passwordList = new BindableList<Password>();
-            _passwordList.CreateBinding(PasswordDataGridView);
+            //_passwordList = new BindableList<Password>();
+            //_passwordList.CreateBinding(PasswordDataGridView);
 
             _cm = new ContextMenu();
             _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
@@ -193,100 +211,107 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!_user.ValidKey)
-            {
-                LoginForm loginForm = new LoginForm();
-                if (loginForm.ShowDialog() == DialogResult.OK)
-                {
-                    _user = loginForm.GetUser();
-                    userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
-                    applicationTextBox.Enabled = true;
-                    descriptionTextBox.Enabled = true;
-                    websiteTextBox.Enabled = true;
-                    passphraseTextBox.Enabled = true;
-                    usernameTextBox.Enabled = true;
-                    addButton.Enabled = true;
-                    moveUpButton.Enabled = true;
-                    moveDownButton.Enabled = true;
-                    deleteButton.Enabled = true;
-                    editButton.Enabled = true;
+            //if (!_user.ValidKey)
+            //{
+            //    LoginForm loginForm = new LoginForm();
+            //    if (loginForm.ShowDialog() == DialogResult.OK)
+            //    {
+            //        _user = loginForm.GetUser();
+            //        userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
+            //        applicationTextBox.Enabled = true;
+            //        descriptionTextBox.Enabled = true;
+            //        websiteTextBox.Enabled = true;
+            //        passphraseTextBox.Enabled = true;
+            //        usernameTextBox.Enabled = true;
+            //        addButton.Enabled = true;
+            //        moveUpButton.Enabled = true;
+            //        moveDownButton.Enabled = true;
+            //        deleteButton.Enabled = true;
+            //        editButton.Enabled = true;
+            //        filterComboBox.Enabled = true;
+            //        filterTextBox.Enabled = true;
 
-                    if (_storage.GetType() == typeof(CSV))
-                    {
-                        ((CSV)_storage).SetPasswordFileName(_user.UserID);
-                    }
+            //        if (_storage.GetType() == typeof(CSV))
+            //        {
+            //            ((CSV)_storage).SetCSVFileName(_user.UserID);
+            //        }
 
-                    _passwordList.Clear();
-                    foreach (var item in _storage.GetPasswords())
-                    {
-                        Password password = new Password();
-                        password.Application = EncryptDecrypt.Decrypt(item.Application, _user.Key);
-                        password.Username = EncryptDecrypt.Decrypt(item.Username, _user.Key);
-                        password.Description = EncryptDecrypt.Decrypt(item.Description, _user.Key);
-                        password.Website = EncryptDecrypt.Decrypt(item.Website, _user.Key);
-                        password.Passphrase = item.Passphrase;
-                        _passwordList.Add(password);
-                    }
+            //        _passwordList.Clear();
+            //        _passwordList.Clear();
+            //        _passwordList.Clear();
+            //        _passwordList.Clear();
+            //        foreach (var item in _storage.GetPasswords())
+            //        {
+            //            Password password = new Password();
+            //            password.Application = EncryptDecrypt.Decrypt(item.Application, _user.Key);
+            //            password.Username = EncryptDecrypt.Decrypt(item.Username, _user.Key);
+            //            password.Description = EncryptDecrypt.Decrypt(item.Description, _user.Key);
+            //            password.Website = EncryptDecrypt.Decrypt(item.Website, _user.Key);
+            //            password.Passphrase = item.Passphrase; // Leave pass phase encrypted until it is needed
+            //            _passwordList.Add(password);
+            //        }
 
-                    loginToolStripMenuItem.Text = "Logoff";
-                }
-            }
-            else
-            {
-                _user.ValidKey = false;
-                _user.UserID = null;
-                _user.Salt = null;
-                _user.Hash = null;
-                _user.Key = null;
+            //        loginToolStripMenuItem.Text = "Logoff";
+            //    }
+            //}
+            //else
+            //{
+            //    _user.ValidKey = false;
+            //    _user.UserID = null;
+            //    _user.Salt = null;
+            //    _user.Hash = null;
+            //    _user.Key = null;
 
-                userStatusLabel.Text = "";
-                applicationTextBox.Enabled = false;
-                descriptionTextBox.Enabled = false;
-                websiteTextBox.Enabled = false;
-                passphraseTextBox.Enabled = false;
-                usernameTextBox.Enabled = false;
-                addButton.Enabled = false;
-                moveUpButton.Enabled = false;
-                moveDownButton.Enabled = false;
-                deleteButton.Enabled = false;
-                editButton.Enabled = false;
+            //    userStatusLabel.Text = "";
+            //    applicationTextBox.Enabled = false;
+            //    descriptionTextBox.Enabled = false;
+            //    websiteTextBox.Enabled = false;
+            //    passphraseTextBox.Enabled = false;
+            //    usernameTextBox.Enabled = false;
+            //    addButton.Enabled = false;
+            //    moveUpButton.Enabled = false;
+            //    moveDownButton.Enabled = false;
+            //    deleteButton.Enabled = false;
+            //    editButton.Enabled = false;
+            //    filterComboBox.Enabled = false;
+            //    filterTextBox.Enabled = false;
 
-                if (_storage.GetType() == typeof(CSV))
-                {
-                    ((CSV)_storage).SetPasswordFileName("");
-                }
+            //    if (_storage.GetType() == typeof(CSV))
+            //    {
+            //        ((CSV)_storage).SetUserTableName("");
+            //    }
 
-                _passwordList.Clear();
+            //    _passwordList.Clear();
 
-                loginToolStripMenuItem.Text = "Login";
-            }
+            //    loginToolStripMenuItem.Text = "Login";
+            //}
         }
 
         /*************************************************************************************************/
         private void AddButton_Click(object sender, EventArgs e)
         {
-            Password newPassword = new Password();
-            Password newPassword2 = new Password(); // Make a new password object so we dont modify _passwordList object when adding to storage list
+            //Password newPassword = new Password();
+            //Password newPassword2 = new Password(); // Make a new password object so we dont modify _passwordList object when adding to storage list
 
-            newPassword.Application = applicationTextBox.Text;
-            newPassword.Description = descriptionTextBox.Text;
-            newPassword.Website =     websiteTextBox.Text    ;
-            newPassword.Username =    usernameTextBox.Text   ;
-            newPassword.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text, _user.Key);
-            _passwordList.Add(newPassword);
+            //newPassword.Application = applicationTextBox.Text;
+            //newPassword.Description = descriptionTextBox.Text;
+            //newPassword.Website =     websiteTextBox.Text    ;
+            //newPassword.Username =    usernameTextBox.Text   ;
+            //newPassword.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text, _user.Key);
+            //_passwordList.Add(newPassword);
 
-            newPassword2.Application = EncryptDecrypt.Encrypt(applicationTextBox.Text, _user.Key);
-            newPassword2.Description = EncryptDecrypt.Encrypt(descriptionTextBox.Text, _user.Key);
-            newPassword2.Website =     EncryptDecrypt.Encrypt(websiteTextBox.Text,     _user.Key);
-            newPassword2.Username =    EncryptDecrypt.Encrypt(usernameTextBox.Text,    _user.Key);
-            newPassword2.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text,  _user.Key);
-            _storage.AddPassword(newPassword2);
+            //newPassword2.Application = EncryptDecrypt.Encrypt(applicationTextBox.Text, _user.Key);
+            //newPassword2.Description = EncryptDecrypt.Encrypt(descriptionTextBox.Text, _user.Key);
+            //newPassword2.Website =     EncryptDecrypt.Encrypt(websiteTextBox.Text,     _user.Key);
+            //newPassword2.Username =    EncryptDecrypt.Encrypt(usernameTextBox.Text,    _user.Key);
+            //newPassword2.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text,  _user.Key);
+            //_storage.AddPassword(newPassword2);
 
-            applicationTextBox.Text = "";
-            descriptionTextBox.Text = "";
-            websiteTextBox.Text     = "";
-            usernameTextBox.Text    = "";
-            passphraseTextBox.Text  = "";
+            //applicationTextBox.Text = "";
+            //descriptionTextBox.Text = "";
+            //websiteTextBox.Text     = "";
+            //usernameTextBox.Text    = "";
+            //passphraseTextBox.Text  = "";
         }
 
         /*************************************************************************************************/
@@ -310,42 +335,42 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CopyPass_Click(object sender, EventArgs e)
         {
-            if (_passwordList.Count != 0)
-            {
-                Clipboard.SetText(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
-            }          
+            //if (_passwordList.Count != 0)
+            //{
+            //    Clipboard.SetText(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
+            //}          
         }
 
         /*************************************************************************************************/
         private void CopyUser_Click(object sender, EventArgs e)
         {
-            if (_passwordList.Count != 0)
-            {
-                Clipboard.SetText(_passwordList.GetList()[_rowIndexCopy].Username);
-            }
+            //if (_passwordList.Count != 0)
+            //{
+            //    Clipboard.SetText(_passwordList.GetList()[_rowIndexCopy].Username);
+            //}
         }
 
         /*************************************************************************************************/
         private void Website_Click(object sender, EventArgs e)
         {
-            if (_passwordList.Count != 0)
-            {
-                string website = _passwordList.GetList()[_rowIndexCopy].Website;
+            //if (_passwordList.Count != 0)
+            //{
+            //    string website = _passwordList.GetList()[_rowIndexCopy].Website;
 
-                if (UriUtilities.IsValidUri(website))
-                {
-                    UriUtilities.OpenUri(website);
-                }
-            }
+            //    if (UriUtilities.IsValidUri(website))
+            //    {
+            //        UriUtilities.OpenUri(website);
+            //    }
+            //}
         }
 
         /*************************************************************************************************/
         private void ShowPassword_Click(object sender, EventArgs e)
         {
-            if (_passwordList.Count != 0)
-            {
-                MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
-            }
+            //if (_passwordList.Count != 0)
+            //{
+            //    MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
+            //}
         }
 
         /*************************************************************************************************/

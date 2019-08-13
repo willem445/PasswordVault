@@ -61,7 +61,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public override IStorage Get()
         {
-            return new CSV();
+            return CSV.GetInstance(new CSVUserParser(new CSVReader()));
         }
 
         /*=================================================================================================
