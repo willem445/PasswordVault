@@ -13,10 +13,12 @@ namespace PasswordVault
         List<User> GetUsers();
         void AddUser(string userName, string salt, string hash);
         void ModifyUser(User user, User modifiedUser);
-        void DeleteUser(string userName);
+        void DeleteUser(User user);
 
         // User passwords
-        void SetUserTableName(string name);
+        bool SetUserTableName(string name);
+        void ClearUserTableName();
+        void CreateUserTable(string name);
         void AddPassword(Password password);
         void ModifyPassword(Password password, Password modifiedPassword);
         void DeletePassword(Password password);
