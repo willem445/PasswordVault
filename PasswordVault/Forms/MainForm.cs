@@ -185,7 +185,6 @@ namespace PasswordVault
             #endregion
 
             // Set storage to use CSV data
-            IStorage _storage = new CSVFactory().Get();
 
             //_user = new User();
             //userStatusLabel.Text = "";

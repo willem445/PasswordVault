@@ -129,7 +129,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            var storage = new CSVFactory().Get();
+            var storage = new CsvDatabaseFactory().Get();
 
             string user = loginUsernameTextBox.Text;
             string pass = loginPasswordTextBox.Text;
@@ -168,7 +168,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CreateLoginButton_Click(object sender, EventArgs e)
         {        
-            var csv = new CSVFactory().Get();
+            var csv = new CsvDatabaseFactory().Get();
             List<User> users = csv.GetUsers();
 
             string newUser = createUsernameTextBox.Text;

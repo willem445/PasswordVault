@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PasswordVault
 {
-    public interface IStorage
+    public interface IDatabase
     {
         // Master users/password
         User GetUser(string username);
@@ -14,11 +14,13 @@ namespace PasswordVault
         void AddUser(string userName, string salt, string hash);
         void ModifyUser(User user, User modifiedUser);
         void DeleteUser(User user);
+        bool UserExists(User user);
+        bool UserPasswordTableExists(User user);
 
         // User passwords
-        bool SetUserTableName(string name);
-        void ClearUserTableName();
-        void CreateUserTable(string name);
+        bool SetUserPasswordTableName(string name);
+        void ClearUserPasswordTableName();
+        void CreateUserPasswordTable(string name);
         void AddPassword(Password password);
         void ModifyPassword(Password password, Password modifiedPassword);
         void DeletePassword(Password password);

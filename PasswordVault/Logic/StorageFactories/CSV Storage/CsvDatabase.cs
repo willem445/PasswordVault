@@ -3,13 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* 
+/* TODO - may need more error handling if table or entry does not exist
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -25,7 +23,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public sealed class CSV : IStorage
+    public sealed class CsvDatabase : IDatabase
     {
         /*=================================================================================================
 		CONSTANTS
@@ -45,9 +43,10 @@ namespace PasswordVault
         private string _passwordFileName = "";
         private List<User> _encryptedUsers;
         private List<Password> _encryptedPasswords;
-        private static CSV _instance = null;
+        private static CsvDatabase _instance = null;
         private static Object _mutex = new Object();
         private ICSVUserManager _csvUserManager;
+        private ICSVPasswordManager _csvPasswordManager;
         private bool _validUserPasswordTable = false;
 
 
@@ -61,9 +60,10 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        private CSV(ICSVUserManager csvUserManager)
+        private CsvDatabase(ICSVUserManager csvUserManager, ICSVPasswordManager csvPasswordManager)
         {
             _csvUserManager = csvUserManager;
+            _csvPasswordManager = csvPasswordManager;
 
             if (!Directory.Exists(BASE_PATH))
             {
@@ -77,6 +77,7 @@ namespace PasswordVault
 
             _csvUserManager.ParseUsersCSVFile(USERS_CSV_PATH);
             _encryptedUsers = _csvUserManager.GetEncryptedUsers();
+          
             _encryptedPasswords = new List<Password>();
         }
 
@@ -84,7 +85,7 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public static CSV GetInstance(ICSVUserManager parseUsers)
+        public static CsvDatabase GetInstance(ICSVUserManager parseUsers, ICSVPasswordManager parsePasswords)
         {
             if (_instance == null)
             {
@@ -92,7 +93,7 @@ namespace PasswordVault
                 {
                     if (_instance == null)
                     {
-                        _instance = new CSV(parseUsers);
+                        _instance = new CsvDatabase(parseUsers, parsePasswords);
                     }
                 }
             }
@@ -149,7 +150,20 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public bool SetUserTableName(string name)
+        public bool UserExists(User user)
+        {
+            bool exists = _encryptedUsers.Exists(x => x.UserID == user.UserID);
+            return exists;
+        }
+
+        /*************************************************************************************************/
+        public bool UserPasswordTableExists(User user)
+        {
+            return File.Exists(CreateCSVFileNameFromTable(user.UserID));
+        }
+
+        /*************************************************************************************************/
+        public bool SetUserPasswordTableName(string name)
         {
             bool tableExists = false;
             string userTableFileName = CreateCSVFileNameFromTable(name);
@@ -159,20 +173,24 @@ namespace PasswordVault
                 tableExists = true;
                 _validUserPasswordTable = true;
                 _passwordFileName = userTableFileName;
+
+                _csvPasswordManager.ParsePasswordCSVFile(_passwordFileName);
+                _encryptedPasswords = _csvPasswordManager.GetEncryptedPasswords();
             }
 
             return tableExists;
         }
 
         /*************************************************************************************************/
-        public void ClearUserTableName()
+        public void ClearUserPasswordTableName()
         {
             _passwordFileName = "";
+            _encryptedPasswords = new List<Password>();
             _validUserPasswordTable = false;
         }
 
         /*************************************************************************************************/
-        void CreateUserTable(string name)
+        public void CreateUserPasswordTable(string name)
         {
             string userTableFileName = CreateCSVFileNameFromTable(name);
 
@@ -182,52 +200,38 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void AddPassword(Password password)
         {
-            // TODO - Create password manager similar to user manager
-
-            //string path = string.Format("{0}{1}.csv", BASE_PATH, _passwordFileName);
-
-            //if (_passwordFileName != "")
-            //{
-            //    if (!File.Exists(path))
-            //    {
-            //        File.Create(path);
-            //    }
-
-            //    var write = File.AppendText(path);
-            //    write.WriteLine(string.Format("{0},{1},{2},{3},{4}", password.Application, password.Username, password.Description,  password.Website, password.Passphrase));
-            //    write.Close();
-            //}
-            
+            _encryptedPasswords.Add(password);
+            _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
         }
 
         /*************************************************************************************************/
         public List<Password> GetPasswords()
         {
-            List<Password> passwords = new List<Password>();
-            //string path = string.Format("{0}{1}.csv", BASE_PATH, _passwordFileName);
-
-            //using (var reader = new StreamReader(path))
-            //{
-            //    while (!reader.EndOfStream)
-            //    {
-            //        string[] line = reader.ReadLine().Split(',');
-            //        passwords.Add(new Password(line[0], line[1], line[2], line[3], line[4]));
-            //    }
-            //}
-
-            return passwords;
+            return _encryptedPasswords;
         }
 
         /*************************************************************************************************/
         public void ModifyPassword(Password password, Password modifiedPassword)
         {
+            int index = GetIndexOfPassword(password);
 
+            if (index != -1)
+            {
+                _encryptedPasswords[index] = modifiedPassword;
+                _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+            }
         }
 
         /*************************************************************************************************/
         public void DeletePassword(Password password)
         {
+            int index = GetIndexOfPassword(password);
 
+            if (index != -1)
+            {
+                _encryptedPasswords.Remove(password);
+                _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+            }
         }
 
         /*=================================================================================================
@@ -239,6 +243,16 @@ namespace PasswordVault
             int index = -1;
 
             index = _encryptedUsers.IndexOf(user);
+
+            return index;
+        }
+
+        /*************************************************************************************************/
+        private int GetIndexOfPassword(Password pass)
+        {
+            int index = -1;
+
+            index = _encryptedPasswords.IndexOf(pass);
 
             return index;
         }

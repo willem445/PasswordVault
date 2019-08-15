@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class User
+    public class CsvDatabaseFactory : DatabaseFactory
     {
         /*=================================================================================================
 		CONSTANTS
@@ -44,55 +44,24 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public string UserID { get; }
-        public string Salt { get; }
-        public string Hash { get; }
-        public string Key { get; }
-        public bool ValidKey { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public User(string user, string salt, string hash, string key, bool validKey = false)
+        public CsvDatabaseFactory()
         {
-            UserID = user;
-            Salt = salt;
-            Hash = hash;
-            Key = key;
-            ValidKey = validKey;
-        }
 
-        public User(string user, string salt, string hash, bool validKey = false)
-        {
-            UserID = user;
-            Salt = salt;
-            Hash = hash;
-            ValidKey = validKey;
-        }
-
-        public User(bool validKey = false)
-        {
-            ValidKey = validKey;
-        }
-
-        public User(string user)
-        {
-            UserID = user;
         }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public string GetUserString()
+        public override IDatabase Get()
         {
-            string userString = "";
-
-            userString = string.Format("{0},{1},{2}", UserID, Salt, Hash);
-
-            return userString;
+            return CsvDatabase.GetInstance(new CSVUserManager(new CSVReader(), new CSVWriter()), new CSVPasswordManager(new CSVReader(), new CSVWriter()));
         }
 
         /*=================================================================================================
@@ -105,5 +74,5 @@ namespace PasswordVault
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // User CLASS
+    } // CSVFactory CLASS
 } // PasswordHashTest NAMESPACE

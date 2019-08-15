@@ -39,9 +39,9 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private User _currentUser;                           // Current user's username and password
-        private List<Password> _passwordList; // stores the current users passwords and binds to datagridview
-        private IStorage _storage;                    // Method of storing the passwords (ie. csv file or database)
+        private User _currentUser;                       // Current user's username and password
+        private List<Password> _passwordList;            // stores the current users passwords and binds to datagridview
+        private IDatabase _dbcontext;                    // Method of storing the passwords (ie. csv file or database)
         private IMasterPassword _masterPassword;
         private IEncryptDecrypt _encryptDecrypt;
         private IMessageWriter _messageWriter;
@@ -56,14 +56,15 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public PasswordManager(IStorage storage, IMasterPassword masterPassword, IEncryptDecrypt encryptDecrypt, IMessageWriter messageWriter)
+        public PasswordManager(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptDecrypt encryptDecrypt, IMessageWriter messageWriter)
         {
-            _storage = storage;
+            _dbcontext = dbcontext;
             _masterPassword = masterPassword;
             _encryptDecrypt = encryptDecrypt;
             _messageWriter = messageWriter;
 
             _currentUser = new User(false);
+            _passwordList = new List<Password>();
         }
 
         /*=================================================================================================
@@ -72,14 +73,15 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void Login(string username, string password)
         {
-            User user = _storage.GetUser(username);
-
-            if (user == null)
+            // Perform user login verification
+            if (!_dbcontext.UserExists(new User(username)))
             {
                 _messageWriter.Show("Username does not exist.");
             }
             else
             {
+                User user = _dbcontext.GetUser(username);
+
                 bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
 
                 if (valid)
@@ -93,9 +95,10 @@ namespace PasswordVault
                 }
             }
 
+            // Set table name and read passwords
             if (_currentUser.ValidKey)
             {
-                _storage.SetUserTableName(_currentUser.UserID);
+                _dbcontext.SetUserPasswordTableName(_currentUser.UserID);
                 UpdatePasswordList();
             }
         }
@@ -103,7 +106,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void CreateNewUser(string username, string password)
         {
-            User user = _storage.GetUser(username);
+            User user = _dbcontext.GetUser(username);
 
             if (user != null)
             {
@@ -112,7 +115,7 @@ namespace PasswordVault
             else
             {
                 CryptData_S newPassword = _masterPassword.HashPassword(password);
-                _storage.AddUser(username, newPassword.Salt, newPassword.Hash);
+                _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
             }
         }
 
@@ -123,14 +126,16 @@ namespace PasswordVault
         private void UpdatePasswordList()
         {
             _passwordList.Clear();
-            foreach (var item in _storage.GetPasswords())
+            foreach (var item in _dbcontext.GetPasswords())
             {
-                Password password = new Password();
-                password.Application = _encryptDecrypt.Decrypt(item.Application, _currentUser.Key);
-                password.Username = _encryptDecrypt.Decrypt(item.Username, _currentUser.Key);
-                password.Description = _encryptDecrypt.Decrypt(item.Description, _currentUser.Key);
-                password.Website = _encryptDecrypt.Decrypt(item.Website, _currentUser.Key);
-                password.Passphrase = item.Passphrase; // Leave pass phase encrypted until it is needed
+                Password password = new Password(
+                    _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
+                    item.Passphrase
+                    );
+
                 _passwordList.Add(password);
             }
         }

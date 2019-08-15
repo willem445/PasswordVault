@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* 
+/* TODO - Add email field
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -46,19 +46,19 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public string Passphrase { get; set; }
+        public string Passphrase { get;  }
 
         [Browsable(true)]
-        public string Application { get; set; }
+        public string Application { get; }
 
         [Browsable(true)]
-        public string Username { get; set; }
+        public string Username { get; }
 
         [Browsable(true)]
-        public string Description { get; set; }
+        public string Description { get; }
 
         [Browsable(true)]
-        public string Website { get; set; }
+        public string Website { get; }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -84,6 +84,10 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public string GetPasswordString()
+        {
+            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
+        }
 
         /*=================================================================================================
 		PRIVATE METHODS
