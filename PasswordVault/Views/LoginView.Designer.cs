@@ -1,6 +1,6 @@
 ﻿namespace PasswordVault
 {
-    partial class LoginForm
+    partial class LoginView
     {
         /// <summary>
         /// Required designer variable.

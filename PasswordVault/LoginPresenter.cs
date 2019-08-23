@@ -11,7 +11,7 @@ DESCRIPTION
 /* 
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordHashTest
+namespace PasswordVault
 {
     /*=================================================================================================
 	ENUMERATIONS
@@ -24,7 +24,7 @@ namespace PasswordHashTest
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class FormHelper
+    class LoginPresenter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,6 +39,8 @@ namespace PasswordHashTest
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private ILoginView _loginView;
+        private IPasswordService _passwordService;
 
         /*=================================================================================================
 		PROPERTIES
@@ -50,15 +52,26 @@ namespace PasswordHashTest
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public FormHelper()
+        public LoginPresenter(ILoginView loginView, IPasswordService passwordService)
         {
+            _loginView = loginView;
+            _passwordService = passwordService;
 
+            _loginView.LoginEvent += Login;
         }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public void Login(string username, string password)
+        {
+            LoginResult result = LoginResult.UnSuccessful;
+
+            result = _passwordService.Login(username, password);
+
+            _loginView.DisplayLoginResult(result);
+        }
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -70,5 +83,5 @@ namespace PasswordHashTest
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // FormHelper CLASS
-} // PasswordHashTest NAMESPACE
+    } // LoginPresenter CLASS
+} // PasswordVault NAMESPACE

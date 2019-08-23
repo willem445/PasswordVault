@@ -16,7 +16,20 @@ namespace PasswordVault
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
+    public enum LoginResult
+    {
+        PasswordIncorrect, 
+        UsernameDoesNotExist,
+        Successful,
+        UnSuccessful
+    }
 
+    public enum CreateUserResult
+    {
+        UsernameTaken,
+        Successful,
+        Unsuccessful,
+    }
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -24,7 +37,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class PasswordManager : IPasswordManager
+    class PasswordService : IPasswordService
     {
         /*=================================================================================================
 		CONSTANTS
@@ -44,7 +57,6 @@ namespace PasswordVault
         private IDatabase _dbcontext;                    // Method of storing the passwords (ie. csv file or database)
         private IMasterPassword _masterPassword;
         private IEncryptDecrypt _encryptDecrypt;
-        private IMessageWriter _messageWriter;
 
         /*=================================================================================================
 		PROPERTIES
@@ -56,12 +68,11 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public PasswordManager(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptDecrypt encryptDecrypt, IMessageWriter messageWriter)
+        public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptDecrypt encryptDecrypt)
         {
             _dbcontext = dbcontext;
             _masterPassword = masterPassword;
             _encryptDecrypt = encryptDecrypt;
-            _messageWriter = messageWriter;
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -71,12 +82,14 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public void Login(string username, string password)
+        public LoginResult Login(string username, string password)
         {
+            LoginResult loginResult = LoginResult.UnSuccessful;
+
             // Perform user login verification
             if (!_dbcontext.UserExists(new User(username)))
             {
-                _messageWriter.Show("Username does not exist.");
+                loginResult = LoginResult.UsernameDoesNotExist;
             }
             else
             {
@@ -90,7 +103,7 @@ namespace PasswordVault
                 }
                 else
                 {
-                    _messageWriter.Show("Password is incorrect.");
+                    loginResult = LoginResult.PasswordIncorrect;
                     _currentUser = new User(false);
                 }
             }
@@ -98,25 +111,67 @@ namespace PasswordVault
             // Set table name and read passwords
             if (_currentUser.ValidKey)
             {
+                loginResult = LoginResult.Successful;
                 _dbcontext.SetUserPasswordTableName(_currentUser.UserID);
                 UpdatePasswordList();
             }
+
+            return loginResult;
+        }
+
+        public void Logout()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsLoggedIn()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteUser(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ChangeUserPassword(string username, string oldPassword, string newPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPassword()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemovePassword()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ModifyPassword()
+        {
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
-        public void CreateNewUser(string username, string password)
+        public CreateUserResult CreateNewUser(string username, string password)
         {
+            CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
             User user = _dbcontext.GetUser(username);
 
             if (user != null)
             {
-                _messageWriter.Show("Username is taken.");
+                createUserResult = CreateUserResult.UsernameTaken;
             }
             else
             {
+                createUserResult = CreateUserResult.Successful;
                 CryptData_S newPassword = _masterPassword.HashPassword(password);
                 _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
             }
+
+            return createUserResult;
         }
 
         /*=================================================================================================

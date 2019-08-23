@@ -28,7 +28,7 @@ namespace PasswordVault
 	*================================================================================================*/
 
 
-    public partial class MainForm : Form
+    public partial class MainView : Form
     {
         /*=================================================================================================
         CONSTANTS
@@ -46,10 +46,14 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private ILoginView _loginView;
+
         private ContextMenu _cm;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
+
+        private bool _loggedIn = false;
 
         /*=================================================================================================
 		PROPERTIES
@@ -61,8 +65,10 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainForm()
+        public MainView(ILoginView loginView)
         {
+            _loginView = loginView;
+
             InitializeComponent();
 
             #region UI
@@ -210,6 +216,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!_loggedIn)
+            {
+                _loginView.ShowLoginMenu();
+            }
+
+            Console.WriteLine("Continues");
+
             //if (!_user.ValidKey)
             //{
             //    LoginForm loginForm = new LoginForm();

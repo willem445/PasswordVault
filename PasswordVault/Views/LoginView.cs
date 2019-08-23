@@ -17,7 +17,7 @@ DESCRIPTION
 
 namespace PasswordVault
 {
-    public partial class LoginForm : Form
+    public partial class LoginView : Form, ILoginView
     {
         /*=================================================================================================
         CONSTANTS
@@ -38,6 +38,8 @@ namespace PasswordVault
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
+        public event Action<string, string> LoginEvent;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -48,7 +50,7 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public LoginForm()
+        public LoginView()
         {
             InitializeComponent();
 
@@ -123,6 +125,16 @@ namespace PasswordVault
             return _user;
         }
 
+        public void DisplayLoginResult(LoginResult result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowLoginMenu()
+        {
+            this.ShowDialog();
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -157,6 +169,14 @@ namespace PasswordVault
 
             DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void RaiseLoginEvent(string username, string password)
+        {
+            if (LoginEvent != null)
+            {
+                LoginEvent(username, password);
+            }
         }
 
         /*************************************************************************************************/

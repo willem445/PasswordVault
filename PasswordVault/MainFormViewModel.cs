@@ -39,7 +39,7 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private IPasswordManager _passwordManager;
+        private IPasswordService _passwordManager;
 
         /*=================================================================================================
 		PROPERTIES
@@ -51,7 +51,7 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainFormViewModel(IPasswordManager passwordManager)
+        public MainFormViewModel(IPasswordService passwordManager)
         {
             _passwordManager = passwordManager;
         }

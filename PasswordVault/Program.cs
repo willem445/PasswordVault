@@ -16,7 +16,15 @@ namespace PasswordVault
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            ILoginView loginView = new LoginView();
+            CsvDatabaseFactory csvDatabaseFactory = new CsvDatabaseFactory();
+            IPasswordService passwordService = new PasswordService(csvDatabaseFactory.Get(), new MasterPassword(), new EncryptDecrypt());
+
+            // Create presenters
+            LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
+
+            Application.Run(new MainView(loginView));
         }
     }
 }
