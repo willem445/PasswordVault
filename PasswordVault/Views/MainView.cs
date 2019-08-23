@@ -11,6 +11,7 @@ DESCRIPTION
  * TODO - Sort _password binding list by application name
  * TODO - Add category option to password object
  * TODO - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
+ * TODO - Create INI file to store database configuration etc.
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault

@@ -150,6 +150,7 @@ namespace PasswordVault
             rngCryptoServiceProvider.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes);
         }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/

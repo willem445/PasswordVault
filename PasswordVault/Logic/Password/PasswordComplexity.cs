@@ -18,6 +18,13 @@ namespace PasswordVault
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
+    public enum PasswordComplexityLevel
+    {
+        Weak,
+        Mediocre,
+        Ok,
+        Great,
+    }
 
     /*=================================================================================================
 	STRUCTS
@@ -57,10 +64,10 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-  		public static string checkEffectiveBitSize(int passSize, string pass)
+  		public static PasswordComplexityLevel checkEffectiveBitSize(int passSize, string pass)
   		{
   			int charSet = 0;
-  			string passStrength = "";
+            PasswordComplexityLevel passStrength = PasswordComplexityLevel.Weak;
   
   			charSet = getCharSetUsed(pass);
   
@@ -68,23 +75,23 @@ namespace PasswordVault
   
   			if(result <= 32 )
   			{
-  				passStrength = "WEAK";
+  				passStrength = PasswordComplexityLevel.Weak;
   			}
   			else if(result <= 64 )
   			{
-  				passStrength = "MEDIOCRE";
+  				passStrength = PasswordComplexityLevel.Mediocre;
   			}
   			else if(result <= 128 )
   			{
-  				passStrength = "OK";
+  				passStrength = PasswordComplexityLevel.Ok;
   			}
   			else if(result > 128 )
   			{
-  				passStrength = "GREAT";
+  				passStrength = PasswordComplexityLevel.Great;
   			}
 
-            Console.WriteLine("Your password is " + passStrength +
-                " it is equivalent to a " + Math.Round(result, 0) + "-bit key.");
+            //Console.WriteLine("Your password is " + passStrength +
+            //    " it is equivalent to a " + Math.Round(result, 0) + "-bit key.");
 
             return passStrength;
 

@@ -45,6 +45,8 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private const int DEFAULT_PASSWORD_LENGTH = 15;
+        private const int MINIMUM_PASSWORD_LENGTH = 8;
 
         /*=================================================================================================
 		FIELDS
@@ -169,9 +171,16 @@ namespace PasswordVault
                 createUserResult = CreateUserResult.Successful;
                 CryptData_S newPassword = _masterPassword.HashPassword(password);
                 _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
+                _dbcontext.CreateUserPasswordTable(username);
             }
 
             return createUserResult;
+        }
+
+        /*************************************************************************************************/
+        public string GeneratePasswordKey()
+        {
+            return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
         }
 
         /*=================================================================================================

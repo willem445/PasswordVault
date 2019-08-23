@@ -25,8 +25,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        const int DEFAULT_PASSWORD_LENGTH = 15;
-        const int MINIMUM_PASSWORD_LENGTH = 8;
 
         /*=================================================================================================
 		FIELDS
@@ -34,11 +32,13 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private User _user;
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         public event Action<string, string> LoginEvent;
+        public event Action<string, string> CreateNewUserEvent;
+        public event Action GenerateNewPasswordEvent;
+        public event Action<string> PasswordChanged;
 
         /*=================================================================================================
 		PROPERTIES
@@ -54,6 +54,7 @@ namespace PasswordVault
         {
             InitializeComponent();
 
+            #region UI
             // Configure form UI
             BackColor = Color.FromArgb(35, 35, 35);
             FormBorderStyle = FormBorderStyle.None;
@@ -105,31 +106,123 @@ namespace PasswordVault
             label4.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             label4.ForeColor = Color.FromArgb(242, 242, 242);
 
+            loginResultLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            loginResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+            loginResultLabel.Visible = false;
+
+            createNewUserResultLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            createNewUserResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+            createNewUserResultLabel.Visible = false;
+
             // Configure groupbox
             groupBox1.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             groupBox1.ForeColor = Color.FromArgb(242, 242, 242);
 
             groupBox2.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             groupBox2.ForeColor = Color.FromArgb(242, 242, 242);
-
-            _user = new User(null, null, null);
-            _user.ValidKey = false;
+            #endregion
         }
 
         /*=================================================================================================
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
-        public User GetUser()
-        {
-            return _user;
-        }
-
         public void DisplayLoginResult(LoginResult result)
         {
-            throw new NotImplementedException();
+            switch(result)
+            {
+                case LoginResult.PasswordIncorrect:
+                    loginResultLabel.Visible = true;
+                    loginResultLabel.Text = "Password incorrect.";
+                    break;
+
+                case LoginResult.UsernameDoesNotExist:
+                    loginResultLabel.Visible = true;
+                    loginResultLabel.Text = "Username doesn't exist.";
+                    break;
+
+                case LoginResult.UnSuccessful:
+                    loginResultLabel.Visible = true;
+                    loginResultLabel.Text = "Login failed.";
+                    break;
+
+                case LoginResult.Successful:
+                    loginResultLabel.Visible = false;
+                    loginResultLabel.Text = "";
+                    DialogResult = DialogResult.OK;
+                    this.Close();
+                    break;
+
+                default:
+                    loginResultLabel.Visible = true;
+                    loginResultLabel.Text = "Login failed.";
+                    break;
+            }
         }
 
+        /*************************************************************************************************/
+        public void DisplayGeneratePasswordResult(string generatedPassword)
+        {
+            createPasswordTextBox.Text = generatedPassword;
+        }
+
+        /*************************************************************************************************/
+        public void DisplayCreateNewUserResult(CreateUserResult result)
+        {
+            switch(result)
+            {
+                case CreateUserResult.UsernameTaken:
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Username taken.";
+                    break;
+
+                case CreateUserResult.Unsuccessful:
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Unsuccessful.";
+                    break;
+
+                case CreateUserResult.Successful:
+                    createNewUserResultLabel.Visible = false;
+                    createNewUserResultLabel.Text = "Username taken.";
+                    DialogResult = DialogResult.OK;
+                    this.Close();
+                    break;
+
+                default:
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Unsuccessful.";
+                    break;
+            }
+        }
+
+        /*************************************************************************************************/
+        public void DisplayPasswordComplexity(PasswordComplexityLevel complexity)
+        {
+            switch (complexity)
+            {
+                case PasswordComplexityLevel.Weak:
+                    createPasswordTextBox.ForeColor = Color.Red;
+                    break;
+
+                case PasswordComplexityLevel.Mediocre:
+                    createPasswordTextBox.ForeColor = Color.Orange;
+                    break;
+
+                case PasswordComplexityLevel.Ok:
+                    createPasswordTextBox.ForeColor = Color.YellowGreen;
+                    break;
+
+                case PasswordComplexityLevel.Great:
+                    createPasswordTextBox.ForeColor = Color.Green;
+                    break;
+
+                default:
+                    createPasswordTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+                    break;
+            }
+        }
+
+        /*************************************************************************************************/
         public void ShowLoginMenu()
         {
             this.ShowDialog();
@@ -141,36 +234,10 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            var storage = new CsvDatabaseFactory().Get();
-
-            string user = loginUsernameTextBox.Text;
-            string pass = loginPasswordTextBox.Text;
-
-            User userInfo = storage.GetUser(user);
-
-            if (userInfo == null)
-            {
-                MessageBox.Show("Invalid username.");
-                return;
-            }
-
-            MasterPassword hash = new MasterPassword();
-            bool valid = hash.VerifyPassword(pass, userInfo.Salt, userInfo.Hash);
-
-            if (!valid)
-            {
-                MessageBox.Show("Password is incorrect!");
-                return;
-            }
-
-            //_user.UserID = user;
-            //_user.Key = pass;
-            //_user.ValidKey = true;
-
-            DialogResult = DialogResult.OK;
-            this.Close();
+            RaiseLoginEvent(loginUsernameTextBox.Text, loginPasswordTextBox.Text);
         }
 
+        /*************************************************************************************************/
         private void RaiseLoginEvent(string username, string password)
         {
             if (LoginEvent != null)
@@ -182,70 +249,45 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void GeneratePasswordButton_Click(object sender, EventArgs e)
         {
-            //createPasswordTextBox.Text = EncryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
+            RaiseGeneratePasswordEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseGeneratePasswordEvent()
+        {
+            if (GenerateNewPasswordEvent != null)
+            {
+                GenerateNewPasswordEvent();
+            }
         }
 
         /*************************************************************************************************/
         private void CreateLoginButton_Click(object sender, EventArgs e)
-        {        
-            var csv = new CsvDatabaseFactory().Get();
-            List<User> users = csv.GetUsers();
+        {
+            RaiseCreateNewUserEvent(createUsernameTextBox.Text, createPasswordTextBox.Text);
+        }
 
-            string newUser = createUsernameTextBox.Text;
-            string newPass = createPasswordTextBox.Text;
-
-            // Verify username doesnt exist
-            bool exists = users.Any(user => user.UserID == newUser);
-
-            if (exists)
+        /*************************************************************************************************/
+        private void RaiseCreateNewUserEvent(string user, string password)
+        {
+            if (CreateNewUserEvent != null)
             {
-                MessageBox.Show("Username already exists.");
-                return;
+                CreateNewUserEvent(user, password);
             }
-
-            // Verify password length
-            if (newPass.Length < MINIMUM_PASSWORD_LENGTH)
-            {
-                MessageBox.Show("Password requires at least 8 characters.");
-                return;
-            }
-
-            // Hash password 
-            MasterPassword hash = new MasterPassword();
-            CryptData_S data = hash.HashPassword(newPass);
-     
-            //csv.AddUser(new User(newUser, data.Salt, data.Hash));
-
-            DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         /*************************************************************************************************/
         private void CreatePasswordTextBox_TextChanged(object sender, EventArgs e)
         {
-            string complexity = PasswordComplexity.checkEffectiveBitSize(((TextBox)sender).Text.Length, ((TextBox)sender).Text);
+            RaisePasswordChangedEvent(createPasswordTextBox.Text);
+        }
 
-            switch(complexity)
+        /*************************************************************************************************/
+        private void RaisePasswordChangedEvent(string password)
+        {
+            if (PasswordChanged != null)
             {
-                case "WEAK":
-                    ((TextBox)sender).ForeColor = Color.Red;
-                    break;
-
-                case "MEDIOCRE":
-                    ((TextBox)sender).ForeColor = Color.Orange;
-                    break;
-
-                case "OK":
-                    ((TextBox)sender).ForeColor = Color.YellowGreen;
-                    break;
-
-                case "GREAT":
-                    ((TextBox)sender).ForeColor = Color.Green;
-                    break;
-
-                default:
-                    ((TextBox)sender).ForeColor = Color.FromArgb(242, 242, 242); 
-                    break;
+                PasswordChanged(password);
             }
         }
 
@@ -276,6 +318,7 @@ namespace PasswordVault
         private void CloseButton_Click(object sender, EventArgs e)
         {
             this.Close();
+            DialogResult = DialogResult.Cancel;
         }
 
         /*************************************************************************************************/

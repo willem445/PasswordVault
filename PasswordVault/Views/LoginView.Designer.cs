@@ -43,12 +43,15 @@
             this.createLoginButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
+            this.loginResultLabel = new System.Windows.Forms.Label();
+            this.createNewUserResultLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.loginResultLabel);
             this.groupBox1.Controls.Add(this.loginPasswordTextBox);
             this.groupBox1.Controls.Add(this.loginUsernameTextBox);
             this.groupBox1.Controls.Add(this.label2);
@@ -106,6 +109,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.createNewUserResultLabel);
             this.groupBox2.Controls.Add(this.generatePasswordButton);
             this.groupBox2.Controls.Add(this.createPasswordTextBox);
             this.groupBox2.Controls.Add(this.createUsernameTextBox);
@@ -195,7 +199,25 @@
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
-            // LoginForm
+            // loginResultLabel
+            // 
+            this.loginResultLabel.AutoSize = true;
+            this.loginResultLabel.Location = new System.Drawing.Point(16, 150);
+            this.loginResultLabel.Name = "loginResultLabel";
+            this.loginResultLabel.Size = new System.Drawing.Size(69, 13);
+            this.loginResultLabel.TabIndex = 5;
+            this.loginResultLabel.Text = "Login Result:";
+            // 
+            // createNewUserResultLabel
+            // 
+            this.createNewUserResultLabel.AutoSize = true;
+            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 126);
+            this.createNewUserResultLabel.Name = "createNewUserResultLabel";
+            this.createNewUserResultLabel.Size = new System.Drawing.Size(99, 13);
+            this.createNewUserResultLabel.TabIndex = 10;
+            this.createNewUserResultLabel.Text = "Create User Result:";
+            // 
+            // LoginView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -206,7 +228,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "LoginForm";
+            this.Name = "LoginView";
             this.Text = "Login";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -234,5 +256,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label closeButton;
         private System.Windows.Forms.Panel moveWindowPanel;
+        private System.Windows.Forms.Label loginResultLabel;
+        private System.Windows.Forms.Label createNewUserResultLabel;
     }
 }
