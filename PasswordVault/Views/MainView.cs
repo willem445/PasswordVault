@@ -69,6 +69,7 @@ namespace PasswordVault
         public MainView(ILoginView loginView)
         {
             _loginView = loginView;
+            _loginView.LoginSuccessfulEvent += LoginSuccessful;
 
             InitializeComponent();
 
@@ -217,9 +218,26 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!_loggedIn)
+            if (!_loggedIn) // login
             {
                 _loginView.ShowLoginMenu();
+            }
+            else // logout
+            {
+                userStatusLabel.Text = "";
+                applicationTextBox.Enabled = false;
+                descriptionTextBox.Enabled = false;
+                websiteTextBox.Enabled = false;
+                passphraseTextBox.Enabled = false;
+                usernameTextBox.Enabled = false;
+                addButton.Enabled = false;
+                moveUpButton.Enabled = false;
+                moveDownButton.Enabled = false;
+                deleteButton.Enabled = false;
+                editButton.Enabled = false;
+                filterComboBox.Enabled = false;
+                filterTextBox.Enabled = false;
+                loginToolStripMenuItem.Text = "Login";
             }
 
             Console.WriteLine("Continues");
@@ -298,6 +316,29 @@ namespace PasswordVault
 
             //    loginToolStripMenuItem.Text = "Login";
             //}
+        }
+
+        /*************************************************************************************************/
+        private void LoginSuccessful()
+        {
+            _loggedIn = true;
+
+            //_user = loginForm.GetUser();
+            //userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
+
+            applicationTextBox.Enabled = true;
+            descriptionTextBox.Enabled = true;
+            websiteTextBox.Enabled = true;
+            passphraseTextBox.Enabled = true;
+            usernameTextBox.Enabled = true;
+            addButton.Enabled = true;
+            moveUpButton.Enabled = true;
+            moveDownButton.Enabled = true;
+            deleteButton.Enabled = true;
+            editButton.Enabled = true;
+            filterComboBox.Enabled = true;
+            filterTextBox.Enabled = true;
+            loginToolStripMenuItem.Text = "Logoff";
         }
 
         /*************************************************************************************************/

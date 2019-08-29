@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class LoginPresenter
+    class MainFormPresenter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,8 +39,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private ILoginView _loginView;
-        private IPasswordService _passwordService;
 
         /*=================================================================================================
 		PROPERTIES
@@ -52,15 +50,9 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public LoginPresenter(ILoginView loginView, IPasswordService passwordService)
+        public MainFormPresenter(IMainView mainView, IPasswordService passwordService)
         {
-            _loginView = loginView;
-            _passwordService = passwordService;
 
-            _loginView.LoginEvent += Login;
-            _loginView.CreateNewUserEvent += CreateNewUser;
-            _loginView.PasswordChangedEvent += CalculatePasswordComplexity;
-            _loginView.GenerateNewPasswordEvent += GeneratePassword;
         }
 
         /*=================================================================================================
@@ -72,49 +64,11 @@ namespace PasswordVault
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void Login(string username, string password)
-        {
-            LoginResult result = LoginResult.UnSuccessful;
-
-            result = _passwordService.Login(username, password);
-
-            _loginView.DisplayLoginResult(result);
-        }
-
-        /********************************************************************************** ***************/
-        private void CreateNewUser(string username, string password)
-        {
-            CreateUserResult result = CreateUserResult.Unsuccessful;
-
-            result = _passwordService.CreateNewUser(username, password);
-
-            _loginView.DisplayCreateNewUserResult(result, _passwordService.GetMinimumPasswordLength());
-        }
-
-        /*************************************************************************************************/
-        private void GeneratePassword()
-        {
-            string generatedPassword = "";
-
-            generatedPassword = _passwordService.GeneratePasswordKey();
-
-            _loginView.DisplayGeneratePasswordResult(generatedPassword);
-        }
-
-        /*************************************************************************************************/
-        private void CalculatePasswordComplexity(string password)
-        {
-            PasswordComplexityLevel passwordComplexityLevel = PasswordComplexityLevel.Weak;
-
-            passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(password.Length, password);
-
-            _loginView.DisplayPasswordComplexity(passwordComplexityLevel);
-        }
 
         /*=================================================================================================
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // LoginPresenter CLASS
+    } // MainFormPresenter CLASS
 } // PasswordVault NAMESPACE

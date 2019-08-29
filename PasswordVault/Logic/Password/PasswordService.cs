@@ -27,6 +27,8 @@ namespace PasswordVault
     public enum CreateUserResult
     {
         UsernameTaken,
+        UsernameNotValid,
+        PasswordNotValid,
         Successful,
         Unsuccessful,
     }
@@ -168,13 +170,31 @@ namespace PasswordVault
             }
             else
             {
-                createUserResult = CreateUserResult.Successful;
-                CryptData_S newPassword = _masterPassword.HashPassword(password);
-                _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
-                _dbcontext.CreateUserPasswordTable(username);
+                // Verify that username and password pass requirements
+                if (username == null || username == "")
+                {
+                    createUserResult = CreateUserResult.UsernameNotValid;
+                }
+                else if(password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 1- Check if password contains special characters
+                {
+                    createUserResult = CreateUserResult.PasswordNotValid;
+                }
+                else
+                {
+                    createUserResult = CreateUserResult.Successful;
+                    CryptData_S newPassword = _masterPassword.HashPassword(password);
+                    _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
+                    _dbcontext.CreateUserPasswordTable(username);
+                }
             }
 
             return createUserResult;
+        }
+
+        /*************************************************************************************************/
+        public int GetMinimumPasswordLength()
+        {
+            return MINIMUM_PASSWORD_LENGTH;
         }
 
         /*************************************************************************************************/
@@ -203,6 +223,8 @@ namespace PasswordVault
                 _passwordList.Add(password);
             }
         }
+
+
 
         /*=================================================================================================
 		STATIC METHODS

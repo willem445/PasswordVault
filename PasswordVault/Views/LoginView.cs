@@ -38,7 +38,8 @@ namespace PasswordVault
         public event Action<string, string> LoginEvent;
         public event Action<string, string> CreateNewUserEvent;
         public event Action GenerateNewPasswordEvent;
-        public event Action<string> PasswordChanged;
+        public event Action<string> PasswordChangedEvent;
+        public event Action LoginSuccessfulEvent;
 
         /*=================================================================================================
 		PROPERTIES
@@ -151,6 +152,7 @@ namespace PasswordVault
                     loginResultLabel.Text = "";
                     DialogResult = DialogResult.OK;
                     this.Close();
+                    RaiseLoginSuccessfulEvent();
                     break;
 
                 default:
@@ -167,7 +169,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DisplayCreateNewUserResult(CreateUserResult result)
+        public void DisplayCreateNewUserResult(CreateUserResult result, int minimumPasswordLength)
         {
             switch(result)
             {
@@ -181,11 +183,22 @@ namespace PasswordVault
                     createNewUserResultLabel.Text = "Unsuccessful.";
                     break;
 
+                case CreateUserResult.PasswordNotValid:
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Password not long enough.";
+                    break;
+
+                case CreateUserResult.UsernameNotValid:
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Invalid username.";
+                    break;
+
                 case CreateUserResult.Successful:
                     createNewUserResultLabel.Visible = false;
                     createNewUserResultLabel.Text = "Username taken.";
                     DialogResult = DialogResult.OK;
                     this.Close();
+                    RaiseLoginSuccessfulEvent();
                     break;
 
                 default:
@@ -225,7 +238,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void ShowLoginMenu()
         {
-            this.ShowDialog();
+            this.Show();
         }
 
         /*=================================================================================================
@@ -285,9 +298,18 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void RaisePasswordChangedEvent(string password)
         {
-            if (PasswordChanged != null)
+            if (PasswordChangedEvent != null)
             {
-                PasswordChanged(password);
+                PasswordChangedEvent(password);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void RaiseLoginSuccessfulEvent()
+        {
+            if (LoginSuccessfulEvent != null)
+            {
+                LoginSuccessfulEvent();
             }
         }
 
