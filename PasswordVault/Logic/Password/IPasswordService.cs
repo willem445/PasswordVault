@@ -18,6 +18,8 @@ namespace PasswordVault
         void ChangeUserPassword(string username, string oldPassword, string newPassword);
         void AddPassword();
         void RemovePassword();
-        void ModifyPassword();      
+        void ModifyPassword();
+
+        List<Password> GetPasswords();
     }
 }

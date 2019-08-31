@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -29,7 +31,7 @@ namespace PasswordVault
 	*================================================================================================*/
 
 
-    public partial class MainView : Form
+    public partial class MainView : Form, IMainView
     {
         /*=================================================================================================
         CONSTANTS
@@ -39,12 +41,22 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private const float STANDARD_UI_FONT_SIZE = 9.0f;
         private const float CLOSE_BUTTON_FONT_SIZE = 12.0f;
-        private const float TEXTBOX_FONT_SIZE = 7.0f;
+        private const float TEXTBOX_FONT_SIZE = 8.0f;
+        private const float BUTTON_FONT_SIZE = 8.0f;
+
+        private const int INVALID_INDEX = -1;
 
         /*=================================================================================================
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public event Action<string, PasswordFilterOptions> FilterChangedEvent;
+        public event Action RequestPasswordsEvent;
+        public event Action<string, string, string, string, string> AddPasswordEvent;
+        public event Action<int> MovePasswordUpEvent;
+        public event Action<int> MovePasswordDownEvent;
+        public event Action<int> EditPasswordEvent;
+        public event Action<int> DeletePasswordEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -55,6 +67,8 @@ namespace PasswordVault
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         private bool _loggedIn = false;
+        private int _selectedDgvIndex = INVALID_INDEX;
+
 
         /*=================================================================================================
 		PROPERTIES
@@ -62,6 +76,15 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        protected override CreateParams CreateParams // This helps to avoid flickering with custom controls
+        {
+            get
+            {
+                CreateParams handleParam = base.CreateParams;
+                handleParam.ExStyle |= 0x02000000;      // WS_EX_COMPOSITED
+                return handleParam;
+            }
+        }
 
         /*=================================================================================================
 		CONSTRUCTORS
@@ -106,26 +129,41 @@ namespace PasswordVault
             addButton.BackColor = ControlBackground();
             addButton.ForeColor = WhiteText();
             addButton.FlatStyle = FlatStyle.Flat;
+            addButton.Font = UIFont(BUTTON_FONT_SIZE);
+            addButton.FlatAppearance.BorderColor = DarkBackground();
+            addButton.FlatAppearance.BorderSize = 1;
 
             moveUpButton.BackColor = ControlBackground();
             moveUpButton.ForeColor = WhiteText();
             moveUpButton.FlatStyle = FlatStyle.Flat;
+            moveUpButton.Font = UIFont(BUTTON_FONT_SIZE);
+            moveUpButton.FlatAppearance.BorderColor = DarkBackground();
+            moveUpButton.FlatAppearance.BorderSize = 1;
 
             moveDownButton.BackColor = ControlBackground();
             moveDownButton.ForeColor = WhiteText();
             moveDownButton.FlatStyle = FlatStyle.Flat;
+            moveDownButton.Font = UIFont(BUTTON_FONT_SIZE);
+            moveDownButton.FlatAppearance.BorderColor = DarkBackground();
+            moveDownButton.FlatAppearance.BorderSize = 1;
 
             deleteButton.BackColor = ControlBackground();
             deleteButton.ForeColor = WhiteText();
             deleteButton.FlatStyle = FlatStyle.Flat;
+            deleteButton.Font = UIFont(BUTTON_FONT_SIZE);
+            deleteButton.FlatAppearance.BorderColor = DarkBackground();
+            deleteButton.FlatAppearance.BorderSize = 1;
 
             editButton.BackColor = ControlBackground();
             editButton.ForeColor = WhiteText();
             editButton.FlatStyle = FlatStyle.Flat;
+            editButton.Font = UIFont(BUTTON_FONT_SIZE);
+            editButton.FlatAppearance.BorderColor = DarkBackground();
+            editButton.FlatAppearance.BorderSize = 1;
 
             closeButton.BackColor = ControlBackground();
             closeButton.ForeColor = WhiteText();
-            closeButton.Font = UIFont(CLOSE_BUTTON_FONT_SIZE);
+            closeButton.Font = UIFont(BUTTON_FONT_SIZE);
 
             // Configure textbox
             applicationTextBox.BackColor = ControlBackground();
@@ -162,8 +200,10 @@ namespace PasswordVault
             filterComboBox.BackColor = ControlBackground();
             filterComboBox.ForeColor = WhiteText();
             filterComboBox.Font = UIFont(TEXTBOX_FONT_SIZE);
-            filterComboBox.Items.Add("Name");
-            filterComboBox.Items.Add("Description");
+            filterComboBox.DataSource = Enum.GetValues(typeof(PasswordFilterOptions));
+            filterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            filterComboBox.HighlightColor = ControlHighlight();
+            filterComboBox.BorderColor = ControlBackground();
 
             // Configure status strip
             statusStrip1.BackColor = DarkBackground();
@@ -192,6 +232,7 @@ namespace PasswordVault
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
             #endregion
 
+
             // Set storage to use CSV data
 
             //_user = new User();
@@ -211,6 +252,12 @@ namespace PasswordVault
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
+        public void DisplayPasswords(BindingList<Password> passwordList)
+        {
+            PasswordDataGridView.DataSource = passwordList;
+            PasswordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            PasswordDataGridView.RowHeadersVisible = false;
+        }
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -339,6 +386,17 @@ namespace PasswordVault
             filterComboBox.Enabled = true;
             filterTextBox.Enabled = true;
             loginToolStripMenuItem.Text = "Logoff";
+
+            RaiseRequestPasswordsEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseRequestPasswordsEvent()
+        {
+            if (RequestPasswordsEvent != null)
+            {
+                RequestPasswordsEvent();
+            }
         }
 
         /*************************************************************************************************/
@@ -369,9 +427,27 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
+        private void RaiseAddPasswordEvent(string application, string username, string description, string website, string passphrase)
+        {
+            if (AddPasswordEvent != null)
+            {
+                AddPasswordEvent(application, username, description, website, passphrase);
+            }
+        }
+
+        /*************************************************************************************************/
         private void MoveUpButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /*************************************************************************************************/
+        private void RaiseMovePasswordUpEvent(int index)
+        {
+            if (MovePasswordUpEvent != null)
+            {
+                MovePasswordUpEvent(index);
+            }
         }
 
         /*************************************************************************************************/
@@ -381,9 +457,42 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
+        private void RaiseMovePasswordDownEvent(int index)
+        {
+            if (MovePasswordDownEvent != null)
+            {
+                MovePasswordDownEvent(index);
+            }
+        }
+
+        /*************************************************************************************************/
         private void EditButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /*************************************************************************************************/
+        private void RaiseEditPasswordEvent(int index)
+        {
+            if (EditPasswordEvent != null)
+            {
+                EditPasswordEvent(index);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /*************************************************************************************************/
+        private void RaiseDeletePasswordEvent(int index)
+        {
+            if (DeletePasswordEvent != null)
+            {
+                DeletePasswordEvent(index);
+            }
         }
 
         /*************************************************************************************************/
@@ -425,6 +534,21 @@ namespace PasswordVault
             //{
             //    MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
             //}
+        }
+
+        /*************************************************************************************************/
+        private void filterChanged(object sender, EventArgs e)
+        {
+            // RaiseNewFilterEvent(filterTextBox.Text, ); TODO - Parse enum from combobox
+        }
+
+        /*************************************************************************************************/
+        private void RaiseNewFilterEvent(string filterText, PasswordFilterOptions passwordFilterOption)
+        {
+            if (FilterChangedEvent != null)
+            {
+                FilterChangedEvent(filterText, passwordFilterOption);
+            }
         }
 
         /*************************************************************************************************/
@@ -503,6 +627,12 @@ namespace PasswordVault
         private Color ControlBackground()
         {
             return Color.FromArgb(63, 63, 63);
+        }
+
+        /*************************************************************************************************/
+        private Color ControlHighlight()
+        {
+            return Color.FromArgb(0x80, 0x80, 0x80);
         }
 
         /*************************************************************************************************/

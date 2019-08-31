@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* 
+/* Serves as the bridge between the database and the presenters
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -158,6 +158,12 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
+        public List<Password> GetPasswords()
+        {
+            return _passwordList;
+        }
+
+
         /*************************************************************************************************/
         public CreateUserResult CreateNewUser(string username, string password)
         {
@@ -223,7 +229,6 @@ namespace PasswordVault
                 _passwordList.Add(password);
             }
         }
-
 
 
         /*=================================================================================================

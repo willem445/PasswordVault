@@ -21,10 +21,13 @@ namespace PasswordVault
             CsvDatabaseFactory csvDatabaseFactory = new CsvDatabaseFactory();
             IPasswordService passwordService = new PasswordService(csvDatabaseFactory.Get(), new MasterPassword(), new EncryptDecrypt());
 
+            MainView mainView = new MainView(loginView);
+
             // Create presenters
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
+            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService);
 
-            Application.Run(new MainView(loginView));
+            Application.Run(mainView);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace PasswordVault
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace PasswordVault
 {
     partial class MainView
     {
@@ -54,7 +57,7 @@
             this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.filterLabel = new System.Windows.Forms.Label();
-            this.filterComboBox = new System.Windows.Forms.ComboBox();
+            this.filterComboBox = new PasswordVault.AdvancedComboBox();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PasswordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -224,6 +227,7 @@
             this.deleteButton.TabIndex = 15;
             this.deleteButton.Text = "Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
             // usernameTextBox
             // 
@@ -287,6 +291,7 @@
             this.filterTextBox.Name = "filterTextBox";
             this.filterTextBox.Size = new System.Drawing.Size(264, 20);
             this.filterTextBox.TabIndex = 30;
+            this.filterTextBox.TextChanged += new System.EventHandler(this.filterChanged);
             // 
             // filterLabel
             // 
@@ -299,16 +304,17 @@
             // 
             // filterComboBox
             // 
-            this.filterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.filterComboBox.Enabled = false;
+            this.filterComboBox.BorderColor = System.Drawing.Color.Black;
+            this.filterComboBox.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
             this.filterComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.filterComboBox.FormattingEnabled = true;
+            this.filterComboBox.HighlightColor = System.Drawing.Color.Gray;
             this.filterComboBox.Location = new System.Drawing.Point(282, 119);
             this.filterComboBox.Name = "filterComboBox";
             this.filterComboBox.Size = new System.Drawing.Size(121, 21);
-            this.filterComboBox.TabIndex = 31;
+            this.filterComboBox.TabIndex = 0;
             // 
-            // MainForm
+            // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -339,7 +345,7 @@
             this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MainMenuStrip = this.menuStrip;
-            this.Name = "MainForm";
+            this.Name = "MainView";
             this.Text = "Password Vault";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -379,7 +385,7 @@
         private System.Windows.Forms.Panel moveWindowPanel;
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.Label filterLabel;
-        private System.Windows.Forms.ComboBox filterComboBox;
+        private AdvancedComboBox filterComboBox;
     }
 }
 
