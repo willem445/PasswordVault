@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -35,6 +36,7 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private const string BASE_PATH = @"..\..\CSV\";
         private const string USERS_CSV_PATH = BASE_PATH + @"users.csv";
+        private const string PASSWORDS_CSV_PATH = BASE_PATH + @"passwords.csv";
 
         /*=================================================================================================
 		FIELDS
@@ -51,11 +53,32 @@ namespace PasswordVault
         private ICSVPasswordManager _csvPasswordManager;
         private bool _validUserPasswordTable = false;
 
+        private string _usersCsvPath = USERS_CSV_PATH;
+        private string _passwordsCsvPath = PASSWORDS_CSV_PATH;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public string UsersCsvPathOverride
+        {
+            set
+            {
+                _usersCsvPath = value;
+                _csvUserManager.ParseUsersCSVFile(_usersCsvPath); 
+                _encryptedUsers = _csvUserManager.GetEncryptedUsers();
+            }
+        }
+
+        public string PasswordCsvPathOverride
+        {
+            set
+            {
+                _passwordsCsvPath = value;              
+                _csvPasswordManager.ParsePasswordCSVFile(_passwordsCsvPath);
+                _encryptedPasswords = _csvPasswordManager.GetEncryptedPasswords();
+            }
+        }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -67,20 +90,14 @@ namespace PasswordVault
             _csvUserManager = csvUserManager;
             _csvPasswordManager = csvPasswordManager;
 
-            if (!Directory.Exists(BASE_PATH))
-            {
-                Directory.CreateDirectory(BASE_PATH);
-            }
+            VerifyTablesExist();
 
-            if (!File.Exists(USERS_CSV_PATH))
-            {
-                File.Create(USERS_CSV_PATH);
-            }
-
-            _csvUserManager.ParseUsersCSVFile(USERS_CSV_PATH);
+            // Update each list on start up
+            _csvUserManager.ParseUsersCSVFile(_usersCsvPath); // TODO - Make this async
             _encryptedUsers = _csvUserManager.GetEncryptedUsers();
-          
-            _encryptedPasswords = new List<Password>();
+
+            _csvPasswordManager.ParsePasswordCSVFile(_passwordsCsvPath);
+            _encryptedPasswords = _csvPasswordManager.GetEncryptedPasswords();
         }
 
         /*=================================================================================================
@@ -104,147 +121,138 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void AddUser(string username, string salt, string hash)
+        public Task AddUser(string username, string salt, string hash)
         {
-            _encryptedUsers.Add(new User(username, salt, hash));
-            _csvUserManager.UpdateUsersCSVFile(USERS_CSV_PATH, _encryptedUsers);
-
-        }
-
-        /*************************************************************************************************/
-        public void ModifyUser(User user, User modifiedUser)
-        {
-            int index = GetIndexOfUser(user);
-
-            if (index != -1)
+            return Task.Run(() =>
             {
-                _encryptedUsers[index] = modifiedUser;
-                _csvUserManager.UpdateUsersCSVFile(USERS_CSV_PATH, _encryptedUsers);
-            }            
+                _encryptedUsers.Add(new User(username, salt, hash));
+                _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+            });
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(User user)
+        public Task ModifyUser(string username, User modifiedUser)
         {
-            int index = GetIndexOfUser(user);
-
-            if (index != -1)
+            return Task.Run(() =>
             {
-                _encryptedUsers.Remove(user);
-                _csvUserManager.UpdateUsersCSVFile(USERS_CSV_PATH, _encryptedUsers);
-            }
+                int index = GetIndexOfUser(username);
+
+                if (index != -1)
+                {
+                    _encryptedUsers[index] = modifiedUser;
+                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+                }
+            });          
         }
 
         /*************************************************************************************************/
-        public User GetUser(string username)
+        public Task DeleteUser(string username)
         {
-            User user;
-
-            user = _encryptedUsers.FirstOrDefault(x => x.UserID == username);
-
-            return user;
-        }
-
-        /*************************************************************************************************/
-        public List<User> GetUsers()
-        {
-            return _encryptedUsers;
-        }
-
-        /*************************************************************************************************/
-        public bool UserExists(User user)
-        {
-            bool exists = _encryptedUsers.Exists(x => x.UserID == user.UserID);
-            return exists;
-        }
-
-        /*************************************************************************************************/
-        public bool UserPasswordTableExists(User user)
-        {
-            return File.Exists(CreateCSVFileNameFromTable(user.UserID));
-        }
-
-        /*************************************************************************************************/
-        public bool SetUserPasswordTableName(string name)
-        {
-            bool tableExists = false;
-            string userTableFileName = CreateCSVFileNameFromTable(name);
-
-            if (File.Exists(userTableFileName))
+            return Task.Run(() =>
             {
-                tableExists = true;
-                _validUserPasswordTable = true;
-                _passwordFileName = userTableFileName;
+                int index = GetIndexOfUser(username);
 
-                _csvPasswordManager.ParsePasswordCSVFile(_passwordFileName);
-                _encryptedPasswords = _csvPasswordManager.GetEncryptedPasswords();
-            }
-
-            return tableExists;
+                if (index != -1)
+                {
+                    _encryptedUsers.RemoveAt(index);
+                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+                }
+            });
         }
 
         /*************************************************************************************************/
-        public void ClearUserPasswordTableName()
+        public Task<User> GetUser(string username)
         {
-            _passwordFileName = "";
-            _encryptedPasswords = new List<Password>();
-            _validUserPasswordTable = false;
+            return Task.Run(() =>
+            {
+                User user;
+
+                user = _encryptedUsers.FirstOrDefault(x => x.UserID == username);
+
+                return user;
+            });
         }
 
         /*************************************************************************************************/
-        public void CreateUserPasswordTable(string name)
+        public Task<List<User>> GetAllUsers()
         {
-            string userTableFileName = CreateCSVFileNameFromTable(name);
+            return Task.Run(() =>
+            {
+                return _encryptedUsers;
+            });
+        }
 
-            File.Create(userTableFileName);
+        /*************************************************************************************************/
+        public Task<bool> UserExists(string username)
+        {
+            return Task.Run(() =>
+            {
+                bool exists = _encryptedUsers.Exists(x => x.UserID == username);
+                return exists;
+            });
         }
             
         /*************************************************************************************************/
-        public void AddPassword(Password password)
+        public Task AddPassword(string username, Password password)
         {
-            _encryptedPasswords.Add(password);
-            _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-        }
-
-        /*************************************************************************************************/
-        public List<Password> GetPasswords()
-        {
-            return _encryptedPasswords;
-        }
-
-        /*************************************************************************************************/
-        public void ModifyPassword(Password password, Password modifiedPassword)
-        {
-            int index = GetIndexOfPassword(password);
-
-            if (index != -1)
+            return Task.Run(() =>
             {
-                _encryptedPasswords[index] = modifiedPassword;
+                _encryptedPasswords.Add(password);
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-            }
+            });
         }
 
         /*************************************************************************************************/
-        public void DeletePassword(Password password)
+        public Task ModifyPassword(string username, Password password, Password modifiedPassword)
         {
-            int index = GetIndexOfPassword(password);
-
-            if (index != -1)
+            return Task.Run(() =>
             {
-                _encryptedPasswords.Remove(password);
-                _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-            }
+                int index = GetIndexOfPassword(password);
+
+                if (index != -1)
+                {
+                    _encryptedPasswords[index] = modifiedPassword;
+                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+                }
+            });
+        }
+
+        /*************************************************************************************************/
+        public Task DeletePassword(string username, Password password)
+        {
+            return Task.Run(() =>
+            {
+                int index = GetIndexOfPassword(password);
+
+                if (index != -1)
+                {
+                    _encryptedPasswords.Remove(password);
+                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+                }
+            });
+        }
+
+        /*************************************************************************************************/
+        public Task<List<Password>> GetUserPasswords(string username)
+        {
+            return Task.Run(() =>
+            {
+                List<Password> result = (from Password password in _encryptedPasswords
+                                        where password.ID == username
+                                        select password).ToList<Password>();
+                return result;
+            });         
         }
 
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private int GetIndexOfUser(User user)
+        private int GetIndexOfUser(string username)
         {
             int index = -1;
 
-            index = _encryptedUsers.IndexOf(user);
+            index = _encryptedUsers.FindIndex(x => x.UserID == username);
 
             return index;
         }
@@ -265,6 +273,25 @@ namespace PasswordVault
             string userTableFileName = BASE_PATH + name + ".csv";
 
             return userTableFileName;
+        }
+
+        /*************************************************************************************************/
+        private void VerifyTablesExist()
+        {
+            if (!Directory.Exists(BASE_PATH))
+            {
+                Directory.CreateDirectory(BASE_PATH);
+            }
+
+            if (!File.Exists(_usersCsvPath))
+            {
+                File.Create(_usersCsvPath);
+            }
+
+            if (!File.Exists(_passwordsCsvPath))
+            {
+                File.Create(_passwordsCsvPath);
+            }
         }
 
         /*=================================================================================================

@@ -9,21 +9,17 @@ namespace PasswordVault
     public interface IDatabase
     {
         // Master users/password
-        User GetUser(string username);
-        List<User> GetUsers();
-        void AddUser(string userName, string salt, string hash);
-        void ModifyUser(User user, User modifiedUser);
-        void DeleteUser(User user);
-        bool UserExists(User user);
-        bool UserPasswordTableExists(User user);
+        Task<User> GetUser(string username);
+        Task<List<User>> GetAllUsers();
+        Task AddUser(string username, string salt, string hash);
+        Task ModifyUser(string username, User modifiedUser);
+        Task DeleteUser(string username);
+        Task<bool> UserExists(string username);
 
         // User passwords
-        bool SetUserPasswordTableName(string name);
-        void ClearUserPasswordTableName();
-        void CreateUserPasswordTable(string name);
-        void AddPassword(Password password);
-        void ModifyPassword(Password password, Password modifiedPassword);
-        void DeletePassword(Password password);
-        List<Password> GetPasswords();
+        Task AddPassword(string username, Password password);
+        Task ModifyPassword(string username, Password password, Password modifiedPassword);
+        Task DeletePassword(string username, Password password);
+        Task<List<Password>> GetUserPasswords(string username);
     }
 }

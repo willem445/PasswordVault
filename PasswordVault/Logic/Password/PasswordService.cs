@@ -90,35 +90,37 @@ namespace PasswordVault
         {
             LoginResult loginResult = LoginResult.UnSuccessful;
 
-            // Perform user login verification
-            if (!_dbcontext.UserExists(new User(username)))
-            {
-                loginResult = LoginResult.UsernameDoesNotExist;
-            }
-            else
-            {
-                User user = _dbcontext.GetUser(username);
+            //bool result = await _dbcontext.UserExists(username);
 
-                bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
+            //// Perform user login verification
+            //if (!result)
+            //{
+            //    loginResult = LoginResult.UsernameDoesNotExist;
+            //}
+            //else
+            //{
+            //    User user = _dbcontext.GetUser(username);
 
-                if (valid)
-                {
-                    _currentUser = new User(username, user.Salt, user.Hash, password, true);
-                }
-                else
-                {
-                    loginResult = LoginResult.PasswordIncorrect;
-                    _currentUser = new User(false);
-                }
-            }
+            //    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
 
-            // Set table name and read passwords
-            if (_currentUser.ValidKey)
-            {
-                loginResult = LoginResult.Successful;
-                _dbcontext.SetUserPasswordTableName(_currentUser.UserID);
-                UpdatePasswordList();
-            }
+            //    if (valid)
+            //    {
+            //        _currentUser = new User(username, user.Salt, user.Hash, password, true);
+            //    }
+            //    else
+            //    {
+            //        loginResult = LoginResult.PasswordIncorrect;
+            //        _currentUser = new User(false);
+            //    }
+            //}
+
+            //// Set table name and read passwords
+            //if (_currentUser.ValidKey)
+            //{
+            //    loginResult = LoginResult.Successful;
+            //    _dbcontext.SetUserPasswordTableName(_currentUser.UserID);
+            //    UpdatePasswordList();
+            //}
 
             return loginResult;
         }
@@ -168,31 +170,31 @@ namespace PasswordVault
         public CreateUserResult CreateNewUser(string username, string password)
         {
             CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
-            User user = _dbcontext.GetUser(username);
+            //User user = _dbcontext.GetUser(username);
 
-            if (user != null)
-            {
-                createUserResult = CreateUserResult.UsernameTaken;
-            }
-            else
-            {
-                // Verify that username and password pass requirements
-                if (username == null || username == "")
-                {
-                    createUserResult = CreateUserResult.UsernameNotValid;
-                }
-                else if(password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 1- Check if password contains special characters
-                {
-                    createUserResult = CreateUserResult.PasswordNotValid;
-                }
-                else
-                {
-                    createUserResult = CreateUserResult.Successful;
-                    CryptData_S newPassword = _masterPassword.HashPassword(password);
-                    _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
-                    _dbcontext.CreateUserPasswordTable(username);
-                }
-            }
+            //if (user != null)
+            //{
+            //    createUserResult = CreateUserResult.UsernameTaken;
+            //}
+            //else
+            //{
+            //    // Verify that username and password pass requirements
+            //    if (username == null || username == "")
+            //    {
+            //        createUserResult = CreateUserResult.UsernameNotValid;
+            //    }
+            //    else if(password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 1- Check if password contains special characters
+            //    {
+            //        createUserResult = CreateUserResult.PasswordNotValid;
+            //    }
+            //    else
+            //    {
+            //        createUserResult = CreateUserResult.Successful;
+            //        CryptData_S newPassword = _masterPassword.HashPassword(password);
+            //        _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
+            //        _dbcontext.CreateUserPasswordTable(username);
+            //    }
+            //}
 
             return createUserResult;
         }
@@ -215,19 +217,19 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void UpdatePasswordList()
         {
-            _passwordList.Clear();
-            foreach (var item in _dbcontext.GetPasswords())
-            {
-                Password password = new Password(
-                    _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
-                    item.Passphrase
-                    );
+            //_passwordList.Clear();
+            //foreach (var item in _dbcontext.GetUserPasswords())
+            //{
+            //    Password password = new Password(
+            //        _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
+            //        _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
+            //        _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
+            //        _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
+            //        item.Passphrase
+            //        );
 
-                _passwordList.Add(password);
-            }
+            //    _passwordList.Add(password);
+            //}
         }
 
 

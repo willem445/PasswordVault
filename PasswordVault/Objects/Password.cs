@@ -52,6 +52,9 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
+        public string ID { get; set; } // Store the users ID with each password 
+
+        [Browsable(false)]
         public string Passphrase { get;  }
 
         [Browsable(true)]
@@ -77,8 +80,9 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public Password(string application, string username, string description, string website, string passphrase)
+        public Password(string id, string application, string username, string description, string website, string passphrase)
         {
+            ID = id;
             Passphrase = passphrase;
             Application = application;
             Username = username;

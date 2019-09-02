@@ -18,8 +18,7 @@ namespace PasswordVault
             Application.SetCompatibleTextRenderingDefault(false);
 
             ILoginView loginView = new LoginView();
-            CsvDatabaseFactory csvDatabaseFactory = new CsvDatabaseFactory();
-            IPasswordService passwordService = new PasswordService(csvDatabaseFactory.Get(), new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(new CsvDatabaseFactory().Get(), new MasterPassword(), new EncryptDecrypt());
 
             MainView mainView = new MainView(loginView);
 
