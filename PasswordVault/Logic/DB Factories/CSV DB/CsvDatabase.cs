@@ -121,127 +121,97 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public Task AddUser(string username, string salt, string hash)
+        public void AddUser(string username, string salt, string hash)
         {
-            return Task.Run(() =>
+            _encryptedUsers.Add(new User(username, salt, hash));
+            _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+        }
+
+        /*************************************************************************************************/
+        public void ModifyUser(string username, User modifiedUser)
+        {
+            int index = GetIndexOfUser(username);
+
+            if (index != -1)
             {
-                _encryptedUsers.Add(new User(username, salt, hash));
+                _encryptedUsers[index] = modifiedUser;
                 _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-            });
+            }    
         }
 
         /*************************************************************************************************/
-        public Task ModifyUser(string username, User modifiedUser)
+        public void DeleteUser(string username)
         {
-            return Task.Run(() =>
-            {
-                int index = GetIndexOfUser(username);
+            int index = GetIndexOfUser(username);
 
-                if (index != -1)
-                {
-                    _encryptedUsers[index] = modifiedUser;
-                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-                }
-            });          
+            if (index != -1)
+            {
+                _encryptedUsers.RemoveAt(index);
+                _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+            }
         }
 
         /*************************************************************************************************/
-        public Task DeleteUser(string username)
+        public User GetUser(string username)
         {
-            return Task.Run(() =>
-            {
-                int index = GetIndexOfUser(username);
+            User user;
 
-                if (index != -1)
-                {
-                    _encryptedUsers.RemoveAt(index);
-                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-                }
-            });
+            user = _encryptedUsers.FirstOrDefault(x => x.UserID == username);
+
+            return user;
         }
 
         /*************************************************************************************************/
-        public Task<User> GetUser(string username)
+        public List<User> GetAllUsers()
         {
-            return Task.Run(() =>
-            {
-                User user;
-
-                user = _encryptedUsers.FirstOrDefault(x => x.UserID == username);
-
-                return user;
-            });
+            return _encryptedUsers;
         }
 
         /*************************************************************************************************/
-        public Task<List<User>> GetAllUsers()
+        public bool UserExists(string username)
         {
-            return Task.Run(() =>
-            {
-                return _encryptedUsers;
-            });
-        }
-
-        /*************************************************************************************************/
-        public Task<bool> UserExists(string username)
-        {
-            return Task.Run(() =>
-            {
-                bool exists = _encryptedUsers.Exists(x => x.UserID == username);
-                return exists;
-            });
+            bool exists = _encryptedUsers.Exists(x => x.UserID == username);
+            return exists;
         }
             
         /*************************************************************************************************/
-        public Task AddPassword(string username, Password password)
+        public void AddPassword(string username, Password password)
         {
-            return Task.Run(() =>
+            _encryptedPasswords.Add(password);
+            _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+        }
+
+        /*************************************************************************************************/
+        public void ModifyPassword(string username, Password password, Password modifiedPassword)
+        {
+            int index = GetIndexOfPassword(password);
+
+            if (index != -1)
             {
-                _encryptedPasswords.Add(password);
+                _encryptedPasswords[index] = modifiedPassword;
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-            });
+            }
         }
 
         /*************************************************************************************************/
-        public Task ModifyPassword(string username, Password password, Password modifiedPassword)
+        public void DeletePassword(string username, Password password)
         {
-            return Task.Run(() =>
-            {
-                int index = GetIndexOfPassword(password);
+            int index = GetIndexOfPassword(password);
 
-                if (index != -1)
-                {
-                    _encryptedPasswords[index] = modifiedPassword;
-                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-                }
-            });
+            if (index != -1)
+            {
+                _encryptedPasswords.Remove(password);
+                _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
+            }
         }
 
         /*************************************************************************************************/
-        public Task DeletePassword(string username, Password password)
+        public List<Password> GetUserPasswords(string username)
         {
-            return Task.Run(() =>
-            {
-                int index = GetIndexOfPassword(password);
-
-                if (index != -1)
-                {
-                    _encryptedPasswords.Remove(password);
-                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordFileName, _encryptedPasswords);
-                }
-            });
-        }
-
-        /*************************************************************************************************/
-        public Task<List<Password>> GetUserPasswords(string username)
-        {
-            return Task.Run(() =>
-            {
-                List<Password> result = (from Password password in _encryptedPasswords
-                                        where password.ID == username
-                                        select password).ToList<Password>();
-                return result;
-            });         
+            List<Password> result = (from Password password in _encryptedPasswords
+                                    where password.ID == username
+                                    select password).ToList<Password>();
+            return result;      
         }
 
         /*=================================================================================================

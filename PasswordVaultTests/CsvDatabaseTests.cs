@@ -23,7 +23,7 @@ namespace PasswordVault.Tests
             IDatabase db = csvDatabaseFactory.Get();
             ((CsvDatabase)db).UsersCsvPathOverride = USERS_CSV_PATH;
             ((CsvDatabase)db).PasswordCsvPathOverride = PASSWORDS_CSV_PATH;
-            List<Password> result = db.GetUserPasswords("willem445").Result;
+            List<Password> result = db.GetUserPasswords("willem445");
             Assert.AreEqual(20, result.Count);           
         }
     }
