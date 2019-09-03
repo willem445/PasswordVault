@@ -52,10 +52,7 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public string ID { get; set; } // Store the users ID with each password 
-
-        [Browsable(false)]
-        public string Passphrase { get;  }
+        public string MasterUserID { get; set; } // Store the users ID with each password
 
         [Browsable(true)]
         public string Application { get; }
@@ -68,6 +65,9 @@ namespace PasswordVault
 
         [Browsable(true)]
         public string Website { get; }
+
+        [Browsable(false)]
+        public string Passphrase { get;  }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -92,7 +92,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public Password(string id, string application, string username, string description, string website, string passphrase)
         {
-            ID = id;
+            MasterUserID = id;
             Passphrase = passphrase;
             Application = application;
             Username = username;
@@ -106,7 +106,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4},{5}", ID, Application, Username, Description, Website, Passphrase);
+            return string.Format("{0},{1},{2},{3},{4},{5}", MasterUserID, Application, Username, Description, Website, Passphrase);
         }
 
         /*=================================================================================================

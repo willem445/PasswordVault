@@ -236,7 +236,7 @@ namespace PasswordVault
             foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UserID))
             {
                 Password password = new Password(
-                    item.ID,
+                    item.MasterUserID,
                     _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
