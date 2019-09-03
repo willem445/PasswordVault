@@ -17,9 +17,9 @@ namespace PasswordVault
         bool UserExists(string username);
 
         // User passwords
-        void AddPassword(Password password);
-        void ModifyPassword(Password password, Password modifiedPassword);
-        void DeletePassword(Password password);
-        List<Password> GetUserPasswords(string username);
+        void AddPassword(DatabasePassword password);
+        void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword);
+        void DeletePassword(DatabasePassword password);
+        List<DatabasePassword> GetUserPasswords(string username);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,29 +8,23 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* TODO - Add email field
+/* 
  ------------------------------------------------------------------------------------------------*/
-
+ 
 namespace PasswordVault
 {
-    /*=================================================================================================
+	/*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
-    public enum PasswordFilterOptions
-    {
-        Application = 0,
-        Description = 1,
-        Website = 2,
-    }
-    
-    /*=================================================================================================
+		
+	/*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
-
-    /*=================================================================================================
+	
+	/*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class Password
+    class PasswordUIFormatter : IPasswordUIFormatter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -46,59 +39,68 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        IEncryptDecrypt _encryptDecrypt;
+        private string _key;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        [Browsable(true)]
-        public string Application { get; protected set; }
-
-        [Browsable(true)]
-        public string Username { get; protected set; }
-
-        [Browsable(true)]
-        public string Description { get; protected set; }
-
-        [Browsable(true)]
-        public string Website { get; protected set; }
-
-        [Browsable(false)]
-        public string Passphrase { get; protected set; }
+        public string Key
+        {
+            set
+            {
+                _key = value;
+            }
+        }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public Password()
-        {
-
-        }
-
-        /*************************************************************************************************/
-        public Password(string application, string username, string description, string website, string passphrase)
-        {
-            Passphrase = passphrase;
-            Application = application;
-            Username = username;
-            Description = description;
-            Website = website;
+        public PasswordUIFormatter(IEncryptDecrypt encryptDecrypt)
+		{
+            _encryptDecrypt = encryptDecrypt;
         }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public string GetPasswordString()
+        public Password PasswordServiceToUI(Password servicePassword)
         {
-            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
+            Password uiPassword = null;
+
+            if (_key != "" && _key != null)
+            {
+                uiPassword = new Password(
+                    _encryptDecrypt.Decrypt(servicePassword.Application, _key),
+                    _encryptDecrypt.Decrypt(servicePassword.Username, _key),
+                    _encryptDecrypt.Decrypt(servicePassword.Description, _key),
+                    _encryptDecrypt.Decrypt(servicePassword.Website, _key),
+                    servicePassword.Username);
+            }
+
+            return uiPassword;
         }
 
         /*************************************************************************************************/
-        public string GetPasswordStringWithMasterUserID(string masterUserID)
+        public Password PasswordUIToService(Password uiPassword)
         {
-            return string.Format("{0},{1},{2},{3},{4},{5}", masterUserID, Application, Username, Description, Website, Passphrase);
+            Password servicePassword = null;
+
+            if (_key != "" && _key != null)
+            {
+                uiPassword = new Password(
+                    _encryptDecrypt.Encrypt(servicePassword.Application, _key),
+                    _encryptDecrypt.Encrypt(servicePassword.Username, _key),
+                    _encryptDecrypt.Encrypt(servicePassword.Description, _key),
+                    _encryptDecrypt.Encrypt(servicePassword.Website, _key),
+                    _encryptDecrypt.Encrypt(servicePassword.Username, _key));
+            }
+
+            return servicePassword;
         }
 
         /*=================================================================================================
@@ -111,5 +113,5 @@ namespace PasswordVault
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // Password CLASS
-} // PasswordHashTest NAMESPACE
+    } // PasswordUIFormatter CLASS
+} // PasswordVault NAMESPACE

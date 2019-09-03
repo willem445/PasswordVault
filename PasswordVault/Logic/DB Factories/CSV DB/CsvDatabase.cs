@@ -45,7 +45,7 @@ namespace PasswordVault
 
         /*PRIVATE*****************************************************************************************/
         private List<User> _encryptedUsers;
-        private List<Password> _encryptedPasswords;
+        private List<DatabasePassword> _encryptedPasswords;
         private static CsvDatabase _instance = null;
         private static Object _mutex = new Object();
         private ICSVUserManager _csvUserManager;
@@ -174,14 +174,14 @@ namespace PasswordVault
         }
             
         /*************************************************************************************************/
-        public void AddPassword(Password password)
+        public void AddPassword(DatabasePassword password)
         {
             _encryptedPasswords.Add(password);
             _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
         }
 
         /*************************************************************************************************/
-        public void ModifyPassword(Password password, Password modifiedPassword)
+        public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
             int index = GetIndexOfPassword(password);
 
@@ -193,7 +193,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DeletePassword(Password password)
+        public void DeletePassword(DatabasePassword password)
         {
             int index = GetIndexOfPassword(password);
 
@@ -205,11 +205,11 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public List<Password> GetUserPasswords(string username)
+        public List<DatabasePassword> GetUserPasswords(string username)
         {
-            List<Password> result = (from Password password in _encryptedPasswords
+            List<DatabasePassword> result = (from DatabasePassword password in _encryptedPasswords
                                     where password.MasterUserID == username
-                                    select password).ToList<Password>();
+                                    select password).ToList<DatabasePassword>();
             return result;      
         }
 
@@ -227,7 +227,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private int GetIndexOfPassword(Password pass)
+        private int GetIndexOfPassword(DatabasePassword pass)
         {
             int index = -1;
 

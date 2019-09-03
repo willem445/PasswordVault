@@ -146,7 +146,6 @@ namespace PasswordVault
         {
             // Encrypt password
             Password encryptedPassword = new Password(
-                _currentUser.UserID,
                 _encryptDecrypt.Encrypt(unencryptedPassword.Application, _currentUser.Key),
                 _encryptDecrypt.Encrypt(unencryptedPassword.Username, _currentUser.Key),
                 _encryptDecrypt.Encrypt(unencryptedPassword.Description, _currentUser.Key),
@@ -155,15 +154,21 @@ namespace PasswordVault
                 );
 
             // Add password to password list
-            _passwordList.Add(new Password(_currentUser.UserID, 
-                                            unencryptedPassword.Application,
+            _passwordList.Add(new Password(unencryptedPassword.Application,
                                             unencryptedPassword.Username, 
                                             unencryptedPassword.Description, 
                                             unencryptedPassword.Website, 
                                             encryptedPassword.Passphrase));
 
             // Add encrypted password to database
-            _dbcontext.AddPassword(encryptedPassword);
+            _dbcontext.AddPassword(new DatabasePassword(
+                _encryptDecrypt.Encrypt(_currentUser.UserID, _currentUser.Key),
+                encryptedPassword.Application,
+                encryptedPassword.Username,
+                encryptedPassword.Description,
+                encryptedPassword.Website,
+                encryptedPassword.Passphrase
+                ));
         }
 
         public void RemovePassword()
@@ -236,7 +241,6 @@ namespace PasswordVault
             foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UserID))
             {
                 Password password = new Password(
-                    item.MasterUserID,
                     _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),

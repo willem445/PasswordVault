@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* TODO - Add email field
+/* 
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -17,13 +17,7 @@ namespace PasswordVault
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
-    public enum PasswordFilterOptions
-    {
-        Application = 0,
-        Description = 1,
-        Website = 2,
-    }
-    
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -31,7 +25,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class Password
+    public class DatabasePassword : Password
     {
         /*=================================================================================================
 		CONSTANTS
@@ -52,33 +46,21 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(true)]
-        public string Application { get; protected set; }
-
-        [Browsable(true)]
-        public string Username { get; protected set; }
-
-        [Browsable(true)]
-        public string Description { get; protected set; }
-
-        [Browsable(true)]
-        public string Website { get; protected set; }
-
-        [Browsable(false)]
-        public string Passphrase { get; protected set; }
+        public string MasterUserID { get; }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public Password()
+        public DatabasePassword()
         {
 
         }
 
-        /*************************************************************************************************/
-        public Password(string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(string masterUserID, string application, string username, string description, string website, string passphrase)
         {
+            MasterUserID = masterUserID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
@@ -90,16 +72,6 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public string GetPasswordString()
-        {
-            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
-        }
-
-        /*************************************************************************************************/
-        public string GetPasswordStringWithMasterUserID(string masterUserID)
-        {
-            return string.Format("{0},{1},{2},{3},{4},{5}", masterUserID, Application, Username, Description, Website, Passphrase);
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -111,5 +83,5 @@ namespace PasswordVault
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // Password CLASS
-} // PasswordHashTest NAMESPACE
+    } // DatabasePassword CLASS
+} // PasswordVault NAMESPACE
