@@ -80,6 +80,16 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
+        public Password(string application, string username, string description, string website, string passphrase)
+        {
+            Passphrase = passphrase;
+            Application = application;
+            Username = username;
+            Description = description;
+            Website = website;
+        }
+
+        /*************************************************************************************************/
         public Password(string id, string application, string username, string description, string website, string passphrase)
         {
             ID = id;
@@ -96,7 +106,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
+            return string.Format("{0},{1},{2},{3},{4},{5}", ID, Application, Username, Description, Website, Passphrase);
         }
 
         /*=================================================================================================

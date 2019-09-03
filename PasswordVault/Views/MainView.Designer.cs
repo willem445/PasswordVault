@@ -313,6 +313,7 @@ namespace PasswordVault
             this.filterComboBox.Name = "filterComboBox";
             this.filterComboBox.Size = new System.Drawing.Size(121, 21);
             this.filterComboBox.TabIndex = 0;
+            this.filterComboBox.TextChanged += new System.EventHandler(this.filterChanged);
             // 
             // MainView
             // 

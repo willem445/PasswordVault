@@ -424,6 +424,8 @@ namespace PasswordVault
             //websiteTextBox.Text     = "";
             //usernameTextBox.Text    = "";
             //passphraseTextBox.Text  = "";
+
+            RaiseAddPasswordEvent(applicationTextBox.Text, usernameTextBox.Text, descriptionTextBox.Text, websiteTextBox.Text, passphraseTextBox.Text);
         }
 
         /*************************************************************************************************/
@@ -539,7 +541,8 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void filterChanged(object sender, EventArgs e)
         {
-            // RaiseNewFilterEvent(filterTextBox.Text, ); TODO - Parse enum from combobox
+            PasswordFilterOptions filterOption = (PasswordFilterOptions)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption); 
         }
 
         /*************************************************************************************************/

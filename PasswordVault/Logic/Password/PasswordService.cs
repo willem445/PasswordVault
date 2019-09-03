@@ -142,9 +142,28 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
-        public void AddPassword()
+        public void AddPassword(Password unencryptedPassword)
         {
-            throw new NotImplementedException();
+            // Encrypt password
+            Password encryptedPassword = new Password(
+                _currentUser.UserID,
+                _encryptDecrypt.Encrypt(unencryptedPassword.Application, _currentUser.Key),
+                _encryptDecrypt.Encrypt(unencryptedPassword.Username, _currentUser.Key),
+                _encryptDecrypt.Encrypt(unencryptedPassword.Description, _currentUser.Key),
+                _encryptDecrypt.Encrypt(unencryptedPassword.Website, _currentUser.Key),
+                _encryptDecrypt.Encrypt(unencryptedPassword.Passphrase, _currentUser.Key)
+                );
+
+            // Add password to password list
+            _passwordList.Add(new Password(_currentUser.UserID, 
+                                            unencryptedPassword.Application,
+                                            unencryptedPassword.Username, 
+                                            unencryptedPassword.Description, 
+                                            unencryptedPassword.Website, 
+                                            encryptedPassword.Passphrase));
+
+            // Add encrypted password to database
+            _dbcontext.AddPassword(encryptedPassword);
         }
 
         public void RemovePassword()

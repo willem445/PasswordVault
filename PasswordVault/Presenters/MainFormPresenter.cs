@@ -59,7 +59,8 @@ namespace PasswordVault
             _passwordService = passwordService;
 
             _mainView.FilterChangedEvent += FilterChanged;
-            _mainView.RequestPasswordsEvent += UpdatePasswords;
+            _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
+            _mainView.AddPasswordEvent += AddPassword;
         }
 
         /*=================================================================================================
@@ -73,16 +74,57 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void FilterChanged(string filterText, PasswordFilterOptions passwordFilterOption)
         {
+            List<Password> result = new List<Password>();
+            List<Password> temp = _passwordService.GetPasswords();
 
+            if (filterText != "")
+            {
+                switch (passwordFilterOption)
+                {
+                    case PasswordFilterOptions.Application:
+                        result = (from Password password in temp
+                                  where password.Application.Contains(filterText)
+                                  select password).ToList<Password>();
+                        break;
+
+                    case PasswordFilterOptions.Description:
+                        result = (from Password password in temp
+                                  where password.Description.Contains(filterText)
+                                  select password).ToList<Password>();
+                        break;
+
+                    case PasswordFilterOptions.Website:
+                        result = (from Password password in temp
+                                  where password.Website.Contains(filterText)
+                                  select password).ToList<Password>();
+                        break;
+                }
+
+                BindingList<Password> passwordList = new BindingList<Password>(result);
+                _mainView.DisplayPasswords(passwordList);
+            }
+            else
+            {
+                BindingList<Password> passwordList = new BindingList<Password>(temp);
+                _mainView.DisplayPasswords(passwordList);
+            }
         }
 
-        private void UpdatePasswords()
+        /*************************************************************************************************/
+        private void UpdatePasswordsUI()
         {
             List<Password> temp = _passwordService.GetPasswords();
 
             BindingList<Password> passwordList = new BindingList<Password>(temp);
 
             _mainView.DisplayPasswords(passwordList);
+        }
+
+        /*************************************************************************************************/
+        private void AddPassword(string application, string username, string description, string website, string passphrase)
+        {
+            _passwordService.AddPassword(new Password(application, username, description, website, passphrase));
+            UpdatePasswordsUI();
         }
 
         /*=================================================================================================
