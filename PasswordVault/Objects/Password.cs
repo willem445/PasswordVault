@@ -90,16 +90,12 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public string GetPasswordString()
+        public virtual string GetPasswordString()
         {
             return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
         }
 
         /*************************************************************************************************/
-        public string GetPasswordStringWithMasterUserID(string masterUserID)
-        {
-            return string.Format("{0},{1},{2},{3},{4},{5}", masterUserID, Application, Username, Description, Website, Passphrase);
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS

@@ -116,7 +116,7 @@ namespace PasswordVault
             if (_currentUser.ValidKey)
             {
                 loginResult = LoginResult.Successful;
-                UpdatePasswordList();
+                UpdatePasswordListFromDB();
             }
 
             return loginResult;
@@ -142,27 +142,14 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
-        public void AddPassword(Password unencryptedPassword)
+        public void AddPassword(Password encryptedPassword)
         {
-            // Encrypt password
-            Password encryptedPassword = new Password(
-                _encryptDecrypt.Encrypt(unencryptedPassword.Application, _currentUser.Key),
-                _encryptDecrypt.Encrypt(unencryptedPassword.Username, _currentUser.Key),
-                _encryptDecrypt.Encrypt(unencryptedPassword.Description, _currentUser.Key),
-                _encryptDecrypt.Encrypt(unencryptedPassword.Website, _currentUser.Key),
-                _encryptDecrypt.Encrypt(unencryptedPassword.Passphrase, _currentUser.Key)
-                );
-
             // Add password to password list
-            _passwordList.Add(new Password(unencryptedPassword.Application,
-                                            unencryptedPassword.Username, 
-                                            unencryptedPassword.Description, 
-                                            unencryptedPassword.Website, 
-                                            encryptedPassword.Passphrase));
+            _passwordList.Add(encryptedPassword);
 
-            // Add encrypted password to database
+            // Add encrypted password to database with user's unique ID
             _dbcontext.AddPassword(new DatabasePassword(
-                _encryptDecrypt.Encrypt(_currentUser.UserID, _currentUser.Key),
+                _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
                 encryptedPassword.Application,
                 encryptedPassword.Username,
                 encryptedPassword.Description,
@@ -231,20 +218,27 @@ namespace PasswordVault
             return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
         }
 
+        /*************************************************************************************************/
+        public string GetMasterUserKey()
+        {
+            return _currentUser.Key;
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void UpdatePasswordList()
+        private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
             foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UserID))
             {
+                // Add encrypted password to _passwordList
                 Password password = new Password(
-                    _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
+                    item.Application,
+                    item.Username, 
+                    item.Description, 
+                    item.Website, 
                     item.Passphrase
                     );
 

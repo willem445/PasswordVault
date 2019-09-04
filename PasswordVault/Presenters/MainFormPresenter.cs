@@ -44,6 +44,8 @@ namespace PasswordVault
         private IPasswordService _passwordService;
         private IPasswordUIFormatter _passwordUIFormatter;
 
+        private List<Password> _uiPasswordList;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -59,6 +61,7 @@ namespace PasswordVault
             _mainView = mainView;
             _passwordService = passwordService;
             _passwordUIFormatter = passwordUIFormatter;
+            _uiPasswordList = new List<Password>();
 
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
@@ -77,55 +80,65 @@ namespace PasswordVault
         private void FilterChanged(string filterText, PasswordFilterOptions passwordFilterOption)
         {
             List<Password> result = new List<Password>();
-            List<Password> temp = _passwordService.GetPasswords();
 
             if (filterText != "")
             {
                 switch (passwordFilterOption)
                 {
                     case PasswordFilterOptions.Application:
-                        result = (from Password password in temp
+                        result = (from Password password in _uiPasswordList
                                   where password.Application.Contains(filterText)
                                   select password).ToList<Password>();
                         break;
 
                     case PasswordFilterOptions.Description:
-                        result = (from Password password in temp
+                        result = (from Password password in _uiPasswordList
                                   where password.Description.Contains(filterText)
                                   select password).ToList<Password>();
                         break;
 
                     case PasswordFilterOptions.Website:
-                        result = (from Password password in temp
+                        result = (from Password password in _uiPasswordList
                                   where password.Website.Contains(filterText)
                                   select password).ToList<Password>();
                         break;
                 }
 
-                BindingList<Password> passwordList = new BindingList<Password>(result);
-                _mainView.DisplayPasswords(passwordList);
+                BindingList<Password> uiBindingList = new BindingList<Password>(result);
+                _mainView.DisplayPasswords(uiBindingList);
             }
             else
             {
-                BindingList<Password> passwordList = new BindingList<Password>(temp);
-                _mainView.DisplayPasswords(passwordList);
+                BindingList<Password> uiBindingList = new BindingList<Password>(_uiPasswordList);
+                _mainView.DisplayPasswords(uiBindingList);
             }
         }
 
         /*************************************************************************************************/
         private void UpdatePasswordsUI()
         {
-            List<Password> temp = _passwordService.GetPasswords();
+            // Get encrypted passwords from the password service and modify to display in UI
+            List<Password> encryptedPasswords = _passwordService.GetPasswords();
+            _uiPasswordList.Clear();
 
-            BindingList<Password> passwordList = new BindingList<Password>(temp);
+            foreach (var encryptedPassword in encryptedPasswords)
+            {
+                Password uiPassword = _passwordUIFormatter.PasswordServiceToUI(encryptedPassword, _passwordService.GetMasterUserKey());
+                _uiPasswordList.Add(uiPassword);
+            }
 
-            _mainView.DisplayPasswords(passwordList);
+            BindingList<Password> uiBindingList = new BindingList<Password>(_uiPasswordList);
+            _mainView.DisplayPasswords(uiBindingList);
         }
 
         /*************************************************************************************************/
         private void AddPassword(string application, string username, string description, string website, string passphrase)
         {
-            _passwordService.AddPassword(new Password(application, username, description, website, passphrase));
+            Password uiPassword = new Password(application, username, description, website, passphrase);
+            _uiPasswordList.Add(uiPassword);
+
+            Password encryptedServicePassword = _passwordUIFormatter.PasswordUIToService(uiPassword, _passwordService.GetMasterUserKey());
+            _passwordService.AddPassword(encryptedServicePassword);
             UpdatePasswordsUI();
         }
 

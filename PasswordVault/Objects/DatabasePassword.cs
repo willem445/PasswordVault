@@ -45,8 +45,8 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        [Browsable(true)]
-        public string MasterUserID { get; }
+        [Browsable(false)]
+        public string UniqueID { get; }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -58,9 +58,9 @@ namespace PasswordVault
 
         }
 
-        public DatabasePassword(string masterUserID, string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(string uniqueID, string application, string username, string description, string website, string passphrase)
         {
-            MasterUserID = masterUserID;
+            UniqueID = uniqueID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
@@ -72,6 +72,10 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public override string GetPasswordString()
+        {
+            return string.Format("{0},{1},{2},{3},{4},{5}", UniqueID, Application, Username, Description, Website, Passphrase);
+        }
 
         /*=================================================================================================
 		PRIVATE METHODS

@@ -208,7 +208,7 @@ namespace PasswordVault
         public List<DatabasePassword> GetUserPasswords(string username)
         {
             List<DatabasePassword> result = (from DatabasePassword password in _encryptedPasswords
-                                    where password.MasterUserID == username
+                                    where password.UniqueID == username
                                     select password).ToList<DatabasePassword>();
             return result;      
         }

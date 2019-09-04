@@ -8,7 +8,7 @@ namespace PasswordVault
 {
     interface IPasswordUIFormatter
     {
-        Password PasswordUIToService(Password uiPassword);
-        Password PasswordServiceToUI(Password servicePassword);
+        Password PasswordUIToService(Password uiPassword, string key);
+        Password PasswordServiceToUI(Password servicePassword, string key);
     }
 }

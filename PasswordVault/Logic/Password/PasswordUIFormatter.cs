@@ -40,19 +40,11 @@ namespace PasswordVault
 
         /*PRIVATE*****************************************************************************************/
         IEncryptDecrypt _encryptDecrypt;
-        private string _key;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public string Key
-        {
-            set
-            {
-                _key = value;
-            }
-        }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -68,17 +60,17 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public Password PasswordServiceToUI(Password servicePassword)
+        public Password PasswordServiceToUI(Password servicePassword, string key)
         {
             Password uiPassword = null;
 
-            if (_key != "" && _key != null)
+            if (key != "" && key != null)
             {
                 uiPassword = new Password(
-                    _encryptDecrypt.Decrypt(servicePassword.Application, _key),
-                    _encryptDecrypt.Decrypt(servicePassword.Username, _key),
-                    _encryptDecrypt.Decrypt(servicePassword.Description, _key),
-                    _encryptDecrypt.Decrypt(servicePassword.Website, _key),
+                    _encryptDecrypt.Decrypt(servicePassword.Application, key),
+                    _encryptDecrypt.Decrypt(servicePassword.Username, key),
+                    _encryptDecrypt.Decrypt(servicePassword.Description, key),
+                    _encryptDecrypt.Decrypt(servicePassword.Website, key),
                     servicePassword.Username);
             }
 
@@ -86,18 +78,18 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public Password PasswordUIToService(Password uiPassword)
+        public Password PasswordUIToService(Password uiPassword, string key)
         {
             Password servicePassword = null;
 
-            if (_key != "" && _key != null)
+            if (key != "" && key != null)
             {
-                uiPassword = new Password(
-                    _encryptDecrypt.Encrypt(servicePassword.Application, _key),
-                    _encryptDecrypt.Encrypt(servicePassword.Username, _key),
-                    _encryptDecrypt.Encrypt(servicePassword.Description, _key),
-                    _encryptDecrypt.Encrypt(servicePassword.Website, _key),
-                    _encryptDecrypt.Encrypt(servicePassword.Username, _key));
+                servicePassword = new Password(
+                    _encryptDecrypt.Encrypt(uiPassword.Application, key),
+                    _encryptDecrypt.Encrypt(uiPassword.Username, key),
+                    _encryptDecrypt.Encrypt(uiPassword.Description, key),
+                    _encryptDecrypt.Encrypt(uiPassword.Website, key),
+                    _encryptDecrypt.Encrypt(uiPassword.Username, key));
             }
 
             return servicePassword;
