@@ -42,6 +42,7 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private IMainView _mainView;
         private IPasswordService _passwordService;
+        private IPasswordUIFormatter _passwordUIFormatter;
 
         /*=================================================================================================
 		PROPERTIES
@@ -53,10 +54,11 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainFormPresenter(IMainView mainView, IPasswordService passwordService)
+        public MainFormPresenter(IMainView mainView, IPasswordService passwordService, IPasswordUIFormatter passwordUIFormatter)
         {
             _mainView = mainView;
             _passwordService = passwordService;
+            _passwordUIFormatter = passwordUIFormatter;
 
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsEvent += UpdatePasswordsUI;

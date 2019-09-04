@@ -44,11 +44,14 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public string UserID { get; }
-        public string Salt { get; }
-        public string Hash { get; }
+        public string UniqueID { get; } // DB
+        public string UserID { get; } // DB
+        public string Salt { get; } // DB
+        public string Hash { get; } // DB
         public string Key { get; }
         public bool ValidKey { get; set; }
+
+         
 
         /*PRIVATE*****************************************************************************************/
 

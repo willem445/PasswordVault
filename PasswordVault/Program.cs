@@ -18,13 +18,15 @@ namespace PasswordVault
             Application.SetCompatibleTextRenderingDefault(false);
 
             ILoginView loginView = new LoginView();
-            IPasswordService passwordService = new PasswordService(new CsvDatabaseFactory().Get(), new MasterPassword(), new EncryptDecrypt());
+            IEncryptDecrypt encryptDecrypt = new EncryptDecrypt();
+            IPasswordService passwordService = new PasswordService(new CsvDatabaseFactory().Get(), new MasterPassword(), encryptDecrypt);
+            IPasswordUIFormatter passwordUIFormatter = new PasswordUIFormatter(encryptDecrypt);
 
             MainView mainView = new MainView(loginView);
 
             // Create presenters
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
-            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService);
+            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService, passwordUIFormatter);
 
             Application.Run(mainView);
         }
