@@ -20,13 +20,12 @@ namespace PasswordVault
             ILoginView loginView = new LoginView();
             IEncryptDecrypt encryptDecrypt = new EncryptDecrypt();
             IPasswordService passwordService = new PasswordService(new CsvDatabaseFactory().Get(), new MasterPassword(), encryptDecrypt);
-            IPasswordUIFormatter passwordUIFormatter = new PasswordUIFormatter(encryptDecrypt);
 
             MainView mainView = new MainView(loginView);
 
             // Create presenters
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
-            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService, passwordUIFormatter);
+            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService);
 
             Application.Run(mainView);
         }

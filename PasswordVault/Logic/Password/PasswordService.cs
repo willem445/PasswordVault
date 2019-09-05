@@ -142,16 +142,33 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
-        public void AddPassword(Password encryptedPassword)
+        public void AddPassword(Password password)
         {
-            _passwordList.Add(encryptedPassword);
-            _dbcontext.AddPassword(ConvertToDatabasePassword(encryptedPassword));
+            List<Password> result = (from Password pass in _passwordList
+                               where pass.Application == password.Application
+                               where pass.Username == password.Username
+                               where pass.Description == password.Description
+                               where pass.Website == password.Website
+                               select pass).ToList<Password>();
+
+            if (result.Count <= 0) // Verify that this isn't an exact replica of another password
+            {
+                _passwordList.Add(ConvertPlaintextPasswordToEncryptedPassword(password));
+                _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
+            }         
         }
 
-        public void RemovePassword(Password encryptedPassword)
+        public void RemovePassword(Password password)
         {
-            _passwordList.Remove(encryptedPassword);
-            _dbcontext.DeletePassword(ConvertToDatabasePassword(encryptedPassword));
+            Password result = (from Password pass in _passwordList
+                      where pass.Application == password.Application
+                      where pass.Username == password.Username
+                      where pass.Description == password.Description
+                      where pass.Website == password.Website
+                      select pass).First();
+
+            _passwordList.Remove(result);
+            _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
         }
 
         public void ModifyPassword()
@@ -209,12 +226,6 @@ namespace PasswordVault
             return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
         }
 
-        /*************************************************************************************************/
-        public string GetMasterUserKey()
-        {
-            return _currentUser.Key;
-        }
-
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -226,11 +237,11 @@ namespace PasswordVault
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(
-                    item.Application,
-                    item.Username, 
-                    item.Description, 
-                    item.Website, 
-                    item.Passphrase
+                    _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
+                    item.Passphrase // Leave the password encrypted
                     );
 
                 _passwordList.Add(password);
@@ -238,15 +249,26 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private DatabasePassword ConvertToDatabasePassword(Password encryptedPassword)
+        private DatabasePassword ConvertToEncryptedDatabasePassword(Password password)
         {
             return new DatabasePassword(
                 _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
-                encryptedPassword.Application,
-                encryptedPassword.Username,
-                encryptedPassword.Description,
-                encryptedPassword.Website,
-                encryptedPassword.Passphrase
+                _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
+                _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
+                _encryptDecrypt.Encrypt(password.Description, _currentUser.Key),
+                _encryptDecrypt.Encrypt(password.Website, _currentUser.Key),
+                password.Passphrase // Password is already encrypted
+                );
+        }
+
+        private Password ConvertPlaintextPasswordToEncryptedPassword(Password password)
+        {
+            return new Password(
+                password.Application,
+                password.Username, 
+                password.Description,
+                password.Website, 
+                _encryptDecrypt.Encrypt(password.Passphrase, _currentUser.Key) 
                 );
         }
 

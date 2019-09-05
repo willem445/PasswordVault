@@ -20,6 +20,5 @@ namespace PasswordVault
         void RemovePassword(Password encryptedPassword);
         void ModifyPassword();
         List<Password> GetPasswords();
-        string GetMasterUserKey();
     }
 }
