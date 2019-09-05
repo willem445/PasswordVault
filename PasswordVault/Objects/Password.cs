@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -106,6 +107,16 @@ namespace PasswordVault
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public static explicit operator Password(DataRow dr)
+        {
+            Password p = new Password();
+            p.Application = dr.ItemArray[0].ToString();
+            p.Username = dr.ItemArray[1].ToString();
+            p.Description = dr.ItemArray[2].ToString();
+            p.Website = dr.ItemArray[3].ToString();
+
+            return p;
+        }
 
     } // Password CLASS
 } // PasswordHashTest NAMESPACE

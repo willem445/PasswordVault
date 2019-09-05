@@ -66,6 +66,7 @@ namespace PasswordVault
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
             _mainView.AddPasswordEvent += AddPassword;
+            _mainView.DeletePasswordEvent += DeletePassword;
         }
 
         /*=================================================================================================
@@ -139,6 +140,21 @@ namespace PasswordVault
 
             Password encryptedServicePassword = _passwordUIFormatter.PasswordUIToService(uiPassword, _passwordService.GetMasterUserKey());
             _passwordService.AddPassword(encryptedServicePassword);
+            UpdatePasswordsUI();
+        }
+
+        /*************************************************************************************************/
+        private void DeletePassword(string application, string username, string description, string website)
+        {
+            Password result = (from Password password in _uiPasswordList
+                               where password.Application.Contains(application)
+                               where password.Username.Contains(username)
+                               where password.Description.Contains(description)
+                               where password.Website.Contains(website)
+                               select password).First();
+
+            Password encryptedServicePassword = _passwordUIFormatter.PasswordUIToService(result, _passwordService.GetMasterUserKey());
+            _passwordService.RemovePassword(encryptedServicePassword);
             UpdatePasswordsUI();
         }
 

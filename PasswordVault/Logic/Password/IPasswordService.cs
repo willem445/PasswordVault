@@ -17,7 +17,7 @@ namespace PasswordVault
         void DeleteUser(string username);
         void ChangeUserPassword(string username, string oldPassword, string newPassword);
         void AddPassword(Password unencryptedPassword);
-        void RemovePassword();
+        void RemovePassword(Password encryptedPassword);
         void ModifyPassword();
         List<Password> GetPasswords();
         string GetMasterUserKey();

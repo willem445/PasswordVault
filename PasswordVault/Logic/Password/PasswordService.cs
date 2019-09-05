@@ -144,23 +144,14 @@ namespace PasswordVault
 
         public void AddPassword(Password encryptedPassword)
         {
-            // Add password to password list
             _passwordList.Add(encryptedPassword);
-
-            // Add encrypted password to database with user's unique ID
-            _dbcontext.AddPassword(new DatabasePassword(
-                _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
-                encryptedPassword.Application,
-                encryptedPassword.Username,
-                encryptedPassword.Description,
-                encryptedPassword.Website,
-                encryptedPassword.Passphrase
-                ));
+            _dbcontext.AddPassword(ConvertToDatabasePassword(encryptedPassword));
         }
 
-        public void RemovePassword()
+        public void RemovePassword(Password encryptedPassword)
         {
-            throw new NotImplementedException();
+            _passwordList.Remove(encryptedPassword);
+            _dbcontext.DeletePassword(ConvertToDatabasePassword(encryptedPassword));
         }
 
         public void ModifyPassword()
@@ -244,6 +235,19 @@ namespace PasswordVault
 
                 _passwordList.Add(password);
             }
+        }
+
+        /*************************************************************************************************/
+        private DatabasePassword ConvertToDatabasePassword(Password encryptedPassword)
+        {
+            return new DatabasePassword(
+                _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
+                encryptedPassword.Application,
+                encryptedPassword.Username,
+                encryptedPassword.Description,
+                encryptedPassword.Website,
+                encryptedPassword.Passphrase
+                );
         }
 
 

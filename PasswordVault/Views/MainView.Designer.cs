@@ -104,6 +104,7 @@ namespace PasswordVault
             this.PasswordDataGridView.Name = "PasswordDataGridView";
             this.PasswordDataGridView.Size = new System.Drawing.Size(657, 290);
             this.PasswordDataGridView.TabIndex = 1;
+            this.PasswordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
             this.PasswordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
             // 
             // addButton

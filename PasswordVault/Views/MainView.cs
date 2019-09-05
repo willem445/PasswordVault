@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -56,7 +57,7 @@ namespace PasswordVault
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
         public event Action<int> EditPasswordEvent;
-        public event Action<int> DeletePasswordEvent;
+        public event Action<string, string, string, string> DeletePasswordEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -485,15 +486,18 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-
+            RaiseDeletePasswordEvent(PasswordDataGridView.SelectedCells[0].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[1].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[2].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[3].Value.ToString());
         }
 
         /*************************************************************************************************/
-        private void RaiseDeletePasswordEvent(int index)
+        private void RaiseDeletePasswordEvent(string application, string username, string description, string website)
         {
             if (DeletePasswordEvent != null)
             {
-                DeletePasswordEvent(index);
+                DeletePasswordEvent(application, username, description, website);
             }
         }
 
@@ -642,6 +646,12 @@ namespace PasswordVault
         private Font UIFont(float fontSize)
         {
             return new Font("Segoe UI", fontSize, FontStyle.Bold);
+        }
+
+        /*************************************************************************************************/
+        private void PasswordDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            _selectedDgvIndex = PasswordDataGridView.CurrentCell.RowIndex;
         }
 
         /*=================================================================================================
