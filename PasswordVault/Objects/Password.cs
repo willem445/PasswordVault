@@ -52,6 +52,9 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        [Browsable(false)]
+        public Int64 UniqueID { get; protected set; }
+
         [Browsable(true)]
         public string Application { get; protected set; }
 
@@ -80,6 +83,17 @@ namespace PasswordVault
         /*************************************************************************************************/
         public Password(string application, string username, string description, string website, string passphrase)
         {
+            Passphrase = passphrase;
+            Application = application;
+            Username = username;
+            Description = description;
+            Website = website;
+        }
+
+        /*************************************************************************************************/
+        public Password(Int64 uniqueID, string application, string username, string description, string website, string passphrase)
+        {
+            UniqueID = uniqueID;
             Passphrase = passphrase;
             Application = application;
             Username = username;

@@ -137,6 +137,11 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
+        public string GetCurrentUserID()
+        {
+            return _currentUser.UserID;
+        }
+
         public void ChangeUserPassword(string username, string oldPassword, string newPassword)
         {
             throw new NotImplementedException();
@@ -237,6 +242,7 @@ namespace PasswordVault
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(
+                    item.UniqueID,
                     _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
@@ -252,6 +258,7 @@ namespace PasswordVault
         private DatabasePassword ConvertToEncryptedDatabasePassword(Password password)
         {
             return new DatabasePassword(
+                password.UniqueID,
                 _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
@@ -264,6 +271,7 @@ namespace PasswordVault
         private Password ConvertPlaintextPasswordToEncryptedPassword(Password password)
         {
             return new Password(
+                password.UniqueID,
                 password.Application,
                 password.Username, 
                 password.Description,

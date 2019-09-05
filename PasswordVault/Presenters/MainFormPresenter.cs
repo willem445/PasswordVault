@@ -59,7 +59,8 @@ namespace PasswordVault
             _passwordService = passwordService;
 
             _mainView.FilterChangedEvent += FilterChanged;
-            _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
+            _mainView.RequestPasswordsOnLoginEvent += UpdatePasswordsUI;
+            _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
             _mainView.AddPasswordEvent += AddPassword;
             _mainView.DeletePasswordEvent += DeletePassword;
         }
@@ -119,6 +120,13 @@ namespace PasswordVault
 
             BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
             _mainView.DisplayPasswords(uiBindingList);
+        }
+
+        /*************************************************************************************************/
+        private void UpdateUsernameWelcomeUI()
+        {
+            _mainView.DisplayUserID(_passwordService.GetCurrentUserID());
+            _mainView.RequestPasswordsOnLoginEvent -= UpdateUsernameWelcomeUI;
         }
 
         /*************************************************************************************************/

@@ -52,7 +52,7 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         public event Action<string, PasswordFilterOptions> FilterChangedEvent;
-        public event Action RequestPasswordsEvent;
+        public event Action RequestPasswordsOnLoginEvent;
         public event Action<string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
@@ -209,6 +209,7 @@ namespace PasswordVault
             // Configure status strip
             statusStrip1.BackColor = DarkBackground();
             statusStrip1.ForeColor = WhiteText();
+            statusStrip1.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             // Confgiure data grid view
             PasswordDataGridView.BorderStyle = BorderStyle.None;
@@ -231,6 +232,8 @@ namespace PasswordVault
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
+
+            
             #endregion
 
 
@@ -260,6 +263,12 @@ namespace PasswordVault
             PasswordDataGridView.RowHeadersVisible = false;
         }
 
+        /*************************************************************************************************/
+        public void DisplayUserID(string userID)
+        {
+            userStatusLabel.Text = string.Format("Welcome: {0}", userID);
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -283,12 +292,10 @@ namespace PasswordVault
                 moveDownButton.Enabled = false;
                 deleteButton.Enabled = false;
                 editButton.Enabled = false;
-                filterComboBox.Enabled = false;
                 filterTextBox.Enabled = false;
                 loginToolStripMenuItem.Text = "Login";
+                userStatusLabel.Text = "";
             }
-
-            Console.WriteLine("Continues");
 
             //if (!_user.ValidKey)
             //{
@@ -388,15 +395,15 @@ namespace PasswordVault
             filterTextBox.Enabled = true;
             loginToolStripMenuItem.Text = "Logoff";
 
-            RaiseRequestPasswordsEvent();
+            RaiseRequestPasswordsOnLoginEvent();
         }
 
         /*************************************************************************************************/
-        private void RaiseRequestPasswordsEvent()
+        private void RaiseRequestPasswordsOnLoginEvent()
         {
-            if (RequestPasswordsEvent != null)
+            if (RequestPasswordsOnLoginEvent != null)
             {
-                RequestPasswordsEvent();
+                RequestPasswordsOnLoginEvent();
             }
         }
 

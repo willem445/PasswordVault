@@ -92,7 +92,7 @@ namespace PasswordVault
             VerifyTablesExist();
 
             // Update each list on start up
-            _csvUserManager.ParseUsersCSVFile(_usersCsvPath); // TODO - Make this async
+            _csvUserManager.ParseUsersCSVFile(_usersCsvPath);
             _encryptedUsers = _csvUserManager.GetEncryptedUsers();
 
             _csvPasswordManager.ParsePasswordCSVFile(_passwordsCsvPath);
@@ -176,14 +176,25 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void AddPassword(DatabasePassword password)
         {
-            _encryptedPasswords.Add(password);
+            Int64 uniqueID = _encryptedPasswords[_encryptedPasswords.Count - 1].UniqueID + 1;
+
+            DatabasePassword newPassword = new DatabasePassword(
+                uniqueID, 
+                password.UserID, 
+                password.Application, 
+                password.Username, 
+                password.Description,
+                password.Website, 
+                password.Passphrase);
+
+            _encryptedPasswords.Add(newPassword);
             _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
         }
 
         /*************************************************************************************************/
         public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
-            int index = GetIndexOfPassword(password);
+            int index = GetIndexOfPassword(password.UniqueID);
 
             if (index != -1)
             {
@@ -195,11 +206,11 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DeletePassword(DatabasePassword password)
         {
-            int index = GetIndexOfPassword(password);
+            int index = GetIndexOfPassword(password.UniqueID);
 
             if (index != -1)
             {
-                _encryptedPasswords.Remove(password);
+                _encryptedPasswords.RemoveAt(index);
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
             }
         }
@@ -208,7 +219,7 @@ namespace PasswordVault
         public List<DatabasePassword> GetUserPasswords(string username)
         {
             List<DatabasePassword> result = (from DatabasePassword password in _encryptedPasswords
-                                    where password.UniqueID == username
+                                    where password.UserID == username
                                     select password).ToList<DatabasePassword>();
             return result;      
         }
@@ -227,11 +238,11 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private int GetIndexOfPassword(DatabasePassword pass)
+        private int GetIndexOfPassword(Int64 uniqueID)
         {
             int index = -1;
 
-            index = _encryptedPasswords.IndexOf(pass);
+            index = _encryptedPasswords.IndexOf(_encryptedPasswords.Where(x => x.UniqueID == uniqueID).FirstOrDefault());
 
             return index;
         }
