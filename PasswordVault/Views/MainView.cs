@@ -57,6 +57,8 @@ namespace PasswordVault
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
         public event Action<int> EditPasswordEvent;
+        public event Action EditOkayEvent;
+        public event Action EditCancelEvent;
         public event Action<string, string, string, string> DeletePasswordEvent;
 
         /*PRIVATE*****************************************************************************************/
@@ -69,6 +71,7 @@ namespace PasswordVault
 
         private bool _loggedIn = false;
         private int _selectedDgvIndex = INVALID_INDEX;
+        private bool _editMode = false;
 
 
         /*=================================================================================================
@@ -161,6 +164,15 @@ namespace PasswordVault
             editButton.Font = UIFont(BUTTON_FONT_SIZE);
             editButton.FlatAppearance.BorderColor = DarkBackground();
             editButton.FlatAppearance.BorderSize = 1;
+          
+            editCancelButton.BackColor = ControlBackground();
+            editCancelButton.ForeColor = WhiteText();
+            editCancelButton.FlatStyle = FlatStyle.Flat;
+            editCancelButton.Font = UIFont(BUTTON_FONT_SIZE);
+            editCancelButton.FlatAppearance.BorderColor = DarkBackground();
+            editCancelButton.FlatAppearance.BorderSize = 1;
+            editCancelButton.Enabled = false;
+            editCancelButton.Visible = false;
 
             closeButton.BackColor = ControlBackground();
             closeButton.ForeColor = WhiteText();
@@ -236,14 +248,7 @@ namespace PasswordVault
             
             #endregion
 
-
-            // Set storage to use CSV data
-
-            //_user = new User();
-            //userStatusLabel.Text = "";
-
-            //_passwordList = new BindableList<Password>();
-            //_passwordList.CreateBinding(PasswordDataGridView);
+            userStatusLabel.Text = "Not logged in.";
 
             _cm = new ContextMenu();
             _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
@@ -267,6 +272,18 @@ namespace PasswordVault
         public void DisplayUserID(string userID)
         {
             userStatusLabel.Text = string.Format("Welcome: {0}", userID);
+        }
+
+        /*************************************************************************************************/
+        public void DisplayPasswordToEdit(Password password)
+        {
+
+        }
+
+        /*************************************************************************************************/
+        public void DisplayAddEditPasswordResult(AddModifyPasswordResult result)
+        {
+
         }
 
         /*=================================================================================================
@@ -410,30 +427,14 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void AddButton_Click(object sender, EventArgs e)
         {
-            //Password newPassword = new Password();
-            //Password newPassword2 = new Password(); // Make a new password object so we dont modify _passwordList object when adding to storage list
-
-            //newPassword.Application = applicationTextBox.Text;
-            //newPassword.Description = descriptionTextBox.Text;
-            //newPassword.Website =     websiteTextBox.Text    ;
-            //newPassword.Username =    usernameTextBox.Text   ;
-            //newPassword.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text, _user.Key);
-            //_passwordList.Add(newPassword);
-
-            //newPassword2.Application = EncryptDecrypt.Encrypt(applicationTextBox.Text, _user.Key);
-            //newPassword2.Description = EncryptDecrypt.Encrypt(descriptionTextBox.Text, _user.Key);
-            //newPassword2.Website =     EncryptDecrypt.Encrypt(websiteTextBox.Text,     _user.Key);
-            //newPassword2.Username =    EncryptDecrypt.Encrypt(usernameTextBox.Text,    _user.Key);
-            //newPassword2.Passphrase =  EncryptDecrypt.Encrypt(passphraseTextBox.Text,  _user.Key);
-            //_storage.AddPassword(newPassword2);
-
-            //applicationTextBox.Text = "";
-            //descriptionTextBox.Text = "";
-            //websiteTextBox.Text     = "";
-            //usernameTextBox.Text    = "";
-            //passphraseTextBox.Text  = "";
-
-            RaiseAddPasswordEvent(applicationTextBox.Text, usernameTextBox.Text, descriptionTextBox.Text, websiteTextBox.Text, passphraseTextBox.Text);
+            if (!_editMode)
+            {
+                RaiseAddPasswordEvent(applicationTextBox.Text, usernameTextBox.Text, descriptionTextBox.Text, websiteTextBox.Text, passphraseTextBox.Text);
+            }
+            else
+            {
+                RaiseEditOkayEvent();
+            }        
         }
 
         /*************************************************************************************************/
@@ -442,6 +443,55 @@ namespace PasswordVault
             if (AddPasswordEvent != null)
             {
                 AddPasswordEvent(application, username, description, website, passphrase);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void EditButton_Click(object sender, EventArgs e)
+        {
+            editCancelButton.Enabled = true;
+            editCancelButton.Visible = true;
+            _editMode = true;
+            addButton.Text = "Ok";
+
+            RaiseEditPasswordEvent(_selectedDgvIndex);
+        }
+
+        /*************************************************************************************************/
+        private void EditCancelButton_Click(object sender, EventArgs e)
+        {
+            addButton.Text = "Add";
+            _editMode = false;
+            editCancelButton.Enabled = false;
+            editCancelButton.Visible = false;
+
+            RaiseEditCancelEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseEditPasswordEvent(int index)
+        {
+            if (EditPasswordEvent != null)
+            {
+                EditPasswordEvent(index);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void RaiseEditOkayEvent()
+        {
+            if (EditOkayEvent != null)
+            {
+                EditOkayEvent();
+            }
+        }
+
+        /*************************************************************************************************/
+        private void RaiseEditCancelEvent()
+        {
+            if (EditCancelEvent != null)
+            {
+                EditCancelEvent();
             }
         }
 
@@ -472,21 +522,6 @@ namespace PasswordVault
             if (MovePasswordDownEvent != null)
             {
                 MovePasswordDownEvent(index);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void EditButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        /*************************************************************************************************/
-        private void RaiseEditPasswordEvent(int index)
-        {
-            if (EditPasswordEvent != null)
-            {
-                EditPasswordEvent(index);
             }
         }
 

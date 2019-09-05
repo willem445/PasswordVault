@@ -58,6 +58,7 @@ namespace PasswordVault
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.filterLabel = new System.Windows.Forms.Label();
             this.filterComboBox = new PasswordVault.AdvancedComboBox();
+            this.editCancelButton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PasswordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -316,12 +317,24 @@ namespace PasswordVault
             this.filterComboBox.TabIndex = 0;
             this.filterComboBox.TextChanged += new System.EventHandler(this.filterChanged);
             // 
+            // editCancelButton
+            // 
+            this.editCancelButton.Enabled = false;
+            this.editCancelButton.Location = new System.Drawing.Point(680, 99);
+            this.editCancelButton.Name = "editCancelButton";
+            this.editCancelButton.Size = new System.Drawing.Size(75, 23);
+            this.editCancelButton.TabIndex = 31;
+            this.editCancelButton.Text = "Cancel";
+            this.editCancelButton.UseVisualStyleBackColor = true;
+            this.editCancelButton.Click += new System.EventHandler(this.EditCancelButton_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(775, 466);
+            this.Controls.Add(this.editCancelButton);
             this.Controls.Add(this.filterComboBox);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.filterLabel);
@@ -388,6 +401,7 @@ namespace PasswordVault
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.Label filterLabel;
         private AdvancedComboBox filterComboBox;
+        private Button editCancelButton;
     }
 }
 

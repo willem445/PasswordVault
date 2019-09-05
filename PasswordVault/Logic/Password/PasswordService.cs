@@ -32,6 +32,14 @@ namespace PasswordVault
         Successful,
         Unsuccessful,
     }
+
+    public enum AddModifyPasswordResult
+    {
+        DuplicatePassword,
+        Failed,
+        Success,
+    }
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/

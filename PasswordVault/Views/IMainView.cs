@@ -15,8 +15,12 @@ namespace PasswordVault
         event Action<int> MovePasswordUpEvent;
         event Action<int> MovePasswordDownEvent;
         event Action<int> EditPasswordEvent;
+        event Action EditOkayEvent;
+        event Action EditCancelEvent;
         event Action <string, string, string, string> DeletePasswordEvent;
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);
+        void DisplayPasswordToEdit(Password password);
+        void DisplayAddEditPasswordResult(AddModifyPasswordResult result);
     }
 }
