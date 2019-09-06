@@ -68,6 +68,7 @@ namespace PasswordVault
         public event Action<string, string, string, string, string> EditOkayEvent;
         public event Action EditCancelEvent;
         public event Action<string, string, string, string> DeletePasswordEvent;
+        public event Action LogoutEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -80,6 +81,8 @@ namespace PasswordVault
         private bool _loggedIn = false;
         private int _selectedDgvIndex = INVALID_INDEX;
         private bool _editMode = false;
+
+        private BindingList<Password> _dgvPasswordList;
 
 
         /*=================================================================================================
@@ -104,7 +107,7 @@ namespace PasswordVault
         public MainView(ILoginView loginView)
         {
             _loginView = loginView;
-            _loginView.LoginSuccessfulEvent += LoginSuccessful;
+            _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
 
             InitializeComponent();
 
@@ -271,7 +274,8 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DisplayPasswords(BindingList<Password> passwordList)
         {
-            PasswordDataGridView.DataSource = passwordList;
+            _dgvPasswordList = new BindingList<Password>(passwordList);
+            PasswordDataGridView.DataSource = _dgvPasswordList;
             PasswordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             PasswordDataGridView.RowHeadersVisible = false;
         }
@@ -316,6 +320,37 @@ namespace PasswordVault
             }
         }
 
+        /*************************************************************************************************/
+        public void DisplayLogOutResult(LogOutResult result)
+        {
+            switch (result)
+            {
+                case LogOutResult.Failed:
+
+                    break;
+
+                case LogOutResult.Success:
+                    _loggedIn = false;
+                    PasswordDataGridView.DataSource = null;
+                    PasswordDataGridView.Rows.Clear();
+                    userStatusLabel.Text = "";
+                    applicationTextBox.Enabled = false;
+                    descriptionTextBox.Enabled = false;
+                    websiteTextBox.Enabled = false;
+                    passphraseTextBox.Enabled = false;
+                    usernameTextBox.Enabled = false;
+                    addButton.Enabled = false;
+                    moveUpButton.Enabled = false;
+                    moveDownButton.Enabled = false;
+                    deleteButton.Enabled = false;
+                    editButton.Enabled = false;
+                    filterTextBox.Enabled = false;
+                    loginToolStripMenuItem.Text = "Login";
+                    userStatusLabel.Text = "Logged off.";
+                    break;
+            }
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -328,30 +363,14 @@ namespace PasswordVault
             }
             else // logout
             {
-                userStatusLabel.Text = "";
-                applicationTextBox.Enabled = false;
-                descriptionTextBox.Enabled = false;
-                websiteTextBox.Enabled = false;
-                passphraseTextBox.Enabled = false;
-                usernameTextBox.Enabled = false;
-                addButton.Enabled = false;
-                moveUpButton.Enabled = false;
-                moveDownButton.Enabled = false;
-                deleteButton.Enabled = false;
-                editButton.Enabled = false;
-                filterTextBox.Enabled = false;
-                loginToolStripMenuItem.Text = "Login";
-                userStatusLabel.Text = "";
+                RaiseLogoutEvent();
             }
         }
 
         /*************************************************************************************************/
-        private void LoginSuccessful()
+        private void DisplayLoginSuccessful()
         {
             _loggedIn = true;
-
-            //_user = loginForm.GetUser();
-            //userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
 
             applicationTextBox.Enabled = true;
             descriptionTextBox.Enabled = true;
@@ -368,6 +387,15 @@ namespace PasswordVault
             loginToolStripMenuItem.Text = "Logoff";
 
             RaiseRequestPasswordsOnLoginEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseLogoutEvent()
+        {
+            if (LogoutEvent != null)
+            {
+                LogoutEvent();
+            }
         }
 
         /*************************************************************************************************/

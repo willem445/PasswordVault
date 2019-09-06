@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.loginResultLabel = new System.Windows.Forms.Label();
             this.loginPasswordTextBox = new System.Windows.Forms.TextBox();
             this.loginUsernameTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.loginButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.createNewUserResultLabel = new System.Windows.Forms.Label();
             this.generatePasswordButton = new System.Windows.Forms.Button();
             this.createPasswordTextBox = new System.Windows.Forms.TextBox();
             this.createUsernameTextBox = new System.Windows.Forms.TextBox();
@@ -43,8 +45,6 @@
             this.createLoginButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
-            this.loginResultLabel = new System.Windows.Forms.Label();
-            this.createNewUserResultLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -63,6 +63,15 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Login";
+            // 
+            // loginResultLabel
+            // 
+            this.loginResultLabel.AutoSize = true;
+            this.loginResultLabel.Location = new System.Drawing.Point(16, 150);
+            this.loginResultLabel.Name = "loginResultLabel";
+            this.loginResultLabel.Size = new System.Drawing.Size(69, 13);
+            this.loginResultLabel.TabIndex = 5;
+            this.loginResultLabel.Text = "Login Result:";
             // 
             // loginPasswordTextBox
             // 
@@ -122,6 +131,15 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create New User";
+            // 
+            // createNewUserResultLabel
+            // 
+            this.createNewUserResultLabel.AutoSize = true;
+            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 126);
+            this.createNewUserResultLabel.Name = "createNewUserResultLabel";
+            this.createNewUserResultLabel.Size = new System.Drawing.Size(99, 13);
+            this.createNewUserResultLabel.TabIndex = 10;
+            this.createNewUserResultLabel.Text = "Create User Result:";
             // 
             // generatePasswordButton
             // 
@@ -199,24 +217,6 @@
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
-            // loginResultLabel
-            // 
-            this.loginResultLabel.AutoSize = true;
-            this.loginResultLabel.Location = new System.Drawing.Point(16, 150);
-            this.loginResultLabel.Name = "loginResultLabel";
-            this.loginResultLabel.Size = new System.Drawing.Size(69, 13);
-            this.loginResultLabel.TabIndex = 5;
-            this.loginResultLabel.Text = "Login Result:";
-            // 
-            // createNewUserResultLabel
-            // 
-            this.createNewUserResultLabel.AutoSize = true;
-            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 126);
-            this.createNewUserResultLabel.Name = "createNewUserResultLabel";
-            this.createNewUserResultLabel.Size = new System.Drawing.Size(99, 13);
-            this.createNewUserResultLabel.TabIndex = 10;
-            this.createNewUserResultLabel.Text = "Create User Result:";
-            // 
             // LoginView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -230,6 +230,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "LoginView";
             this.Text = "Login";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoginView_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

@@ -148,8 +148,7 @@ namespace PasswordVault
                     break;
 
                 case LoginResult.Successful:
-                    loginResultLabel.Visible = false;
-                    loginResultLabel.Text = "";
+                    ClearLoginView();
                     DialogResult = DialogResult.OK;
                     this.Close();
                     RaiseLoginSuccessfulEvent();
@@ -194,8 +193,7 @@ namespace PasswordVault
                     break;
 
                 case CreateUserResult.Successful:
-                    createNewUserResultLabel.Visible = false;
-                    createNewUserResultLabel.Text = "Username taken.";
+                    ClearLoginView();
                     DialogResult = DialogResult.OK;
                     this.Close();
                     RaiseLoginSuccessfulEvent();
@@ -339,6 +337,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CloseButton_Click(object sender, EventArgs e)
         {
+            ClearLoginView();
             this.Close();
             DialogResult = DialogResult.Cancel;
         }
@@ -355,6 +354,26 @@ namespace PasswordVault
         {
             closeButton.BackColor = Color.FromArgb(63, 63, 63);
             closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
+        private void LoginView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true; // this cancels the close event.
+        }
+
+        /*************************************************************************************************/
+        private void ClearLoginView()
+        {
+            loginResultLabel.Visible = false;
+            loginResultLabel.Text = "";
+            loginUsernameTextBox.Text = "";
+            loginPasswordTextBox.Text = "";
+            createNewUserResultLabel.Visible = false;
+            createNewUserResultLabel.Text = "";
+            createUsernameTextBox.Text = "";
+            createPasswordTextBox.Text = "";
         }
 
         /*=================================================================================================

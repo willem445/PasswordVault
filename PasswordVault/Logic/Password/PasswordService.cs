@@ -40,6 +40,12 @@ namespace PasswordVault
         Success,
     }
 
+    public enum LogOutResult
+    {
+        Success,
+        Failed
+    }
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -98,97 +104,138 @@ namespace PasswordVault
         {
             LoginResult loginResult = LoginResult.UnSuccessful;
 
-            // Perform user login verification
-            if (!_dbcontext.UserExists(username))
+            if (!IsLoggedIn())
             {
-                loginResult = LoginResult.UsernameDoesNotExist;
-            }
-            else
-            {
-                User user = _dbcontext.GetUser(username);
-
-                bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
-
-                if (valid)
+                // Perform user login verification
+                if (!_dbcontext.UserExists(username))
                 {
-                    _currentUser = new User(username, user.Salt, user.Hash, password, true);
+                    loginResult = LoginResult.UsernameDoesNotExist;
                 }
                 else
                 {
-                    loginResult = LoginResult.PasswordIncorrect;
-                    _currentUser = new User(false);
-                }
-            }
+                    User user = _dbcontext.GetUser(username);
 
-            // Set table name and read passwords
-            if (_currentUser.ValidKey)
-            {
-                loginResult = LoginResult.Successful;
-                UpdatePasswordListFromDB();
+                    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
+
+                    if (valid)
+                    {
+                        _currentUser = new User(username, user.Salt, user.Hash, password, true);
+                    }
+                    else
+                    {
+                        loginResult = LoginResult.PasswordIncorrect;
+                        _currentUser = new User(false);
+                    }
+                }
+
+                // Set table name and read passwords
+                if (_currentUser.ValidKey)
+                {
+                    loginResult = LoginResult.Successful;
+                    UpdatePasswordListFromDB();
+                }
             }
 
             return loginResult;
         }
 
         /*************************************************************************************************/
-        public void Logout()
+        public LogOutResult Logout()
         {
-            throw new NotImplementedException();
+            LogOutResult result = LogOutResult.Failed;
+
+            if (IsLoggedIn())
+            {
+                _passwordList.Clear();
+                _currentUser = new User(false);
+
+                result = LogOutResult.Success;
+            }
+
+            return result;        
         }
 
         /*************************************************************************************************/
         public bool IsLoggedIn()
         {
-            throw new NotImplementedException();
+            if (_currentUser.ValidKey)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(string username)
+        public void DeleteUser()
         {
+            if (IsLoggedIn())
+            {
+
+            }
+
             throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
         public string GetCurrentUserID()
         {
-            return _currentUser.UserID;
+            string user = "";
+
+            if (IsLoggedIn())
+            {
+                user = _currentUser.UserID;
+            }
+
+            return user;
         }
 
         /*************************************************************************************************/
         public void ChangeUserPassword(string username, string oldPassword, string newPassword)
         {
+            if (IsLoggedIn())
+            {
+
+            }
+
             throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
         public void AddPassword(Password password)
         {
-            List<Password> result = (from Password pass in _passwordList
-                               where pass.Application == password.Application
-                               where pass.Username == password.Username
-                               where pass.Description == password.Description
-                               where pass.Website == password.Website
-                               select pass).ToList<Password>();
-
-            if (result.Count <= 0) // Verify that this isn't an exact replica of another password
+            if (IsLoggedIn())
             {
-                _passwordList.Add(ConvertPlaintextPasswordToEncryptedPassword(password));
-                _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
-            }         
+                List<Password> result = (from Password pass in _passwordList
+                                         where pass.Application == password.Application
+                                         where pass.Username == password.Username
+                                         where pass.Description == password.Description
+                                         where pass.Website == password.Website
+                                         select pass).ToList<Password>();
+
+                if (result.Count <= 0) // Verify that this isn't an exact replica of another password
+                {
+                    _passwordList.Add(ConvertPlaintextPasswordToEncryptedPassword(password));
+                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
+                }
+            } 
         }
 
         /*************************************************************************************************/
         public void RemovePassword(Password password)
         {
-            Password result = (from Password pass in _passwordList
-                      where pass.Application == password.Application
-                      where pass.Username == password.Username
-                      where pass.Description == password.Description
-                      where pass.Website == password.Website
-                      select pass).First();
+            if (IsLoggedIn())
+            {
+                Password result = (from Password pass in _passwordList
+                                   where pass.Application == password.Application
+                                   where pass.Username == password.Username
+                                   where pass.Description == password.Description
+                                   where pass.Website == password.Website
+                                   select pass).First();
 
-            _passwordList.Remove(result);
-            _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
+                _passwordList.Remove(result);
+                _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
+            }
         }
 
         /*************************************************************************************************/
@@ -196,15 +243,18 @@ namespace PasswordVault
         {
             AddModifiedPasswordResult result = AddModifiedPasswordResult.Failed;
 
-            Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
-
-            int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
-
-            if (index != -1)
+            if (IsLoggedIn())
             {
-                _passwordList[index] = modifiedEncryptedPassword;
-                _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
-                result = AddModifiedPasswordResult.Success;
+                Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+
+                int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
+
+                if (index != -1)
+                {
+                    _passwordList[index] = modifiedEncryptedPassword;
+                    _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                    result = AddModifiedPasswordResult.Success;
+                }
             }
 
             return result;

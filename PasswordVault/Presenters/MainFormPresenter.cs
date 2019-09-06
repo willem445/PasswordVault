@@ -67,6 +67,7 @@ namespace PasswordVault
             _mainView.DeletePasswordEvent += DeletePassword;
             _mainView.EditPasswordEvent += EditPasswordInit;
             _mainView.EditOkayEvent += EditPasswordExecute;
+            _mainView.LogoutEvent += Logout;
         }
 
         /*=================================================================================================
@@ -178,6 +179,19 @@ namespace PasswordVault
             }
 
             _mainView.DisplayAddEditPasswordResult(result);
+        }
+
+        /*************************************************************************************************/
+        private void Logout()
+        {
+            LogOutResult result = _passwordService.Logout();
+
+            if (result == LogOutResult.Success)
+            {
+                _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
+            }
+
+            _mainView.DisplayLogOutResult(result);
         }
 
         /*************************************************************************************************/
