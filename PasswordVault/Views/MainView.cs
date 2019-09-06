@@ -108,6 +108,8 @@ namespace PasswordVault
             InitializeComponent();
 
             #region UI
+            // TODO - 10 - Create custom controls with default custom properties
+
             // Configure form UI
             BackColor = DarkBackground();
             FormBorderStyle = FormBorderStyle.None;
@@ -132,10 +134,11 @@ namespace PasswordVault
             filterLabel.ForeColor = WhiteText();
 
             // Configure menu strip
-            menuStrip.Renderer = new ToolStripProfessionalRenderer(new MyColorTable()); // TODO - 1 - Put this in its own AdvancedMenuStripClass
             menuStrip.BackColor = DarkBackground();
             menuStrip.ForeColor = WhiteText();
             menuStrip.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            menuStrip.MenuItemSelectedColor = ControlHighlight();
+            menuStrip.MenuItemBackgroundColor = ControlBackground();
             loginToolStripMenuItem.BackColor = ControlBackground();
             loginToolStripMenuItem.ForeColor = WhiteText();
             loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE); 
@@ -731,111 +734,4 @@ namespace PasswordVault
         /*************************************************************************************************/
 
     } // MainForm CLASS
-
-    public class MyColorTable : ProfessionalColorTable
-    {
-        public override Color ToolStripDropDownBackground
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color ImageMarginGradientBegin
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color ImageMarginGradientMiddle
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color ImageMarginGradientEnd
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuBorder
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemBorder
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemSelected 
-        {
-            get
-            {
-                return Color.FromArgb(0x80, 0x80, 0x80); ; 
-            }
-        }
-
-        public override Color MenuStripGradientBegin
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuStripGradientEnd
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemSelectedGradientBegin
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemSelectedGradientEnd
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemPressedGradientBegin
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-
-        public override Color MenuItemPressedGradientEnd
-        {
-            get
-            {
-                return Color.FromArgb(63, 63, 63); 
-            }
-        }
-    }
 } // MainForm NAMESPACE
