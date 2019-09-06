@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* TODO - may need more error handling if table or entry does not exist
- * TODO - Make these async Tasks
+/* TODO - 3 - may need more error handling if table or entry does not exist
+ * TODO - 9 - Make these async Tasks
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault

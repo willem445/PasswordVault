@@ -86,7 +86,7 @@ namespace PasswordVault
             }
             else
             {
-                return ""; // TODO - Good application for Maybe Monad
+                return ""; 
             }       
         }
 

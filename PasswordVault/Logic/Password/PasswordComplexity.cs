@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 DESCRIPTION
 *================================================================================================*/
 /* Source: https://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=4721
- * TODO - ENUM for results
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -89,9 +88,6 @@ namespace PasswordVault
   			{
   				passStrength = PasswordComplexityLevel.Great;
   			}
-
-            //Console.WriteLine("Your password is " + passStrength +
-            //    " it is equivalent to a " + Math.Round(result, 0) + "-bit key.");
 
             return passStrength;
 

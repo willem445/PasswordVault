@@ -8,14 +8,10 @@ using System.Windows.Forms;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* TODO - Add new form for adding password with validation, password strength etc
- * TODO - Filter for passwords
- * TODO - Edit passwords
- * TODO - Sort _password binding list by application name
- * TODO - Add category option to password object
- * TODO - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
+/* TODO - 8 - Add new form for adding password with validation, password strength etc
+ * TODO - 1 - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
  * https://security.stackexchange.com/questions/157422/store-encrypted-user-data-in-database
- * TODO - Create INI file to store database configuration etc.
+ * TODO - 9 - Create INI file to store database configuration etc.
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -135,10 +131,14 @@ namespace PasswordVault
             filterLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
             filterLabel.ForeColor = WhiteText();
 
-            // Configure menu stip
+            // Configure menu strip
+            menuStrip.Renderer = new ToolStripProfessionalRenderer(new MyColorTable()); // TODO - 1 - Put this in its own AdvancedMenuStripClass
             menuStrip.BackColor = DarkBackground();
             menuStrip.ForeColor = WhiteText();
             menuStrip.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            loginToolStripMenuItem.BackColor = ControlBackground();
+            loginToolStripMenuItem.ForeColor = WhiteText();
+            loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE); 
 
             // Configure buttons
             addButton.BackColor = ControlBackground();
@@ -255,8 +255,7 @@ namespace PasswordVault
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
             PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
-
-            
+          
             #endregion
 
             userStatusLabel.Text = "Not logged in.";
@@ -498,7 +497,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void MoveUpButton_Click(object sender, EventArgs e)
         {
-
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -513,7 +512,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void MoveDownButton_Click(object sender, EventArgs e)
         {
-
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -549,7 +548,9 @@ namespace PasswordVault
             //if (_passwordList.Count != 0)
             //{
             //    Clipboard.SetText(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
-            //}          
+            //}  
+
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -559,6 +560,8 @@ namespace PasswordVault
             //{
             //    Clipboard.SetText(_passwordList.GetList()[_rowIndexCopy].Username);
             //}
+
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -573,6 +576,8 @@ namespace PasswordVault
             //        UriUtilities.OpenUri(website);
             //    }
             //}
+
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -582,6 +587,8 @@ namespace PasswordVault
             //{
             //    MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
             //}
+
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -702,4 +709,111 @@ namespace PasswordVault
         /*************************************************************************************************/
 
     } // MainForm CLASS
+
+    public class MyColorTable : ProfessionalColorTable
+    {
+        public override Color ToolStripDropDownBackground
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color ImageMarginGradientBegin
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color ImageMarginGradientMiddle
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color ImageMarginGradientEnd
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuBorder
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemBorder
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemSelected 
+        {
+            get
+            {
+                return Color.FromArgb(0x80, 0x80, 0x80); ; 
+            }
+        }
+
+        public override Color MenuStripGradientBegin
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuStripGradientEnd
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemSelectedGradientBegin
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemSelectedGradientEnd
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemPressedGradientBegin
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+
+        public override Color MenuItemPressedGradientEnd
+        {
+            get
+            {
+                return Color.FromArgb(63, 63, 63); 
+            }
+        }
+    }
 } // MainForm NAMESPACE

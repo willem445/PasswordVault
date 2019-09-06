@@ -348,7 +348,7 @@ namespace PasswordVault
         {
             return new DatabasePassword(
                 password.UniqueID,
-                _currentUser.UserID, // TODO - Change to unique ID - Use unencrypted username for now
+                _currentUser.UserID, // TODO - 4 - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Description, _currentUser.Key),
