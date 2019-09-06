@@ -104,7 +104,7 @@ namespace PasswordVault
         {
             _loginView = loginView;
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
-
+            _dgvPasswordList = new BindingList<Password>();
             InitializeComponent();
 
             #region UI
@@ -154,6 +154,8 @@ namespace PasswordVault
             moveUpButton.Font = UIFont(BUTTON_FONT_SIZE);
             moveUpButton.FlatAppearance.BorderColor = DarkBackground();
             moveUpButton.FlatAppearance.BorderSize = 1;
+            moveUpButton.Enabled = false;
+            moveUpButton.Visible = false;
 
             moveDownButton.BackColor = ControlBackground();
             moveDownButton.ForeColor = WhiteText();
@@ -161,6 +163,8 @@ namespace PasswordVault
             moveDownButton.Font = UIFont(BUTTON_FONT_SIZE);
             moveDownButton.FlatAppearance.BorderColor = DarkBackground();
             moveDownButton.FlatAppearance.BorderSize = 1;
+            moveDownButton.Enabled = false;
+            moveDownButton.Visible = false;
 
             deleteButton.BackColor = ControlBackground();
             deleteButton.ForeColor = WhiteText();
@@ -235,27 +239,29 @@ namespace PasswordVault
             statusStrip1.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             // Confgiure data grid view
-            PasswordDataGridView.BorderStyle = BorderStyle.None;
-            PasswordDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            PasswordDataGridView.MultiSelect = false;
-            PasswordDataGridView.ReadOnly = true;
-            PasswordDataGridView.BackgroundColor = DarkBackground();
-            PasswordDataGridView.RowsDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            PasswordDataGridView.RowsDefaultCellStyle.ForeColor = WhiteText();
-            PasswordDataGridView.RowsDefaultCellStyle.BackColor = Color.FromArgb(65, 65, 65);
-            PasswordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
-            PasswordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
-            PasswordDataGridView.AllowUserToOrderColumns = true;
-            PasswordDataGridView.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
-            PasswordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
-            PasswordDataGridView.EnableHeadersVisualStyles = false;
-            PasswordDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            PasswordDataGridView.ColumnHeadersDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            PasswordDataGridView.ColumnHeadersDefaultCellStyle.BackColor = DarkBackground();
-            PasswordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
-            PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
-            PasswordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
-          
+            passwordDataGridView.BorderStyle = BorderStyle.None;
+            passwordDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            passwordDataGridView.MultiSelect = false;
+            passwordDataGridView.ReadOnly = true;
+            passwordDataGridView.BackgroundColor = DarkBackground();
+            passwordDataGridView.RowsDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            passwordDataGridView.RowsDefaultCellStyle.ForeColor = WhiteText();
+            passwordDataGridView.RowsDefaultCellStyle.BackColor = Color.FromArgb(65, 65, 65);
+            passwordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
+            passwordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
+            passwordDataGridView.AllowUserToOrderColumns = true;
+            passwordDataGridView.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
+            passwordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+            passwordDataGridView.EnableHeadersVisualStyles = false;
+            passwordDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.BackColor = DarkBackground();
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
+            passwordDataGridView.ScrollBars = ScrollBars.None;
+            passwordDataGridView.MouseWheel += PasswordDataGridView_MouseWheel;
+
             #endregion
 
             userStatusLabel.Text = "Not logged in.";
@@ -274,9 +280,9 @@ namespace PasswordVault
         public void DisplayPasswords(BindingList<Password> passwordList)
         {
             _dgvPasswordList = new BindingList<Password>(passwordList);
-            PasswordDataGridView.DataSource = _dgvPasswordList;
-            PasswordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            PasswordDataGridView.RowHeadersVisible = false;
+            passwordDataGridView.DataSource = _dgvPasswordList;
+            passwordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            passwordDataGridView.RowHeadersVisible = false;
         }
 
         /*************************************************************************************************/
@@ -330,8 +336,8 @@ namespace PasswordVault
 
                 case LogOutResult.Success:
                     _loggedIn = false;
-                    PasswordDataGridView.DataSource = null;
-                    PasswordDataGridView.Rows.Clear();
+                    passwordDataGridView.DataSource = null;
+                    passwordDataGridView.Rows.Clear();
                     userStatusLabel.Text = "";
                     applicationTextBox.Enabled = false;
                     descriptionTextBox.Enabled = false;
@@ -339,8 +345,8 @@ namespace PasswordVault
                     passphraseTextBox.Enabled = false;
                     usernameTextBox.Enabled = false;
                     addButton.Enabled = false;
-                    moveUpButton.Enabled = false;
-                    moveDownButton.Enabled = false;
+                    //moveUpButton.Enabled = false;
+                    //moveDownButton.Enabled = false;
                     deleteButton.Enabled = false;
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
@@ -377,8 +383,8 @@ namespace PasswordVault
             passphraseTextBox.Enabled = true;
             usernameTextBox.Enabled = true;
             addButton.Enabled = true;
-            moveUpButton.Enabled = true;
-            moveDownButton.Enabled = true;
+            //moveUpButton.Enabled = true;
+            //moveDownButton.Enabled = true;
             deleteButton.Enabled = true;
             editButton.Enabled = true;
             filterComboBox.Enabled = true;
@@ -444,10 +450,10 @@ namespace PasswordVault
             _editMode = true;
             addButton.Text = "Ok";
 
-            RaiseEditPasswordEvent(PasswordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+            RaiseEditPasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
         }
 
         /*************************************************************************************************/
@@ -527,10 +533,10 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            RaiseDeletePasswordEvent(PasswordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+            RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
         }
 
         /*************************************************************************************************/
@@ -614,13 +620,29 @@ namespace PasswordVault
             DataGridView.HitTestInfo hitTestInfo;
             if (e.Button == MouseButtons.Right)
             {
-                hitTestInfo = PasswordDataGridView.HitTest(e.X, e.Y);
+                hitTestInfo = passwordDataGridView.HitTest(e.X, e.Y);
                 // If column is first column
                 if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
                 {
-                    _cm.Show(PasswordDataGridView, new Point(e.X, e.Y));
+                    _cm.Show(passwordDataGridView, new Point(e.X, e.Y));
                     _rowIndexCopy = hitTestInfo.RowIndex;
                 }                
+            }
+        }
+
+        /*************************************************************************************************/
+        private void PasswordDataGridView_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (_dgvPasswordList.Count > 0)
+            {
+                if (e.Delta > 0 && passwordDataGridView.FirstDisplayedScrollingRowIndex > 0)
+                {
+                    passwordDataGridView.FirstDisplayedScrollingRowIndex--;
+                }
+                else if (e.Delta < 0)
+                {
+                    passwordDataGridView.FirstDisplayedScrollingRowIndex++;
+                }
             }
         }
 
@@ -700,7 +722,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void PasswordDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            _selectedDgvIndex = PasswordDataGridView.CurrentCell.RowIndex;
+            _selectedDgvIndex = passwordDataGridView.CurrentCell.RowIndex;
         }
 
         /*=================================================================================================

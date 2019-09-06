@@ -162,7 +162,7 @@ namespace PasswordVault
             if (result != null)
             {
                 _editPassword = result;
-                _mainView.DisplayPasswordToEdit(_passwordService.DecryptPassword(_editPassword)); // TODO - 1 - Need to have password service decrypt the password before displaying it 
+                _mainView.DisplayPasswordToEdit(_passwordService.DecryptPassword(_editPassword));
             }
         }
 

@@ -35,7 +35,7 @@ namespace PasswordVault
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PasswordDataGridView = new System.Windows.Forms.DataGridView();
+            this.passwordDataGridView = new System.Windows.Forms.DataGridView();
             this.addButton = new System.Windows.Forms.Button();
             this.moveUpButton = new System.Windows.Forms.Button();
             this.moveDownButton = new System.Windows.Forms.Button();
@@ -57,10 +57,10 @@ namespace PasswordVault
             this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.filterLabel = new System.Windows.Forms.Label();
-            this.filterComboBox = new PasswordVault.AdvancedComboBox();
             this.editCancelButton = new System.Windows.Forms.Button();
+            this.filterComboBox = new PasswordVault.AdvancedComboBox();
             this.menuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PasswordDataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,15 +98,15 @@ namespace PasswordVault
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 26);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
-            // PasswordDataGridView
+            // passwordDataGridView
             // 
-            this.PasswordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.PasswordDataGridView.Location = new System.Drawing.Point(12, 145);
-            this.PasswordDataGridView.Name = "PasswordDataGridView";
-            this.PasswordDataGridView.Size = new System.Drawing.Size(657, 290);
-            this.PasswordDataGridView.TabIndex = 1;
-            this.PasswordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
-            this.PasswordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
+            this.passwordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.passwordDataGridView.Location = new System.Drawing.Point(12, 145);
+            this.passwordDataGridView.Name = "passwordDataGridView";
+            this.passwordDataGridView.Size = new System.Drawing.Size(657, 290);
+            this.passwordDataGridView.TabIndex = 1;
+            this.passwordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
+            this.passwordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
             // 
             // addButton
             // 
@@ -122,7 +122,7 @@ namespace PasswordVault
             // moveUpButton
             // 
             this.moveUpButton.Enabled = false;
-            this.moveUpButton.Location = new System.Drawing.Point(680, 162);
+            this.moveUpButton.Location = new System.Drawing.Point(680, 219);
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Size = new System.Drawing.Size(75, 23);
             this.moveUpButton.TabIndex = 3;
@@ -133,7 +133,7 @@ namespace PasswordVault
             // moveDownButton
             // 
             this.moveDownButton.Enabled = false;
-            this.moveDownButton.Location = new System.Drawing.Point(680, 191);
+            this.moveDownButton.Location = new System.Drawing.Point(680, 248);
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Size = new System.Drawing.Size(75, 23);
             this.moveDownButton.TabIndex = 4;
@@ -144,7 +144,7 @@ namespace PasswordVault
             // editButton
             // 
             this.editButton.Enabled = false;
-            this.editButton.Location = new System.Drawing.Point(680, 220);
+            this.editButton.Location = new System.Drawing.Point(680, 161);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 5;
@@ -223,7 +223,7 @@ namespace PasswordVault
             // deleteButton
             // 
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(680, 249);
+            this.deleteButton.Location = new System.Drawing.Point(680, 190);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 15;
@@ -304,6 +304,17 @@ namespace PasswordVault
             this.filterLabel.TabIndex = 29;
             this.filterLabel.Text = "Filter";
             // 
+            // editCancelButton
+            // 
+            this.editCancelButton.Enabled = false;
+            this.editCancelButton.Location = new System.Drawing.Point(680, 99);
+            this.editCancelButton.Name = "editCancelButton";
+            this.editCancelButton.Size = new System.Drawing.Size(75, 23);
+            this.editCancelButton.TabIndex = 31;
+            this.editCancelButton.Text = "Cancel";
+            this.editCancelButton.UseVisualStyleBackColor = true;
+            this.editCancelButton.Click += new System.EventHandler(this.EditCancelButton_Click);
+            // 
             // filterComboBox
             // 
             this.filterComboBox.BorderColor = System.Drawing.Color.Black;
@@ -316,17 +327,6 @@ namespace PasswordVault
             this.filterComboBox.Size = new System.Drawing.Size(121, 21);
             this.filterComboBox.TabIndex = 0;
             this.filterComboBox.TextChanged += new System.EventHandler(this.filterChanged);
-            // 
-            // editCancelButton
-            // 
-            this.editCancelButton.Enabled = false;
-            this.editCancelButton.Location = new System.Drawing.Point(680, 99);
-            this.editCancelButton.Name = "editCancelButton";
-            this.editCancelButton.Size = new System.Drawing.Size(75, 23);
-            this.editCancelButton.TabIndex = 31;
-            this.editCancelButton.Text = "Cancel";
-            this.editCancelButton.UseVisualStyleBackColor = true;
-            this.editCancelButton.Click += new System.EventHandler(this.EditCancelButton_Click);
             // 
             // MainView
             // 
@@ -356,7 +356,7 @@ namespace PasswordVault
             this.Controls.Add(this.moveDownButton);
             this.Controls.Add(this.moveUpButton);
             this.Controls.Add(this.addButton);
-            this.Controls.Add(this.PasswordDataGridView);
+            this.Controls.Add(this.passwordDataGridView);
             this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MainMenuStrip = this.menuStrip;
@@ -364,7 +364,7 @@ namespace PasswordVault
             this.Text = "Password Vault";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PasswordDataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -378,7 +378,7 @@ namespace PasswordVault
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.DataGridView PasswordDataGridView;
+        private System.Windows.Forms.DataGridView passwordDataGridView;
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button moveUpButton;
         private System.Windows.Forms.Button moveDownButton;
