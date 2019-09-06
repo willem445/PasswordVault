@@ -14,6 +14,7 @@ DESCRIPTION
  * TODO - Sort _password binding list by application name
  * TODO - Add category option to password object
  * TODO - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
+ * https://security.stackexchange.com/questions/157422/store-encrypted-user-data-in-database
  * TODO - Create INI file to store database configuration etc.
  ------------------------------------------------------------------------------------------------*/
 
@@ -22,6 +23,13 @@ namespace PasswordVault
     /*=================================================================================================
     ENUMERATIONS
     *================================================================================================*/
+    public enum DgvColumns
+    {
+        Application,
+        Username, 
+        Description, 
+        Website
+    }
 
     /*=================================================================================================
 	STRUCTS
@@ -56,8 +64,8 @@ namespace PasswordVault
         public event Action<string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
-        public event Action<int> EditPasswordEvent;
-        public event Action EditOkayEvent;
+        public event Action<string, string, string, string> EditPasswordEvent;
+        public event Action<string, string, string, string, string> EditOkayEvent;
         public event Action EditCancelEvent;
         public event Action<string, string, string, string> DeletePasswordEvent;
 
@@ -277,13 +285,35 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DisplayPasswordToEdit(Password password)
         {
-
+            applicationTextBox.Text = password.Application;
+            usernameTextBox.Text = password.Username;
+            descriptionTextBox.Text = password.Description;
+            websiteTextBox.Text = password.Website;
+            passphraseTextBox.Text = password.Passphrase;
         }
 
         /*************************************************************************************************/
-        public void DisplayAddEditPasswordResult(AddModifyPasswordResult result)
+        public void DisplayAddEditPasswordResult(AddModifiedPasswordResult result)
         {
+            switch(result)
+            {
+                case AddModifiedPasswordResult.DuplicatePassword:
+                    userStatusLabel.Text = "Duplicate password.";
+                    break;
 
+                case AddModifiedPasswordResult.Failed:
+                    userStatusLabel.Text = "Modify password failed.";
+                    break;
+
+                case AddModifiedPasswordResult.Success:
+                    applicationTextBox.Text = "";
+                    usernameTextBox.Text = "";
+                    descriptionTextBox.Text = "";
+                    websiteTextBox.Text = "";
+                    passphraseTextBox.Text = "";
+                    userStatusLabel.Text = "Password modified.";
+                    break;
+            }
         }
 
         /*=================================================================================================
@@ -313,81 +343,6 @@ namespace PasswordVault
                 loginToolStripMenuItem.Text = "Login";
                 userStatusLabel.Text = "";
             }
-
-            //if (!_user.ValidKey)
-            //{
-            //    LoginForm loginForm = new LoginForm();
-            //    if (loginForm.ShowDialog() == DialogResult.OK)
-            //    {
-            //        _user = loginForm.GetUser();
-            //        userStatusLabel.Text = string.Format("Welcome: {0}", _user.UserID);
-            //        applicationTextBox.Enabled = true;
-            //        descriptionTextBox.Enabled = true;
-            //        websiteTextBox.Enabled = true;
-            //        passphraseTextBox.Enabled = true;
-            //        usernameTextBox.Enabled = true;
-            //        addButton.Enabled = true;
-            //        moveUpButton.Enabled = true;
-            //        moveDownButton.Enabled = true;
-            //        deleteButton.Enabled = true;
-            //        editButton.Enabled = true;
-            //        filterComboBox.Enabled = true;
-            //        filterTextBox.Enabled = true;
-
-            //        if (_storage.GetType() == typeof(CSV))
-            //        {
-            //            ((CSV)_storage).SetCSVFileName(_user.UserID);
-            //        }
-
-            //        _passwordList.Clear();
-            //        _passwordList.Clear();
-            //        _passwordList.Clear();
-            //        _passwordList.Clear();
-            //        foreach (var item in _storage.GetPasswords())
-            //        {
-            //            Password password = new Password();
-            //            password.Application = EncryptDecrypt.Decrypt(item.Application, _user.Key);
-            //            password.Username = EncryptDecrypt.Decrypt(item.Username, _user.Key);
-            //            password.Description = EncryptDecrypt.Decrypt(item.Description, _user.Key);
-            //            password.Website = EncryptDecrypt.Decrypt(item.Website, _user.Key);
-            //            password.Passphrase = item.Passphrase; // Leave pass phase encrypted until it is needed
-            //            _passwordList.Add(password);
-            //        }
-
-            //        loginToolStripMenuItem.Text = "Logoff";
-            //    }
-            //}
-            //else
-            //{
-            //    _user.ValidKey = false;
-            //    _user.UserID = null;
-            //    _user.Salt = null;
-            //    _user.Hash = null;
-            //    _user.Key = null;
-
-            //    userStatusLabel.Text = "";
-            //    applicationTextBox.Enabled = false;
-            //    descriptionTextBox.Enabled = false;
-            //    websiteTextBox.Enabled = false;
-            //    passphraseTextBox.Enabled = false;
-            //    usernameTextBox.Enabled = false;
-            //    addButton.Enabled = false;
-            //    moveUpButton.Enabled = false;
-            //    moveDownButton.Enabled = false;
-            //    deleteButton.Enabled = false;
-            //    editButton.Enabled = false;
-            //    filterComboBox.Enabled = false;
-            //    filterTextBox.Enabled = false;
-
-            //    if (_storage.GetType() == typeof(CSV))
-            //    {
-            //        ((CSV)_storage).SetUserTableName("");
-            //    }
-
-            //    _passwordList.Clear();
-
-            //    loginToolStripMenuItem.Text = "Login";
-            //}
         }
 
         /*************************************************************************************************/
@@ -429,11 +384,19 @@ namespace PasswordVault
         {
             if (!_editMode)
             {
-                RaiseAddPasswordEvent(applicationTextBox.Text, usernameTextBox.Text, descriptionTextBox.Text, websiteTextBox.Text, passphraseTextBox.Text);
+                RaiseAddPasswordEvent(applicationTextBox.Text, 
+                                      usernameTextBox.Text, 
+                                      descriptionTextBox.Text, 
+                                      websiteTextBox.Text, 
+                                      passphraseTextBox.Text);
             }
             else
             {
-                RaiseEditOkayEvent();
+                RaiseEditOkayEvent(applicationTextBox.Text,
+                                   usernameTextBox.Text,
+                                   descriptionTextBox.Text,
+                                   websiteTextBox.Text,
+                                   passphraseTextBox.Text);
             }        
         }
 
@@ -454,7 +417,10 @@ namespace PasswordVault
             _editMode = true;
             addButton.Text = "Ok";
 
-            RaiseEditPasswordEvent(_selectedDgvIndex);
+            RaiseEditPasswordEvent(PasswordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                   PasswordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
         }
 
         /*************************************************************************************************/
@@ -465,24 +431,30 @@ namespace PasswordVault
             editCancelButton.Enabled = false;
             editCancelButton.Visible = false;
 
+            applicationTextBox.Text = "";
+            usernameTextBox.Text = "";
+            descriptionTextBox.Text = "";
+            websiteTextBox.Text = "";
+            passphraseTextBox.Text = "";
+
             RaiseEditCancelEvent();
         }
 
         /*************************************************************************************************/
-        private void RaiseEditPasswordEvent(int index)
+        private void RaiseEditPasswordEvent(string application, string username, string description, string website)
         {
             if (EditPasswordEvent != null)
             {
-                EditPasswordEvent(index);
+                EditPasswordEvent(application, username, description, website);
             }
         }
 
         /*************************************************************************************************/
-        private void RaiseEditOkayEvent()
+        private void RaiseEditOkayEvent(string application, string username, string description, string website, string passphrase)
         {
             if (EditOkayEvent != null)
             {
-                EditOkayEvent();
+                EditOkayEvent(application, username, description, website, passphrase);
             }
         }
 
@@ -528,10 +500,10 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            RaiseDeletePasswordEvent(PasswordDataGridView.SelectedCells[0].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[1].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[2].Value.ToString(),
-                                     PasswordDataGridView.SelectedCells[3].Value.ToString());
+            RaiseDeletePasswordEvent(PasswordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                     PasswordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
         }
 
         /*************************************************************************************************/

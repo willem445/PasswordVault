@@ -33,7 +33,7 @@ namespace PasswordVault
         Unsuccessful,
     }
 
-    public enum AddModifyPasswordResult
+    public enum AddModifiedPasswordResult
     {
         DuplicatePassword,
         Failed,
@@ -130,31 +130,37 @@ namespace PasswordVault
             return loginResult;
         }
 
+        /*************************************************************************************************/
         public void Logout()
         {
             throw new NotImplementedException();
         }
 
+        /*************************************************************************************************/
         public bool IsLoggedIn()
         {
             throw new NotImplementedException();
         }
 
+        /*************************************************************************************************/
         public void DeleteUser(string username)
         {
             throw new NotImplementedException();
         }
 
+        /*************************************************************************************************/
         public string GetCurrentUserID()
         {
             return _currentUser.UserID;
         }
 
+        /*************************************************************************************************/
         public void ChangeUserPassword(string username, string oldPassword, string newPassword)
         {
             throw new NotImplementedException();
         }
 
+        /*************************************************************************************************/
         public void AddPassword(Password password)
         {
             List<Password> result = (from Password pass in _passwordList
@@ -171,6 +177,7 @@ namespace PasswordVault
             }         
         }
 
+        /*************************************************************************************************/
         public void RemovePassword(Password password)
         {
             Password result = (from Password pass in _passwordList
@@ -184,16 +191,40 @@ namespace PasswordVault
             _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
         }
 
-        public void ModifyPassword()
+        /*************************************************************************************************/
+        public AddModifiedPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
         {
-            throw new NotImplementedException();
+            AddModifiedPasswordResult result = AddModifiedPasswordResult.Failed;
+
+            Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+
+            int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
+
+            if (index != -1)
+            {
+                _passwordList[index] = modifiedEncryptedPassword;
+                _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                result = AddModifiedPasswordResult.Success;
+            }
+
+            return result;
         }
 
+        /*************************************************************************************************/
         public List<Password> GetPasswords()
         {
             return _passwordList;
         }
 
+        /*************************************************************************************************/
+        public Password DecryptPassword(Password password)
+        {
+            Password decryptedPassword;
+
+            decryptedPassword = DecryptEncryptedPassword(password);
+
+            return decryptedPassword;
+        }
 
         /*************************************************************************************************/
         public CreateUserResult CreateNewUser(string username, string password)
@@ -276,6 +307,7 @@ namespace PasswordVault
                 );
         }
 
+        /*************************************************************************************************/
         private Password ConvertPlaintextPasswordToEncryptedPassword(Password password)
         {
             return new Password(
@@ -288,6 +320,18 @@ namespace PasswordVault
                 );
         }
 
+        /*************************************************************************************************/
+        private Password DecryptEncryptedPassword(Password password)
+        {
+            return new Password(
+                password.UniqueID,
+                password.Application,
+                password.Username,
+                password.Description,
+                password.Website,
+                _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.Key)
+    );
+        }
 
         /*=================================================================================================
 		STATIC METHODS

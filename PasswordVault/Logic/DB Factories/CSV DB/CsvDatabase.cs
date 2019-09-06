@@ -10,7 +10,6 @@ DESCRIPTION
 *================================================================================================*/
 /* TODO - may need more error handling if table or entry does not exist
  * TODO - Make these async Tasks
- * TODO - Make one big passwords table instead of table for each user
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault

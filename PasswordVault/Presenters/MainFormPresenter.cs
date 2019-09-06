@@ -43,6 +43,8 @@ namespace PasswordVault
         private IMainView _mainView;
         private IPasswordService _passwordService;
 
+        private Password _editPassword;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -63,6 +65,8 @@ namespace PasswordVault
             _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
             _mainView.AddPasswordEvent += AddPassword;
             _mainView.DeletePasswordEvent += DeletePassword;
+            _mainView.EditPasswordEvent += EditPasswordInit;
+            _mainView.EditOkayEvent += EditPasswordExecute;
         }
 
         /*=================================================================================================
@@ -140,6 +144,45 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeletePassword(string application, string username, string description, string website)
         {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            if (result != null)
+            {
+                _passwordService.RemovePassword(result);
+                UpdatePasswordsUI();
+            }        
+        }
+
+        /*************************************************************************************************/
+        private void EditPasswordInit(string application, string username, string description, string website)
+        {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            if (result != null)
+            {
+                _editPassword = result;
+                _mainView.DisplayPasswordToEdit(_passwordService.DecryptPassword(_editPassword)); // TODO - 1 - Need to have password service decrypt the password before displaying it 
+            }
+        }
+
+        /*************************************************************************************************/
+        private void EditPasswordExecute(string application, string username, string description, string website, string passphrase)
+        {
+            Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, description, website, passphrase);
+
+            AddModifiedPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
+
+            if (result == AddModifiedPasswordResult.Success)
+            {
+                _editPassword = null;
+            }
+
+            _mainView.DisplayAddEditPasswordResult(result);
+        }
+
+        /*************************************************************************************************/
+        private Password QueryForFirstPassword(string application, string username, string description, string website)
+        {
             List<Password> passwords = _passwordService.GetPasswords();
 
             Password result = (from Password password in passwords
@@ -147,10 +190,19 @@ namespace PasswordVault
                                where password.Username.Contains(username)
                                where password.Description.Contains(description)
                                where password.Website.Contains(website)
-                               select password).First();
+                               select password).FirstOrDefault();
 
-            _passwordService.RemovePassword(result);
-            UpdatePasswordsUI();
+            return result;
+        }
+
+        /*************************************************************************************************/
+        private int FindPasswordIndex(string application, string username, string description, string website)
+        {
+            List<Password> passwords = _passwordService.GetPasswords();
+
+            int index = passwords.FindIndex(x => (x.Application == application) && (x.Username == username) && (x.Description == description) && (x.Website == website));
+
+            return index;
         }
 
         /*=================================================================================================
