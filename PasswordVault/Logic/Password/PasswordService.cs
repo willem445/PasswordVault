@@ -221,8 +221,12 @@ namespace PasswordVault
 
                 if (result.Count <= 0) // Verify that this isn't an exact replica of another password
                 {
-                    _passwordList.Add(ConvertPlaintextPasswordToEncryptedPassword(password));
-                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
+                    // Add password to database first
+                    Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password);
+                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword));
+
+                    UpdatePasswordListFromDB();
+
                     addResult = AddPasswordResult.Success;
                 }
                 else

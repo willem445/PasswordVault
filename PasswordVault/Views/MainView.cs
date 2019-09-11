@@ -281,7 +281,10 @@ namespace PasswordVault
             _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
             _cm.MenuItems.Add("Copy Password", new EventHandler(CopyPass_Click));
             _cm.MenuItems.Add("Visit Website", new EventHandler(Website_Click));
+            _cm.MenuItems.Add("-");
             _cm.MenuItems.Add("View Password", new EventHandler(ShowPassword_Click));
+            _cm.MenuItems.Add("Edit Password", new EventHandler(EditButton_Click));
+            _cm.MenuItems.Add("Delete Password", new EventHandler(DeleteButton_Click));
         }
 
         /*=================================================================================================
@@ -395,7 +398,12 @@ namespace PasswordVault
                 case AddPasswordResult.Success:
                     addResultLabel.Visible = true;
                     addResultLabel.ForeColor = Color.FromArgb(0, 255, 0);
-                    addResultLabel.Text = "Success.";
+                    addResultLabel.Text = "Success."; // TODO - 3 - Display success for small period of time
+                    applicationTextBox.Text = "";
+                    descriptionTextBox.Text = "";
+                    websiteTextBox.Text = "";
+                    passphraseTextBox.Text = "";
+                    usernameTextBox.Text = "";
                     break;
             }
         }
