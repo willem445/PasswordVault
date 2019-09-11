@@ -49,7 +49,6 @@ namespace PasswordVault
         private static Object _mutex = new Object();
         private ICSVUserManager _csvUserManager;
         private ICSVPasswordManager _csvPasswordManager;
-        private bool _validUserPasswordTable = false;
 
         private string _usersCsvPath = USERS_CSV_PATH;
         private string _passwordsCsvPath = PASSWORDS_CSV_PATH;

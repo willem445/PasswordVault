@@ -142,8 +142,14 @@ namespace PasswordVault
         private void AddPassword(string application, string username, string description, string website, string passphrase)
         {
             Password uiPassword = new Password(application, username, description, website, passphrase);
-            _passwordService.AddPassword(uiPassword);
-            UpdatePasswordsUI();
+            AddPasswordResult result = _passwordService.AddPassword(uiPassword);
+
+            if (result == AddPasswordResult.Success)
+            {
+                UpdatePasswordsUI();
+            }
+
+            _mainView.DisplayAddPasswordResult(result);    
         }
 
         /*************************************************************************************************/

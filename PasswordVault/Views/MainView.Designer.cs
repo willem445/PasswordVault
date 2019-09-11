@@ -31,7 +31,7 @@ namespace PasswordVault
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip = new AdvancedMenuStrip();
+            this.menuStrip = new PasswordVault.AdvancedMenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +59,7 @@ namespace PasswordVault
             this.filterLabel = new System.Windows.Forms.Label();
             this.editCancelButton = new System.Windows.Forms.Button();
             this.filterComboBox = new PasswordVault.AdvancedComboBox();
+            this.addResultLabel = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -72,6 +73,8 @@ namespace PasswordVault
             this.fileToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.MenuItemBackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(63)))), ((int)(((byte)(63)))));
+            this.menuStrip.MenuItemSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(106, 30);
             this.menuStrip.TabIndex = 0;
@@ -328,12 +331,22 @@ namespace PasswordVault
             this.filterComboBox.TabIndex = 0;
             this.filterComboBox.TextChanged += new System.EventHandler(this.filterChanged);
             // 
+            // addResultLabel
+            // 
+            this.addResultLabel.AutoSize = true;
+            this.addResultLabel.Location = new System.Drawing.Point(540, 99);
+            this.addResultLabel.Name = "addResultLabel";
+            this.addResultLabel.Size = new System.Drawing.Size(37, 13);
+            this.addResultLabel.TabIndex = 32;
+            this.addResultLabel.Text = "Result";
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(775, 466);
+            this.Controls.Add(this.addResultLabel);
             this.Controls.Add(this.editCancelButton);
             this.Controls.Add(this.filterComboBox);
             this.Controls.Add(this.filterTextBox);
@@ -402,6 +415,7 @@ namespace PasswordVault
         private System.Windows.Forms.Label filterLabel;
         private AdvancedComboBox filterComboBox;
         private Button editCancelButton;
+        private Label addResultLabel;
     }
 }
 
