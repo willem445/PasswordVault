@@ -33,11 +33,18 @@ namespace PasswordVault
         Unsuccessful,
     }
 
-    public enum AddModifiedPasswordResult
+    public enum AddPasswordResult
     {
         DuplicatePassword,
         Failed,
         Success,
+    }
+
+    public enum DeletePasswordResult
+    {
+        PasswordDoesNotExist,
+        Success,
+        Failed
     }
 
     public enum LogOutResult
@@ -219,6 +226,9 @@ namespace PasswordVault
                     _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
                 }
             } 
+
+            // TODO - 1 - Should return result of add password
+            // TODO - 1 - Revise how duplicate passwords are detected (ie. only check for duplicate application?)
         }
 
         /*************************************************************************************************/
@@ -236,12 +246,14 @@ namespace PasswordVault
                 _passwordList.Remove(result);
                 _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
             }
+
+            // TODO - 1 - Should return result of add password
         }
 
         /*************************************************************************************************/
-        public AddModifiedPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
+        public AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
         {
-            AddModifiedPasswordResult result = AddModifiedPasswordResult.Failed;
+            AddPasswordResult result = AddPasswordResult.Failed;
 
             if (IsLoggedIn())
             {
@@ -253,7 +265,7 @@ namespace PasswordVault
                 {
                     _passwordList[index] = modifiedEncryptedPassword;
                     _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
-                    result = AddModifiedPasswordResult.Success;
+                    result = AddPasswordResult.Success;
                 }
             }
 
@@ -293,7 +305,7 @@ namespace PasswordVault
                 {
                     createUserResult = CreateUserResult.UsernameNotValid;
                 }
-                else if (password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 1- Check if password contains special characters
+                else if (password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 2 - Check if password contains special characters
                 {
                     createUserResult = CreateUserResult.PasswordNotValid;
                 }
@@ -348,7 +360,7 @@ namespace PasswordVault
         {
             return new DatabasePassword(
                 password.UniqueID,
-                _currentUser.UserID, // TODO - 4 - Change to unique ID - Use unencrypted username for now
+                _currentUser.UserID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Description, _currentUser.Key),

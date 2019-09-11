@@ -65,6 +65,10 @@ namespace PasswordVault
         public event Action EditCancelEvent;
         public event Action<string, string, string, string> DeletePasswordEvent;
         public event Action LogoutEvent;
+        public event Action<string, string, string, string> CopyUserNameEvent;
+        public event Action<string, string, string, string> CopyPasswordEvent;
+        public event Action<string, string, string, string> ShowPasswordEvent;
+        public event Action<string, string, string, string> NavigateToWebsiteEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -108,7 +112,7 @@ namespace PasswordVault
             InitializeComponent();
 
             #region UI
-            // TODO - 10 - Create custom controls with default custom properties
+            // TODO - 9 - Create custom controls with default custom properties
 
             // Configure form UI
             BackColor = DarkBackground();
@@ -305,19 +309,19 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DisplayAddEditPasswordResult(AddModifiedPasswordResult result)
+        public void DisplayAddEditPasswordResult(AddPasswordResult result)
         {
             switch(result)
             {
-                case AddModifiedPasswordResult.DuplicatePassword:
+                case AddPasswordResult.DuplicatePassword:
                     userStatusLabel.Text = "Duplicate password.";
                     break;
 
-                case AddModifiedPasswordResult.Failed:
+                case AddPasswordResult.Failed:
                     userStatusLabel.Text = "Modify password failed.";
                     break;
 
-                case AddModifiedPasswordResult.Success:
+                case AddPasswordResult.Success:
                     applicationTextBox.Text = "";
                     usernameTextBox.Text = "";
                     descriptionTextBox.Text = "";
@@ -357,6 +361,12 @@ namespace PasswordVault
                     userStatusLabel.Text = "Logged off.";
                     break;
             }
+        }
+
+        /*************************************************************************************************/
+        public void DisplayPassword(string password)
+        {
+            MessageBox.Show(password);
         }
 
         /*=================================================================================================
@@ -554,50 +564,73 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CopyPass_Click(object sender, EventArgs e)
         {
-            //if (_passwordList.Count != 0)
-            //{
-            //    Clipboard.SetText(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
-            //}  
+            RaiseCopyPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+        }
 
-            throw new NotImplementedException();
+        /*************************************************************************************************/
+        private void RaiseCopyPasswordEvent(string application, string username, string description, string website)
+        {
+            if (CopyPasswordEvent != null)
+            {
+                CopyPasswordEvent(application, username, description, website);
+            }
         }
 
         /*************************************************************************************************/
         private void CopyUser_Click(object sender, EventArgs e)
         {
-            //if (_passwordList.Count != 0)
-            //{
-            //    Clipboard.SetText(_passwordList.GetList()[_rowIndexCopy].Username);
-            //}
+            RaiseCopyUserEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+        }
 
-            throw new NotImplementedException();
+        /*************************************************************************************************/
+        private void RaiseCopyUserEvent(string application, string username, string description, string website)
+        {
+            if (CopyUserNameEvent != null)
+            {
+                CopyUserNameEvent(application, username, description, website);
+            }
         }
 
         /*************************************************************************************************/
         private void Website_Click(object sender, EventArgs e)
         {
-            //if (_passwordList.Count != 0)
-            //{
-            //    string website = _passwordList.GetList()[_rowIndexCopy].Website;
+            RaiseNavigateToWebsiteEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+        }
 
-            //    if (UriUtilities.IsValidUri(website))
-            //    {
-            //        UriUtilities.OpenUri(website);
-            //    }
-            //}
-
-            throw new NotImplementedException();
+        /*************************************************************************************************/
+        private void RaiseNavigateToWebsiteEvent(string application, string username, string description, string website)
+        {
+            if (NavigateToWebsiteEvent != null)
+            {
+                NavigateToWebsiteEvent(application, username, description, website);
+            }
         }
 
         /*************************************************************************************************/
         private void ShowPassword_Click(object sender, EventArgs e)
         {
-            //if (_passwordList.Count != 0)
-            //{
-            //    MessageBox.Show(EncryptDecrypt.Decrypt(_passwordList.GetList()[_rowIndexCopy].Passphrase, _user.Key));
-            //}
+            RaiseShowPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+        }
 
-            throw new NotImplementedException();
+        /*************************************************************************************************/
+        private void RaiseShowPasswordEvent(string application, string username, string description, string website)
+        {
+            if (ShowPasswordEvent != null)
+            {
+                ShowPasswordEvent(application, username, description, website);
+            }
         }
 
         /*************************************************************************************************/

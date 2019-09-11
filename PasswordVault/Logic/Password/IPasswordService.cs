@@ -19,7 +19,7 @@ namespace PasswordVault
         void ChangeUserPassword(string username, string oldPassword, string newPassword);
         void AddPassword(Password unencryptedPassword);
         void RemovePassword(Password encryptedPassword);
-        AddModifiedPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
+        AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
         Password DecryptPassword(Password password);
     }

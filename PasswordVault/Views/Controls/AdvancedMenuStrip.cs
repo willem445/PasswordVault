@@ -79,7 +79,7 @@ namespace PasswordVault
         {
             _myColorTable = new MyColorTable();
 
-            this.Renderer = new ToolStripProfessionalRenderer(_myColorTable); // TODO - 1 - Put this in its own AdvancedMenuStripClass
+            this.Renderer = new ToolStripProfessionalRenderer(_myColorTable); 
         }
 
         /*=================================================================================================

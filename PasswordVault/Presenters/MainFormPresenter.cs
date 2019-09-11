@@ -68,6 +68,10 @@ namespace PasswordVault
             _mainView.EditPasswordEvent += EditPasswordInit;
             _mainView.EditOkayEvent += EditPasswordExecute;
             _mainView.LogoutEvent += Logout;
+            _mainView.CopyPasswordEvent += CopyPassword;
+            _mainView.CopyUserNameEvent += CopyUsername;
+            _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
+            _mainView.ShowPasswordEvent += ViewPassword;
         }
 
         /*=================================================================================================
@@ -171,9 +175,9 @@ namespace PasswordVault
         {
             Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, description, website, passphrase);
 
-            AddModifiedPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
+            AddPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
 
-            if (result == AddModifiedPasswordResult.Success)
+            if (result == AddPasswordResult.Success)
             {
                 _editPassword = null;
             }
@@ -192,6 +196,47 @@ namespace PasswordVault
             }
 
             _mainView.DisplayLogOutResult(result);
+        }
+
+        /*************************************************************************************************/
+        private void CopyPassword(string application, string username, string description, string website)
+        {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            string passphrase = _passwordService.DecryptPassword(result).Passphrase;
+
+            System.Windows.Forms.Clipboard.SetText(passphrase);
+        }
+
+        /*************************************************************************************************/
+        private void ViewPassword(string application, string username, string description, string website)
+        {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            string passphrase = _passwordService.DecryptPassword(result).Passphrase;
+
+            _mainView.DisplayPassword(passphrase);
+        }
+
+        /*************************************************************************************************/
+        private void NavigateToWebsite(string application, string username, string description, string website)
+        {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            string uri = result.Website;
+
+            if (UriUtilities.IsValidUri(uri))
+            {
+                UriUtilities.OpenUri(uri);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void CopyUsername(string application, string username, string description, string website)
+        {
+            Password result = QueryForFirstPassword(application, username, description, website);
+
+            System.Windows.Forms.Clipboard.SetText(result.Username);
         }
 
         /*************************************************************************************************/
