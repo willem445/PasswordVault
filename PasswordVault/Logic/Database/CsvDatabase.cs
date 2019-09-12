@@ -25,7 +25,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public sealed class CsvDatabase : IDatabase
+    public class CsvDatabase : IDatabase
     {
         /*=================================================================================================
 		CONSTANTS
@@ -45,8 +45,6 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private List<User> _encryptedUsers;
         private List<DatabasePassword> _encryptedPasswords;
-        private static CsvDatabase _instance = null;
-        private static Object _mutex = new Object();
         private ICSVUserManager _csvUserManager;
         private ICSVPasswordManager _csvPasswordManager;
 
@@ -82,7 +80,7 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        private CsvDatabase(ICSVUserManager csvUserManager, ICSVPasswordManager csvPasswordManager)
+        public CsvDatabase(ICSVUserManager csvUserManager, ICSVPasswordManager csvPasswordManager)
         {
             _csvUserManager = csvUserManager;
             _csvPasswordManager = csvPasswordManager;
@@ -101,21 +99,6 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public static CsvDatabase GetInstance(ICSVUserManager parseUsers, ICSVPasswordManager parsePasswords)
-        {
-            if (_instance == null)
-            {
-                lock (_mutex) // now I can claim some form of thread safety...
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new CsvDatabase(parseUsers, parsePasswords);
-                    }
-                }
-            }
-
-            return _instance;
-        }
 
         /*************************************************************************************************/
         public void AddUser(string username, string salt, string hash)

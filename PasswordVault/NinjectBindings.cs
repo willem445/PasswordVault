@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public abstract class DatabaseFactory
+    public class NinjectBindings : Ninject.Modules.NinjectModule
     {
         /*=================================================================================================
 		CONSTANTS
@@ -55,7 +55,20 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public abstract IDatabase Get();
+        public override void Load()
+        {
+            Bind<ICSVReader>().To<CSVReader>();
+            Bind<ICSVWriter>().To<CSVWriter>();
+            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
+            Bind<ICSVUserManager>().To<CSVUserManager>();
+            Bind<IDatabase>().To<CsvDatabase>().InSingletonScope();
+            Bind<IEncryptDecrypt>().To<EncryptDecrypt>();
+            Bind<IMasterPassword>().To<MasterPassword>();
+            Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
+            Bind<IMessageWriter>().To<WinFormsMessageWriter>();
+            Bind<ILoginView>().To<LoginView>().InSingletonScope();
+            Bind<IMainView>().To<MainView>().InSingletonScope();
+        }
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -67,5 +80,5 @@ namespace PasswordVault
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // StorageFactory CLASS
-} // PasswordHashTest NAMESPACE
+    } // NinjectBindings CLASS
+} // PasswordVault NAMESPACE

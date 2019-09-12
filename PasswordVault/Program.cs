@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Ninject;
+using System.Reflection;
 
 namespace PasswordVault
 {
@@ -17,17 +16,17 @@ namespace PasswordVault
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ILoginView loginView = new LoginView();
-            IEncryptDecrypt encryptDecrypt = new EncryptDecrypt();
-            IPasswordService passwordService = new PasswordService(new CsvDatabaseFactory().Get(), new MasterPassword(), encryptDecrypt);
+            var kernal = new StandardKernel();
+            kernal.Load(Assembly.GetExecutingAssembly());
 
-            MainView mainView = new MainView(loginView);
+            var loginView = kernal.Get<ILoginView>();
+            var mainView = kernal.Get<IMainView>();
+            var passwordService = kernal.Get<IPasswordService>();
 
-            // Create presenters
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
             MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService);
 
-            Application.Run(mainView);
+            Application.Run((System.Windows.Forms.Form)mainView);
         }
     }
 }
