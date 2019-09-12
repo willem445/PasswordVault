@@ -277,7 +277,10 @@ namespace PasswordVault
             _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
             _cm.MenuItems.Add("Copy Password", new EventHandler(CopyPass_Click));
             _cm.MenuItems.Add("Visit Website", new EventHandler(Website_Click));
+            _cm.MenuItems.Add("-");
             _cm.MenuItems.Add("View Password", new EventHandler(ShowPassword_Click));
+            _cm.MenuItems.Add("Edit Password", new EventHandler(EditButton_Click));
+            _cm.MenuItems.Add("Delete Password", new EventHandler(DeleteButton_Click));
         }
 
         /*=================================================================================================
@@ -322,12 +325,17 @@ namespace PasswordVault
                     break;
 
                 case AddPasswordResult.Success:
+                    addButton.Text = "Add";
+                    _editMode = false;
+                    editCancelButton.Enabled = false;
+                    editCancelButton.Visible = false;
                     applicationTextBox.Text = "";
                     usernameTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
                     userStatusLabel.Text = "Password modified.";
+                    this.Refresh();
                     break;
             }
         }
@@ -367,6 +375,30 @@ namespace PasswordVault
         public void DisplayPassword(string password)
         {
             MessageBox.Show(password);
+        }
+
+        /*************************************************************************************************/
+        public void DisplayAddPasswordResult(AddPasswordResult result)
+        {
+            switch(result)
+            {
+                case AddPasswordResult.Failed:
+                    userStatusLabel.Text = "Add password failed.";
+                    break;
+
+                case AddPasswordResult.DuplicatePassword:
+                    userStatusLabel.Text = "Duplicate password.";
+                    break;
+
+                case AddPasswordResult.Success:
+                    userStatusLabel.Text = "Success.";
+                    applicationTextBox.Text = "";
+                    descriptionTextBox.Text = "";
+                    websiteTextBox.Text = "";
+                    passphraseTextBox.Text = "";
+                    usernameTextBox.Text = "";
+                    break;
+            }
         }
 
         /*=================================================================================================

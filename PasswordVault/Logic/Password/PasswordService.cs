@@ -209,23 +209,35 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void AddPassword(Password password)
+        public AddPasswordResult AddPassword(Password password)
         {
+            AddPasswordResult addResult = AddPasswordResult.Failed;
+
             if (IsLoggedIn())
             {
                 List<Password> result = (from Password pass in _passwordList
                                          where pass.Application == password.Application
-                                         where pass.Username == password.Username
-                                         where pass.Description == password.Description
-                                         where pass.Website == password.Website
                                          select pass).ToList<Password>();
 
                 if (result.Count <= 0) // Verify that this isn't an exact replica of another password
                 {
-                    _passwordList.Add(ConvertPlaintextPasswordToEncryptedPassword(password));
-                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(password));
+                    Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
+                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
+
+                    // Update the passwordservice list.
+                    // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
+                    // since the database autoincrements the unique ID.
+                    UpdatePasswordListFromDB(); 
+
+                    addResult = AddPasswordResult.Success;
                 }
-            } 
+                else
+                {
+                    addResult = AddPasswordResult.DuplicatePassword;
+                }
+            }
+
+            return addResult;
 
             // TODO - 1 - Should return result of add password
             // TODO - 1 - Revise how duplicate passwords are detected (ie. only check for duplicate application?)
@@ -247,7 +259,7 @@ namespace PasswordVault
                 _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
             }
 
-            // TODO - 1 - Should return result of add password
+            // TODO - 1 - Should return result of remove password
         }
 
         /*************************************************************************************************/

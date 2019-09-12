@@ -31,7 +31,7 @@ namespace PasswordVault
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip = new AdvancedMenuStrip();
+            this.menuStrip = new PasswordVault.AdvancedMenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +72,8 @@ namespace PasswordVault
             this.fileToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.MenuItemBackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(63)))), ((int)(((byte)(63)))));
+            this.menuStrip.MenuItemSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(106, 30);
             this.menuStrip.TabIndex = 0;
