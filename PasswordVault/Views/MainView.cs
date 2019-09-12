@@ -137,10 +137,6 @@ namespace PasswordVault
             filterLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
             filterLabel.ForeColor = WhiteText();
 
-            addResultLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
-            addResultLabel.Visible = false;
-
             // Configure menu strip
             menuStrip.BackColor = DarkBackground();
             menuStrip.ForeColor = WhiteText();
@@ -358,8 +354,6 @@ namespace PasswordVault
                     passwordDataGridView.DataSource = null;
                     passwordDataGridView.Rows.Clear();
                     userStatusLabel.Text = "";
-                    addResultLabel.Visible = false;
-                    addResultLabel.Text = "";
                     applicationTextBox.Enabled = false;
                     descriptionTextBox.Enabled = false;
                     websiteTextBox.Enabled = false;
@@ -389,23 +383,14 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    //addResultLabel.Visible = true;
-                    //addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
-                    //addResultLabel.Text = "Add password failed.";
                     userStatusLabel.Text = "Add password failed.";
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    //addResultLabel.Visible = true;
-                    //addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
-                    //addResultLabel.Text = "Duplicate password.";
                     userStatusLabel.Text = "Duplicate password.";
                     break;
 
                 case AddPasswordResult.Success:
-                    //addResultLabel.Visible = true;
-                    //addResultLabel.ForeColor = Color.FromArgb(0, 255, 0);
-                    //addResultLabel.Text = "Success."; // TODO - 3 - Display success for small period of time
                     userStatusLabel.Text = "Success.";
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
