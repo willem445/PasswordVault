@@ -329,12 +329,17 @@ namespace PasswordVault
                     break;
 
                 case AddPasswordResult.Success:
+                    addButton.Text = "Add";
+                    _editMode = false;
+                    editCancelButton.Enabled = false;
+                    editCancelButton.Visible = false;
                     applicationTextBox.Text = "";
                     usernameTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
                     userStatusLabel.Text = "Password modified.";
+                    this.Refresh();
                     break;
             }
         }
@@ -384,21 +389,24 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    addResultLabel.Visible = true;
-                    addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
-                    addResultLabel.Text = "Add password failed.";
+                    //addResultLabel.Visible = true;
+                    //addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+                    //addResultLabel.Text = "Add password failed.";
+                    userStatusLabel.Text = "Add password failed.";
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    addResultLabel.Visible = true;
-                    addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
-                    addResultLabel.Text = "Duplicate password.";
+                    //addResultLabel.Visible = true;
+                    //addResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+                    //addResultLabel.Text = "Duplicate password.";
+                    userStatusLabel.Text = "Duplicate password.";
                     break;
 
                 case AddPasswordResult.Success:
-                    addResultLabel.Visible = true;
-                    addResultLabel.ForeColor = Color.FromArgb(0, 255, 0);
-                    addResultLabel.Text = "Success."; // TODO - 3 - Display success for small period of time
+                    //addResultLabel.Visible = true;
+                    //addResultLabel.ForeColor = Color.FromArgb(0, 255, 0);
+                    //addResultLabel.Text = "Success."; // TODO - 3 - Display success for small period of time
+                    userStatusLabel.Text = "Success.";
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
