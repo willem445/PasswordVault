@@ -219,7 +219,7 @@ namespace PasswordVault
                                          where pass.Application == password.Application
                                          select pass).ToList<Password>();
 
-                if (result.Count <= 0) // Verify that this isn't an exact replica of another password
+                if (result.Count <= 0) // Verify that new password is not a duplicate of an existing one
                 {
                     Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
                     _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
@@ -238,9 +238,6 @@ namespace PasswordVault
             }
 
             return addResult;
-
-            // TODO - 1 - Should return result of add password
-            // TODO - 1 - Revise how duplicate passwords are detected (ie. only check for duplicate application?)
         }
 
         /*************************************************************************************************/
