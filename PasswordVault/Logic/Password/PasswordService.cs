@@ -221,11 +221,13 @@ namespace PasswordVault
 
                 if (result.Count <= 0) // Verify that this isn't an exact replica of another password
                 {
-                    // Add password to database first
-                    Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password);
-                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword));
+                    Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
+                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
 
-                    UpdatePasswordListFromDB();
+                    // Update the passwordservice list.
+                    // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
+                    // since the database autoincrements the unique ID.
+                    UpdatePasswordListFromDB(); 
 
                     addResult = AddPasswordResult.Success;
                 }
