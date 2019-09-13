@@ -69,7 +69,8 @@ namespace PasswordVault
 
         /*PRIVATE*****************************************************************************************/
         private const int DEFAULT_PASSWORD_LENGTH = 15;
-        private const int MINIMUM_PASSWORD_LENGTH = 8;
+        private const int MINIMUM_PASSWORD_LENGTH = 12;
+        private const int MAXIMUM_PASSWORD_LENGTH = 200;
 
         /*=================================================================================================
 		FIELDS
@@ -314,7 +315,7 @@ namespace PasswordVault
                 {
                     createUserResult = CreateUserResult.UsernameNotValid;
                 }
-                else if (password == null || password == "" || password.Length < MINIMUM_PASSWORD_LENGTH) // TODO - 2 - Check if password contains special characters
+                else if (!VerifyPasswordRequirements(password)) 
                 {
                     createUserResult = CreateUserResult.PasswordNotValid;
                 }
@@ -400,8 +401,73 @@ namespace PasswordVault
                 password.Username,
                 password.Description,
                 password.Website,
-                _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.Key)
-    );
+                _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.Key));
+        }
+
+        /*************************************************************************************************/
+        private bool VerifyPasswordRequirements(string passphrase)
+        {
+            bool result = false;
+
+            bool isNotEmptyOrNull         = false;
+            bool meetsMinimumLength       = false;
+            bool lowerThanMaximum         = false;
+            bool containsNumber           = false;
+            bool containsSpecialCharacter = false;
+            bool containsLowerCase        = false;
+            bool containsUpperCase        = false;
+
+            if (passphrase != "" && passphrase != null)
+            {
+                isNotEmptyOrNull = true;
+            }
+
+            if (passphrase.Length <= MAXIMUM_PASSWORD_LENGTH)
+            {
+                lowerThanMaximum = true;
+            }
+
+            if (passphrase.Length >= MINIMUM_PASSWORD_LENGTH)
+            {
+                meetsMinimumLength = true;
+            }
+
+            if (isNotEmptyOrNull)
+            {
+                foreach (var character in passphrase)
+                {
+                    if (char.IsUpper(character))
+                    {
+                        containsUpperCase = true;
+                    }
+                    else if (char.IsLower(character))
+                    {
+                        containsLowerCase = true;
+                    }
+                    else if (char.IsDigit(character))
+                    {
+                        containsNumber = true;
+                    }
+                }
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(passphrase, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            {
+                containsSpecialCharacter = true;
+            }
+
+            if (isNotEmptyOrNull &&
+                meetsMinimumLength &&
+                lowerThanMaximum &&
+                containsNumber &&
+                containsSpecialCharacter &&
+                containsLowerCase &&
+                containsUpperCase)
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         /*=================================================================================================

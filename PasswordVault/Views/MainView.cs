@@ -578,6 +578,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
+            // TODO - 1 - Need to verify that DGV is not empty
             RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
                                      passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
                                      passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),

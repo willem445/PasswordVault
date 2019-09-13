@@ -183,7 +183,7 @@ namespace PasswordVault
 
                 case CreateUserResult.PasswordNotValid:
                     createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Password not long enough.";
+                    createNewUserResultLabel.Text = "Password does not meet requirements.";
                     break;
 
                 case CreateUserResult.UsernameNotValid:
@@ -192,10 +192,10 @@ namespace PasswordVault
                     break;
 
                 case CreateUserResult.Successful:
-                    ClearLoginView();
-                    DialogResult = DialogResult.OK;
-                    this.Close();
-                    RaiseLoginSuccessfulEvent();
+                    createNewUserResultLabel.Visible = true;
+                    createNewUserResultLabel.Text = "Success. Please log in.";
+                    createUsernameTextBox.Text = "";
+                    createPasswordTextBox.Text = "";
                     break;
 
                 default:

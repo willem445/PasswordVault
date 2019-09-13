@@ -211,7 +211,7 @@ namespace PasswordVault
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
 
-            if (passphrase != "" || passphrase != null)
+            if ((passphrase != "") && (passphrase != null))
             {
                 System.Windows.Forms.Clipboard.SetText(passphrase);
             }          
