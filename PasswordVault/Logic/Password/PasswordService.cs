@@ -35,6 +35,9 @@ namespace PasswordVault
 
     public enum AddPasswordResult
     {
+        ApplicationError,
+        UsernameError,
+        PassphraseError,
         DuplicatePassword,
         Failed,
         Success,
@@ -185,6 +188,16 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
+        void EditUser()
+        {
+            if (IsLoggedIn())
+            {
+
+            }
+
+            throw new NotImplementedException();
+        }
+
         /*************************************************************************************************/
         public string GetCurrentUserID()
         {
@@ -216,6 +229,9 @@ namespace PasswordVault
 
             if (IsLoggedIn())
             {
+                // TODO - 1 - check for requirements before adding the password here
+
+
                 List<Password> result = (from Password pass in _passwordList
                                          where pass.Application == password.Application
                                          select pass).ToList<Password>();
