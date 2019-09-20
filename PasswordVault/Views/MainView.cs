@@ -27,6 +27,14 @@ namespace PasswordVault
         Website
     }
 
+    public enum ErrorLevel
+    {
+        Error,
+        Warning,
+        Ok,
+        Neutral,
+    }
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -298,7 +306,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DisplayUserID(string userID)
         {
-            userStatusLabel.Text = string.Format("Welcome: {0}", userID);
+            UpdateStatus(string.Format("Welcome: {0}", userID), ErrorLevel.Neutral);
         }
 
         /*************************************************************************************************/
@@ -317,11 +325,23 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.DuplicatePassword:
-                    userStatusLabel.Text = "Duplicate password.";
+                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Failed:
-                    userStatusLabel.Text = "Modify password failed.";
+                    UpdateStatus("Modify password failed.", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.UsernameError:
+                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.ApplicationError:
+                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.PassphraseError:
+                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
@@ -334,7 +354,7 @@ namespace PasswordVault
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
-                    userStatusLabel.Text = "Password modified.";
+                    UpdateStatus("Password modified.", ErrorLevel.Ok);
                     this.Refresh();
                     break;
             }
@@ -346,7 +366,7 @@ namespace PasswordVault
             switch (result)
             {
                 case LogOutResult.Failed:
-
+                    UpdateStatus("Log out failed!", ErrorLevel.Error);
                     break;
 
                 case LogOutResult.Success:
@@ -366,7 +386,7 @@ namespace PasswordVault
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
                     loginToolStripMenuItem.Text = "Login";
-                    userStatusLabel.Text = "Logged off.";
+                    UpdateStatus("Logged off.", ErrorLevel.Neutral);
                     break;
             }
         }
@@ -383,15 +403,27 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    userStatusLabel.Text = "Add password failed.";
+                    UpdateStatus("Add password failed.", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    userStatusLabel.Text = "Duplicate password.";
+                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.UsernameError:
+                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.ApplicationError:
+                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.PassphraseError:
+                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
-                    userStatusLabel.Text = "Success.";
+                    UpdateStatus("Success.", ErrorLevel.Ok);
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
@@ -404,6 +436,31 @@ namespace PasswordVault
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
+        /*************************************************************************************************/
+        private void UpdateStatus(string message, ErrorLevel errorLevel)
+        {
+            userStatusLabel.Text = message;
+
+            switch (errorLevel)
+            {
+                case ErrorLevel.Error:
+                    userStatusLabel.ForeColor = Color.FromArgb(0xFF0000);
+                    break;
+
+                case ErrorLevel.Warning:
+                    userStatusLabel.ForeColor = Color.FromArgb(0xFFD633);
+                    break;
+
+                case ErrorLevel.Ok:
+                    userStatusLabel.ForeColor = Color.FromArgb(0x00CC44);
+                    break;
+
+                case ErrorLevel.Neutral:
+                    userStatusLabel.ForeColor = WhiteText();
+                    break;
+            }
+        }
+
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
