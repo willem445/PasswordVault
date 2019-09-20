@@ -35,6 +35,9 @@ namespace PasswordVault
 
     public enum AddPasswordResult
     {
+        ApplicationError,
+        UsernameError,
+        PassphraseError,
         DuplicatePassword,
         Failed,
         Success,
@@ -186,6 +189,17 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
+        public void EditUser()
+        {
+            if (IsLoggedIn())
+            {
+
+            }
+
+            throw new NotImplementedException();
+        }
+
+        /*************************************************************************************************/
         public string GetCurrentUserID()
         {
             string user = "";
@@ -216,25 +230,34 @@ namespace PasswordVault
 
             if (IsLoggedIn())
             {
-                List<Password> result = (from Password pass in _passwordList
-                                         where pass.Application == password.Application
-                                         select pass).ToList<Password>();
+                AddPasswordResult verifyResult = VerifyAddPasswordFields(password);
 
-                if (result.Count <= 0) // Verify that new password is not a duplicate of an existing one
+                if (verifyResult == AddPasswordResult.Success)
                 {
-                    Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
-                    _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
+                    List<Password> result = (from Password pass in _passwordList
+                                             where pass.Application == password.Application
+                                             select pass).ToList<Password>();
 
-                    // Update the passwordservice list.
-                    // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
-                    // since the database autoincrements the unique ID.
-                    UpdatePasswordListFromDB(); 
+                    if (result.Count <= 0) // Verify that new password is not a duplicate of an existing one
+                    {
+                        Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
+                        _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
 
-                    addResult = AddPasswordResult.Success;
+                        // Update the passwordservice list.
+                        // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
+                        // since the database autoincrements the unique ID.
+                        UpdatePasswordListFromDB();
+
+                        addResult = AddPasswordResult.Success;
+                    }
+                    else
+                    {
+                        addResult = AddPasswordResult.DuplicatePassword;
+                    }
                 }
                 else
                 {
-                    addResult = AddPasswordResult.DuplicatePassword;
+                    addResult = verifyResult;
                 }
             }
 
@@ -267,15 +290,36 @@ namespace PasswordVault
 
             if (IsLoggedIn())
             {
-                Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+                AddPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
 
-                int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
-
-                if (index != -1)
+                if (verifyResult == AddPasswordResult.Success)
                 {
-                    _passwordList[index] = modifiedEncryptedPassword;
-                    _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
-                    result = AddPasswordResult.Success;
+                    List<Password> modifiedPasswordResult = (from Password pass in _passwordList
+                                                             where pass.Application == modifiedPassword.Application
+                                                             select pass).ToList<Password>();
+
+                    if (modifiedPasswordResult.Count <= 0)
+                    {
+                        Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+
+                        int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
+
+                        if (index != -1)
+                        {
+                            _passwordList[index] = modifiedEncryptedPassword;
+                            _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                            result = AddPasswordResult.Success;
+                        }
+                    }
+                    else
+                    {
+                        result = AddPasswordResult.DuplicatePassword;
+                    }
+
+                }
+                else
+                {
+                    result = verifyResult;
                 }
             }
 
@@ -465,6 +509,29 @@ namespace PasswordVault
                 containsUpperCase)
             {
                 result = true;
+            }
+
+            return result;
+        }
+
+        /*************************************************************************************************/
+        private AddPasswordResult VerifyAddPasswordFields(Password password)
+        {
+            AddPasswordResult result = AddPasswordResult.Success;
+
+            if (password.Passphrase == null || password.Passphrase == "")
+            {
+                result = AddPasswordResult.PassphraseError;
+            }
+
+            if ((password.Username == null) || (password.Username == ""))
+            {
+                result = AddPasswordResult.UsernameError;
+            }
+
+            if (password.Application == null || password.Application == "")
+            {
+                result = AddPasswordResult.ApplicationError;
             }
 
             return result;

@@ -27,6 +27,14 @@ namespace PasswordVault
         Website
     }
 
+    public enum ErrorLevel
+    {
+        Error,
+        Warning,
+        Ok,
+        Neutral,
+    }
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -50,6 +58,12 @@ namespace PasswordVault
         private const float BUTTON_FONT_SIZE = 8.0f;
 
         private const int INVALID_INDEX = -1;
+        private const int EMPTY_DGV = 1;
+
+        private const int COLOR_ERROR_RED = 0xFF0000;
+        private const int COLOR_WARNING_YELLOW = 0xFFD633;
+        private const int COLOR_OK_GREEN = 0x00CC44;
+        private const int COLOR_FONT_DEFAULT_WHITE = 0xF2F2F2;
 
         /*=================================================================================================
 		FIELDS
@@ -298,7 +312,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DisplayUserID(string userID)
         {
-            userStatusLabel.Text = string.Format("Welcome: {0}", userID);
+            UpdateStatus(string.Format("Welcome: {0}", userID), ErrorLevel.Neutral);
         }
 
         /*************************************************************************************************/
@@ -317,11 +331,23 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.DuplicatePassword:
-                    userStatusLabel.Text = "Duplicate password.";
+                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Failed:
-                    userStatusLabel.Text = "Modify password failed.";
+                    UpdateStatus("Modify password failed.", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.UsernameError:
+                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.ApplicationError:
+                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.PassphraseError:
+                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
@@ -334,7 +360,7 @@ namespace PasswordVault
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
-                    userStatusLabel.Text = "Password modified.";
+                    UpdateStatus("Password modified.", ErrorLevel.Ok);
                     this.Refresh();
                     break;
             }
@@ -346,7 +372,7 @@ namespace PasswordVault
             switch (result)
             {
                 case LogOutResult.Failed:
-
+                    UpdateStatus("Log out failed!", ErrorLevel.Error);
                     break;
 
                 case LogOutResult.Success:
@@ -366,7 +392,7 @@ namespace PasswordVault
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
                     loginToolStripMenuItem.Text = "Login";
-                    userStatusLabel.Text = "Logged off.";
+                    UpdateStatus("Logged off.", ErrorLevel.Neutral);
                     break;
             }
         }
@@ -383,15 +409,27 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    userStatusLabel.Text = "Add password failed.";
+                    UpdateStatus("Add password failed.", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    userStatusLabel.Text = "Duplicate password.";
+                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.UsernameError:
+                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.ApplicationError:
+                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.PassphraseError:
+                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
-                    userStatusLabel.Text = "Success.";
+                    UpdateStatus("Success.", ErrorLevel.Ok);
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
@@ -404,6 +442,31 @@ namespace PasswordVault
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
+        /*************************************************************************************************/
+        private void UpdateStatus(string message, ErrorLevel errorLevel)
+        {
+            userStatusLabel.Text = message;
+
+            switch (errorLevel)
+            {
+                case ErrorLevel.Error:
+                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_ERROR_RED);
+                    break;
+
+                case ErrorLevel.Warning:
+                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_WARNING_YELLOW);
+                    break;
+
+                case ErrorLevel.Ok:
+                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_OK_GREEN);
+                    break;
+
+                case ErrorLevel.Neutral:
+                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_FONT_DEFAULT_WHITE);
+                    break;
+            }
+        }
+
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -490,15 +553,18 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void EditButton_Click(object sender, EventArgs e)
         {
-            editCancelButton.Enabled = true;
-            editCancelButton.Visible = true;
-            _editMode = true;
-            addButton.Text = "Ok";
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                editCancelButton.Enabled = true;
+                editCancelButton.Visible = true;
+                _editMode = true;
+                addButton.Text = "Ok";
 
-            RaiseEditPasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                   passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+                RaiseEditPasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+            }             
         }
 
         /*************************************************************************************************/
@@ -578,11 +644,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            // TODO - 1 - Need to verify that DGV is not empty
-            RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                     passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
+                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
+                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+            }
         }
 
         /*************************************************************************************************/
@@ -597,10 +665,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CopyPass_Click(object sender, EventArgs e)
         {
-            RaiseCopyPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                RaiseCopyPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            }             
         }
 
         /*************************************************************************************************/
@@ -615,10 +686,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CopyUser_Click(object sender, EventArgs e)
         {
-            RaiseCopyUserEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                               passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                RaiseCopyUserEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            }             
         }
 
         /*************************************************************************************************/
@@ -633,10 +707,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void Website_Click(object sender, EventArgs e)
         {
-            RaiseNavigateToWebsiteEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                RaiseNavigateToWebsiteEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            }           
         }
 
         /*************************************************************************************************/
@@ -651,10 +728,13 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void ShowPassword_Click(object sender, EventArgs e)
         {
-            RaiseShowPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                RaiseShowPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+            }            
         }
 
         /*************************************************************************************************/
@@ -791,7 +871,10 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void PasswordDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            _selectedDgvIndex = passwordDataGridView.CurrentCell.RowIndex;
+            if(passwordDataGridView.Rows.Count > EMPTY_DGV)
+            {
+                _selectedDgvIndex = passwordDataGridView.CurrentCell.RowIndex;
+            }      
         }
 
         /*=================================================================================================
