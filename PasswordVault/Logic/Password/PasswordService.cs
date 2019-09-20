@@ -294,16 +294,28 @@ namespace PasswordVault
 
                 if (verifyResult == AddPasswordResult.Success)
                 {
-                    Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+                    List<Password> modifiedPasswordResult = (from Password pass in _passwordList
+                                                             where pass.Application == modifiedPassword.Application
+                                                             select pass).ToList<Password>();
 
-                    int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
-
-                    if (index != -1)
+                    if (modifiedPasswordResult.Count <= 0)
                     {
-                        _passwordList[index] = modifiedEncryptedPassword;
-                        _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
-                        result = AddPasswordResult.Success;
+                        Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
+
+                        int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
+
+                        if (index != -1)
+                        {
+                            _passwordList[index] = modifiedEncryptedPassword;
+                            _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                            result = AddPasswordResult.Success;
+                        }
                     }
+                    else
+                    {
+                        result = AddPasswordResult.DuplicatePassword;
+                    }
+
                 }
                 else
                 {
