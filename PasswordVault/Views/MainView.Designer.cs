@@ -60,6 +60,7 @@ namespace PasswordVault
             this.filterLabel = new System.Windows.Forms.Label();
             this.editCancelButton = new System.Windows.Forms.Button();
             this.filterComboBox = new PasswordVault.AdvancedComboBox();
+            this.minimizeButton = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -292,7 +293,7 @@ namespace PasswordVault
             // 
             this.moveWindowPanel.Location = new System.Drawing.Point(177, 0);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(568, 53);
+            this.moveWindowPanel.Size = new System.Drawing.Size(548, 53);
             this.moveWindowPanel.TabIndex = 28;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
@@ -340,12 +341,26 @@ namespace PasswordVault
             this.filterComboBox.TabIndex = 0;
             this.filterComboBox.TextChanged += new System.EventHandler(this.filterChanged);
             // 
+            // minimizeButton
+            // 
+            this.minimizeButton.AutoSize = true;
+            this.minimizeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.minimizeButton.Location = new System.Drawing.Point(731, 9);
+            this.minimizeButton.Name = "minimizeButton";
+            this.minimizeButton.Size = new System.Drawing.Size(10, 13);
+            this.minimizeButton.TabIndex = 32;
+            this.minimizeButton.Text = "-";
+            this.minimizeButton.Click += new System.EventHandler(this.MinimizeButton_Click);
+            this.minimizeButton.MouseEnter += new System.EventHandler(this.MinimizeButton_MouseEnter);
+            this.minimizeButton.MouseLeave += new System.EventHandler(this.MinimizeButton_MouseLeave);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(775, 466);
+            this.Controls.Add(this.minimizeButton);
             this.Controls.Add(this.editCancelButton);
             this.Controls.Add(this.filterComboBox);
             this.Controls.Add(this.filterTextBox);
@@ -415,6 +430,7 @@ namespace PasswordVault
         private AdvancedComboBox filterComboBox;
         private Button editCancelButton;
         private ToolStripMenuItem aboutToolStripMenuItem;
+        private Label minimizeButton;
     }
 }
 

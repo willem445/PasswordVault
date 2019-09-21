@@ -213,7 +213,11 @@ namespace PasswordVault
 
             closeButton.BackColor = ControlBackground();
             closeButton.ForeColor = WhiteText();
-            closeButton.Font = UIFont(BUTTON_FONT_SIZE);
+            closeButton.Font = UIFont(12.0f);
+
+            minimizeButton.BackColor = ControlBackground();
+            minimizeButton.ForeColor = WhiteText();
+            minimizeButton.Font = UIFont(12.0f);
 
             // Configure textbox
             applicationTextBox.BackColor = ControlBackground();
@@ -877,6 +881,26 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
+        private void MinimizeButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        /*************************************************************************************************/
+        private void MinimizeButton_MouseEnter(object sender, EventArgs e)
+        {
+            minimizeButton.BackColor = ControlHighlight();
+            minimizeButton.ForeColor = Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
+        private void MinimizeButton_MouseLeave(object sender, EventArgs e)
+        {
+            minimizeButton.BackColor = Color.FromArgb(63, 63, 63);
+            minimizeButton.ForeColor = Color.FromArgb(242, 242, 242);
+        }
+
+        /*************************************************************************************************/
         private void MoveWindowPanel_MouseDown(object sender, MouseEventArgs e)
         {
             _draggingWindow = true;
@@ -941,15 +965,8 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void AboutToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            //AboutView about = new AboutView();
-            //about.ShowDialog();
-
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2000, 1, 1)
-                                    .AddDays(version.Build).AddSeconds(version.Revision * 2);
-            string display = $"{version} ({buildDate})";
-
-            MessageBox.Show("This application is still under development.\nUse at your own risk!\n\nThis application utilizes icons from Icons8. (https://icons8.com.)", "Version: " + display, MessageBoxButtons.OK);
+            AboutView about = new AboutView();
+            about.ShowDialog();
         }
 
         /*=================================================================================================

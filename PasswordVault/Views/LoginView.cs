@@ -62,7 +62,7 @@ namespace PasswordVault
             // Configure buttons
             closeButton.BackColor = Color.FromArgb(63, 63, 63);
             closeButton.ForeColor = Color.FromArgb(242, 242, 242);
-            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Regular);
+            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Bold);
 
             loginButton.BackColor = Color.FromArgb(63, 63, 63);
             loginButton.ForeColor = Color.FromArgb(242, 242, 242);
