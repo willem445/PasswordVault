@@ -25,7 +25,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class MainFormPresenter
+    class MainPresenter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -55,7 +55,7 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainFormPresenter(IMainView mainView, IPasswordService passwordService)
+        public MainPresenter(IMainView mainView, IPasswordService passwordService)
         {
             _mainView = mainView;
             _passwordService = passwordService;
@@ -159,8 +159,9 @@ namespace PasswordVault
 
             if (result != null)
             {
-                _passwordService.RemovePassword(result);
+                DeletePasswordResult deleteResult = _passwordService.DeletePassword(result);
                 UpdatePasswordsUI();
+                _mainView.DisplayDeletePasswordResult(deleteResult);
             }        
         }
 
