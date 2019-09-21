@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 /*=================================================================================================
@@ -289,42 +290,42 @@ namespace PasswordVault
             copyUsernameToolStripItem.Font = UIFont(8.0f);
             copyUsernameToolStripItem.BackColor = ControlBackground();
             copyUsernameToolStripItem.ForeColor = WhiteText();
-            copyUsernameToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-copy-48.png");
+            copyUsernameToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyUsernameToolStripItem);
 
             var copyPasswordToolStripItem = new ToolStripMenuItem("Copy Password");
             copyPasswordToolStripItem.Font = UIFont(8.0f);
             copyPasswordToolStripItem.BackColor = ControlBackground();
             copyPasswordToolStripItem.ForeColor = WhiteText();
-            copyPasswordToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-copy-48.png");
+            copyPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyPasswordToolStripItem);
 
             var websiteToolStripItem = new ToolStripMenuItem("Visit Website");
             websiteToolStripItem.Font = UIFont(8.0f);
             websiteToolStripItem.BackColor = ControlBackground();
             websiteToolStripItem.ForeColor = WhiteText();
-            websiteToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-link-100.png");
+            websiteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-link-100.png"));
             passwordContextMenuStrip.Items.Add(websiteToolStripItem);
 
             var showPasswordToolStripItem = new ToolStripMenuItem("Show Password");
             showPasswordToolStripItem.Font = UIFont(8.0f);
             showPasswordToolStripItem.BackColor = ControlBackground();
             showPasswordToolStripItem.ForeColor = WhiteText();
-            showPasswordToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-show-property-60.png");
+            showPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-show-property-60.png"));
             passwordContextMenuStrip.Items.Add(showPasswordToolStripItem);
 
             var editToolStripItem = new ToolStripMenuItem("Edit");
             editToolStripItem.Font = UIFont(8.0f);
             editToolStripItem.BackColor = ControlBackground();
             editToolStripItem.ForeColor = WhiteText();
-            editToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-edit-48.png");
+            editToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-edit-48.png"));
             passwordContextMenuStrip.Items.Add(editToolStripItem);
 
             var deleteToolStripItem = new ToolStripMenuItem("Delete");
             deleteToolStripItem.Font = UIFont(8.0f);
             deleteToolStripItem.BackColor = ControlBackground();
             deleteToolStripItem.ForeColor = WhiteText();
-            deleteToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-delete-60.png");
+            deleteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-delete-60.png"));
             passwordContextMenuStrip.Items.Add(deleteToolStripItem);
 
             passwordContextMenuStrip.Items[0].Click += CopyUser_Click;
