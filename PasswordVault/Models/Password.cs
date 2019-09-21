@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 /*=================================================================================================
 DESCRIPTION
@@ -127,14 +128,14 @@ namespace PasswordVault
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public static explicit operator Password(DataRow dr)
+        public static explicit operator Password(DataGridViewRow dr)
         {
             Password p = new Password();
-            p.Application = dr.ItemArray[0].ToString();
-            p.Username = dr.ItemArray[1].ToString();
-            p.Description = dr.ItemArray[2].ToString();
-            p.Website = dr.ItemArray[3].ToString();
-
+            p.Application = dr.Cells[0].Value.ToString();
+            p.Username = dr.Cells[1].Value.ToString();
+            p.Email = dr.Cells[2].Value.ToString();
+            p.Description = dr.Cells[3].Value.ToString();
+            p.Website = dr.Cells[4].Value.ToString();
             return p;
         }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 /*=================================================================================================
 DESCRIPTION
@@ -153,9 +154,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void DeletePassword(string application, string username, string email, string description, string website)
+        private void DeletePassword(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             if (result != null)
             {
@@ -166,9 +168,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void EditPasswordInit(string application, string username, string email, string description, string website)
+        private void EditPasswordInit(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             if (result != null)
             {
@@ -206,9 +209,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void CopyPassword(string application, string username, string email, string description, string website)
+        private void CopyPassword(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
 
@@ -219,9 +223,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void ViewPassword(string application, string username, string email, string description, string website)
+        private void ViewPassword(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
 
@@ -229,9 +234,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void NavigateToWebsite(string application, string username, string email, string description, string website)
+        private void NavigateToWebsite(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             string uri = result.Website;
 
@@ -242,9 +248,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void CopyUsername(string application, string username, string email, string description, string website)
+        private void CopyUsername(DataGridViewRow dgvrow)
         {
-            Password result = QueryForFirstPassword(application, username, email, description, website);
+            Password password = (Password)dgvrow;
+            Password result = QueryForFirstPassword(password);
 
             System.Windows.Forms.Clipboard.SetText(result.Username);
         }
@@ -261,6 +268,22 @@ namespace PasswordVault
                                where password.Description.Contains(description)
                                where password.Website.Contains(website)
                                select password).FirstOrDefault();
+
+            return result;
+        }
+
+        /*************************************************************************************************/
+        private Password QueryForFirstPassword(Password password)
+        {
+            List<Password> passwords = _passwordService.GetPasswords();
+
+            Password result = (from Password queryPassword in passwords
+                               where queryPassword.Application.Contains(password.Application)
+                               where queryPassword.Username.Contains(password.Username)
+                               where queryPassword.Email.Contains(password.Email)
+                               where queryPassword.Description.Contains(password.Description)
+                               where queryPassword.Website.Contains(password.Website)
+                               select queryPassword).FirstOrDefault();
 
             return result;
         }

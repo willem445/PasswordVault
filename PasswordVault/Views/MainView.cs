@@ -73,18 +73,18 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
         public event Action<string, PasswordFilterOptions> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
+        public event Action LogoutEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
-        public event Action<string, string, string, string, string> EditPasswordEvent;
+        public event Action<DataGridViewRow> EditPasswordEvent;
         public event Action<string, string, string, string, string, string> EditOkayEvent;
         public event Action EditCancelEvent;
-        public event Action<string, string, string, string, string> DeletePasswordEvent;
-        public event Action LogoutEvent;
-        public event Action<string, string, string, string, string> CopyUserNameEvent;
-        public event Action<string, string, string, string, string> CopyPasswordEvent;
-        public event Action<string, string, string, string, string> ShowPasswordEvent;
-        public event Action<string, string, string, string, string> NavigateToWebsiteEvent;
+        public event Action<DataGridViewRow> DeletePasswordEvent;   
+        public event Action<DataGridViewRow> CopyUserNameEvent;
+        public event Action<DataGridViewRow> CopyPasswordEvent;
+        public event Action<DataGridViewRow> ShowPasswordEvent;
+        public event Action<DataGridViewRow> NavigateToWebsiteEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -651,11 +651,8 @@ namespace PasswordVault
                 _editMode = true;
                 addButton.Text = "Ok";
 
-                RaiseEditPasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Email].Value.ToString(),
-                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseEditPasswordEvent(row);
             }             
         }
 
@@ -678,11 +675,11 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void RaiseEditPasswordEvent(string application, string username, string email, string description, string website)
+        private void RaiseEditPasswordEvent(DataGridViewRow dgvrow)
         {
             if (EditPasswordEvent != null)
             {
-                EditPasswordEvent(application, username, email, description, website);
+                EditPasswordEvent(dgvrow);
             }
         }
 
@@ -739,20 +736,17 @@ namespace PasswordVault
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
-                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
-                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Email].Value.ToString(),
-                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
-                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseDeletePasswordEvent(row);
             }
         }
 
         /*************************************************************************************************/
-        private void RaiseDeletePasswordEvent(string application, string username, string email, string description, string website)
+        private void RaiseDeletePasswordEvent(DataGridViewRow dgvrow)
         {
             if (DeletePasswordEvent != null)
             {
-                DeletePasswordEvent(application, username, email, description, website);
+                DeletePasswordEvent(dgvrow);
             }
         }
 
@@ -761,20 +755,17 @@ namespace PasswordVault
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                RaiseCopyPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseCopyPasswordEvent(row);
             }             
         }
 
         /*************************************************************************************************/
-        private void RaiseCopyPasswordEvent(string application, string username, string email, string description, string website)
+        private void RaiseCopyPasswordEvent(DataGridViewRow dgvrow)
         {
             if (CopyPasswordEvent != null)
             {
-                CopyPasswordEvent(application, username, email, description, website);
+                CopyPasswordEvent(dgvrow);
             }
         }
 
@@ -783,20 +774,17 @@ namespace PasswordVault
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                RaiseCopyUserEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseCopyUserEvent(row);
             }             
         }
 
         /*************************************************************************************************/
-        private void RaiseCopyUserEvent(string application, string username, string email, string description, string website)
+        private void RaiseCopyUserEvent(DataGridViewRow dgvrow)
         {
             if (CopyUserNameEvent != null)
             {
-                CopyUserNameEvent(application, username, email, description, website);
+                CopyUserNameEvent(dgvrow);
             }
         }
 
@@ -805,20 +793,17 @@ namespace PasswordVault
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                RaiseNavigateToWebsiteEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
-                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseNavigateToWebsiteEvent(row);
             }           
         }
 
         /*************************************************************************************************/
-        private void RaiseNavigateToWebsiteEvent(string application, string username, string email, string description, string website)
+        private void RaiseNavigateToWebsiteEvent(DataGridViewRow dgvrow)
         {
             if (NavigateToWebsiteEvent != null)
             {
-                NavigateToWebsiteEvent(application, username, email, description, website);
+                NavigateToWebsiteEvent(dgvrow);
             }
         }
 
@@ -827,20 +812,17 @@ namespace PasswordVault
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                RaiseShowPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
-                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
+                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                RaiseShowPasswordEvent(row);
             }            
         }
 
         /*************************************************************************************************/
-        private void RaiseShowPasswordEvent(string application, string username, string email, string description, string website)
+        private void RaiseShowPasswordEvent(DataGridViewRow dgvrow)
         {
             if (ShowPasswordEvent != null)
             {
-                ShowPasswordEvent(application, username, email, description, website);
+                ShowPasswordEvent(dgvrow);
             }
         }
 
