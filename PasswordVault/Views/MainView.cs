@@ -24,6 +24,7 @@ namespace PasswordVault
     {
         Application,
         Username, 
+        Email,
         Description, 
         Website
     }
@@ -72,18 +73,18 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
         public event Action<string, PasswordFilterOptions> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
-        public event Action<string, string, string, string, string> AddPasswordEvent;
+        public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
-        public event Action<string, string, string, string> EditPasswordEvent;
-        public event Action<string, string, string, string, string> EditOkayEvent;
+        public event Action<string, string, string, string, string> EditPasswordEvent;
+        public event Action<string, string, string, string, string, string> EditOkayEvent;
         public event Action EditCancelEvent;
-        public event Action<string, string, string, string> DeletePasswordEvent;
+        public event Action<string, string, string, string, string> DeletePasswordEvent;
         public event Action LogoutEvent;
-        public event Action<string, string, string, string> CopyUserNameEvent;
-        public event Action<string, string, string, string> CopyPasswordEvent;
-        public event Action<string, string, string, string> ShowPasswordEvent;
-        public event Action<string, string, string, string> NavigateToWebsiteEvent;
+        public event Action<string, string, string, string, string> CopyUserNameEvent;
+        public event Action<string, string, string, string, string> CopyPasswordEvent;
+        public event Action<string, string, string, string, string> ShowPasswordEvent;
+        public event Action<string, string, string, string, string> NavigateToWebsiteEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -148,6 +149,9 @@ namespace PasswordVault
 
             label5.Font = UIFont(STANDARD_UI_FONT_SIZE);
             label5.ForeColor = WhiteText();
+
+            label6.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            label6.ForeColor = WhiteText();
 
             filterLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
             filterLabel.ForeColor = WhiteText();
@@ -229,6 +233,11 @@ namespace PasswordVault
             usernameTextBox.ForeColor = WhiteText();
             usernameTextBox.BorderStyle = BorderStyle.FixedSingle;
             usernameTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+
+            emailTextBox.BackColor = ControlBackground();
+            emailTextBox.ForeColor = WhiteText();
+            emailTextBox.BorderStyle = BorderStyle.FixedSingle;
+            emailTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
 
             descriptionTextBox.BackColor = ControlBackground();
             descriptionTextBox.ForeColor = WhiteText();
@@ -366,6 +375,7 @@ namespace PasswordVault
         {
             applicationTextBox.Text = password.Application;
             usernameTextBox.Text = password.Username;
+            emailTextBox.Text = password.Email;
             descriptionTextBox.Text = password.Description;
             websiteTextBox.Text = password.Website;
             passphraseTextBox.Text = password.Passphrase;
@@ -403,9 +413,11 @@ namespace PasswordVault
                     editCancelButton.Visible = false;
                     applicationTextBox.Text = "";
                     usernameTextBox.Text = "";
+                    emailTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
+                    applicationTextBox.Focus();
                     UpdateStatus("Password modified.", ErrorLevel.Ok);
                     this.Refresh();
                     break;
@@ -431,6 +443,7 @@ namespace PasswordVault
                     websiteTextBox.Enabled = false;
                     passphraseTextBox.Enabled = false;
                     usernameTextBox.Enabled = false;
+                    emailTextBox.Enabled = false;
                     addButton.Enabled = false;
                     //moveUpButton.Enabled = false;
                     //moveDownButton.Enabled = false;
@@ -481,6 +494,8 @@ namespace PasswordVault
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
                     usernameTextBox.Text = "";
+                    emailTextBox.Text = "";
+                    applicationTextBox.Focus();
                     break;
             }
         }
@@ -555,6 +570,7 @@ namespace PasswordVault
             websiteTextBox.Enabled = true;
             passphraseTextBox.Enabled = true;
             usernameTextBox.Enabled = true;
+            emailTextBox.Enabled = true;
             addButton.Enabled = true;
             //moveUpButton.Enabled = true;
             //moveDownButton.Enabled = true;
@@ -591,7 +607,8 @@ namespace PasswordVault
             if (!_editMode)
             {
                 RaiseAddPasswordEvent(applicationTextBox.Text, 
-                                      usernameTextBox.Text, 
+                                      usernameTextBox.Text,
+                                      emailTextBox.Text, 
                                       descriptionTextBox.Text, 
                                       websiteTextBox.Text, 
                                       passphraseTextBox.Text);
@@ -600,6 +617,7 @@ namespace PasswordVault
             {
                 RaiseEditOkayEvent(applicationTextBox.Text,
                                    usernameTextBox.Text,
+                                   emailTextBox.Text,
                                    descriptionTextBox.Text,
                                    websiteTextBox.Text,
                                    passphraseTextBox.Text);
@@ -607,11 +625,11 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void RaiseAddPasswordEvent(string application, string username, string description, string website, string passphrase)
+        private void RaiseAddPasswordEvent(string application, string username, string email, string description, string website, string passphrase)
         {
             if (AddPasswordEvent != null)
             {
-                AddPasswordEvent(application, username, description, website, passphrase);
+                AddPasswordEvent(application, username, email, description, website, passphrase);
             }
         }
 
@@ -627,6 +645,7 @@ namespace PasswordVault
 
                 RaiseEditPasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
                                        passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.SelectedCells[(int)DgvColumns.Email].Value.ToString(),
                                        passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
                                        passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
             }             
@@ -650,20 +669,20 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private void RaiseEditPasswordEvent(string application, string username, string description, string website)
+        private void RaiseEditPasswordEvent(string application, string username, string email, string description, string website)
         {
             if (EditPasswordEvent != null)
             {
-                EditPasswordEvent(application, username, description, website);
+                EditPasswordEvent(application, username, email, description, website);
             }
         }
 
         /*************************************************************************************************/
-        private void RaiseEditOkayEvent(string application, string username, string description, string website, string passphrase)
+        private void RaiseEditOkayEvent(string application, string username, string email, string description, string website, string passphrase)
         {
             if (EditOkayEvent != null)
             {
-                EditOkayEvent(application, username, description, website, passphrase);
+                EditOkayEvent(application, username, email, description, website, passphrase);
             }
         }
 
@@ -713,17 +732,18 @@ namespace PasswordVault
             {
                 RaiseDeletePasswordEvent(passwordDataGridView.SelectedCells[(int)DgvColumns.Application].Value.ToString(),
                                          passwordDataGridView.SelectedCells[(int)DgvColumns.Username].Value.ToString(),
+                                         passwordDataGridView.SelectedCells[(int)DgvColumns.Email].Value.ToString(),
                                          passwordDataGridView.SelectedCells[(int)DgvColumns.Description].Value.ToString(),
                                          passwordDataGridView.SelectedCells[(int)DgvColumns.Website].Value.ToString());
             }
         }
 
         /*************************************************************************************************/
-        private void RaiseDeletePasswordEvent(string application, string username, string description, string website)
+        private void RaiseDeletePasswordEvent(string application, string username, string email, string description, string website)
         {
             if (DeletePasswordEvent != null)
             {
-                DeletePasswordEvent(application, username, description, website);
+                DeletePasswordEvent(application, username, email, description, website);
             }
         }
 
@@ -734,17 +754,18 @@ namespace PasswordVault
             {
                 RaiseCopyPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
             }             
         }
 
         /*************************************************************************************************/
-        private void RaiseCopyPasswordEvent(string application, string username, string description, string website)
+        private void RaiseCopyPasswordEvent(string application, string username, string email, string description, string website)
         {
             if (CopyPasswordEvent != null)
             {
-                CopyPasswordEvent(application, username, description, website);
+                CopyPasswordEvent(application, username, email, description, website);
             }
         }
 
@@ -755,17 +776,18 @@ namespace PasswordVault
             {
                 RaiseCopyUserEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
                                    passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                   passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
                                    passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
                                    passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
             }             
         }
 
         /*************************************************************************************************/
-        private void RaiseCopyUserEvent(string application, string username, string description, string website)
+        private void RaiseCopyUserEvent(string application, string username, string email, string description, string website)
         {
             if (CopyUserNameEvent != null)
             {
-                CopyUserNameEvent(application, username, description, website);
+                CopyUserNameEvent(application, username, email, description, website);
             }
         }
 
@@ -776,17 +798,18 @@ namespace PasswordVault
             {
                 RaiseNavigateToWebsiteEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
                                             passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                            passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
                                             passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
                                             passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
             }           
         }
 
         /*************************************************************************************************/
-        private void RaiseNavigateToWebsiteEvent(string application, string username, string description, string website)
+        private void RaiseNavigateToWebsiteEvent(string application, string username, string email, string description, string website)
         {
             if (NavigateToWebsiteEvent != null)
             {
-                NavigateToWebsiteEvent(application, username, description, website);
+                NavigateToWebsiteEvent(application, username, email, description, website);
             }
         }
 
@@ -797,17 +820,18 @@ namespace PasswordVault
             {
                 RaiseShowPasswordEvent(passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Application].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Username].Value.ToString(),
+                                       passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Email].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Description].Value.ToString(),
                                        passwordDataGridView.Rows[_rowIndexCopy].Cells[(int)DgvColumns.Website].Value.ToString());
             }            
         }
 
         /*************************************************************************************************/
-        private void RaiseShowPasswordEvent(string application, string username, string description, string website)
+        private void RaiseShowPasswordEvent(string application, string username, string email, string description, string website)
         {
             if (ShowPasswordEvent != null)
             {
-                ShowPasswordEvent(application, username, description, website);
+                ShowPasswordEvent(application, username, email, description, website);
             }
         }
 
@@ -967,6 +991,31 @@ namespace PasswordVault
         {
             AboutView about = new AboutView();
             about.ShowDialog();
+        }
+
+        private void PassphraseTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!_editMode)
+                {
+                    RaiseAddPasswordEvent(applicationTextBox.Text,
+                                          usernameTextBox.Text,
+                                          emailTextBox.Text,
+                                          descriptionTextBox.Text,
+                                          websiteTextBox.Text,
+                                          passphraseTextBox.Text);
+                }
+                else
+                {
+                    RaiseEditOkayEvent(applicationTextBox.Text,
+                                       usernameTextBox.Text,
+                                       emailTextBox.Text,
+                                       descriptionTextBox.Text,
+                                       websiteTextBox.Text,
+                                       passphraseTextBox.Text);
+                }
+            }
         }
 
         /*=================================================================================================

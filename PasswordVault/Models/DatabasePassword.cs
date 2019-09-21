@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,8 +9,7 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* TODO - 2 - Add email field
- * TODO - 5 - Add category field 
+/* 
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -19,13 +17,7 @@ namespace PasswordVault
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
-    public enum PasswordFilterOptions
-    {
-        Application = 0,
-        Description = 1,
-        Website = 2,
-    }
-    
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -33,7 +25,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class Password
+    public class DatabasePassword : Password
     {
         /*=================================================================================================
 		CONSTANTS
@@ -54,50 +46,37 @@ namespace PasswordVault
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public Int64 UniqueID { get; protected set; }
-
-        [Browsable(true)]
-        public string Application { get; protected set; }
-
-        [Browsable(true)]
-        public string Username { get; protected set; }
-
-        [Browsable(true)]
-        public string Description { get; protected set; }
-
-        [Browsable(true)]
-        public string Website { get; protected set; }
-
-        [Browsable(false)]
-        public string Passphrase { get; protected set; }
+        public string UserID { get; }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public Password()
+        public DatabasePassword()
         {
 
         }
 
-        /*************************************************************************************************/
-        public Password(string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(Int64 uniqueID, string userID, string application, string username, string email, string description, string website, string passphrase)
         {
+            UniqueID = uniqueID;
+            UserID = userID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
+            Email = email;
             Description = description;
             Website = website;
         }
 
-        /*************************************************************************************************/
-        public Password(Int64 uniqueID, string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(string userID, string application, string username, string email, string description, string website, string passphrase)
         {
-            UniqueID = uniqueID;
+            UserID = userID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
+            Email = email;
             Description = description;
             Website = website;
         }
@@ -106,12 +85,10 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public virtual string GetPasswordString()
+        public override string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
+            return string.Format("{0},{1},{2},{3},{4},{5},{6}", UniqueID, UserID, Application, Username, Description, Website, Passphrase);
         }
-
-        /*************************************************************************************************/
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -122,16 +99,6 @@ namespace PasswordVault
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public static explicit operator Password(DataRow dr)
-        {
-            Password p = new Password();
-            p.Application = dr.ItemArray[0].ToString();
-            p.Username = dr.ItemArray[1].ToString();
-            p.Description = dr.ItemArray[2].ToString();
-            p.Website = dr.ItemArray[3].ToString();
 
-            return p;
-        }
-
-    } // Password CLASS
-} // PasswordHashTest NAMESPACE
+    } // DatabasePassword CLASS
+} // PasswordVault NAMESPACE

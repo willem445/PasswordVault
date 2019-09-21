@@ -11,18 +11,18 @@ namespace PasswordVault
     {
         event Action<string, PasswordFilterOptions> FilterChangedEvent;
         event Action RequestPasswordsOnLoginEvent;
-        event Action<string, string, string, string, string> AddPasswordEvent;
+        event Action<string, string, string, string, string, string> AddPasswordEvent;
         event Action<int> MovePasswordUpEvent;
         event Action<int> MovePasswordDownEvent;
-        event Action<string, string, string, string> EditPasswordEvent;
-        event Action<string, string, string, string, string> EditOkayEvent;
+        event Action<string, string, string, string, string> EditPasswordEvent;
+        event Action<string, string, string, string, string, string> EditOkayEvent;
         event Action EditCancelEvent;
-        event Action<string, string, string, string> DeletePasswordEvent;
+        event Action<string, string, string, string, string> DeletePasswordEvent;
         event Action LogoutEvent;
-        event Action<string, string, string, string> CopyUserNameEvent;
-        event Action<string, string, string, string> CopyPasswordEvent;
-        event Action<string, string, string, string> ShowPasswordEvent;
-        event Action<string, string, string, string> NavigateToWebsiteEvent;
+        event Action<string, string, string, string, string> CopyUserNameEvent;
+        event Action<string, string, string, string, string> CopyPasswordEvent;
+        event Action<string, string, string, string, string> ShowPasswordEvent;
+        event Action<string, string, string, string, string> NavigateToWebsiteEvent;
 
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);

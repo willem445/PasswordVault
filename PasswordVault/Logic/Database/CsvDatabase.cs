@@ -157,13 +157,19 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void AddPassword(DatabasePassword password)
         {
-            Int64 uniqueID = _encryptedPasswords[_encryptedPasswords.Count - 1].UniqueID + 1;
+            Int64 uniqueID = 0;
+
+            if (_encryptedPasswords.Count != 0)
+            {
+                uniqueID = _encryptedPasswords[_encryptedPasswords.Count - 1].UniqueID + 1;
+            }      
 
             DatabasePassword newPassword = new DatabasePassword(
                 uniqueID, 
                 password.UserID, 
                 password.Application, 
-                password.Username, 
+                password.Username,
+                password.Email,
                 password.Description,
                 password.Website, 
                 password.Passphrase);
