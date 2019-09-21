@@ -26,21 +26,25 @@ namespace PasswordVault
 	*================================================================================================*/
     class CSVPasswordManager : ICSVPasswordManager
     {
+        private enum CsvPasswordIndexes
+        {
+            UniqueId,
+            UserId,
+            Application,
+            Username,
+            Email,
+            Description,
+            Website,
+            Password,
+            NumIndexes
+        }
+
         /*=================================================================================================
 		CONSTANTS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private const int _UNIQUE_ID = 0;
-        private const int _USER_ID_IDX = 1;
-        private const int _APP_IDX = 2;
-        private const int _USER_IDX = 3;
-        private const int _EMAIL_IDX = 4;
-        private const int _DESC_IDX = 5;
-        private const int _WEB_IDX = 6;
-        private const int _PASS_IDX = 7;
-        private const int _NUM_FIELDS = 8;
 
         /*=================================================================================================
 		FIELDS
@@ -119,9 +123,16 @@ namespace PasswordVault
 
             string[] fields = line.Split(',');
 
-            if (fields.Count() == _NUM_FIELDS)
+            if (fields.Count() == (int)CsvPasswordIndexes.NumIndexes)
             {
-                pass = new DatabasePassword(Convert.ToInt64(fields[_UNIQUE_ID]), fields[_USER_ID_IDX], fields[_APP_IDX], fields[_USER_IDX], fields[_EMAIL_IDX], fields[_DESC_IDX], fields[_WEB_IDX], fields[_PASS_IDX]);
+                pass = new DatabasePassword(Convert.ToInt64(fields[(int)CsvPasswordIndexes.UniqueId]), 
+                                                            fields[(int)CsvPasswordIndexes.UserId], 
+                                                            fields[(int)CsvPasswordIndexes.Application],
+                                                            fields[(int)CsvPasswordIndexes.Username], 
+                                                            fields[(int)CsvPasswordIndexes.Email], 
+                                                            fields[(int)CsvPasswordIndexes.Description],
+                                                            fields[(int)CsvPasswordIndexes.Website], 
+                                                            fields[(int)CsvPasswordIndexes.Password]);
             }
 
             return pass;
@@ -136,7 +147,7 @@ namespace PasswordVault
             {
                 result = false;
             }
-            else if (line.Split(',').Count() == _NUM_FIELDS)
+            else if (line.Split(',').Count() == (int)CsvPasswordIndexes.NumIndexes)
             {
                 result = true;
             }
