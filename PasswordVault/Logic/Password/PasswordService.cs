@@ -298,7 +298,8 @@ namespace PasswordVault
                                                              where pass.Application == modifiedPassword.Application
                                                              select pass).ToList<Password>();
 
-                    if (modifiedPasswordResult.Count <= 0)
+                    if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
+                        (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
                     {
                         Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
 
