@@ -406,6 +406,10 @@ namespace PasswordVault
                     UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
                     break;
 
+                case AddPasswordResult.EmailError:
+                    UpdateStatus("Invalid email!", ErrorLevel.Error);
+                    break;
+
                 case AddPasswordResult.Success:
                     addButton.Text = "Add";
                     _editMode = false;
@@ -485,6 +489,10 @@ namespace PasswordVault
 
                 case AddPasswordResult.PassphraseError:
                     UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.EmailError:
+                    UpdateStatus("Invalid email!", ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
@@ -661,6 +669,7 @@ namespace PasswordVault
 
             applicationTextBox.Text = "";
             usernameTextBox.Text = "";
+            emailTextBox.Text = "";
             descriptionTextBox.Text = "";
             websiteTextBox.Text = "";
             passphraseTextBox.Text = "";

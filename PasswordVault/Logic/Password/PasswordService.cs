@@ -37,6 +37,7 @@ namespace PasswordVault
     {
         ApplicationError,
         UsernameError,
+        EmailError,
         PassphraseError,
         DuplicatePassword,
         Failed,
@@ -546,6 +547,14 @@ namespace PasswordVault
             if (password.Application == null || password.Application == "")
             {
                 result = AddPasswordResult.ApplicationError;
+            }
+
+            if (password.Email != "")
+            {
+                if (!password.Email.Contains("@") && !password.Email.Contains("."))
+                {
+                    result = AddPasswordResult.EmailError;
+                }
             }
 
             return result;

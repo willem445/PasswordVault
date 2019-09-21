@@ -113,7 +113,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public virtual string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4}", Application, Username, Description, Website, Passphrase);
+            return string.Format("{0},{1},{2},{3},{4},{5}", Application, Username, Email, Description, Website, Passphrase);
         }
 
         /*************************************************************************************************/
