@@ -31,5 +31,6 @@ namespace PasswordVault
         void DisplayLogOutResult(LogOutResult result);
         void DisplayPassword(string password);
         void DisplayAddPasswordResult(AddPasswordResult result);
+        void DisplayDeletePasswordResult(DeletePasswordResult result);
     }
 }

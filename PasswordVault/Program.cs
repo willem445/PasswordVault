@@ -24,7 +24,7 @@ namespace PasswordVault
             var passwordService = kernal.Get<IPasswordService>();
 
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
-            MainFormPresenter mainViewPresenter = new MainFormPresenter(mainView, passwordService);
+            MainPresenter mainViewPresenter = new MainPresenter(mainView, passwordService);
 
             Application.Run((System.Windows.Forms.Form)mainView);
         }

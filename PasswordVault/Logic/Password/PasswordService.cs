@@ -234,11 +234,11 @@ namespace PasswordVault
 
                 if (verifyResult == AddPasswordResult.Success)
                 {
-                    List<Password> result = (from Password pass in _passwordList
+                    List<Password> queryResult = (from Password pass in _passwordList
                                              where pass.Application == password.Application
                                              select pass).ToList<Password>();
 
-                    if (result.Count <= 0) // Verify that new password is not a duplicate of an existing one
+                    if (queryResult.Count <= 0) // Verify that new password is not a duplicate of an existing one
                     {
                         Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
                         _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
@@ -265,22 +265,32 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void RemovePassword(Password password)
+        public DeletePasswordResult DeletePassword(Password password)
         {
+            DeletePasswordResult result = DeletePasswordResult.Failed;
+
             if (IsLoggedIn())
             {
-                Password result = (from Password pass in _passwordList
+                Password queryResult = (from Password pass in _passwordList
                                    where pass.Application == password.Application
                                    where pass.Username == password.Username
                                    where pass.Description == password.Description
                                    where pass.Website == password.Website
-                                   select pass).First();
+                                   select pass).FirstOrDefault();
 
-                _passwordList.Remove(result);
-                _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(result));
+                if (queryResult != null)
+                {
+                    _passwordList.Remove(queryResult);
+                    _dbcontext.DeletePassword(ConvertToEncryptedDatabasePassword(queryResult));
+                    result = DeletePasswordResult.Success;
+                }
+                else
+                {
+                    result = DeletePasswordResult.PasswordDoesNotExist;
+                }     
             }
 
-            // TODO - 1 - Should return result of remove password
+            return result;
         }
 
         /*************************************************************************************************/

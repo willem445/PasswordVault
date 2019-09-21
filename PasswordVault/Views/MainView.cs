@@ -336,7 +336,7 @@ namespace PasswordVault
             passwordContextMenuStrip.Items[5].Click += DeleteButton_Click;
             #endregion
 
-            userStatusLabel.Text = "Not logged in.";       
+            userStatusLabel.Text = "Not logged in.";
         }
 
         /*=================================================================================================
@@ -480,6 +480,25 @@ namespace PasswordVault
                     break;
             }
         }
+
+        public void DisplayDeletePasswordResult(DeletePasswordResult result)
+        {
+            switch (result)
+            {
+                case DeletePasswordResult.Failed:
+                    UpdateStatus("Delete password failed.", ErrorLevel.Error);
+                    break;
+
+                case DeletePasswordResult.PasswordDoesNotExist:
+                    UpdateStatus("Password does not exist.", ErrorLevel.Error);
+                    break;
+
+                case DeletePasswordResult.Success:
+                    UpdateStatus("Password deleted.", ErrorLevel.Ok);
+                    break;
+            }
+        }
+
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -925,7 +944,12 @@ namespace PasswordVault
             //AboutView about = new AboutView();
             //about.ShowDialog();
 
-            MessageBox.Show("This application is still under development.\nUse at your own risk!\n\nThis application utilizes icons from Icons8. (https://icons8.com.)", "Version 0.0.1", MessageBoxButtons.OK);
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = new DateTime(2000, 1, 1)
+                                    .AddDays(version.Build).AddSeconds(version.Revision * 2);
+            string display = $"{version} ({buildDate})";
+
+            MessageBox.Show("This application is still under development.\nUse at your own risk!\n\nThis application utilizes icons from Icons8. (https://icons8.com.)", "Version: " + display, MessageBoxButtons.OK);
         }
 
         /*=================================================================================================
