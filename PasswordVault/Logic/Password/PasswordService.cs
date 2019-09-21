@@ -37,6 +37,7 @@ namespace PasswordVault
     {
         ApplicationError,
         UsernameError,
+        EmailError,
         PassphraseError,
         DuplicatePassword,
         Failed,
@@ -410,6 +411,7 @@ namespace PasswordVault
                     item.UniqueID,
                     _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Email, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
                     _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
                     item.Passphrase // Leave the password encrypted
@@ -427,6 +429,7 @@ namespace PasswordVault
                 _currentUser.UserID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
+                _encryptDecrypt.Encrypt(password.Email, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Description, _currentUser.Key),
                 _encryptDecrypt.Encrypt(password.Website, _currentUser.Key),
                 password.Passphrase // Password is already encrypted
@@ -440,6 +443,7 @@ namespace PasswordVault
                 password.UniqueID,
                 password.Application,
                 password.Username, 
+                password.Email,
                 password.Description,
                 password.Website, 
                 _encryptDecrypt.Encrypt(password.Passphrase, _currentUser.Key) 
@@ -453,6 +457,7 @@ namespace PasswordVault
                 password.UniqueID,
                 password.Application,
                 password.Username,
+                password.Email,
                 password.Description,
                 password.Website,
                 _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.Key));
@@ -542,6 +547,14 @@ namespace PasswordVault
             if (password.Application == null || password.Application == "")
             {
                 result = AddPasswordResult.ApplicationError;
+            }
+
+            if (password.Email != "")
+            {
+                if (!password.Email.Contains("@") && !password.Email.Contains("."))
+                {
+                    result = AddPasswordResult.EmailError;
+                }
             }
 
             return result;

@@ -58,23 +58,25 @@ namespace PasswordVault
 
         }
 
-        public DatabasePassword(Int64 uniqueID, string userID, string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(Int64 uniqueID, string userID, string application, string username, string email, string description, string website, string passphrase)
         {
             UniqueID = uniqueID;
             UserID = userID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
+            Email = email;
             Description = description;
             Website = website;
         }
 
-        public DatabasePassword(string userID, string application, string username, string description, string website, string passphrase)
+        public DatabasePassword(string userID, string application, string username, string email, string description, string website, string passphrase)
         {
             UserID = userID;
             Passphrase = passphrase;
             Application = application;
             Username = username;
+            Email = email;
             Description = description;
             Website = website;
         }
@@ -85,7 +87,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public override string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4},{5},{6}", UniqueID, UserID, Application, Username, Description, Website, Passphrase);
+            return string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", UniqueID, UserID, Application, Username, Email, Description, Website, Passphrase);
         }
 
         /*=================================================================================================
