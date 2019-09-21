@@ -35,6 +35,7 @@ namespace PasswordVault
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.passwordDataGridView = new System.Windows.Forms.DataGridView();
             this.addButton = new System.Windows.Forms.Button();
             this.moveUpButton = new System.Windows.Forms.Button();
@@ -66,16 +67,18 @@ namespace PasswordVault
             // 
             // menuStrip
             // 
+            this.menuStrip.AllowMerge = false;
             this.menuStrip.AutoSize = false;
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.aboutToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.MenuItemBackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(63)))), ((int)(((byte)(63)))));
             this.menuStrip.MenuItemSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(106, 30);
+            this.menuStrip.Size = new System.Drawing.Size(174, 30);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -99,6 +102,13 @@ namespace PasswordVault
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 26);
             this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 26);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click_1);
             // 
             // passwordDataGridView
             // 
@@ -280,9 +290,9 @@ namespace PasswordVault
             // 
             // moveWindowPanel
             // 
-            this.moveWindowPanel.Location = new System.Drawing.Point(109, 0);
+            this.moveWindowPanel.Location = new System.Drawing.Point(177, 0);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(636, 30);
+            this.moveWindowPanel.Size = new System.Drawing.Size(568, 53);
             this.moveWindowPanel.TabIndex = 28;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
@@ -404,6 +414,7 @@ namespace PasswordVault
         private System.Windows.Forms.Label filterLabel;
         private AdvancedComboBox filterComboBox;
         private Button editCancelButton;
+        private ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

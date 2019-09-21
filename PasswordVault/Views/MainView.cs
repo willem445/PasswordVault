@@ -87,7 +87,7 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
 
-        private ContextMenu _cm;                      // Context menu for right clicking on datagridview row
+        private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
@@ -159,7 +159,7 @@ namespace PasswordVault
             menuStrip.MenuItemBackgroundColor = ControlBackground();
             loginToolStripMenuItem.BackColor = ControlBackground();
             loginToolStripMenuItem.ForeColor = WhiteText();
-            loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE); 
+            loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
 
             // Configure buttons
             addButton.BackColor = ControlBackground();
@@ -283,18 +283,59 @@ namespace PasswordVault
             passwordDataGridView.ScrollBars = ScrollBars.None;
             passwordDataGridView.MouseWheel += PasswordDataGridView_MouseWheel;
 
+            // Configure context menu
+            passwordContextMenuStrip = new AdvancedContextMenuStrip();
+            var copyUsernameToolStripItem = new ToolStripMenuItem("Copy Username");
+            copyUsernameToolStripItem.Font = UIFont(8.0f);
+            copyUsernameToolStripItem.BackColor = ControlBackground();
+            copyUsernameToolStripItem.ForeColor = WhiteText();
+            copyUsernameToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-copy-48.png");
+            passwordContextMenuStrip.Items.Add(copyUsernameToolStripItem);
+
+            var copyPasswordToolStripItem = new ToolStripMenuItem("Copy Password");
+            copyPasswordToolStripItem.Font = UIFont(8.0f);
+            copyPasswordToolStripItem.BackColor = ControlBackground();
+            copyPasswordToolStripItem.ForeColor = WhiteText();
+            copyPasswordToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-copy-48.png");
+            passwordContextMenuStrip.Items.Add(copyPasswordToolStripItem);
+
+            var websiteToolStripItem = new ToolStripMenuItem("Visit Website");
+            websiteToolStripItem.Font = UIFont(8.0f);
+            websiteToolStripItem.BackColor = ControlBackground();
+            websiteToolStripItem.ForeColor = WhiteText();
+            websiteToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-link-100.png");
+            passwordContextMenuStrip.Items.Add(websiteToolStripItem);
+
+            var showPasswordToolStripItem = new ToolStripMenuItem("Show Password");
+            showPasswordToolStripItem.Font = UIFont(8.0f);
+            showPasswordToolStripItem.BackColor = ControlBackground();
+            showPasswordToolStripItem.ForeColor = WhiteText();
+            showPasswordToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-show-property-60.png");
+            passwordContextMenuStrip.Items.Add(showPasswordToolStripItem);
+
+            var editToolStripItem = new ToolStripMenuItem("Edit");
+            editToolStripItem.Font = UIFont(8.0f);
+            editToolStripItem.BackColor = ControlBackground();
+            editToolStripItem.ForeColor = WhiteText();
+            editToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-edit-48.png");
+            passwordContextMenuStrip.Items.Add(editToolStripItem);
+
+            var deleteToolStripItem = new ToolStripMenuItem("Delete");
+            deleteToolStripItem.Font = UIFont(8.0f);
+            deleteToolStripItem.BackColor = ControlBackground();
+            deleteToolStripItem.ForeColor = WhiteText();
+            deleteToolStripItem.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\icons8-delete-60.png");
+            passwordContextMenuStrip.Items.Add(deleteToolStripItem);
+
+            passwordContextMenuStrip.Items[0].Click += CopyUser_Click;
+            passwordContextMenuStrip.Items[1].Click += CopyPass_Click;
+            passwordContextMenuStrip.Items[2].Click += Website_Click;
+            passwordContextMenuStrip.Items[3].Click += ShowPassword_Click;
+            passwordContextMenuStrip.Items[4].Click += EditButton_Click;
+            passwordContextMenuStrip.Items[5].Click += DeleteButton_Click;
             #endregion
 
-            userStatusLabel.Text = "Not logged in.";
-
-            _cm = new ContextMenu();
-            _cm.MenuItems.Add("Copy Username", new EventHandler(CopyUser_Click));
-            _cm.MenuItems.Add("Copy Password", new EventHandler(CopyPass_Click));
-            _cm.MenuItems.Add("Visit Website", new EventHandler(Website_Click));
-            _cm.MenuItems.Add("-");
-            _cm.MenuItems.Add("View Password", new EventHandler(ShowPassword_Click));
-            _cm.MenuItems.Add("Edit Password", new EventHandler(EditButton_Click));
-            _cm.MenuItems.Add("Delete Password", new EventHandler(DeleteButton_Click));
+            userStatusLabel.Text = "Not logged in.";       
         }
 
         /*=================================================================================================
@@ -773,7 +814,7 @@ namespace PasswordVault
                 // If column is first column
                 if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
                 {
-                    _cm.Show(passwordDataGridView, new Point(e.X, e.Y));
+                    passwordContextMenuStrip.Show(passwordDataGridView, new Point(e.X, e.Y));
                     _rowIndexCopy = hitTestInfo.RowIndex;
                 }                
             }
@@ -875,6 +916,15 @@ namespace PasswordVault
             {
                 _selectedDgvIndex = passwordDataGridView.CurrentCell.RowIndex;
             }      
+        }
+
+        /*************************************************************************************************/
+        private void AboutToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            //AboutView about = new AboutView();
+            //about.ShowDialog();
+
+            MessageBox.Show("This application is still under development.\nUse at your own risk!\n\nThis application utilizes icons from Icons8. (https://icons8.com.)", "Version 0.0.1", MessageBoxButtons.OK);
         }
 
         /*=================================================================================================
