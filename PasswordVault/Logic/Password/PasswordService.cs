@@ -315,7 +315,6 @@ namespace PasswordVault
                     {
                         result = AddPasswordResult.DuplicatePassword;
                     }
-
                 }
                 else
                 {
@@ -355,7 +354,7 @@ namespace PasswordVault
             else
             {
                 // Verify that username and password pass requirements
-                if (username == null || username == "")
+                if (username == null || username == "") // TODO - 9 - Move this into it's own method
                 {
                     createUserResult = CreateUserResult.UsernameNotValid;
                 }
