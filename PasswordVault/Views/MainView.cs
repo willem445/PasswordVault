@@ -283,16 +283,7 @@ namespace PasswordVault
             passwordDataGridView.ScrollBars = ScrollBars.None;
             passwordDataGridView.MouseWheel += PasswordDataGridView_MouseWheel;
 
-            #endregion
-
-            userStatusLabel.Text = "Not logged in.";
-
-            //var item = new ToolStripMenuItem("test");
-            //item.BackColor = ControlBackground();
-            //item.ForeColor = WhiteText();
-            //item.Image = Bitmap.FromFile(@"H:\Visual Studio Projects\PasswordVault\PasswordVault\Resources\plus-304947_960_720.png");
-            //item.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
+            // Configure context menu
             passwordContextMenuStrip = new AdvancedContextMenuStrip();
             var copyUsernameToolStripItem = new ToolStripMenuItem("Copy Username");
             copyUsernameToolStripItem.Font = UIFont(8.0f);
@@ -342,6 +333,9 @@ namespace PasswordVault
             passwordContextMenuStrip.Items[3].Click += ShowPassword_Click;
             passwordContextMenuStrip.Items[4].Click += EditButton_Click;
             passwordContextMenuStrip.Items[5].Click += DeleteButton_Click;
+            #endregion
+
+            userStatusLabel.Text = "Not logged in.";       
         }
 
         /*=================================================================================================
