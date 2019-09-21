@@ -44,14 +44,22 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public string UniqueID { get; } // DB
-        public string UserID { get; } // DB
-        public string Salt { get; } // DB
-        public string Hash { get; } // DB
         public string Key { get; }
         public bool ValidKey { get; set; }
 
-         
+        // Properties stored in database
+        public string UniqueID { get; } // unique Id assigned to each user, this unique id is the PK for password table
+        public string EncryptedKey { get; } // encrypted version of randomly generated key, encrypted using the plaintext user password
+        public string Iterations { get; }
+        public string UserID { get; } // use randomly generated key to hash and store
+        public string Salt { get; }
+        public string Hash { get; }
+        public string FirstName { get; } // use randomly generated key to hash and store
+        public string LastName { get; } // use randomly generated key to hash and store
+        public string PhoneNumber { get; } // use randomly generated key to hash and store
+        public string Email { get; } // use randomly generated key to hash and store
+
+
 
         /*PRIVATE*****************************************************************************************/
 

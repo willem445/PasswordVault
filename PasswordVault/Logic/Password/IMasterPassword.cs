@@ -11,5 +11,7 @@ namespace PasswordVault
         CryptData_S HashPassword(string password);
         string GetFormattedString();
         bool VerifyPassword(string password, string salt, string hash);
+        string GenerateRandomKey();
+
     }
 }

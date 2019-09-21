@@ -133,6 +133,22 @@ namespace PasswordVault
             return passwordMatches;
         }
 
+        /*************************************************************************************************/
+        public string GenerateRandomKey()
+        {
+            string token;
+
+            using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
+            {
+                byte[] tokenData = new byte[32];
+                rng.GetBytes(tokenData);
+
+                token = Convert.ToBase64String(tokenData);
+            }
+
+            return token;
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
