@@ -11,7 +11,7 @@ namespace PasswordVault
         LoginResult Login(string username, string password);
         LogOutResult Logout();
         bool IsLoggedIn();
-        CreateUserResult CreateNewUser(string username, string password);
+        CreateUserResult CreateNewUser(User user);
         string GetCurrentUserID();
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();

@@ -101,9 +101,9 @@ namespace PasswordVault
         /*************************************************************************************************/
 
         /*************************************************************************************************/
-        public void AddUser(string username, string salt, string hash)
+        public void AddUser(User user)
         {
-            _encryptedUsers.Add(new User(username, salt, hash));
+            _encryptedUsers.Add(user);
             _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
         }
 
@@ -136,7 +136,7 @@ namespace PasswordVault
         {
             User user;
 
-            user = _encryptedUsers.FirstOrDefault(x => x.UserID == username);
+            user = _encryptedUsers.FirstOrDefault(x => x.Username == username);
 
             return user;
         }
@@ -150,7 +150,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public bool UserExists(string username)
         {
-            bool exists = _encryptedUsers.Exists(x => x.UserID == username);
+            bool exists = _encryptedUsers.Exists(x => x.Username == username);
             return exists;
         }
             
@@ -219,7 +219,7 @@ namespace PasswordVault
         {
             int index = -1;
 
-            index = _encryptedUsers.FindIndex(x => x.UserID == username);
+            index = _encryptedUsers.FindIndex(x => x.Username == username);
 
             return index;
         }

@@ -21,18 +21,22 @@ namespace PasswordVault
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
-    public struct CryptData_S
+    public struct UserEncrypedData
     {
-        public CryptData_S(string salt, string hash, int iterations)
+        public UserEncrypedData(string salt, string hash, int iterations, string uniqueGUID, string randomGeneratedKey)
         {
             Salt = salt;
             Hash = hash;
             Iterations = iterations;
+            UniqueGUID = uniqueGUID;
+            RandomGeneratedKey = randomGeneratedKey;
         }
 
         public string Salt { get; }
         public string Hash { get; }
         public int Iterations { get; }
+        public string UniqueGUID { get; }
+        public string RandomGeneratedKey { get; }
     }
 
     /*=================================================================================================
@@ -54,63 +58,71 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private CryptData_S _cryptData;
+        private IEncryptDecrypt _encryptDecrypt;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         public int _hashIterationCount { get; } = 1000;
-        public int _saltArraySize { get; } = 24;
-        public int _hashArraySize { get; } = 24;
+        public int _saltArraySize { get; } = 32;
+        public int _hashArraySize { get; } = 32;
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MasterPassword()
+        public MasterPassword(IEncryptDecrypt encryptDecrypt)
         {
             // Use defaults
+            _encryptDecrypt = encryptDecrypt;
         }
 
-        public MasterPassword(int iterations, int saltArraySize, int hashArraySize)
+        public MasterPassword(IEncryptDecrypt encryptDecrypt, int iterations, int saltArraySize, int hashArraySize)
         {
             _hashIterationCount = iterations;
             _saltArraySize = saltArraySize;
             _hashArraySize = hashArraySize;
+            _encryptDecrypt = encryptDecrypt;
         }
 
         /*=================================================================================================
 		PUBLIC METHODS
-		*================================================================================================*/
+		*================================================================================================*/    
         /*************************************************************************************************/
-        public CryptData_S HashPassword(string password)
+        public UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password)
         {
-            // SALT
+            // Salt
             RNGCryptoServiceProvider saltCellar = new RNGCryptoServiceProvider();
             byte[] salt = new byte[_saltArraySize];
             saltCellar.GetBytes(salt);
-
             string saltString = Convert.ToBase64String(salt);
 
-            // HASH
+            // Hash
             Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, salt);
             hashTool.IterationCount = _hashIterationCount;
             byte[] hash = hashTool.GetBytes(_hashArraySize);
-
             string hashString = Convert.ToBase64String(hash);
+
+            // Iterations
             int iterations = _hashIterationCount;
 
-            return new CryptData_S(saltString, hashString, iterations);
+            // Guid
+            var uniqueID = Guid.NewGuid().ToString();
+
+            // Random Key
+            string randomGeneratedKey = GenerateRandomKey();
+
+            return new UserEncrypedData(saltString, hashString, iterations, uniqueID, randomGeneratedKey);
         }
 
         /*************************************************************************************************/
-        public string GetFormattedString()
+        public string GetFormattedString(UserEncrypedData data)
         {
             string formatted = "";
 
-            formatted = string.Format("{0}:{1}:{2}", _cryptData.Iterations, _cryptData.Salt, _cryptData.Hash);
+            formatted = string.Format("{0},{1},{2},{3},{4}", data.UniqueGUID, data.RandomGeneratedKey, data.Iterations, data.Salt, data.Hash);
 
             return formatted;
         }
