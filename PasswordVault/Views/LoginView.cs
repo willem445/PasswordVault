@@ -35,7 +35,7 @@ namespace PasswordVault
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         public event Action<string, string> LoginEvent;
-        public event Action<string, string> CreateNewUserEvent;
+        public event Action<string, string, string, string, string, string> CreateNewUserEvent;
         public event Action GenerateNewPasswordEvent;
         public event Action<string> PasswordChangedEvent;
         public event Action LoginSuccessfulEvent;
@@ -93,6 +93,22 @@ namespace PasswordVault
             createPasswordTextBox.ForeColor = Color.FromArgb(242, 242, 242);
             createPasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
 
+            createFirstNameTextBox.BackColor = Color.FromArgb(63, 63, 63);
+            createFirstNameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createFirstNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            createLastNameTextBox.BackColor = Color.FromArgb(63, 63, 63);
+            createLastNameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createLastNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            createEmailTextBox.BackColor = Color.FromArgb(63, 63, 63);
+            createEmailTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createEmailTextBox.BorderStyle = BorderStyle.FixedSingle;
+
+            createPhoneNumberTextBox.BackColor = Color.FromArgb(63, 63, 63);
+            createPhoneNumberTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createPhoneNumberTextBox.BorderStyle = BorderStyle.FixedSingle;
+
             // Configure labels
             label1.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             label1.ForeColor = Color.FromArgb(242, 242, 242);
@@ -105,6 +121,18 @@ namespace PasswordVault
 
             label4.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             label4.ForeColor = Color.FromArgb(242, 242, 242);
+
+            label5.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            label5.ForeColor = Color.FromArgb(242, 242, 242);
+
+            label6.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            label6.ForeColor = Color.FromArgb(242, 242, 242);
+
+            label7.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            label7.ForeColor = Color.FromArgb(242, 242, 242);
+
+            label8.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
+            label8.ForeColor = Color.FromArgb(242, 242, 242);
 
             loginResultLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             loginResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
@@ -196,6 +224,10 @@ namespace PasswordVault
                     createNewUserResultLabel.Text = "Success. Please log in.";
                     createUsernameTextBox.Text = "";
                     createPasswordTextBox.Text = "";
+                    createFirstNameTextBox.Text = "";
+                    createLastNameTextBox.Text = "";
+                    createEmailTextBox.Text = "";
+                    createPhoneNumberTextBox.Text = "";
                     break;
 
                 default:
@@ -274,15 +306,15 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CreateLoginButton_Click(object sender, EventArgs e)
         {
-            RaiseCreateNewUserEvent(createUsernameTextBox.Text, createPasswordTextBox.Text);
+            RaiseCreateNewUserEvent(createUsernameTextBox.Text, createPasswordTextBox.Text, createFirstNameTextBox.Text, createLastNameTextBox.Text, createPhoneNumberTextBox.Text, createEmailTextBox.Text);
         }
 
         /*************************************************************************************************/
-        private void RaiseCreateNewUserEvent(string user, string password)
+        private void RaiseCreateNewUserEvent(string user, string password, string firstName, string lastName, string phoneNumber, string email)
         {
             if (CreateNewUserEvent != null)
             {
-                CreateNewUserEvent(user, password);
+                CreateNewUserEvent(user, password, firstName, lastName, phoneNumber, email);
             }
         }
 

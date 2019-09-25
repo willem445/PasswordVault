@@ -83,26 +83,34 @@ namespace PasswordVault
             ValidUser = validUser;
         }
 
-        public User(string username, string salt, string hash, string key, bool validKey = false)
+        public User(string uniqueID, string username, string plainTextRandomKey, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
         {
+            UniqueID = uniqueID;
             Username = username;
-            Salt = salt;
-            Hash = hash;
-            PlainTextRandomKey = key;
-            ValidUser = validKey;
+            PlainTextRandomKey = plainTextRandomKey;
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+            Email = email;
+
+            ValidUser = validUser;
         }
 
-        public User(string username, string salt, string hash, bool validKey = false)
+        public User(string username, string password, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
         {
             Username = username;
-            Salt = salt;
-            Hash = hash;
-            ValidUser = validKey;
+            PlainTextPassword = password;
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+            Email = email;
+
+            ValidUser = validUser;
         }
 
-        public User(bool validKey = false)
+        public User(bool validUser = false)
         {
-            ValidUser = validKey;
+            ValidUser = validUser;
         }
 
         public User(string username)
@@ -118,7 +126,7 @@ namespace PasswordVault
         {
             string userString = "";
 
-            userString = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{8}", UniqueID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
+            userString = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", UniqueID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
 
             return userString;
         }

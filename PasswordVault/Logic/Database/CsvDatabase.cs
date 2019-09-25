@@ -166,7 +166,7 @@ namespace PasswordVault
 
             DatabasePassword newPassword = new DatabasePassword(
                 uniqueID, 
-                password.UserID, 
+                password.UserGUID, 
                 password.Application, 
                 password.Username,
                 password.Email,
@@ -206,7 +206,7 @@ namespace PasswordVault
         public List<DatabasePassword> GetUserPasswords(string username)
         {
             List<DatabasePassword> result = (from DatabasePassword password in _encryptedPasswords
-                                    where password.UserID == username
+                                    where password.UserGUID == username
                                     select password).ToList<DatabasePassword>();
             return result;      
         }

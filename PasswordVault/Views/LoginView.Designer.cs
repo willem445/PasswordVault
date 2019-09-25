@@ -45,6 +45,14 @@
             this.createLoginButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
+            this.createLastNameTextBox = new System.Windows.Forms.TextBox();
+            this.createFirstNameTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.createEmailTextBox = new System.Windows.Forms.TextBox();
+            this.createPhoneNumberTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -75,7 +83,7 @@
             // 
             // loginPasswordTextBox
             // 
-            this.loginPasswordTextBox.Location = new System.Drawing.Point(19, 100);
+            this.loginPasswordTextBox.Location = new System.Drawing.Point(19, 91);
             this.loginPasswordTextBox.Name = "loginPasswordTextBox";
             this.loginPasswordTextBox.PasswordChar = '•';
             this.loginPasswordTextBox.Size = new System.Drawing.Size(218, 20);
@@ -91,7 +99,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 82);
+            this.label2.Location = new System.Drawing.Point(16, 75);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
             this.label2.TabIndex = 3;
@@ -118,6 +126,14 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.createEmailTextBox);
+            this.groupBox2.Controls.Add(this.createPhoneNumberTextBox);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.createLastNameTextBox);
+            this.groupBox2.Controls.Add(this.createFirstNameTextBox);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.createNewUserResultLabel);
             this.groupBox2.Controls.Add(this.generatePasswordButton);
             this.groupBox2.Controls.Add(this.createPasswordTextBox);
@@ -127,7 +143,7 @@
             this.groupBox2.Controls.Add(this.createLoginButton);
             this.groupBox2.Location = new System.Drawing.Point(274, 34);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(256, 190);
+            this.groupBox2.Size = new System.Drawing.Size(256, 353);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create New User";
@@ -135,7 +151,7 @@
             // createNewUserResultLabel
             // 
             this.createNewUserResultLabel.AutoSize = true;
-            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 126);
+            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 297);
             this.createNewUserResultLabel.Name = "createNewUserResultLabel";
             this.createNewUserResultLabel.Size = new System.Drawing.Size(99, 13);
             this.createNewUserResultLabel.TabIndex = 10;
@@ -143,7 +159,7 @@
             // 
             // generatePasswordButton
             // 
-            this.generatePasswordButton.Location = new System.Drawing.Point(15, 145);
+            this.generatePasswordButton.Location = new System.Drawing.Point(15, 322);
             this.generatePasswordButton.Name = "generatePasswordButton";
             this.generatePasswordButton.Size = new System.Drawing.Size(137, 23);
             this.generatePasswordButton.TabIndex = 9;
@@ -153,7 +169,7 @@
             // 
             // createPasswordTextBox
             // 
-            this.createPasswordTextBox.Location = new System.Drawing.Point(15, 100);
+            this.createPasswordTextBox.Location = new System.Drawing.Point(15, 91);
             this.createPasswordTextBox.Name = "createPasswordTextBox";
             this.createPasswordTextBox.Size = new System.Drawing.Size(218, 20);
             this.createPasswordTextBox.TabIndex = 8;
@@ -169,7 +185,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 82);
+            this.label3.Location = new System.Drawing.Point(12, 75);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 7;
@@ -186,7 +202,7 @@
             // 
             // createLoginButton
             // 
-            this.createLoginButton.Location = new System.Drawing.Point(158, 145);
+            this.createLoginButton.Location = new System.Drawing.Point(158, 322);
             this.createLoginButton.Name = "createLoginButton";
             this.createLoginButton.Size = new System.Drawing.Size(75, 23);
             this.createLoginButton.TabIndex = 1;
@@ -217,12 +233,76 @@
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
+            // createLastNameTextBox
+            // 
+            this.createLastNameTextBox.Location = new System.Drawing.Point(15, 180);
+            this.createLastNameTextBox.Name = "createLastNameTextBox";
+            this.createLastNameTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createLastNameTextBox.TabIndex = 14;
+            // 
+            // createFirstNameTextBox
+            // 
+            this.createFirstNameTextBox.Location = new System.Drawing.Point(15, 136);
+            this.createFirstNameTextBox.Name = "createFirstNameTextBox";
+            this.createFirstNameTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createFirstNameTextBox.TabIndex = 11;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 164);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Last Name:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 118);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "First Name:";
+            // 
+            // createEmailTextBox
+            // 
+            this.createEmailTextBox.Location = new System.Drawing.Point(15, 269);
+            this.createEmailTextBox.Name = "createEmailTextBox";
+            this.createEmailTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createEmailTextBox.TabIndex = 18;
+            // 
+            // createPhoneNumberTextBox
+            // 
+            this.createPhoneNumberTextBox.Location = new System.Drawing.Point(15, 225);
+            this.createPhoneNumberTextBox.Name = "createPhoneNumberTextBox";
+            this.createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createPhoneNumberTextBox.TabIndex = 15;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 253);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Email:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 207);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(81, 13);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "Phone Number:";
+            // 
             // LoginView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(550, 236);
+            this.ClientSize = new System.Drawing.Size(550, 400);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.groupBox2);
@@ -259,5 +339,13 @@
         private System.Windows.Forms.Panel moveWindowPanel;
         private System.Windows.Forms.Label loginResultLabel;
         private System.Windows.Forms.Label createNewUserResultLabel;
+        private System.Windows.Forms.TextBox createEmailTextBox;
+        private System.Windows.Forms.TextBox createPhoneNumberTextBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox createLastNameTextBox;
+        private System.Windows.Forms.TextBox createFirstNameTextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }

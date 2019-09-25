@@ -127,11 +127,19 @@ namespace PasswordVault
                 {
                     User user = _dbcontext.GetUser(username);
 
-                    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
+                    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations)); // Hash password with user.Salt and compare to user.Hash
 
                     if (valid)
                     {
-                        _currentUser = new User(username, user.Salt, user.Hash, password, true); // NEED TO STORE RANDOM KEY FOR ENCRYPTING
+                        string tempKey = _encryptDecrypt.Decrypt(user.EncryptedKey, password);
+                        _currentUser = new User(user.UniqueID, 
+                                                user.Username, 
+                                                tempKey,
+                                                _encryptDecrypt.Decrypt(user.FirstName, tempKey),
+                                                _encryptDecrypt.Decrypt(user.LastName, tempKey),
+                                                _encryptDecrypt.Decrypt(user.PhoneNumber, tempKey),
+                                                _encryptDecrypt.Decrypt(user.Email, tempKey),
+                                                true); 
                     }
                     else
                     {
@@ -418,7 +426,7 @@ namespace PasswordVault
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.Username))
+            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UniqueID))
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(
@@ -440,7 +448,7 @@ namespace PasswordVault
         {
             return new DatabasePassword(
                 password.UniqueID,
-                _currentUser.Username, // TODO - 7 - Change to unique ID - Use unencrypted username for now
+                _currentUser.UniqueID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.PlainTextRandomKey),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.PlainTextRandomKey),
                 _encryptDecrypt.Encrypt(password.Email, _currentUser.PlainTextRandomKey),

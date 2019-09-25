@@ -128,12 +128,12 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public bool VerifyPassword(string password, string salt, string hash)
+        public bool VerifyPassword(string password, string salt, string hash, int iterationCount)
         {
             byte[] originalSalt = Convert.FromBase64String(salt);
             byte[] originalHash = Convert.FromBase64String(hash);
             Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, originalSalt);
-            hashTool.IterationCount = _hashIterationCount;
+            hashTool.IterationCount = iterationCount;
             byte[] newHash = hashTool.GetBytes(_hashArraySize);
 
             uint differences = (uint)originalHash.Length ^ (uint)newHash.Length;
