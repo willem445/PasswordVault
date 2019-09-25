@@ -58,7 +58,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private IEncryptDecrypt _encryptDecrypt;
 
         /*=================================================================================================
 		PROPERTIES
@@ -73,18 +72,16 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MasterPassword(IEncryptDecrypt encryptDecrypt)
+        public MasterPassword()
         {
             // Use defaults
-            _encryptDecrypt = encryptDecrypt;
         }
 
-        public MasterPassword(IEncryptDecrypt encryptDecrypt, int iterations, int saltArraySize, int hashArraySize)
+        public MasterPassword(int iterations, int saltArraySize, int hashArraySize)
         {
             _hashIterationCount = iterations;
             _saltArraySize = saltArraySize;
             _hashArraySize = hashArraySize;
-            _encryptDecrypt = encryptDecrypt;
         }
 
         /*=================================================================================================
