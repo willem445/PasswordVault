@@ -485,6 +485,7 @@ namespace PasswordVault
                 _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.PlainTextRandomKey));
         }
 
+        /*************************************************************************************************/
         private bool VerifyUsernameRequirements(string username)
         {
             bool result = true;
