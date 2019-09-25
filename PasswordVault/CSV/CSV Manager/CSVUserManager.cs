@@ -26,15 +26,27 @@ namespace PasswordVault
 	*================================================================================================*/
     class CSVUserManager : ICSVUserManager
     {
+        private enum CsvUserIndexes
+        {
+            UniqueId,
+            EncryptedKey,
+            Username,
+            Iterations,
+            Salt,
+            Hash,
+            FirstName,
+            LastName,
+            PhoneNumber,
+            Email,
+            NumIndexes
+        }
+
         /*=================================================================================================
 		CONSTANTS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private const int _USER_IDX = 0;
-        private const int _SALT_IDX = 1;
-        private const int _HASH_IDX = 2;
 
         /*=================================================================================================
 		FIELDS
@@ -112,9 +124,18 @@ namespace PasswordVault
 
             string[] fields = line.Split(',');
 
-            if (fields.Count() == 3U)
+            if (fields.Count() == (int)CsvUserIndexes.NumIndexes)
             {
-                user = new User(fields[_USER_IDX], fields[_SALT_IDX], fields[_HASH_IDX]);
+                user = new User(fields[(int)CsvUserIndexes.UniqueId], 
+                                fields[(int)CsvUserIndexes.EncryptedKey], 
+                                fields[(int)CsvUserIndexes.Username],
+                                fields[(int)CsvUserIndexes.Iterations],
+                                fields[(int)CsvUserIndexes.Salt],
+                                fields[(int)CsvUserIndexes.Hash],
+                                fields[(int)CsvUserIndexes.FirstName],
+                                fields[(int)CsvUserIndexes.LastName],
+                                fields[(int)CsvUserIndexes.PhoneNumber],
+                                fields[(int)CsvUserIndexes.Email]);
             }
 
             return user;
@@ -129,7 +150,7 @@ namespace PasswordVault
             {
                 result = false;
             }
-            else if (line.Split(',').Count() == 3U)
+            else if (line.Split(',').Count() == (int)CsvUserIndexes.NumIndexes)
             {
                 result = true;
             }

@@ -9,7 +9,7 @@ namespace PasswordVault
     public interface ILoginView
     {
         event Action<string, string> LoginEvent;
-        event Action<string, string> CreateNewUserEvent;
+        event Action<string, string, string, string, string, string> CreateNewUserEvent;
         event Action GenerateNewPasswordEvent;
         event Action<string> PasswordChangedEvent;
         event Action LoginSuccessfulEvent;

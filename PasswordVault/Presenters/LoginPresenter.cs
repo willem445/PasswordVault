@@ -82,11 +82,13 @@ namespace PasswordVault
         }
 
         /********************************************************************************** ***************/
-        private void CreateNewUser(string username, string password)
+        private void CreateNewUser(string username, string password, string firstName, string lastName, string phoneNumber, string email)
         {
             CreateUserResult result = CreateUserResult.Unsuccessful;
 
-            result = _passwordService.CreateNewUser(username, password);
+            User user = new User(username, password, firstName, lastName, phoneNumber, email);
+
+            result = _passwordService.CreateNewUser(user);
 
             _loginView.DisplayCreateNewUserResult(result, _passwordService.GetMinimumPasswordLength());
         }

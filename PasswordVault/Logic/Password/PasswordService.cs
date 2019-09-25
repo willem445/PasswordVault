@@ -127,11 +127,19 @@ namespace PasswordVault
                 {
                     User user = _dbcontext.GetUser(username);
 
-                    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash); // Hash password with user.Salt and compare to user.Hash
+                    bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations)); // Hash password with user.Salt and compare to user.Hash
 
                     if (valid)
                     {
-                        _currentUser = new User(username, user.Salt, user.Hash, password, true);
+                        string tempKey = _encryptDecrypt.Decrypt(user.EncryptedKey, password);
+                        _currentUser = new User(user.UniqueID, 
+                                                user.Username, 
+                                                tempKey,
+                                                _encryptDecrypt.Decrypt(user.FirstName, tempKey),
+                                                _encryptDecrypt.Decrypt(user.LastName, tempKey),
+                                                _encryptDecrypt.Decrypt(user.PhoneNumber, tempKey),
+                                                _encryptDecrypt.Decrypt(user.Email, tempKey),
+                                                true); 
                     }
                     else
                     {
@@ -141,7 +149,7 @@ namespace PasswordVault
                 }
 
                 // Set table name and read passwords
-                if (_currentUser.ValidKey)
+                if (_currentUser.ValidUser)
                 {
                     loginResult = LoginResult.Successful;
                     UpdatePasswordListFromDB();
@@ -170,12 +178,58 @@ namespace PasswordVault
         /*************************************************************************************************/
         public bool IsLoggedIn()
         {
-            if (_currentUser.ValidKey)
+            if (_currentUser.ValidUser)
             {
                 return true;
             }
 
             return false;
+        }
+
+        /*************************************************************************************************/
+        public CreateUserResult CreateNewUser(User user)
+        {
+            CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
+            User queryResult = _dbcontext.GetUser(user.Username); 
+
+            if (queryResult != null)
+            {
+                createUserResult = CreateUserResult.UsernameTaken;
+            }
+            else
+            {
+                // Verify that username and password pass requirements
+                if (!VerifyUsernameRequirements(user.Username)) 
+                {
+                    createUserResult = CreateUserResult.UsernameNotValid;
+                }
+                else if (!VerifyPasswordRequirements(user.PlainTextPassword))
+                {
+                    createUserResult = CreateUserResult.PasswordNotValid;
+                }
+                else
+                {
+                    createUserResult = CreateUserResult.Successful;
+                    UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(user.PlainTextPassword);
+
+                    User newUser = new User(
+                        newEncryptedData.UniqueGUID, // Leave unique guid in plaintext
+                        _encryptDecrypt.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
+                        user.Username, // Leave username in plaintext
+                        newEncryptedData.Iterations.ToString(), // Leave iterations in plaintext
+                        newEncryptedData.Salt,
+                        newEncryptedData.Hash,
+                        _encryptDecrypt.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey) // Encrypt with decrypted random key
+                        );
+
+                    _dbcontext.AddUser(newUser);
+                }
+            }
+
+            return createUserResult;
         }
 
         /*************************************************************************************************/
@@ -207,7 +261,7 @@ namespace PasswordVault
 
             if (IsLoggedIn())
             {
-                user = _currentUser.UserID;
+                user = _currentUser.Username;
             }
 
             return user;
@@ -354,38 +408,6 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public CreateUserResult CreateNewUser(string username, string password)
-        {
-            CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
-            User user = _dbcontext.GetUser(username);
-
-            if (user != null)
-            {
-                createUserResult = CreateUserResult.UsernameTaken;
-            }
-            else
-            {
-                // Verify that username and password pass requirements
-                if (username == null || username == "") // TODO - 9 - Move this into it's own method
-                {
-                    createUserResult = CreateUserResult.UsernameNotValid;
-                }
-                else if (!VerifyPasswordRequirements(password)) 
-                {
-                    createUserResult = CreateUserResult.PasswordNotValid;
-                }
-                else
-                {
-                    createUserResult = CreateUserResult.Successful;
-                    CryptData_S newPassword = _masterPassword.HashPassword(password);
-                    _dbcontext.AddUser(username, newPassword.Salt, newPassword.Hash);
-                }
-            }
-
-            return createUserResult;
-        }
-
-        /*************************************************************************************************/
         public int GetMinimumPasswordLength()
         {
             return MINIMUM_PASSWORD_LENGTH;
@@ -404,16 +426,16 @@ namespace PasswordVault
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UserID))
+            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UniqueID))
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(
                     item.UniqueID,
-                    _encryptDecrypt.Decrypt(item.Application, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Username, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Email, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Description, _currentUser.Key),
-                    _encryptDecrypt.Decrypt(item.Website, _currentUser.Key),
+                    _encryptDecrypt.Decrypt(item.Application, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Decrypt(item.Username, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Decrypt(item.Email, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Decrypt(item.Description, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Decrypt(item.Website, _currentUser.PlainTextRandomKey),
                     item.Passphrase // Leave the password encrypted
                     );
 
@@ -426,12 +448,12 @@ namespace PasswordVault
         {
             return new DatabasePassword(
                 password.UniqueID,
-                _currentUser.UserID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
-                _encryptDecrypt.Encrypt(password.Application, _currentUser.Key),
-                _encryptDecrypt.Encrypt(password.Username, _currentUser.Key),
-                _encryptDecrypt.Encrypt(password.Email, _currentUser.Key),
-                _encryptDecrypt.Encrypt(password.Description, _currentUser.Key),
-                _encryptDecrypt.Encrypt(password.Website, _currentUser.Key),
+                _currentUser.UniqueID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
+                _encryptDecrypt.Encrypt(password.Application, _currentUser.PlainTextRandomKey),
+                _encryptDecrypt.Encrypt(password.Username, _currentUser.PlainTextRandomKey),
+                _encryptDecrypt.Encrypt(password.Email, _currentUser.PlainTextRandomKey),
+                _encryptDecrypt.Encrypt(password.Description, _currentUser.PlainTextRandomKey),
+                _encryptDecrypt.Encrypt(password.Website, _currentUser.PlainTextRandomKey),
                 password.Passphrase // Password is already encrypted
                 );
         }
@@ -446,7 +468,7 @@ namespace PasswordVault
                 password.Email,
                 password.Description,
                 password.Website, 
-                _encryptDecrypt.Encrypt(password.Passphrase, _currentUser.Key) 
+                _encryptDecrypt.Encrypt(password.Passphrase, _currentUser.PlainTextRandomKey) 
                 );
         }
 
@@ -460,7 +482,20 @@ namespace PasswordVault
                 password.Email,
                 password.Description,
                 password.Website,
-                _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.Key));
+                _encryptDecrypt.Decrypt(password.Passphrase, _currentUser.PlainTextRandomKey));
+        }
+
+        /*************************************************************************************************/
+        private bool VerifyUsernameRequirements(string username)
+        {
+            bool result = true;
+
+            if (username == null || username == "")
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/

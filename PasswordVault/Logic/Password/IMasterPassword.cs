@@ -8,8 +8,10 @@ namespace PasswordVault
 {
     interface IMasterPassword
     {
-        CryptData_S HashPassword(string password);
-        string GetFormattedString();
-        bool VerifyPassword(string password, string salt, string hash);
+        UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password);
+        string GetFormattedString(UserEncrypedData data);
+        bool VerifyPassword(string password, string salt, string hash, int iterationCount);
+        string GenerateRandomKey();
+
     }
 }

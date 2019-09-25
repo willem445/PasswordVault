@@ -11,7 +11,7 @@ namespace PasswordVault
         // Master users/password
         User GetUser(string username);
         List<User> GetAllUsers();
-        void AddUser(string username, string salt, string hash);
+        void AddUser(User user);
         void ModifyUser(string username, User modifiedUser);
         void DeleteUser(string username);
         bool UserExists(string username);
