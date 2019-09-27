@@ -42,7 +42,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class MasterPassword : IMasterPassword
+    public class MasterPassword : IMasterPassword
     {
         /*=================================================================================================
 		CONSTANTS
@@ -63,7 +63,7 @@ namespace PasswordVault
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public int _hashIterationCount { get; } = 1000;
+        public int _hashIterationCount { get; } = 10000;
         public int _saltArraySize { get; } = 32;
         public int _hashArraySize { get; } = 32;
 

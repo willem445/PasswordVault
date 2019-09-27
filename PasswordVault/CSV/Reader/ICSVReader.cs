@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PasswordVault
 {
-    interface ICSVReader
+    public interface ICSVReader
     {
         void Initialize(string fileName);
         void Close();

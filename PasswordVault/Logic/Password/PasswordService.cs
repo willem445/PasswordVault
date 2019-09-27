@@ -29,6 +29,10 @@ namespace PasswordVault
         UsernameTaken,
         UsernameNotValid,
         PasswordNotValid,
+        FirstNameNotValid,
+        LastNameNotValid,
+        PhoneNumberNotValid,
+        EmailNotValid,
         Successful,
         Unsuccessful,
     }
@@ -64,7 +68,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class PasswordService : IPasswordService
+    public class PasswordService : IPasswordService
     {
         /*=================================================================================================
 		CONSTANTS
@@ -131,6 +135,8 @@ namespace PasswordVault
 
                     if (valid)
                     {
+                        _encryptDecrypt.Iterations = Convert.ToInt32(user.Iterations); // Use same iterations as master password for simplicity
+
                         string tempKey = _encryptDecrypt.Decrypt(user.EncryptedKey, password);
                         _currentUser = new User(user.UniqueID, 
                                                 user.Username, 
@@ -233,7 +239,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DeleteUser()
+        public void DeleteUser(User user)
         {
             if (IsLoggedIn())
             {
@@ -244,7 +250,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void EditUser()
+        public void EditUser(User user)
         {
             if (IsLoggedIn())
             {
@@ -255,7 +261,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public string GetCurrentUserID()
+        public string GetCurrentUsername()
         {
             string user = "";
 
@@ -268,7 +274,7 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void ChangeUserPassword(string username, string oldPassword, string newPassword)
+        public void ChangeUserPassword(User user)
         {
             if (IsLoggedIn())
             {

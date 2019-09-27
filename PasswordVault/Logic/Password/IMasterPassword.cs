@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PasswordVault
 {
-    interface IMasterPassword
+    public interface IMasterPassword
     {
         UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password);
         string GetFormattedString(UserEncrypedData data);

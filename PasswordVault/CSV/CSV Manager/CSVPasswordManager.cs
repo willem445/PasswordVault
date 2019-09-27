@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class CSVPasswordManager : ICSVPasswordManager
+    public class CSVPasswordManager : ICSVPasswordManager
     {
         private enum CsvPasswordIndexes
         {

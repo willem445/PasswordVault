@@ -135,7 +135,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void UpdateUsernameWelcomeUI()
         {
-            _mainView.DisplayUserID(_passwordService.GetCurrentUserID());
+            _mainView.DisplayUserID(_passwordService.GetCurrentUsername());
             _mainView.RequestPasswordsOnLoginEvent -= UpdateUsernameWelcomeUI;
         }
 

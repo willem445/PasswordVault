@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class CSVUserManager : ICSVUserManager
+    public class CSVUserManager : ICSVUserManager
     {
         private enum CsvUserIndexes
         {

@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace PasswordVault
 {
-    interface IPasswordService
+    public interface IPasswordService
     {
         LoginResult Login(string username, string password);
         LogOutResult Logout();
         bool IsLoggedIn();
         CreateUserResult CreateNewUser(User user);
-        string GetCurrentUserID();
+        string GetCurrentUsername();
+        void ChangeUserPassword(User user);
+        void DeleteUser(User user);
+        void EditUser(User user);
         int GetMinimumPasswordLength();
-        string GeneratePasswordKey();
-        void DeleteUser();
-        void ChangeUserPassword(string username, string oldPassword, string newPassword);
-        void EditUser();
+        string GeneratePasswordKey();        
         AddPasswordResult AddPassword(Password unencryptedPassword);
         DeletePasswordResult DeletePassword(Password encryptedPassword);
         AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
