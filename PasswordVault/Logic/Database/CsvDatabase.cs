@@ -101,28 +101,39 @@ namespace PasswordVault
         /*************************************************************************************************/
 
         /*************************************************************************************************/
-        public void AddUser(User user)
+        public bool AddUser(User user)
         {
             _encryptedUsers.Add(user);
             _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+
+            return true;
         }
 
         /*************************************************************************************************/
-        public void ModifyUser(User user, User modifiedUser)
+        public bool ModifyUser(User user, User modifiedUser)
         {
             int index = GetIndexOfUser(user.GUID);
+            bool result = false;
 
             if (index != -1)
             {
                 _encryptedUsers[index] = modifiedUser;
                 _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-            }    
+                result = true;
+            }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(User user)
+        public bool DeleteUser(User user)
         {
             int index = GetIndexOfUser(user.GUID);
+            bool result = false;
 
             if (index != -1)
             {
@@ -130,7 +141,14 @@ namespace PasswordVault
                 _encryptedPasswords.RemoveAll(x => x.UserGUID == user.GUID);
                 _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/
@@ -174,9 +192,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void AddPassword(DatabasePassword password)
+        public bool AddPassword(DatabasePassword password)
         {
             Int64 uniqueID = 0;
+            bool result = false;
 
             if (_encryptedPasswords.Count != 0)
             {
@@ -195,30 +214,51 @@ namespace PasswordVault
 
             _encryptedPasswords.Add(newPassword);
             _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+
+            result = true;
+            return result;
         }
 
         /*************************************************************************************************/
-        public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
-            int index = GetIndexOfPassword(password.UniqueID);
+            bool result = false;
 
+            int index = GetIndexOfPassword(password.UniqueID);
+            
             if (index != -1)
             {
                 _encryptedPasswords[index] = modifiedPassword;
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/
-        public void DeletePassword(DatabasePassword password)
+        public bool DeletePassword(DatabasePassword password)
         {
+            bool result = false;
+
             int index = GetIndexOfPassword(password.UniqueID);
 
             if (index != -1)
             {
                 _encryptedPasswords.RemoveAt(index);
                 _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/

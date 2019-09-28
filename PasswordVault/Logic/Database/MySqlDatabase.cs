@@ -59,22 +59,22 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public void AddPassword(DatabasePassword password)
+        public bool AddPassword(DatabasePassword password)
         {
             throw new NotImplementedException();
         }
 
-        public void AddUser(User user)
+        public bool AddUser(User user)
         {
             throw new NotImplementedException();
         }
 
-        public void DeletePassword(DatabasePassword password)
+        public bool DeletePassword(DatabasePassword password)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteUser(User user)
+        public bool DeleteUser(User user)
         {
             throw new NotImplementedException();
         }
@@ -99,12 +99,12 @@ namespace PasswordVault
             throw new NotImplementedException();
         }
 
-        public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
             throw new NotImplementedException();
         }
 
-        public void ModifyUser(User user, User modifiedUser)
+        public bool ModifyUser(User user, User modifiedUser)
         {
             throw new NotImplementedException();
         }

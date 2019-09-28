@@ -74,7 +74,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void Login(string username, string password)
         {
-            LoginResult result = LoginResult.UnSuccessful;
+            LoginResult result = LoginResult.Failed;
 
             result = _passwordService.Login(username, password);
 
@@ -84,7 +84,7 @@ namespace PasswordVault
         /********************************************************************************** ***************/
         private void CreateNewUser(string username, string password, string firstName, string lastName, string phoneNumber, string email)
         {
-            CreateUserResult result = CreateUserResult.Unsuccessful;
+            CreateUserResult result = CreateUserResult.Failed;
 
             User user = new User(username, password, firstName, lastName, phoneNumber, email);
 

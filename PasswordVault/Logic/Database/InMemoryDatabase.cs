@@ -77,27 +77,32 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public void AddPassword(DatabasePassword password)
+        public bool AddPassword(DatabasePassword password)
         {
             _localPasswordDb.Add(password);
+            return true;
         }
 
         /*************************************************************************************************/
-        public void AddUser(User user)
+        public bool AddUser(User user)
         {
             _localUserDb.Add(user);
+            return true;
         }
 
         /*************************************************************************************************/
-        public void DeletePassword(DatabasePassword password)
+        public bool DeletePassword(DatabasePassword password)
         {
             _localPasswordDb.RemoveAll(x => x.UniqueID == password.UniqueID);
+            return true;
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(User user)
+        public bool DeleteUser(User user)
         {
             _localUserDb.RemoveAll(x => x.GUID == user.GUID);
+            _localPasswordDb.RemoveAll(x => x.UserGUID == user.GUID);
+            return true;
         }
 
         /*************************************************************************************************/
@@ -125,25 +130,43 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
+            bool result = false;
+
             int index = _localPasswordDb.FindIndex(x => x.UniqueID == password.UniqueID);
 
             if (index != -1)
             {
                 _localPasswordDb[index] = modifiedPassword;
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/
-        public void ModifyUser(User user, User modifiedUser)
+        public bool ModifyUser(User user, User modifiedUser)
         {
+            bool result = false;
+
             int index = _localUserDb.FindIndex(x => x.GUID == user.GUID);
 
             if (index != -1)
             {
                 _localUserDb[index] = modifiedUser;
+                result = true;
             }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         /*************************************************************************************************/

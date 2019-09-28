@@ -169,7 +169,7 @@ namespace PasswordVault
                     loginResultLabel.Text = "Username doesn't exist.";
                     break;
 
-                case LoginResult.UnSuccessful:
+                case LoginResult.Failed:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Login failed.";
                     break;
@@ -204,7 +204,7 @@ namespace PasswordVault
                     createNewUserResultLabel.Text = "Username taken.";
                     break;
 
-                case CreateUserResult.Unsuccessful:
+                case CreateUserResult.Failed:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Unsuccessful.";
                     break;

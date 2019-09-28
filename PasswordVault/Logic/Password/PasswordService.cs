@@ -21,7 +21,7 @@ namespace PasswordVault
         PasswordIncorrect, 
         UsernameDoesNotExist,
         Successful,
-        UnSuccessful
+        Failed
     }
 
     public enum CreateUserResult
@@ -34,7 +34,13 @@ namespace PasswordVault
         PhoneNumberNotValid,
         EmailNotValid,
         Successful,
-        Unsuccessful,
+        Failed,
+    }
+
+    public enum DeleteUserResult
+    {
+        Successful,
+        Failed,
     }
 
     public enum AddPasswordResult
@@ -118,7 +124,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public LoginResult Login(string username, string password)
         {
-            LoginResult loginResult = LoginResult.UnSuccessful;
+            LoginResult loginResult = LoginResult.Failed;
 
             if (!IsLoggedIn())
             {
@@ -193,7 +199,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public CreateUserResult CreateNewUser(User user)
         {
-            CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
+            CreateUserResult createUserResult = CreateUserResult.Failed;
             User queryResult = _dbcontext.GetUserByUsername(user.Username); 
 
             if (queryResult != null)
@@ -237,9 +243,29 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(User user)
+        public DeleteUserResult DeleteUser(User user)
         {
-            _dbcontext.DeleteUser(user);
+            DeleteUserResult result = DeleteUserResult.Failed;
+
+            User getUser = _dbcontext.GetUserByUsername(user.Username);
+
+            if (getUser != null)
+            {
+                bool success = _dbcontext.DeleteUser(getUser);
+
+                if (success)
+                {
+                    result = DeleteUserResult.Successful;
+                }
+            }
+            else
+            {
+                result = DeleteUserResult.Failed;
+            }
+
+
+
+            return result;
         }
 
         /*************************************************************************************************/
