@@ -9,17 +9,19 @@ namespace PasswordVault
     public interface IDatabase
     {
         // Master users/password
-        User GetUser(string username);
+        User GetUserByUsername(string username);
+        User GetUserByGUID(string guid);
         List<User> GetAllUsers();
         void AddUser(User user);
-        void ModifyUser(string username, User modifiedUser);
-        void DeleteUser(User modifiedUser);
-        bool UserExists(string username);
+        void ModifyUser(User user, User modifiedUser);
+        void DeleteUser(User user);
+        bool UserExistsByUsername(string username);
+        bool UserExistsByGUID(string guid);
 
         // User passwords
         void AddPassword(DatabasePassword password);
         void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword);
         void DeletePassword(DatabasePassword password);
-        List<DatabasePassword> GetUserPasswords(string username);
+        List<DatabasePassword> GetUserPasswordsByGUID(string guid);
     }
 }

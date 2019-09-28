@@ -108,9 +108,9 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void ModifyUser(string username, User modifiedUser)
+        public void ModifyUser(User user, User modifiedUser)
         {
-            int index = GetIndexOfUser(username);
+            int index = GetIndexOfUser(user.GUID);
 
             if (index != -1)
             {
@@ -134,11 +134,21 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public User GetUser(string username)
+        public User GetUserByUsername(string username)
         {
             User user;
 
             user = _encryptedUsers.FirstOrDefault(x => x.Username == username);
+
+            return user;
+        }
+
+        /*************************************************************************************************/
+        public User GetUserByGUID(string guid)
+        {
+            User user;
+
+            user = _encryptedUsers.FirstOrDefault(x => x.GUID == guid);
 
             return user;
         }
@@ -150,12 +160,19 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public bool UserExists(string username)
+        public bool UserExistsByUsername(string username)
         {
             bool exists = _encryptedUsers.Exists(x => x.Username == username);
             return exists;
         }
-            
+
+        /*************************************************************************************************/
+        public bool UserExistsByGUID(string guid)
+        {
+            bool exists = _encryptedUsers.Exists(x => x.GUID == guid);
+            return exists;
+        }
+
         /*************************************************************************************************/
         public void AddPassword(DatabasePassword password)
         {
@@ -205,10 +222,10 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public List<DatabasePassword> GetUserPasswords(string username)
+        public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
         {
             List<DatabasePassword> result = (from DatabasePassword password in _encryptedPasswords
-                                    where password.UserGUID == username
+                                    where password.UserGUID == guid
                                     select password).ToList<DatabasePassword>();
             return result;      
         }

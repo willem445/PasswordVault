@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PasswordVault;
 
 /*=================================================================================================
 DESCRIPTION
@@ -16,6 +17,13 @@ namespace PasswordVaultTests
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
+    public enum Database
+    {
+        InMemory,
+        CSV, 
+        MySQL,
+        SQLLite,
+    }
 
     /*=================================================================================================
 	STRUCTS
@@ -50,16 +58,45 @@ namespace PasswordVaultTests
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public DatabaseFactory()
-        {
-
-        }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public static IDatabase GetDatabase(Database database)
+        {
+            IDatabase result = null;
 
+            switch (database)
+            {
+                case Database.InMemory:
+                    result = new InMemoryDatabase();
+                    break;
+
+                case Database.CSV:
+                    result = new CsvDatabase(
+                        new CSVUserManager(
+                            new CSVReader(),
+                            new CSVWriter()
+                            ),
+                        new CSVPasswordManager(
+                            new CSVReader(),
+                            new CSVWriter()
+                            )
+                        );
+                    break;
+
+                case Database.MySQL:
+                    result = new MySQLDatabase();
+                    break;
+
+                case Database.SQLLite:
+                    result = new SQLiteDatabase();
+                    break;
+            }
+
+            return result;
+        }
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/

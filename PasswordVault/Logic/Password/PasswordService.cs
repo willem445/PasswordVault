@@ -123,13 +123,13 @@ namespace PasswordVault
             if (!IsLoggedIn())
             {
                 // Perform user login verification
-                if (!_dbcontext.UserExists(username))
+                if (!_dbcontext.UserExistsByUsername(username))
                 {
                     loginResult = LoginResult.UsernameDoesNotExist;
                 }
                 else
                 {
-                    User user = _dbcontext.GetUser(username);
+                    User user = _dbcontext.GetUserByUsername(username);
 
                     bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations)); // Hash password with user.Salt and compare to user.Hash
 
@@ -194,7 +194,7 @@ namespace PasswordVault
         public CreateUserResult CreateNewUser(User user)
         {
             CreateUserResult createUserResult = CreateUserResult.Unsuccessful;
-            User queryResult = _dbcontext.GetUser(user.Username); 
+            User queryResult = _dbcontext.GetUserByUsername(user.Username); 
 
             if (queryResult != null)
             {
@@ -438,7 +438,7 @@ namespace PasswordVault
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.GUID))
+            foreach (var item in _dbcontext.GetUserPasswordsByGUID(_currentUser.GUID))
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(

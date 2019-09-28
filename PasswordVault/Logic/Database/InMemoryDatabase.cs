@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 /*=================================================================================================
 DESCRIPTION
 *================================================================================================*/
-/* https://stackoverflow.com/questions/10283780/equivalent-of-mssql-identity-column-in-mysql
+/* 
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault
@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class MySQLDatabase : IDatabase
+    public class InMemoryDatabase : IDatabase
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,20 +39,38 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private List<DatabasePassword> _localPasswordDb;
+        private List<User> _localUserDb;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public List<DatabasePassword> LocalPasswordDbAccess
+        {
+            get
+            {
+                return _localPasswordDb;
+            }
+        }
+
+        public List<User> LocalUserDbAccess
+        {
+            get
+            {
+                return _localUserDb;
+            }
+        }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MySQLDatabase()
+        public InMemoryDatabase()
         {
-
+            _localPasswordDb = new List<DatabasePassword>();
+            _localUserDb = new List<User>();
         }
 
         /*=================================================================================================
@@ -61,62 +79,85 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void AddPassword(DatabasePassword password)
         {
-            throw new NotImplementedException();
+            _localPasswordDb.Add(password);
         }
 
+        /*************************************************************************************************/
         public void AddUser(User user)
         {
-            throw new NotImplementedException();
+            _localUserDb.Add(user);
         }
 
+        /*************************************************************************************************/
         public void DeletePassword(DatabasePassword password)
         {
-            throw new NotImplementedException();
+            _localPasswordDb.RemoveAll(x => x.UniqueID == password.UniqueID);
         }
 
+        /*************************************************************************************************/
         public void DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            _localUserDb.RemoveAll(x => x.GUID == user.GUID);
         }
 
+        /*************************************************************************************************/
         public List<User> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return _localUserDb;
         }
 
+        /*************************************************************************************************/
         public User GetUserByGUID(string guid)
         {
-            throw new NotImplementedException();
+            return _localUserDb.Where(x => x.GUID == guid).FirstOrDefault();
         }
 
+        /*************************************************************************************************/
         public User GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            return _localUserDb.Where(x => x.Username == username).FirstOrDefault();
         }
 
+        /*************************************************************************************************/
         public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
         {
-            throw new NotImplementedException();
+            return _localPasswordDb.Where(x => x.UserGUID == guid).ToList();
         }
 
+        /*************************************************************************************************/
         public void ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
         {
-            throw new NotImplementedException();
+            int index = _localPasswordDb.FindIndex(x => x.UniqueID == password.UniqueID);
+
+            if (index != -1)
+            {
+                _localPasswordDb[index] = modifiedPassword;
+            }
         }
 
+        /*************************************************************************************************/
         public void ModifyUser(User user, User modifiedUser)
         {
-            throw new NotImplementedException();
+            int index = _localUserDb.FindIndex(x => x.GUID == user.GUID);
+
+            if (index != -1)
+            {
+                _localUserDb[index] = modifiedUser;
+            }
         }
 
+        /*************************************************************************************************/
         public bool UserExistsByGUID(string guid)
         {
-            throw new NotImplementedException();
+            bool exists = _localUserDb.Exists(x => x.GUID == guid);
+            return exists;
         }
 
+        /*************************************************************************************************/
         public bool UserExistsByUsername(string username)
         {
-            throw new NotImplementedException();
+            bool exists = _localUserDb.Exists(x => x.Username == username);
+            return exists;
         }
 
         /*=================================================================================================
@@ -129,5 +170,5 @@ namespace PasswordVault
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // Database CLASS
-} // PasswordHashTest NAMESPACE
+    } // InMemoryDatabase CLASS
+} // PasswordVault NAMESPACE
