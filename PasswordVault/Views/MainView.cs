@@ -90,6 +90,7 @@ namespace PasswordVault
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
+        private IChangePasswordView _changePasswordView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -122,9 +123,11 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView)
         {
             _loginView = loginView;
+            _changePasswordView = changePasswordView;
+
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _dgvPasswordList = new BindingList<Password>();
             InitializeComponent();
@@ -178,6 +181,10 @@ namespace PasswordVault
             deleteToolStripMenuItem.ForeColor = WhiteText();
             deleteToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
             deleteToolStripMenuItem.Enabled = false;
+            changePasswordToolStripMenuItem.BackColor = ControlBackground();
+            changePasswordToolStripMenuItem.ForeColor = WhiteText();
+            changePasswordToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            changePasswordToolStripMenuItem.Enabled = false;
 
 
             // Configure buttons
@@ -469,6 +476,7 @@ namespace PasswordVault
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
+                    changePasswordToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
                     loginToolStripMenuItem.Text = "Login";
                     UpdateStatus("Logged off.", ErrorLevel.Neutral);
@@ -603,6 +611,7 @@ namespace PasswordVault
             filterComboBox.Enabled = true;
             filterTextBox.Enabled = true;
             deleteToolStripMenuItem.Enabled = true;
+            changePasswordToolStripMenuItem.Enabled = true;
             editToolStripMenuItem.Enabled = true;
             loginToolStripMenuItem.Text = "Logoff";
 
@@ -660,7 +669,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            _changePasswordView.ShowChangePassword();
         }
 
         /*************************************************************************************************/

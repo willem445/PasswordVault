@@ -21,10 +21,12 @@ namespace PasswordVault
 
             var loginView = kernal.Get<ILoginView>();
             var mainView = kernal.Get<IMainView>();
+            var changePasswordView = kernal.Get<IChangePasswordView>();
             var passwordService = kernal.Get<IPasswordService>();
 
             LoginPresenter loginPresenter = new LoginPresenter(loginView, passwordService);
             MainPresenter mainViewPresenter = new MainPresenter(mainView, passwordService);
+            ChangePasswordPresenter changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, passwordService);
 
             Application.Run((System.Windows.Forms.Form)mainView);
         }

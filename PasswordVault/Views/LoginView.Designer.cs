@@ -36,6 +36,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.loginButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.createEmailTextBox = new System.Windows.Forms.TextBox();
+            this.createPhoneNumberTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.createLastNameTextBox = new System.Windows.Forms.TextBox();
+            this.createFirstNameTextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.createNewUserResultLabel = new System.Windows.Forms.Label();
             this.generatePasswordButton = new System.Windows.Forms.Button();
             this.createPasswordTextBox = new System.Windows.Forms.TextBox();
@@ -45,14 +53,6 @@
             this.createLoginButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
-            this.createLastNameTextBox = new System.Windows.Forms.TextBox();
-            this.createFirstNameTextBox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.createEmailTextBox = new System.Windows.Forms.TextBox();
-            this.createPhoneNumberTextBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -148,6 +148,70 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create New User";
             // 
+            // createEmailTextBox
+            // 
+            this.createEmailTextBox.Location = new System.Drawing.Point(15, 269);
+            this.createEmailTextBox.Name = "createEmailTextBox";
+            this.createEmailTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createEmailTextBox.TabIndex = 18;
+            // 
+            // createPhoneNumberTextBox
+            // 
+            this.createPhoneNumberTextBox.Location = new System.Drawing.Point(15, 225);
+            this.createPhoneNumberTextBox.Name = "createPhoneNumberTextBox";
+            this.createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createPhoneNumberTextBox.TabIndex = 15;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 253);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Email:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 207);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(81, 13);
+            this.label8.TabIndex = 16;
+            this.label8.Text = "Phone Number:";
+            // 
+            // createLastNameTextBox
+            // 
+            this.createLastNameTextBox.Location = new System.Drawing.Point(15, 180);
+            this.createLastNameTextBox.Name = "createLastNameTextBox";
+            this.createLastNameTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createLastNameTextBox.TabIndex = 14;
+            // 
+            // createFirstNameTextBox
+            // 
+            this.createFirstNameTextBox.Location = new System.Drawing.Point(15, 136);
+            this.createFirstNameTextBox.Name = "createFirstNameTextBox";
+            this.createFirstNameTextBox.Size = new System.Drawing.Size(218, 20);
+            this.createFirstNameTextBox.TabIndex = 11;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 164);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(61, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Last Name:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(12, 118);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(60, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "First Name:";
+            // 
             // createNewUserResultLabel
             // 
             this.createNewUserResultLabel.AutoSize = true;
@@ -233,76 +297,12 @@
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
-            // createLastNameTextBox
-            // 
-            this.createLastNameTextBox.Location = new System.Drawing.Point(15, 180);
-            this.createLastNameTextBox.Name = "createLastNameTextBox";
-            this.createLastNameTextBox.Size = new System.Drawing.Size(218, 20);
-            this.createLastNameTextBox.TabIndex = 14;
-            // 
-            // createFirstNameTextBox
-            // 
-            this.createFirstNameTextBox.Location = new System.Drawing.Point(15, 136);
-            this.createFirstNameTextBox.Name = "createFirstNameTextBox";
-            this.createFirstNameTextBox.Size = new System.Drawing.Size(218, 20);
-            this.createFirstNameTextBox.TabIndex = 11;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 164);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(61, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Last Name:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 118);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(60, 13);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "First Name:";
-            // 
-            // createEmailTextBox
-            // 
-            this.createEmailTextBox.Location = new System.Drawing.Point(15, 269);
-            this.createEmailTextBox.Name = "createEmailTextBox";
-            this.createEmailTextBox.Size = new System.Drawing.Size(218, 20);
-            this.createEmailTextBox.TabIndex = 18;
-            // 
-            // createPhoneNumberTextBox
-            // 
-            this.createPhoneNumberTextBox.Location = new System.Drawing.Point(15, 225);
-            this.createPhoneNumberTextBox.Name = "createPhoneNumberTextBox";
-            this.createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 20);
-            this.createPhoneNumberTextBox.TabIndex = 15;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 253);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(35, 13);
-            this.label7.TabIndex = 17;
-            this.label7.Text = "Email:";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 207);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(81, 13);
-            this.label8.TabIndex = 16;
-            this.label8.Text = "Phone Number:";
-            // 
             // LoginView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(550, 400);
+            this.ClientSize = new System.Drawing.Size(550, 406);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.groupBox2);

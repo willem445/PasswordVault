@@ -29,16 +29,15 @@ namespace PasswordVault
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-
-        /*PRIVATE*****************************************************************************************/
-        private bool _draggingWindow = false;         // Variable to track whether the form is being moved
-        private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
-
         public event Action<string, string> LoginEvent;
         public event Action<string, string, string, string, string, string> CreateNewUserEvent;
         public event Action GenerateNewPasswordEvent;
         public event Action<string> PasswordChangedEvent;
         public event Action LoginSuccessfulEvent;
+
+        /*PRIVATE*****************************************************************************************/
+        private bool _draggingWindow = false;         // Variable to track whether the form is being moved
+        private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         /*=================================================================================================
 		PROPERTIES
@@ -56,7 +55,7 @@ namespace PasswordVault
 
             #region UI
             // Configure form UI
-            BackColor = Color.FromArgb(35, 35, 35);
+            BackColor = Color.FromArgb(42, 42, 42);
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure buttons
@@ -67,14 +66,23 @@ namespace PasswordVault
             loginButton.BackColor = Color.FromArgb(63, 63, 63);
             loginButton.ForeColor = Color.FromArgb(242, 242, 242);
             loginButton.FlatStyle = FlatStyle.Flat;
+            loginButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            loginButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            loginButton.FlatAppearance.BorderSize = 1;
 
             generatePasswordButton.BackColor = Color.FromArgb(63, 63, 63);
             generatePasswordButton.ForeColor = Color.FromArgb(242, 242, 242);
             generatePasswordButton.FlatStyle = FlatStyle.Flat;
+            generatePasswordButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            generatePasswordButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            generatePasswordButton.FlatAppearance.BorderSize = 1;
 
             createLoginButton.BackColor = Color.FromArgb(63, 63, 63);
             createLoginButton.ForeColor = Color.FromArgb(242, 242, 242);
             createLoginButton.FlatStyle = FlatStyle.Flat;
+            createLoginButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            createLoginButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            createLoginButton.FlatAppearance.BorderSize = 1;
 
             // Configure textbox
             loginUsernameTextBox.BackColor = Color.FromArgb(63, 63, 63);
@@ -202,21 +210,25 @@ namespace PasswordVault
                 case CreateUserResult.UsernameTaken:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Username taken.";
+                    createNewUserResultLabel.ForeColor = Color.Red;
                     break;
 
                 case CreateUserResult.Failed:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Unsuccessful.";
+                    createNewUserResultLabel.ForeColor = Color.Red;
                     break;
 
                 case CreateUserResult.PasswordNotValid:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Password does not meet requirements.";
+                    createNewUserResultLabel.ForeColor = Color.Red;
                     break;
 
                 case CreateUserResult.UsernameNotValid:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Invalid username.";
+                    createNewUserResultLabel.ForeColor = Color.Red;
                     break;
 
                 case CreateUserResult.Successful:
@@ -228,11 +240,13 @@ namespace PasswordVault
                     createLastNameTextBox.Text = "";
                     createEmailTextBox.Text = "";
                     createPhoneNumberTextBox.Text = "";
+                    createNewUserResultLabel.ForeColor = Color.Green;
                     break;
 
                 default:
                     createNewUserResultLabel.Visible = true;
                     createNewUserResultLabel.Text = "Unsuccessful.";
+                    createNewUserResultLabel.ForeColor = Color.Red;
                     break;
             }
         }

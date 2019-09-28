@@ -43,6 +43,18 @@ namespace PasswordVault
         Failed,
     }
 
+    public enum ChangeUserPasswordResult
+    {
+        Failed,
+        Success,
+        NoSpecialCharacter,
+        LengthRequirementNotMet,
+        NoNumber,
+        NoUpperCaseCharacter,
+        NoLowerCaseCharacter,
+        PasswordsDoNotMatch,
+    }
+
     public enum AddPasswordResult
     {
         ApplicationError,
@@ -213,7 +225,7 @@ namespace PasswordVault
                 {
                     createUserResult = CreateUserResult.UsernameNotValid;
                 }
-                else if (!VerifyPasswordRequirements(user.PlainTextPassword))
+                else if (VerifyPasswordRequirements(user.PlainTextPassword) != ChangeUserPasswordResult.Success)
                 {
                     createUserResult = CreateUserResult.PasswordNotValid;
                 }
@@ -306,14 +318,59 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void ChangeUserPassword(User user)
+        public ChangeUserPasswordResult ChangeUserPassword(string newPassword)
         {
+            ChangeUserPasswordResult result = ChangeUserPasswordResult.Failed;
+
             if (IsLoggedIn())
             {
+                ChangeUserPasswordResult verifyPass = VerifyPasswordRequirements(newPassword);
+                if (verifyPass != ChangeUserPasswordResult.Success)
+                {
+                    result = verifyPass;
+                }
+                else
+                {
+                    User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
+                    UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
 
+                    User newUser = new User(
+                        user.GUID, 
+                        _encryptDecrypt.Encrypt(_currentUser.PlainTextRandomKey, newPassword), // Encrypt the random key with the users password
+                        user.Username,
+                        newEncryptedData.Iterations.ToString(), 
+                        newEncryptedData.Salt, 
+                        newEncryptedData.Hash, 
+                        user.FirstName,
+                        user.LastName, 
+                        user.PhoneNumber, 
+                        user.Email  
+                    );
+
+                    if (_dbcontext.ModifyUser(user, newUser))
+                    {
+                        result = ChangeUserPasswordResult.Success;
+                    }
+                    else
+                    {
+                        result = ChangeUserPasswordResult.Failed;
+                    }                   
+                }
             }
 
-            throw new NotImplementedException();
+            return result;
+        }
+
+        /*************************************************************************************************/
+        public bool VerifyCurrentUserPassword(string password)
+        {
+            bool result = false;
+
+            User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
+
+            result = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations)); 
+
+            return result;
         }
 
         /*************************************************************************************************/
@@ -537,31 +594,29 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        private bool VerifyPasswordRequirements(string passphrase)
+        private ChangeUserPasswordResult VerifyPasswordRequirements(string passphrase)
         {
-            bool result = false;
+            ChangeUserPasswordResult result = ChangeUserPasswordResult.Success;
 
-            bool isNotEmptyOrNull         = false;
-            bool meetsMinimumLength       = false;
-            bool lowerThanMaximum         = false;
+            bool isNotEmptyOrNull         = true;
             bool containsNumber           = false;
-            bool containsSpecialCharacter = false;
             bool containsLowerCase        = false;
             bool containsUpperCase        = false;
 
-            if (passphrase != "" && passphrase != null)
+            if (passphrase == "" || passphrase == null)
             {
-                isNotEmptyOrNull = true;
+                isNotEmptyOrNull = false;
+                result = ChangeUserPasswordResult.Failed;
             }
 
-            if (passphrase.Length <= MAXIMUM_PASSWORD_LENGTH)
+            if (passphrase.Length >= MAXIMUM_PASSWORD_LENGTH)
             {
-                lowerThanMaximum = true;
+                result = ChangeUserPasswordResult.LengthRequirementNotMet;
             }
 
-            if (passphrase.Length >= MINIMUM_PASSWORD_LENGTH)
+            if (passphrase.Length <= MINIMUM_PASSWORD_LENGTH)
             {
-                meetsMinimumLength = true;
+                result = ChangeUserPasswordResult.Failed;
             }
 
             if (isNotEmptyOrNull)
@@ -583,20 +638,24 @@ namespace PasswordVault
                 }
             }
 
-            if (System.Text.RegularExpressions.Regex.IsMatch(passphrase, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            if (!containsLowerCase)
             {
-                containsSpecialCharacter = true;
+                result = ChangeUserPasswordResult.NoLowerCaseCharacter;
             }
 
-            if (isNotEmptyOrNull &&
-                meetsMinimumLength &&
-                lowerThanMaximum &&
-                containsNumber &&
-                containsSpecialCharacter &&
-                containsLowerCase &&
-                containsUpperCase)
+            if (!containsUpperCase)
             {
-                result = true;
+                result = ChangeUserPasswordResult.NoUpperCaseCharacter;
+            }
+
+            if (!containsNumber)
+            {
+                result = ChangeUserPasswordResult.NoNumber;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(passphrase, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            {
+                result = ChangeUserPasswordResult.NoSpecialCharacter;
             }
 
             return result;

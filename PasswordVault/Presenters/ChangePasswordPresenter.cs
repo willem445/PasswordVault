@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+using System.Text;
+using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -23,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class BindableList<T>
+    public class ChangePasswordPresenter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -38,140 +39,85 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private BindingList<T> _list;
+        private IChangePasswordView _changePasswordView;
+        private IPasswordService _passwordService;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public int Count
-        {
-            get
-            {
-                return _list.Count;
-            }
-        }
 
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public BindableList()
+        public ChangePasswordPresenter(IChangePasswordView changePasswordView, IPasswordService passwordService)
         {
-            Type d1 = typeof(BindingList<>);
-            Type[] typeArgs = { typeof(T) };
-            Type makeme = d1.MakeGenericType(typeArgs);
-            object o = Activator.CreateInstance(makeme);
+            _changePasswordView = changePasswordView;
+            _passwordService = passwordService;
 
-            _list = o as BindingList<T>;
+            _changePasswordView.ChangePasswordEvent += ModifyPassword;
+            _changePasswordView.PasswordTextChangedEvent += PasswordTextChanged;
+            _changePasswordView.GenerateNewPasswordEvent += GeneratePassword;
         }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public void CreateBinding(DataGridView dgv)
-        {
-            BindingSource bindingSource;
-            bindingSource = new BindingSource(this.Get(), null);
-
-            dgv.DataSource = bindingSource;
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowHeadersVisible = false;
-        }
-
-        /*************************************************************************************************/
-        public BindingSource GetBindingSource()
-        {
-            BindingSource bindingSource;
-            bindingSource = new BindingSource(this.Get(), null);
-
-            return bindingSource;
-        }
-
-        /*************************************************************************************************/
-        public void Add(T item)
-        {
-            _list.Add(item);
-        }
-
-        /*************************************************************************************************/
-        public void Remove(int index)
-        {
-            Exception ex;
-
-            if (index < _list.Count && _list.Count != 0)
-            {
-                _list.RemoveAt(index);
-            }
-            else
-            {
-                ex = new ArgumentException("Index exceeds database index.");
-                throw ex;
-            }
-        }
-
-        /*************************************************************************************************/
-        public void Swap(int first, int second)
-        {
-            Exception ex;
-
-            if (first >= _list.Count || second >= _list.Count)
-            {
-                ex = new ArgumentException("Index exceeds database index.");
-                throw ex;
-            }
-            else if (first == second)
-            {
-                ex = new ArgumentException("Indexes cannot be the same.");
-                throw ex;
-            }
-            else
-            {
-                SwapElements<T>(_list, first, second);
-            }
-        }
-
-        /*************************************************************************************************/
-        public BindingList<T> Get()
-        {
-            return _list;
-        }
-
-        /*************************************************************************************************/
-        public void Set(BindingList<T> setList)
-        {
-            _list = setList;
-        }
-
-        /*************************************************************************************************/
-        public void Clear()
-        {
-            _list.Clear();
-        }
-
-        /*************************************************************************************************/
-        public List<T> GetList()
-        {
-            return _list.ToList<T>();
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        private void PasswordTextChanged(string passwordText)
+        {
+            PasswordComplexityLevel passwordComplexityLevel = PasswordComplexityLevel.Weak;
+
+            passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(passwordText.Length, passwordText);
+
+            _changePasswordView.DisplayPasswordComplexity(passwordComplexityLevel);
+        }
+
+        /*************************************************************************************************/
+        private void ModifyPassword(string originalPassword, string password, string confirmPassword)
+        {
+            ChangeUserPasswordResult result = ChangeUserPasswordResult.Failed;
+
+            if (password == confirmPassword)
+            {
+                bool validPassword = _passwordService.VerifyCurrentUserPassword(originalPassword);
+
+                if (validPassword)
+                {
+                    ChangeUserPasswordResult passresult = _passwordService.ChangeUserPassword(password);
+
+                    if (passresult == ChangeUserPasswordResult.Success)
+                    {
+                        result = ChangeUserPasswordResult.Success;
+                    }
+                }              
+            }
+            else
+            {
+                result = ChangeUserPasswordResult.PasswordsDoNotMatch;
+            }
+
+            _changePasswordView.DisplayChangePasswordResult(result);
+        }
+
+        /*************************************************************************************************/
+        private void GeneratePassword()
+        {
+            string generatedPassword = _passwordService.GeneratePasswordKey();
+            _changePasswordView.DisplayGeneratedPassword(generatedPassword);
+        }
 
         /*=================================================================================================
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private static void SwapElements<K>(BindingList<T> list, int first, int second)
-        {
-            T temp = list[first];
-            list[first] = list[second];
-            list[second] = temp;
-        }
 
-    } // BindableList CLASS
-} // HerdHelper NAMESPACE
+    } // ChangePasswordPresenter CLASS
+} // PasswordVault NAMESPACE

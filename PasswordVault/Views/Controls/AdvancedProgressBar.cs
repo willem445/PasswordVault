@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 /*=================================================================================================
 DESCRIPTION
@@ -24,7 +28,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class NinjectBindings : Ninject.Modules.NinjectModule
+    class AdvancedProgressBar : ProgressBar
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,47 +43,58 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+ 
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
 
+
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
+        public AdvancedProgressBar()
+        {
+            this.SetStyle(ControlStyles.UserPaint, true);
+        }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public override void Load()
-        {
-            Bind<ICSVReader>().To<CSVReader>();
-            Bind<ICSVWriter>().To<CSVWriter>();
-            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
-            Bind<ICSVUserManager>().To<CSVUserManager>();
-            Bind<IDatabase>().To<CsvDatabase>().InSingletonScope();
-            Bind<IEncryptDecrypt>().To<EncryptDecrypt>();
-            Bind<IMasterPassword>().To<MasterPassword>();
-            Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
-            Bind<IMessageWriter>().To<WinFormsMessageWriter>();
-            Bind<ILoginView>().To<LoginView>().InSingletonScope();
-            Bind<IMainView>().To<MainView>().InSingletonScope();
-            Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            LinearGradientBrush brush = null;
+            Rectangle rec = new Rectangle(0, 0, this.Width, this.Height);
+            double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
+
+            if (ProgressBarRenderer.IsSupported)
+                ProgressBarRenderer.DrawHorizontalBar(e.Graphics, rec);
+
+            rec.Width = (int)((rec.Width * scaleFactor) - 4);
+            rec.Height -= 4;
+            brush = new LinearGradientBrush(rec, this.ForeColor, this.BackColor, LinearGradientMode.Vertical);
+            e.Graphics.FillRectangle(brush, 2, 2, rec.Width, rec.Height);
+        }
+
+        /*************************************************************************************************/
+        protected override void OnPaintBackground(PaintEventArgs pevent)
+        {
+            // None... Helps control the flicker.
+        }
 
         /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
+        STATIC METHODS
+        *================================================================================================
         /*************************************************************************************************/
 
-    } // NinjectBindings CLASS
+    }
 } // PasswordVault NAMESPACE
