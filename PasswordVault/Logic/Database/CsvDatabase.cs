@@ -120,14 +120,16 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DeleteUser(string username)
+        public void DeleteUser(User user)
         {
-            int index = GetIndexOfUser(username);
+            int index = GetIndexOfUser(user.GUID);
 
             if (index != -1)
             {
                 _encryptedUsers.RemoveAt(index);
+                _encryptedPasswords.RemoveAll(x => x.UserGUID == user.GUID);
                 _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+                _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
             }
         }
 
@@ -215,11 +217,11 @@ namespace PasswordVault
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private int GetIndexOfUser(string username)
+        private int GetIndexOfUser(string guid)
         {
             int index = -1;
 
-            index = _encryptedUsers.FindIndex(x => x.Username == username);
+            index = _encryptedUsers.FindIndex(x => x.GUID == guid);
 
             return index;
         }

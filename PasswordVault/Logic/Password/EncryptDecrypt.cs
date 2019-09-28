@@ -39,7 +39,7 @@ namespace PasswordVault
 
         /*PRIVATE*****************************************************************************************/
         private int _keySize = 256;
-        private int _derivationIterations = 10000;
+        private int _derivationIterations = 2500;
 
         /*=================================================================================================
 		PROPERTIES
@@ -50,10 +50,6 @@ namespace PasswordVault
             get
             {
                 return _derivationIterations;
-            }
-            set
-            {
-                _derivationIterations = value;
             }
         }
 

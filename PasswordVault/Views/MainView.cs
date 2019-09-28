@@ -74,6 +74,8 @@ namespace PasswordVault
         public event Action<string, PasswordFilterOptions> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
         public event Action LogoutEvent;
+        public event Action DeleteAccountEvent;
+        public event Action ModifyAccountEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
@@ -165,6 +167,18 @@ namespace PasswordVault
             loginToolStripMenuItem.BackColor = ControlBackground();
             loginToolStripMenuItem.ForeColor = WhiteText();
             loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            accountToolStripMenuItem.BackColor = ControlBackground();
+            accountToolStripMenuItem.ForeColor = WhiteText();
+            accountToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            editToolStripMenuItem.BackColor = ControlBackground();
+            editToolStripMenuItem.ForeColor = WhiteText();
+            editToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            editToolStripMenuItem.Enabled = false;
+            deleteToolStripMenuItem.BackColor = ControlBackground();
+            deleteToolStripMenuItem.ForeColor = WhiteText();
+            deleteToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            deleteToolStripMenuItem.Enabled = false;
+
 
             // Configure buttons
             addButton.BackColor = ControlBackground();
@@ -454,6 +468,8 @@ namespace PasswordVault
                     deleteButton.Enabled = false;
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
+                    deleteToolStripMenuItem.Enabled = false;
+                    editToolStripMenuItem.Enabled = false;
                     loginToolStripMenuItem.Text = "Login";
                     UpdateStatus("Logged off.", ErrorLevel.Neutral);
                     break;
@@ -586,6 +602,8 @@ namespace PasswordVault
             editButton.Enabled = true;
             filterComboBox.Enabled = true;
             filterTextBox.Enabled = true;
+            deleteToolStripMenuItem.Enabled = true;
+            editToolStripMenuItem.Enabled = true;
             loginToolStripMenuItem.Text = "Logoff";
 
             RaiseRequestPasswordsOnLoginEvent();
@@ -607,6 +625,42 @@ namespace PasswordVault
             {
                 RequestPasswordsOnLoginEvent();
             }
+        }
+
+        /*************************************************************************************************/
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RaiseEditAccountEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseEditAccountEvent()
+        {
+            if (ModifyAccountEvent != null)
+            {
+                ModifyAccountEvent();
+            }
+        }
+
+        /*************************************************************************************************/
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RaiseDeleteAccountEvent();
+        }
+
+        /*************************************************************************************************/
+        private void RaiseDeleteAccountEvent()
+        {
+            if (DeleteAccountEvent != null)
+            {
+                DeleteAccountEvent();
+            }
+        }
+
+        /*************************************************************************************************/
+        private void changePasswordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -782,10 +836,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void RaiseCopyUserEvent(DataGridViewRow dgvrow)
         {
-            if (CopyUserNameEvent != null)
-            {
-                CopyUserNameEvent(dgvrow);
-            }
+            CopyUserNameEvent?.Invoke(dgvrow);
         }
 
         /*************************************************************************************************/

@@ -134,11 +134,9 @@ namespace PasswordVault
                     bool valid = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations)); // Hash password with user.Salt and compare to user.Hash
 
                     if (valid)
-                    {
-                        _encryptDecrypt.Iterations = Convert.ToInt32(user.Iterations); // Use same iterations as master password for simplicity
-
+                    {                       
                         string tempKey = _encryptDecrypt.Decrypt(user.EncryptedKey, password);
-                        _currentUser = new User(user.UniqueID, 
+                        _currentUser = new User(user.GUID, 
                                                 user.Username, 
                                                 tempKey,
                                                 _encryptDecrypt.Decrypt(user.FirstName, tempKey),
@@ -241,12 +239,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DeleteUser(User user)
         {
-            if (IsLoggedIn())
-            {
-
-            }
-
-            throw new NotImplementedException();
+            _dbcontext.DeleteUser(user);
         }
 
         /*************************************************************************************************/
@@ -268,6 +261,19 @@ namespace PasswordVault
             if (IsLoggedIn())
             {
                 user = _currentUser.Username;
+            }
+
+            return user;
+        }
+
+        /*************************************************************************************************/
+        public User GetCurrentUser()
+        {
+            User user = new User();
+
+            if (IsLoggedIn())
+            {
+                user = _currentUser;
             }
 
             return user;
@@ -432,7 +438,7 @@ namespace PasswordVault
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.UniqueID))
+            foreach (var item in _dbcontext.GetUserPasswords(_currentUser.GUID))
             {
                 // Add encrypted password to _passwordList
                 Password password = new Password(
@@ -454,7 +460,7 @@ namespace PasswordVault
         {
             return new DatabasePassword(
                 password.UniqueID,
-                _currentUser.UniqueID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
+                _currentUser.GUID, // TODO - 7 - Change to unique ID - Use unencrypted username for now
                 _encryptDecrypt.Encrypt(password.Application, _currentUser.PlainTextRandomKey),
                 _encryptDecrypt.Encrypt(password.Username, _currentUser.PlainTextRandomKey),
                 _encryptDecrypt.Encrypt(password.Email, _currentUser.PlainTextRandomKey),

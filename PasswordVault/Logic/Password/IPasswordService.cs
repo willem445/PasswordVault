@@ -13,6 +13,7 @@ namespace PasswordVault
         bool IsLoggedIn();
         CreateUserResult CreateNewUser(User user);
         string GetCurrentUsername();
+        User GetCurrentUser();
         void ChangeUserPassword(User user);
         void DeleteUser(User user);
         void EditUser(User user);

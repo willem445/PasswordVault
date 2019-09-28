@@ -8,7 +8,7 @@ namespace PasswordVault
 {
     public interface IEncryptDecrypt
     {
-        int Iterations { get; set; }
+        int Iterations { get; }
         string Encrypt(string plainText, string passPhrase);
         string Decrypt(string cipherText, string passPhrase);
         string CreateKey(int keyLength);

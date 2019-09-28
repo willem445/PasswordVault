@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PasswordVault.Tests
+namespace PasswordVaultTests
 {
     [TestClass()]
     public class CsvDatabaseTests

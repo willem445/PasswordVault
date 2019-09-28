@@ -73,6 +73,7 @@ namespace PasswordVault
             _mainView.CopyUserNameEvent += CopyUsername;
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
+            _mainView.DeleteAccountEvent += DeleteAccount;
         }
 
         /*=================================================================================================
@@ -83,6 +84,26 @@ namespace PasswordVault
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
+        /*************************************************************************************************/
+        private void ModifyAccount()
+        {
+            throw new NotImplementedException();
+            User user = new User();
+            _passwordService.EditUser(user);
+        }
+
+        /*************************************************************************************************/
+        private void DeleteAccount()
+        {
+            User user = _passwordService.GetCurrentUser();
+            LogOutResult result = LogoutUser();
+
+            if (result == LogOutResult.Success)
+            {
+                _passwordService.DeleteUser(user);
+            }         
+        }
+
         /*************************************************************************************************/
         private void FilterChanged(string filterText, PasswordFilterOptions passwordFilterOption)
         {
@@ -198,6 +219,12 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void Logout()
         {
+            LogoutUser();
+        }
+
+        /*************************************************************************************************/
+        private LogOutResult LogoutUser()
+        {
             LogOutResult result = _passwordService.Logout();
 
             if (result == LogOutResult.Success)
@@ -206,6 +233,8 @@ namespace PasswordVault
             }
 
             _mainView.DisplayLogOutResult(result);
+
+            return result;
         }
 
         /*************************************************************************************************/

@@ -13,7 +13,7 @@ namespace PasswordVault
         List<User> GetAllUsers();
         void AddUser(User user);
         void ModifyUser(string username, User modifiedUser);
-        void DeleteUser(string username);
+        void DeleteUser(User modifiedUser);
         bool UserExists(string username);
 
         // User passwords
