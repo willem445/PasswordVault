@@ -57,7 +57,6 @@ namespace PasswordVault
         public event Action RequestPasswordsOnLoginEvent;
         public event Action LogoutEvent;
         public event Action DeleteAccountEvent;
-        public event Action ModifyAccountEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
@@ -73,6 +72,7 @@ namespace PasswordVault
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
         private IChangePasswordView _changePasswordView;
+        private IEditUserView _editUserView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -105,10 +105,11 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView)
         {
             _loginView = loginView;
             _changePasswordView = changePasswordView;
+            _editUserView = editUserView;
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _dgvPasswordList = new BindingList<Password>();
@@ -571,16 +572,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RaiseEditAccountEvent();
-        }
-
-        /*************************************************************************************************/
-        private void RaiseEditAccountEvent()
-        {
-            if (ModifyAccountEvent != null)
-            {
-                ModifyAccountEvent();
-            }
+            _editUserView.ShowEditUserMenu();
         }
 
         /*************************************************************************************************/
@@ -876,15 +868,15 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(107, 20, 3);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.CloseButtonColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/

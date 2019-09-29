@@ -39,8 +39,18 @@ namespace PasswordVault
 
     public enum DeleteUserResult
     {
-        Successful,
+        Success,
         Failed,
+    }
+
+    public enum ModifyUserResult
+    {
+        Success,
+        Failed,
+        InvalidFirstName,
+        InvalidLastName,
+        InvalidPhoneNumber,
+        InvalidEmail,
     }
 
     public enum ChangeUserPasswordResult
@@ -267,7 +277,7 @@ namespace PasswordVault
 
                 if (success)
                 {
-                    result = DeleteUserResult.Successful;
+                    result = DeleteUserResult.Success;
                 }
             }
             else
@@ -285,7 +295,7 @@ namespace PasswordVault
         {
             if (IsLoggedIn())
             {
-
+                
             }
 
             throw new NotImplementedException();

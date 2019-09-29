@@ -85,12 +85,6 @@ namespace PasswordVault
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void ModifyAccount()
-        {
-            throw new NotImplementedException();
-            User user = new User();
-            _passwordService.EditUser(user);
-        }
 
         /*************************************************************************************************/
         private void DeleteAccount()

@@ -390,15 +390,15 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(107, 20, 3);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.CloseButtonColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/

@@ -25,7 +25,7 @@ namespace PasswordVault
         Ok,
         Neutral,
     }
-    
+
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -58,6 +58,7 @@ namespace PasswordVault
             public const int ControlHighLightColor = 0x505050;
             public const int DefaultBackgroundColor = 0x232323;
             public const int SecondaryFromBackgroundColor = 0x2A2A2A;
+            public const int CloseButtonColor = 0xb0270c;
         }   
 
         /*PRIVATE*****************************************************************************************/

@@ -57,7 +57,7 @@ namespace PasswordVaultTests
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             deleteResult = passwordService.DeleteUser(user);
-            Assert.AreEqual(DeleteUserResult.Successful, deleteResult);
+            Assert.AreEqual(DeleteUserResult.Success, deleteResult);
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
         }
 
@@ -96,7 +96,7 @@ namespace PasswordVaultTests
             foreach (var user in users)
             {
                 deleteResult = passwordService.DeleteUser(user);
-                Assert.AreEqual(DeleteUserResult.Successful, deleteResult);
+                Assert.AreEqual(DeleteUserResult.Success, deleteResult);
                 Assert.AreEqual(deletedUsersCount, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
                 deletedUsersCount--;
             }
@@ -145,7 +145,7 @@ namespace PasswordVaultTests
             }
 
             deleteResult = passwordService.DeleteUser(user);
-            Assert.AreEqual(DeleteUserResult.Successful, deleteResult);
+            Assert.AreEqual(DeleteUserResult.Success, deleteResult);
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
         }
@@ -216,7 +216,7 @@ namespace PasswordVaultTests
             // Delete the account
             string currentUserGUID = passwordService.GetCurrentUser().GUID;
             deleteResult = passwordService.DeleteUser(passwordService.GetCurrentUser());
-            Assert.AreEqual(DeleteUserResult.Successful, deleteResult);
+            Assert.AreEqual(DeleteUserResult.Success, deleteResult);
             Assert.AreEqual(((passwords.Length * users.Length) - passwords.Length), ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
             Assert.AreEqual((users.Length - 1), ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 

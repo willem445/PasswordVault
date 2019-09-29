@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class NinjectBindings : Ninject.Modules.NinjectModule
+    class EditUserPresenter
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,6 +39,8 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private IEditUserView _editUserView;
+        private IPasswordService _passwordService;
 
         /*=================================================================================================
 		PROPERTIES
@@ -50,37 +52,40 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
+        public EditUserPresenter(IEditUserView editUserView, IPasswordService passwordService)
+        {
+            _editUserView = editUserView;
+            _passwordService = passwordService;
+
+            _editUserView.ModifyAccountEvent += ModifyUserInformation;
+            _editUserView.RequestUserEvent += GetUserInformation;
+        }
 
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public override void Load()
-        {
-            Bind<ICSVReader>().To<CSVReader>();
-            Bind<ICSVWriter>().To<CSVWriter>();
-            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
-            Bind<ICSVUserManager>().To<CSVUserManager>();
-            Bind<IDatabase>().To<CsvDatabase>().InSingletonScope();
-            Bind<IEncryption>().To<RijndaelManagedEncryption>();
-            Bind<IMasterPassword>().To<MasterPassword>();
-            Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
-            Bind<IMessageWriter>().To<WinFormsMessageWriter>();
-            Bind<ILoginView>().To<LoginView>().InSingletonScope();
-            Bind<IMainView>().To<MainView>().InSingletonScope();
-            Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
-            Bind<IEditUserView>().To<EditUserView>().InSingletonScope();
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        private void ModifyUserInformation(string firstName, string lastName, string email, string phoneNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*************************************************************************************************/
+        private void GetUserInformation()
+        {
+            User user = _passwordService.GetCurrentUser();
+            _editUserView.DisplayUser(user);
+        }
 
         /*=================================================================================================
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // NinjectBindings CLASS
+    } // EditUserPresenter CLASS
 } // PasswordVault NAMESPACE
