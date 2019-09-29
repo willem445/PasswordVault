@@ -38,11 +38,10 @@ namespace PasswordVault
             this.accountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.changePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.passwordDataGridView = new System.Windows.Forms.DataGridView();
             this.addButton = new System.Windows.Forms.Button();
-            this.moveUpButton = new System.Windows.Forms.Button();
-            this.moveDownButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.applicationTextBox = new System.Windows.Forms.TextBox();
@@ -66,7 +65,6 @@ namespace PasswordVault
             this.minimizeButton = new System.Windows.Forms.Label();
             this.emailTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.changePasswordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -119,22 +117,29 @@ namespace PasswordVault
             this.deleteToolStripMenuItem,
             this.changePasswordToolStripMenuItem});
             this.accountToolStripMenuItem.Name = "accountToolStripMenuItem";
-            this.accountToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.accountToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.accountToolStripMenuItem.Text = "Account";
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.editToolStripMenuItem.Text = "Edit";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // changePasswordToolStripMenuItem
+            // 
+            this.changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
+            this.changePasswordToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.changePasswordToolStripMenuItem.Text = "Change Password";
+            this.changePasswordToolStripMenuItem.Click += new System.EventHandler(this.changePasswordToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -163,28 +168,6 @@ namespace PasswordVault
             this.addButton.Text = "Add";
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.AddButton_Click);
-            // 
-            // moveUpButton
-            // 
-            this.moveUpButton.Enabled = false;
-            this.moveUpButton.Location = new System.Drawing.Point(733, 221);
-            this.moveUpButton.Name = "moveUpButton";
-            this.moveUpButton.Size = new System.Drawing.Size(75, 23);
-            this.moveUpButton.TabIndex = 3;
-            this.moveUpButton.Text = "Move Up";
-            this.moveUpButton.UseVisualStyleBackColor = true;
-            this.moveUpButton.Click += new System.EventHandler(this.MoveUpButton_Click);
-            // 
-            // moveDownButton
-            // 
-            this.moveDownButton.Enabled = false;
-            this.moveDownButton.Location = new System.Drawing.Point(733, 250);
-            this.moveDownButton.Name = "moveDownButton";
-            this.moveDownButton.Size = new System.Drawing.Size(75, 23);
-            this.moveDownButton.TabIndex = 4;
-            this.moveDownButton.Text = "Move Down";
-            this.moveDownButton.UseVisualStyleBackColor = true;
-            this.moveDownButton.Click += new System.EventHandler(this.MoveDownButton_Click);
             // 
             // editButton
             // 
@@ -404,13 +387,6 @@ namespace PasswordVault
             this.label6.TabIndex = 34;
             this.label6.Text = "Email";
             // 
-            // changePasswordToolStripMenuItem
-            // 
-            this.changePasswordToolStripMenuItem.Name = "changePasswordToolStripMenuItem";
-            this.changePasswordToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.changePasswordToolStripMenuItem.Text = "Change Password";
-            this.changePasswordToolStripMenuItem.Click += new System.EventHandler(this.changePasswordToolStripMenuItem_Click);
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -439,8 +415,6 @@ namespace PasswordVault
             this.Controls.Add(this.applicationTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.editButton);
-            this.Controls.Add(this.moveDownButton);
-            this.Controls.Add(this.moveUpButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.passwordDataGridView);
             this.Controls.Add(this.menuStrip);
@@ -466,8 +440,6 @@ namespace PasswordVault
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.DataGridView passwordDataGridView;
         private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.Button moveUpButton;
-        private System.Windows.Forms.Button moveDownButton;
         private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox applicationTextBox;

@@ -29,14 +29,6 @@ namespace PasswordVault
         Website
     }
 
-    public enum ErrorLevel
-    {
-        Error,
-        Warning,
-        Ok,
-        Neutral,
-    }
-
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
@@ -54,18 +46,8 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private const float STANDARD_UI_FONT_SIZE = 9.0f;
-        private const float CLOSE_BUTTON_FONT_SIZE = 12.0f;
-        private const float TEXTBOX_FONT_SIZE = 8.0f;
-        private const float BUTTON_FONT_SIZE = 8.0f;
-
         private const int INVALID_INDEX = -1;
         private const int EMPTY_DGV = 1;
-
-        private const int COLOR_ERROR_RED = 0xFF0000;
-        private const int COLOR_WARNING_YELLOW = 0xFFD633;
-        private const int COLOR_OK_GREEN = 0x00CC44;
-        private const int COLOR_FONT_DEFAULT_WHITE = 0xF2F2F2;
 
         /*=================================================================================================
 		FIELDS
@@ -133,175 +115,154 @@ namespace PasswordVault
             InitializeComponent();
 
             #region UI
-            // TODO - 9 - Create custom controls with default custom properties
-
             // Configure form UI
-            BackColor = DarkBackground();
+            BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure labels
-            label1.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label1.ForeColor = WhiteText();
+            label1.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label1.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            label2.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label2.ForeColor = WhiteText();
+            label2.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label2.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            label3.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label3.ForeColor = WhiteText();
+            label3.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label3.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            label4.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label4.ForeColor = WhiteText();
+            label4.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label4.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            label5.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label5.ForeColor = WhiteText();
+            label5.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label5.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            label6.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            label6.ForeColor = WhiteText();
+            label6.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            label6.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
-            filterLabel.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            filterLabel.ForeColor = WhiteText();
+            filterLabel.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            filterLabel.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
 
             // Configure menu strip
-            menuStrip.BackColor = DarkBackground();
-            menuStrip.ForeColor = WhiteText();
-            menuStrip.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            menuStrip.MenuItemSelectedColor = ControlHighlight();
-            menuStrip.MenuItemBackgroundColor = ControlBackground();
-            loginToolStripMenuItem.BackColor = ControlBackground();
-            loginToolStripMenuItem.ForeColor = WhiteText();
-            loginToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            accountToolStripMenuItem.BackColor = ControlBackground();
-            accountToolStripMenuItem.ForeColor = WhiteText();
-            accountToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            editToolStripMenuItem.BackColor = ControlBackground();
-            editToolStripMenuItem.ForeColor = WhiteText();
-            editToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            menuStrip.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            menuStrip.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            menuStrip.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            menuStrip.MenuItemSelectedColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlHighLightColor);
+            menuStrip.MenuItemBackgroundColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            loginToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            loginToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            loginToolStripMenuItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            accountToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            accountToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            accountToolStripMenuItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            editToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            editToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            editToolStripMenuItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
             editToolStripMenuItem.Enabled = false;
-            deleteToolStripMenuItem.BackColor = ControlBackground();
-            deleteToolStripMenuItem.ForeColor = WhiteText();
-            deleteToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            deleteToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            deleteToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            deleteToolStripMenuItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
             deleteToolStripMenuItem.Enabled = false;
-            changePasswordToolStripMenuItem.BackColor = ControlBackground();
-            changePasswordToolStripMenuItem.ForeColor = WhiteText();
-            changePasswordToolStripMenuItem.Font = UIFont(STANDARD_UI_FONT_SIZE);
+            changePasswordToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            changePasswordToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            changePasswordToolStripMenuItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
             changePasswordToolStripMenuItem.Enabled = false;
 
-
             // Configure buttons
-            addButton.BackColor = ControlBackground();
-            addButton.ForeColor = WhiteText();
+            addButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            addButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             addButton.FlatStyle = FlatStyle.Flat;
-            addButton.Font = UIFont(BUTTON_FONT_SIZE);
-            addButton.FlatAppearance.BorderColor = DarkBackground();
+            addButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.ButtonFontSize);
+            addButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
             addButton.FlatAppearance.BorderSize = 1;
 
-            moveUpButton.BackColor = ControlBackground();
-            moveUpButton.ForeColor = WhiteText();
-            moveUpButton.FlatStyle = FlatStyle.Flat;
-            moveUpButton.Font = UIFont(BUTTON_FONT_SIZE);
-            moveUpButton.FlatAppearance.BorderColor = DarkBackground();
-            moveUpButton.FlatAppearance.BorderSize = 1;
-            moveUpButton.Enabled = false;
-            moveUpButton.Visible = false;
-
-            moveDownButton.BackColor = ControlBackground();
-            moveDownButton.ForeColor = WhiteText();
-            moveDownButton.FlatStyle = FlatStyle.Flat;
-            moveDownButton.Font = UIFont(BUTTON_FONT_SIZE);
-            moveDownButton.FlatAppearance.BorderColor = DarkBackground();
-            moveDownButton.FlatAppearance.BorderSize = 1;
-            moveDownButton.Enabled = false;
-            moveDownButton.Visible = false;
-
-            deleteButton.BackColor = ControlBackground();
-            deleteButton.ForeColor = WhiteText();
+            deleteButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            deleteButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             deleteButton.FlatStyle = FlatStyle.Flat;
-            deleteButton.Font = UIFont(BUTTON_FONT_SIZE);
-            deleteButton.FlatAppearance.BorderColor = DarkBackground();
+            deleteButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.ButtonFontSize);
+            deleteButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
             deleteButton.FlatAppearance.BorderSize = 1;
 
-            editButton.BackColor = ControlBackground();
-            editButton.ForeColor = WhiteText();
+            editButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            editButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             editButton.FlatStyle = FlatStyle.Flat;
-            editButton.Font = UIFont(BUTTON_FONT_SIZE);
-            editButton.FlatAppearance.BorderColor = DarkBackground();
+            editButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.ButtonFontSize);
+            editButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
             editButton.FlatAppearance.BorderSize = 1;
           
-            editCancelButton.BackColor = ControlBackground();
-            editCancelButton.ForeColor = WhiteText();
+            editCancelButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            editCancelButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             editCancelButton.FlatStyle = FlatStyle.Flat;
-            editCancelButton.Font = UIFont(BUTTON_FONT_SIZE);
-            editCancelButton.FlatAppearance.BorderColor = DarkBackground();
+            editCancelButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.ButtonFontSize);
+            editCancelButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
             editCancelButton.FlatAppearance.BorderSize = 1;
             editCancelButton.Enabled = false;
             editCancelButton.Visible = false;
 
-            closeButton.BackColor = ControlBackground();
-            closeButton.ForeColor = WhiteText();
-            closeButton.Font = UIFont(12.0f);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.CloseButtonFontSize);
 
-            minimizeButton.BackColor = ControlBackground();
-            minimizeButton.ForeColor = WhiteText();
-            minimizeButton.Font = UIFont(12.0f);
+            minimizeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            minimizeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            minimizeButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.CloseButtonFontSize);
 
             // Configure textbox
-            applicationTextBox.BackColor = ControlBackground();
-            applicationTextBox.ForeColor = WhiteText();
+            applicationTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            applicationTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             applicationTextBox.BorderStyle = BorderStyle.FixedSingle;
-            applicationTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            applicationTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            usernameTextBox.BackColor = ControlBackground();
-            usernameTextBox.ForeColor = WhiteText();
+            usernameTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            usernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             usernameTextBox.BorderStyle = BorderStyle.FixedSingle;
-            usernameTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            usernameTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            emailTextBox.BackColor = ControlBackground();
-            emailTextBox.ForeColor = WhiteText();
+            emailTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             emailTextBox.BorderStyle = BorderStyle.FixedSingle;
-            emailTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            emailTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            descriptionTextBox.BackColor = ControlBackground();
-            descriptionTextBox.ForeColor = WhiteText();
+            descriptionTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            descriptionTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             descriptionTextBox.BorderStyle = BorderStyle.FixedSingle;
-            descriptionTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            descriptionTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            passphraseTextBox.BackColor = ControlBackground();
-            passphraseTextBox.ForeColor = WhiteText();
+            passphraseTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            passphraseTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             passphraseTextBox.BorderStyle = BorderStyle.FixedSingle;
-            passphraseTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            passphraseTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            websiteTextBox.BackColor = ControlBackground();
-            websiteTextBox.ForeColor = WhiteText();
+            websiteTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            websiteTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             websiteTextBox.BorderStyle = BorderStyle.FixedSingle;
-            websiteTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            websiteTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
-            filterTextBox.BackColor = ControlBackground();
-            filterTextBox.ForeColor = WhiteText();
+            filterTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            filterTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             filterTextBox.BorderStyle = BorderStyle.FixedSingle;
-            filterTextBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            filterTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
             // Configure combo box
-            filterComboBox.BackColor = ControlBackground();
-            filterComboBox.ForeColor = WhiteText();
-            filterComboBox.Font = UIFont(TEXTBOX_FONT_SIZE);
+            filterComboBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            filterComboBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            filterComboBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
             filterComboBox.DataSource = Enum.GetValues(typeof(PasswordFilterOptions));
             filterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            filterComboBox.HighlightColor = ControlHighlight();
-            filterComboBox.BorderColor = ControlBackground();
+            filterComboBox.HighlightColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlHighLightColor);
+            filterComboBox.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
 
             // Configure status strip
-            statusStrip1.BackColor = DarkBackground();
-            statusStrip1.ForeColor = WhiteText();
-            statusStrip1.Font = UIFont(TEXTBOX_FONT_SIZE);
+            statusStrip1.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            statusStrip1.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            statusStrip1.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
 
             // Confgiure data grid view
             passwordDataGridView.BorderStyle = BorderStyle.None;
             passwordDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             passwordDataGridView.MultiSelect = false;
             passwordDataGridView.ReadOnly = true;
-            passwordDataGridView.BackgroundColor = DarkBackground();
-            passwordDataGridView.RowsDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            passwordDataGridView.RowsDefaultCellStyle.ForeColor = WhiteText();
+            passwordDataGridView.BackgroundColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            passwordDataGridView.RowsDefaultCellStyle.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            passwordDataGridView.RowsDefaultCellStyle.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             passwordDataGridView.RowsDefaultCellStyle.BackColor = Color.FromArgb(65, 65, 65);
             passwordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
             passwordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
@@ -310,55 +271,55 @@ namespace PasswordVault
             passwordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
             passwordDataGridView.EnableHeadersVisualStyles = false;
             passwordDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            passwordDataGridView.ColumnHeadersDefaultCellStyle.Font = UIFont(STANDARD_UI_FONT_SIZE);
-            passwordDataGridView.ColumnHeadersDefaultCellStyle.BackColor = DarkBackground();
-            passwordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = WhiteText();
-            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = DarkBackground();
-            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = WhiteText();
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             passwordDataGridView.ScrollBars = ScrollBars.None;
             passwordDataGridView.MouseWheel += PasswordDataGridView_MouseWheel;
 
             // Configure context menu
             passwordContextMenuStrip = new AdvancedContextMenuStrip();
             var copyUsernameToolStripItem = new ToolStripMenuItem("Copy Username");
-            copyUsernameToolStripItem.Font = UIFont(8.0f);
-            copyUsernameToolStripItem.BackColor = ControlBackground();
-            copyUsernameToolStripItem.ForeColor = WhiteText();
+            copyUsernameToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            copyUsernameToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            copyUsernameToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             copyUsernameToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyUsernameToolStripItem);
 
             var copyPasswordToolStripItem = new ToolStripMenuItem("Copy Password");
-            copyPasswordToolStripItem.Font = UIFont(8.0f);
-            copyPasswordToolStripItem.BackColor = ControlBackground();
-            copyPasswordToolStripItem.ForeColor = WhiteText();
+            copyPasswordToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            copyPasswordToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            copyPasswordToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             copyPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyPasswordToolStripItem);
 
             var websiteToolStripItem = new ToolStripMenuItem("Visit Website");
-            websiteToolStripItem.Font = UIFont(8.0f);
-            websiteToolStripItem.BackColor = ControlBackground();
-            websiteToolStripItem.ForeColor = WhiteText();
+            websiteToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            websiteToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            websiteToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             websiteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-link-100.png"));
             passwordContextMenuStrip.Items.Add(websiteToolStripItem);
 
             var showPasswordToolStripItem = new ToolStripMenuItem("Show Password");
-            showPasswordToolStripItem.Font = UIFont(8.0f);
-            showPasswordToolStripItem.BackColor = ControlBackground();
-            showPasswordToolStripItem.ForeColor = WhiteText();
+            showPasswordToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            showPasswordToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            showPasswordToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             showPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-show-property-60.png"));
             passwordContextMenuStrip.Items.Add(showPasswordToolStripItem);
 
             var editToolStripItem = new ToolStripMenuItem("Edit");
-            editToolStripItem.Font = UIFont(8.0f);
-            editToolStripItem.BackColor = ControlBackground();
-            editToolStripItem.ForeColor = WhiteText();
+            editToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            editToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            editToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             editToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-edit-48.png"));
             passwordContextMenuStrip.Items.Add(editToolStripItem);
 
             var deleteToolStripItem = new ToolStripMenuItem("Delete");
-            deleteToolStripItem.Font = UIFont(8.0f);
-            deleteToolStripItem.BackColor = ControlBackground();
-            deleteToolStripItem.ForeColor = WhiteText();
+            deleteToolStripItem.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
+            deleteToolStripItem.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
+            deleteToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
             deleteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-delete-60.png"));
             passwordContextMenuStrip.Items.Add(deleteToolStripItem);
 
@@ -388,7 +349,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public void DisplayUserID(string userID)
         {
-            UpdateStatus(string.Format("Welcome: {0}", userID), ErrorLevel.Neutral);
+            UIHelper.UpdateStatusLabel(string.Format("Welcome: {0}", userID), userStatusLabel, ErrorLevel.Neutral);
         }
 
         /*************************************************************************************************/
@@ -408,27 +369,27 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.DuplicatePassword:
-                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.Failed:
-                    UpdateStatus("Modify password failed.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Modify password failed.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.UsernameError:
-                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.ApplicationError:
-                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.PassphraseError:
-                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.EmailError:
-                    UpdateStatus("Invalid email!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.Success:
@@ -443,7 +404,7 @@ namespace PasswordVault
                     websiteTextBox.Text = "";
                     passphraseTextBox.Text = "";
                     applicationTextBox.Focus();
-                    UpdateStatus("Password modified.", ErrorLevel.Ok);
+                    UIHelper.UpdateStatusLabel("Password modified.", userStatusLabel, ErrorLevel.Neutral);
                     this.Refresh();
                     break;
             }
@@ -455,7 +416,7 @@ namespace PasswordVault
             switch (result)
             {
                 case LogOutResult.Failed:
-                    UpdateStatus("Log out failed!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Log out failed!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case LogOutResult.Success:
@@ -470,8 +431,6 @@ namespace PasswordVault
                     usernameTextBox.Enabled = false;
                     emailTextBox.Enabled = false;
                     addButton.Enabled = false;
-                    //moveUpButton.Enabled = false;
-                    //moveDownButton.Enabled = false;
                     deleteButton.Enabled = false;
                     editButton.Enabled = false;
                     filterTextBox.Enabled = false;
@@ -479,7 +438,7 @@ namespace PasswordVault
                     changePasswordToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
                     loginToolStripMenuItem.Text = "Login";
-                    UpdateStatus("Logged off.", ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral);
                     break;
             }
         }
@@ -496,31 +455,31 @@ namespace PasswordVault
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    UpdateStatus("Add password failed.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Add password failed.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    UpdateStatus("Duplicate password.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.UsernameError:
-                    UpdateStatus("Issue with username field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.ApplicationError:
-                    UpdateStatus("Issue with application field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.PassphraseError:
-                    UpdateStatus("Issue with passphrase field!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.EmailError:
-                    UpdateStatus("Invalid email!", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case AddPasswordResult.Success:
-                    UpdateStatus("Success.", ErrorLevel.Ok);
+                    UIHelper.UpdateStatusLabel("Success.", userStatusLabel, ErrorLevel.Neutral);
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
                     websiteTextBox.Text = "";
@@ -537,15 +496,15 @@ namespace PasswordVault
             switch (result)
             {
                 case DeletePasswordResult.Failed:
-                    UpdateStatus("Delete password failed.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Delete password failed.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case DeletePasswordResult.PasswordDoesNotExist:
-                    UpdateStatus("Password does not exist.", ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Password does not exist.", userStatusLabel, ErrorLevel.Neutral);
                     break;
 
                 case DeletePasswordResult.Success:
-                    UpdateStatus("Password deleted.", ErrorLevel.Ok);
+                    UIHelper.UpdateStatusLabel("Password deleted.", userStatusLabel, ErrorLevel.Neutral);
                     break;
             }
         }
@@ -554,31 +513,6 @@ namespace PasswordVault
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
-        /*************************************************************************************************/
-        private void UpdateStatus(string message, ErrorLevel errorLevel)
-        {
-            userStatusLabel.Text = message;
-
-            switch (errorLevel)
-            {
-                case ErrorLevel.Error:
-                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_ERROR_RED);
-                    break;
-
-                case ErrorLevel.Warning:
-                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_WARNING_YELLOW);
-                    break;
-
-                case ErrorLevel.Ok:
-                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_OK_GREEN);
-                    break;
-
-                case ErrorLevel.Neutral:
-                    userStatusLabel.ForeColor = Color.FromArgb(COLOR_FONT_DEFAULT_WHITE);
-                    break;
-            }
-        }
-
         /*************************************************************************************************/
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -604,8 +538,6 @@ namespace PasswordVault
             usernameTextBox.Enabled = true;
             emailTextBox.Enabled = true;
             addButton.Enabled = true;
-            //moveUpButton.Enabled = true;
-            //moveDownButton.Enabled = true;
             deleteButton.Enabled = true;
             editButton.Enabled = true;
             filterComboBox.Enabled = true;
@@ -964,7 +896,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void MinimizeButton_MouseEnter(object sender, EventArgs e)
         {
-            minimizeButton.BackColor = ControlHighlight();
+            minimizeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlHighLightColor);
             minimizeButton.ForeColor = Color.FromArgb(242, 242, 242);
         }
 
@@ -996,36 +928,6 @@ namespace PasswordVault
                 Point p = PointToScreen(e.Location);
                 Location = new Point(p.X - this._start_point.X, p.Y - this._start_point.Y);
             }
-        }
-
-        /*************************************************************************************************/
-        private Color WhiteText()
-        {
-            return Color.FromArgb(242, 242, 242);
-        }
-
-        /*************************************************************************************************/
-        private Color DarkBackground()
-        {
-            return Color.FromArgb(35, 35, 35);
-        }
-
-        /*************************************************************************************************/
-        private Color ControlBackground()
-        {
-            return Color.FromArgb(63, 63, 63);
-        }
-
-        /*************************************************************************************************/
-        private Color ControlHighlight()
-        {
-            return Color.FromArgb(0x80, 0x80, 0x80);
-        }
-
-        /*************************************************************************************************/
-        private Font UIFont(float fontSize)
-        {
-            return new Font("Segoe UI", fontSize, FontStyle.Bold);
         }
 
         /*************************************************************************************************/
