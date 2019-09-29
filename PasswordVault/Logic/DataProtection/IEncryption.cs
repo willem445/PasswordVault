@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PasswordVault
 {
-    public interface IEncryptDecrypt
+    public interface IEncryption
     {
         int Iterations { get; }
         string Encrypt(string plainText, string passPhrase);

@@ -19,7 +19,7 @@ namespace PasswordVaultTests
         public void CreateUserTest()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult result;
             User user;
@@ -40,7 +40,7 @@ namespace PasswordVaultTests
         public void DeleteSingleUserTest()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
@@ -68,7 +68,7 @@ namespace PasswordVaultTests
         public void DeleteMultipleUsersTest()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
@@ -109,7 +109,7 @@ namespace PasswordVaultTests
         public void DeleteUserWithPasswords()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             User user;
             CreateUserResult createResult;
@@ -158,7 +158,7 @@ namespace PasswordVaultTests
         public void DeleteUserWithMuPasswords()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new EncryptDecrypt());
+            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult createResult;
             LoginResult loginResult;

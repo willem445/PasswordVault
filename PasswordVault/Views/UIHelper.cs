@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,12 +25,24 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class NinjectBindings : Ninject.Modules.NinjectModule
+    public static class UIHelper
     {
         /*=================================================================================================
 		CONSTANTS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+        public const float LabelFontSize = 9.0f;
+        public const float CloseButtonFontSize = 12.0f;
+        public const float TextBoxFontSize = 8.0f;
+        public const float ButtonFontSize = 8.0f;
+
+        private const int StatusRedColor = 0xFF0000;
+        private const int StatusYellowColor = 0xFFD633;
+        private const int StatusGreenColor = 0x00CC44;
+        private const int DefaultWhiteFontColor = 0xF2F2F2;     
+        private const int ControlBackgroundColor = 0x3F3F3F;
+        private const int MainFormBackgroundColor = 0x232323;
+        private const int SecondaryFromBackgroundColor = 0x2A2A2A;
 
         /*PRIVATE*****************************************************************************************/
 
@@ -55,21 +68,6 @@ namespace PasswordVault
 		PUBLIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public override void Load()
-        {
-            Bind<ICSVReader>().To<CSVReader>();
-            Bind<ICSVWriter>().To<CSVWriter>();
-            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
-            Bind<ICSVUserManager>().To<CSVUserManager>();
-            Bind<IDatabase>().To<CsvDatabase>().InSingletonScope();
-            Bind<IEncryption>().To<RijndaelManagedEncryption>();
-            Bind<IMasterPassword>().To<MasterPassword>();
-            Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
-            Bind<IMessageWriter>().To<WinFormsMessageWriter>();
-            Bind<ILoginView>().To<LoginView>().InSingletonScope();
-            Bind<IMainView>().To<MainView>().InSingletonScope();
-            Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
-        }
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -80,6 +78,10 @@ namespace PasswordVault
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        public static Font UIFont(float fontSize)
+        {
+            return new Font("Segoe UI", fontSize, FontStyle.Bold);
+        }
 
-    } // NinjectBindings CLASS
+    } // UIHelper CLASS
 } // PasswordVault NAMESPACE

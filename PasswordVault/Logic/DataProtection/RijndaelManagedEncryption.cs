@@ -23,7 +23,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class EncryptDecrypt : IEncryptDecrypt
+    public class RijndaelManagedEncryption : IEncryption
     {
         /*=================================================================================================
 		CONSTANTS
@@ -58,13 +58,13 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public EncryptDecrypt()
+        public RijndaelManagedEncryption()
         {
             // Use defaults
         }
 
         /*************************************************************************************************/
-        public EncryptDecrypt(int keySize, int derivationIterations)
+        public RijndaelManagedEncryption(int keySize, int derivationIterations)
         {
             _keySize = keySize;
             _derivationIterations = derivationIterations;

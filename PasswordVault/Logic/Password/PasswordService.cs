@@ -108,7 +108,7 @@ namespace PasswordVault
         private List<Password> _passwordList;            // stores the current users passwords and binds to datagridview
         private IDatabase _dbcontext;                    // Method of storing the passwords (ie. csv file or database)
         private IMasterPassword _masterPassword;
-        private IEncryptDecrypt _encryptDecrypt;
+        private IEncryption _encryptDecrypt;
 
         /*=================================================================================================
 		PROPERTIES
@@ -120,7 +120,7 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptDecrypt encryptDecrypt)
+        public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryption encryptDecrypt)
         {
             _dbcontext = dbcontext;
             _masterPassword = masterPassword;
