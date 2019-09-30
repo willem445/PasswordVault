@@ -149,7 +149,7 @@ namespace PasswordVault
 
             using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
             {
-                byte[] tokenData = new byte[32];
+                byte[] tokenData = new byte[64];
                 rng.GetBytes(tokenData);
 
                 token = Convert.ToBase64String(tokenData);

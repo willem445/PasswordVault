@@ -72,7 +72,9 @@ namespace PasswordVault
         /*************************************************************************************************/
         private void ModifyUserInformation(string firstName, string lastName, string email, string phoneNumber)
         {
-            throw new NotImplementedException();
+            User user = new User(null, null, firstName, lastName, phoneNumber, email);
+            ModifyUserResult result = _passwordService.EditUser(user);
+            _editUserView.DisplayModifyResult(result);
         }
 
         /*************************************************************************************************/

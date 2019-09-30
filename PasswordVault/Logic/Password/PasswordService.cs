@@ -285,20 +285,49 @@ namespace PasswordVault
                 result = DeleteUserResult.Failed;
             }
 
-
-
             return result;
         }
 
         /*************************************************************************************************/
-        public void EditUser(User user)
+        public ModifyUserResult EditUser(User user)
         {
+            ModifyUserResult result = ModifyUserResult.Failed;
             if (IsLoggedIn())
             {
-                
+                User dbUser = _dbcontext.GetUserByGUID(_currentUser.GUID);
+
+                User newCurrentUser = new User(
+                    _currentUser.GUID, 
+                    _currentUser.Username,
+                    _currentUser.PlainTextRandomKey,
+                    user.FirstName,
+                    user.LastName,
+                    user.PhoneNumber,
+                    user.Email,
+                    true);
+
+                _currentUser = newCurrentUser;
+
+                User modifiedUser = new User
+                (
+                    dbUser.GUID,
+                    dbUser.EncryptedKey,
+                    dbUser.Username,
+                    dbUser.Iterations,
+                    dbUser.Salt,
+                    dbUser.Hash,
+                    _encryptDecrypt.Encrypt(user.FirstName, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Encrypt(user.LastName, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Encrypt(user.PhoneNumber, _currentUser.PlainTextRandomKey),
+                    _encryptDecrypt.Encrypt(user.Email, _currentUser.PlainTextRandomKey)
+                );
+
+                _dbcontext.ModifyUser(dbUser, modifiedUser);
+
+                result = ModifyUserResult.Success; // TODO - return other results
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
         /*************************************************************************************************/
@@ -521,7 +550,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public string GeneratePasswordKey()
         {
-            return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
+            return _encryptDecrypt.CreateKey(32);
         }
 
         /*=================================================================================================
