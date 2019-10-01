@@ -239,6 +239,15 @@ namespace PasswordVault
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             modifyButton.Enabled = true;
+
+            if (((TextBox)sender).Name == phoneNumberTextbox.Name)
+            {
+                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
+            else if (((TextBox)sender).Name == emailTextBox.Name)
+            {
+                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
         }
 
         /*************************************************************************************************/
@@ -257,6 +266,46 @@ namespace PasswordVault
         private void RaiseRequestUserEvent()
         {
             RequestUserEvent?.Invoke();
+        }
+
+        /*************************************************************************************************/
+        private void phoneNumberTextbox_Leave(object sender, EventArgs e)
+        {
+            if (phoneNumberTextbox.Text == "")
+            {
+                phoneNumberTextbox.Text = "xxx-xxx-xxxx";
+                phoneNumberTextbox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void emailTextBox_Leave(object sender, EventArgs e)
+        {
+            if (emailTextBox.Text == "")
+            {
+                emailTextBox.Text = "example@provider.com";
+                emailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void phoneNumberTextbox_Enter(object sender, EventArgs e)
+        {
+            if (phoneNumberTextbox.Text == "xxx-xxx-xxxx")
+            {
+                phoneNumberTextbox.Text = "";
+                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void emailTextBox_Enter(object sender, EventArgs e)
+        {
+            if (emailTextBox.Text == "example@provider.com")
+            {
+                emailTextBox.Text = "";
+                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
         }
 
         /*=================================================================================================

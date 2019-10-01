@@ -52,7 +52,7 @@ namespace PasswordVault
         {
             public const int StatusRedColor = 0xFF0000;
             public const int StatusYellowColor = 0xFFD633;
-            public const int StatusGreenColor = 0x00CC44;
+            public const int StatusGreenColor = 0x05ad0d;
             public const int DefaultFontColor = 0xF2F2F2;     
             public const int ControlBackgroundColor = 0x3F3F3F;
             public const int ControlHighLightColor = 0x505050;
@@ -100,6 +100,7 @@ namespace PasswordVault
             return new Font("Segoe UI", fontSize, FontStyle.Bold);
         }
 
+        /*************************************************************************************************/
         public static void UpdateStatusLabel(string message, Label label, ErrorLevel errorLevel)
         {
             int color = 0;
@@ -131,6 +132,7 @@ namespace PasswordVault
             label.ForeColor = Color.FromArgb(red, green, blue);
         }
 
+        /*************************************************************************************************/
         public static void UpdateStatusLabel(string message, ToolStripStatusLabel label, ErrorLevel errorLevel)
         {
             int color = 0;
@@ -162,6 +164,7 @@ namespace PasswordVault
             label.ForeColor = Color.FromArgb(red, green, blue);
         }
 
+        /*************************************************************************************************/
         public static Color GetColorFromCode(int code)
         {
             int red = ((code & 0xFF0000) >> 16);

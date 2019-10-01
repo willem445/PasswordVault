@@ -105,7 +105,7 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private const int DEFAULT_PASSWORD_LENGTH = 15;
+        private const int DEFAULT_PASSWORD_LENGTH = 20;
         private const int MINIMUM_PASSWORD_LENGTH = 12;
         private const int MAXIMUM_PASSWORD_LENGTH = 200;
 
@@ -231,6 +231,8 @@ namespace PasswordVault
             }
             else
             {
+                UserInformationResult verifyUser = VerifyUserInformation(user);
+
                 // Verify that username and password pass requirements
                 if (!VerifyUsernameRequirements(user.Username)) 
                 {
@@ -239,6 +241,31 @@ namespace PasswordVault
                 else if (VerifyPasswordRequirements(user.PlainTextPassword) != ChangeUserPasswordResult.Success)
                 {
                     createUserResult = CreateUserResult.PasswordNotValid;
+                }
+                else if (verifyUser != UserInformationResult.Success)
+                {
+                    switch(verifyUser)
+                    {
+                        case UserInformationResult.InvalidEmail:
+                            createUserResult = CreateUserResult.EmailNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidFirstName:
+                            createUserResult = CreateUserResult.FirstNameNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidLastName:
+                            createUserResult = CreateUserResult.LastNameNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidPhoneNumber:
+                            createUserResult = CreateUserResult.PhoneNumberNotValid;
+                            break;
+
+                        case UserInformationResult.Failed:
+                            createUserResult = CreateUserResult.Failed;
+                            break;
+                    }
                 }
                 else
                 {
@@ -568,7 +595,7 @@ namespace PasswordVault
         /*************************************************************************************************/
         public string GeneratePasswordKey()
         {
-            return _encryptDecrypt.CreateKey(32);
+            return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
         }
 
         /*=================================================================================================
@@ -665,7 +692,7 @@ namespace PasswordVault
                 result = UserInformationResult.InvalidLastName;
             }
 
-            if (user.Email == "" || user.Email == null)
+            if (user.Email == "" || user.Email == null || user.Email == "example@provider.com")
             {
                 result = UserInformationResult.InvalidEmail;
             }
@@ -681,13 +708,16 @@ namespace PasswordVault
                 }
             }
 
-            if (user.PhoneNumber == "" || user.PhoneNumber == null)
+            if (user.PhoneNumber == "" || user.PhoneNumber == null || user.PhoneNumber == "xxx-xxx-xxxx")
             {
                 result = UserInformationResult.InvalidPhoneNumber;
             }
             else
             {
-                throw new NotImplementedException();
+                if (!IsValidUSPhoneNumber(user.PhoneNumber))
+                {
+                    result = UserInformationResult.InvalidPhoneNumber;
+                }
             }
 
             return result;
@@ -796,6 +826,24 @@ namespace PasswordVault
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        /// <summary>
+        /// Allows phone number of the format: NPA = [2-9][0-8][0-9] Nxx = [2-9]      [0-9][0-9] Station = [0-9][0-9][0-9][0-9]
+        /// </summary>
+        /// <param name="strPhone"></param>
+        /// <returns></returns>
+        public static bool IsValidUSPhoneNumber(string strPhone)
+        {
+            string regExPattern = @"^[01]?[- .]?(\([2-9]\d{2}\)|[2-9]\d{2})[- .]?\d{3}[- .]?\d{4}$";
+            return MatchStringFromRegex(strPhone, regExPattern);
+        }
+
+        /*************************************************************************************************/
+        public static bool MatchStringFromRegex(string str, string regexstr)
+        {
+            str = str.Trim();
+            System.Text.RegularExpressions.Regex pattern = new System.Text.RegularExpressions.Regex(regexstr);
+            return pattern.IsMatch(str);
+        }
 
     } // PasswordWrapper CLASS
 } // PasswordHashTest NAMESPACE

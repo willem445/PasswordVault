@@ -116,6 +116,8 @@
             this.phoneNumberTextbox.Size = new System.Drawing.Size(200, 20);
             this.phoneNumberTextbox.TabIndex = 37;
             this.phoneNumberTextbox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.phoneNumberTextbox.Enter += new System.EventHandler(this.phoneNumberTextbox_Enter);
+            this.phoneNumberTextbox.Leave += new System.EventHandler(this.phoneNumberTextbox_Leave);
             // 
             // emailTextBox
             // 
@@ -124,6 +126,8 @@
             this.emailTextBox.Size = new System.Drawing.Size(200, 20);
             this.emailTextBox.TabIndex = 38;
             this.emailTextBox.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            this.emailTextBox.Enter += new System.EventHandler(this.emailTextBox_Enter);
+            this.emailTextBox.Leave += new System.EventHandler(this.emailTextBox_Leave);
             // 
             // label3
             // 

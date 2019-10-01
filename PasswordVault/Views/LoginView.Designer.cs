@@ -154,6 +154,9 @@
             this.createEmailTextBox.Name = "createEmailTextBox";
             this.createEmailTextBox.Size = new System.Drawing.Size(218, 20);
             this.createEmailTextBox.TabIndex = 18;
+            this.createEmailTextBox.TextChanged += new System.EventHandler(this.createEmailTextBox_TextChanged);
+            this.createEmailTextBox.Enter += new System.EventHandler(this.createEmailTextBox_Enter);
+            this.createEmailTextBox.Leave += new System.EventHandler(this.createEmailTextBox_Leave);
             // 
             // createPhoneNumberTextBox
             // 
@@ -161,6 +164,9 @@
             this.createPhoneNumberTextBox.Name = "createPhoneNumberTextBox";
             this.createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 20);
             this.createPhoneNumberTextBox.TabIndex = 15;
+            this.createPhoneNumberTextBox.TextChanged += new System.EventHandler(this.createPhoneNumberTextBox_TextChanged);
+            this.createPhoneNumberTextBox.Enter += new System.EventHandler(this.createPhoneNumberTextBox_Enter);
+            this.createPhoneNumberTextBox.Leave += new System.EventHandler(this.createPhoneNumberTextBox_Leave);
             // 
             // label7
             // 

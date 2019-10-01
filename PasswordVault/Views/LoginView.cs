@@ -157,6 +157,12 @@ namespace PasswordVault
             groupBox2.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
             groupBox2.ForeColor = Color.FromArgb(242, 242, 242);
             #endregion
+
+            createEmailTextBox.Text = "example@provider.com";
+            createEmailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+
+            createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+            createPhoneNumberTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
         }
 
         /*=================================================================================================
@@ -208,47 +214,54 @@ namespace PasswordVault
             switch(result)
             {
                 case CreateUserResult.UsernameTaken:
-                    createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Username taken.";
-                    createNewUserResultLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Username taken!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
                 case CreateUserResult.Failed:
-                    createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Unsuccessful.";
-                    createNewUserResultLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Unsuccessful!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
                 case CreateUserResult.PasswordNotValid:
-                    createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Password does not meet requirements.";
-                    createNewUserResultLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password does not meet requirements!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
                 case CreateUserResult.UsernameNotValid:
-                    createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Invalid username.";
-                    createNewUserResultLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Invalid username!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.FirstNameNotValid:
+                    UIHelper.UpdateStatusLabel("First name not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.LastNameNotValid:
+                    UIHelper.UpdateStatusLabel("Last name not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.PhoneNumberNotValid:
+                    UIHelper.UpdateStatusLabel("Phone number not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.EmailNotValid:
+                    UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
                 case CreateUserResult.Successful:
-                    createNewUserResultLabel.Visible = true;
-                    createNewUserResultLabel.Text = "Success. Please log in.";
+                    UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
                     createUsernameTextBox.Text = "";
                     createPasswordTextBox.Text = "";
                     createFirstNameTextBox.Text = "";
                     createLastNameTextBox.Text = "";
                     createEmailTextBox.Text = "";
                     createPhoneNumberTextBox.Text = "";
-                    createNewUserResultLabel.ForeColor = Color.Green;
                     break;
 
-                default:
-                    createNewUserResultLabel.Visible = true;
+                default:       
                     createNewUserResultLabel.Text = "Unsuccessful.";
                     createNewUserResultLabel.ForeColor = Color.Red;
                     break;
             }
+
+            createNewUserResultLabel.Visible = true;
         }
 
         /*************************************************************************************************/
@@ -419,6 +432,58 @@ namespace PasswordVault
             createNewUserResultLabel.Text = "";
             createUsernameTextBox.Text = "";
             createPasswordTextBox.Text = "";
+        }
+
+        /*************************************************************************************************/
+        private void createPhoneNumberTextBox_TextChanged(object sender, EventArgs e)
+        {
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+        }
+
+        /*************************************************************************************************/
+        private void createPhoneNumberTextBox_Leave(object sender, EventArgs e)
+        {
+            if (createPhoneNumberTextBox.Text == "")
+            {
+                createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+                createPhoneNumberTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void createEmailTextBox_TextChanged(object sender, EventArgs e)
+        {
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+        }
+
+        /*************************************************************************************************/
+        private void createEmailTextBox_Leave(object sender, EventArgs e)
+        {
+            if (createEmailTextBox.Text == "")
+            {
+                createEmailTextBox.Text = "example@provider.com";
+                createEmailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void createPhoneNumberTextBox_Enter(object sender, EventArgs e)
+        {
+            if (createPhoneNumberTextBox.Text == "xxx-xxx-xxxx")
+            {
+                createPhoneNumberTextBox.Text = "";
+                createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
+        }
+
+        /*************************************************************************************************/
+        private void createEmailTextBox_Enter(object sender, EventArgs e)
+        {
+            if (createEmailTextBox.Text == "example@provider.com")
+            {
+                createEmailTextBox.Text = "";
+                createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            }
         }
 
         /*=================================================================================================
