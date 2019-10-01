@@ -24,7 +24,7 @@ namespace PasswordVault
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class EditUserPresenter
+    class DataValidation
     {
         /*=================================================================================================
 		CONSTANTS
@@ -39,8 +39,6 @@ namespace PasswordVault
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private IEditUserView _editUserView;
-        private IPasswordService _passwordService;
 
         /*=================================================================================================
 		PROPERTIES
@@ -52,13 +50,9 @@ namespace PasswordVault
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public EditUserPresenter(IEditUserView editUserView, IPasswordService passwordService)
+        public DataValidation()
         {
-            _editUserView = editUserView;
-            _passwordService = passwordService;
 
-            _editUserView.ModifyAccountEvent += ModifyUserInformation;
-            _editUserView.RequestUserEvent += GetUserInformation;
         }
 
         /*=================================================================================================
@@ -70,24 +64,11 @@ namespace PasswordVault
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void ModifyUserInformation(string firstName, string lastName, string email, string phoneNumber)
-        {
-            User user = new User(null, null, firstName, lastName, phoneNumber, email);
-            UserInformationResult result = _passwordService.EditUser(user);
-            _editUserView.DisplayModifyResult(result);
-        }
-
-        /*************************************************************************************************/
-        private void GetUserInformation()
-        {
-            User user = _passwordService.GetCurrentUser();
-            _editUserView.DisplayUser(user);
-        }
 
         /*=================================================================================================
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
 
-    } // EditUserPresenter CLASS
+    } // DataValidation CLASS
 } // PasswordVault NAMESPACE

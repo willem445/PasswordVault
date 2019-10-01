@@ -17,7 +17,7 @@ namespace PasswordVault
         ChangeUserPasswordResult ChangeUserPassword(string newPassword);
         bool VerifyCurrentUserPassword(string password);
         DeleteUserResult DeleteUser(User user);
-        ModifyUserResult EditUser(User user);
+        UserInformationResult EditUser(User user);
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();        
         AddPasswordResult AddPassword(Password unencryptedPassword);

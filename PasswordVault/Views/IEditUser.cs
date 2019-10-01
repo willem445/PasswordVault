@@ -10,7 +10,7 @@ namespace PasswordVault
     {
         event Action<string, string, string, string> ModifyAccountEvent;
         event Action RequestUserEvent;
-        void DisplayModifyResult(ModifyUserResult result);
+        void DisplayModifyResult(UserInformationResult result);
         void DisplayUser(User user);
         void ShowEditUserMenu();
     }

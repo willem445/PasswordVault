@@ -129,31 +129,31 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public void DisplayModifyResult(ModifyUserResult result)
+        public void DisplayModifyResult(UserInformationResult result)
         {
             switch(result)
             {
-                case ModifyUserResult.Failed:
+                case UserInformationResult.Failed:
                     UIHelper.UpdateStatusLabel("Failed to modify information!", statusLabel, ErrorLevel.Error);
                     break;
 
-                case ModifyUserResult.InvalidEmail:
+                case UserInformationResult.InvalidEmail:
                     UIHelper.UpdateStatusLabel("Invalid email!", statusLabel, ErrorLevel.Error);
                     break;
 
-                case ModifyUserResult.InvalidFirstName:
+                case UserInformationResult.InvalidFirstName:
                     UIHelper.UpdateStatusLabel("Invalid first name!", statusLabel, ErrorLevel.Error);
                     break;
 
-                case ModifyUserResult.InvalidLastName:
+                case UserInformationResult.InvalidLastName:
                     UIHelper.UpdateStatusLabel("Invalid last name!", statusLabel, ErrorLevel.Error);
                     break;
 
-                case ModifyUserResult.InvalidPhoneNumber:
+                case UserInformationResult.InvalidPhoneNumber:
                     UIHelper.UpdateStatusLabel("Invalid phone number!", statusLabel, ErrorLevel.Error);
                     break;
 
-                case ModifyUserResult.Success:
+                case UserInformationResult.Success:
                     UIHelper.UpdateStatusLabel("Success", statusLabel, ErrorLevel.Ok);
                     ClearChangePasswordView();
                     this.Close();

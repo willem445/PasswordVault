@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 /*=================================================================================================
@@ -43,7 +44,7 @@ namespace PasswordVault
         Failed,
     }
 
-    public enum ModifyUserResult
+    public enum UserInformationResult
     {
         Success,
         Failed,
@@ -289,42 +290,59 @@ namespace PasswordVault
         }
 
         /*************************************************************************************************/
-        public ModifyUserResult EditUser(User user)
+        public UserInformationResult EditUser(User user)
         {
-            ModifyUserResult result = ModifyUserResult.Failed;
+            UserInformationResult result = UserInformationResult.Failed;
+
             if (IsLoggedIn())
             {
-                User dbUser = _dbcontext.GetUserByGUID(_currentUser.GUID);
+                var validation = VerifyUserInformation(user);
 
-                User newCurrentUser = new User(
-                    _currentUser.GUID, 
-                    _currentUser.Username,
-                    _currentUser.PlainTextRandomKey,
-                    user.FirstName,
-                    user.LastName,
-                    user.PhoneNumber,
-                    user.Email,
-                    true);
+                if (validation == UserInformationResult.Success)
+                {
+                    User dbUser = _dbcontext.GetUserByGUID(_currentUser.GUID);
 
-                _currentUser = newCurrentUser;
+                    User newCurrentUser = new User(
+                        _currentUser.GUID,
+                        _currentUser.Username,
+                        _currentUser.PlainTextRandomKey,
+                        user.FirstName,
+                        user.LastName,
+                        user.PhoneNumber,
+                        user.Email,
+                        true);
 
-                User modifiedUser = new User
-                (
-                    dbUser.GUID,
-                    dbUser.EncryptedKey,
-                    dbUser.Username,
-                    dbUser.Iterations,
-                    dbUser.Salt,
-                    dbUser.Hash,
-                    _encryptDecrypt.Encrypt(user.FirstName, _currentUser.PlainTextRandomKey),
-                    _encryptDecrypt.Encrypt(user.LastName, _currentUser.PlainTextRandomKey),
-                    _encryptDecrypt.Encrypt(user.PhoneNumber, _currentUser.PlainTextRandomKey),
-                    _encryptDecrypt.Encrypt(user.Email, _currentUser.PlainTextRandomKey)
-                );
+                    _currentUser = newCurrentUser;
 
-                _dbcontext.ModifyUser(dbUser, modifiedUser);
+                    User modifiedUser = new User
+                    (
+                        dbUser.GUID,
+                        dbUser.EncryptedKey,
+                        dbUser.Username,
+                        dbUser.Iterations,
+                        dbUser.Salt,
+                        dbUser.Hash,
+                        _encryptDecrypt.Encrypt(user.FirstName, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.LastName, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.PhoneNumber, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.Email, _currentUser.PlainTextRandomKey)
+                    );
 
-                result = ModifyUserResult.Success; // TODO - return other results
+                    bool success = _dbcontext.ModifyUser(dbUser, modifiedUser);
+
+                    if (success)
+                    {
+                        result = UserInformationResult.Success; // TODO - return other results
+                    }
+                    else
+                    {
+                        result = UserInformationResult.Failed;
+                    }
+                }
+                else
+                {
+                    result = validation;
+                }        
             }
 
             return result;
@@ -627,6 +645,49 @@ namespace PasswordVault
             if (username == null || username == "")
             {
                 result = false;
+            }
+
+            return result;
+        }
+
+        /*************************************************************************************************/
+        private UserInformationResult VerifyUserInformation(User user)
+        {
+            UserInformationResult result = UserInformationResult.Success;
+
+            if (user.FirstName == "" || user.FirstName == null)
+            {
+                result = UserInformationResult.InvalidFirstName;
+            }
+
+            if (user.LastName == "" || user.LastName == null)
+            {
+                result = UserInformationResult.InvalidLastName;
+            }
+
+            if (user.Email == "" || user.Email == null)
+            {
+                result = UserInformationResult.InvalidEmail;
+            }
+            else
+            {
+                var regex = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
+
+                Match match = Regex.Match(user.Email, regex, RegexOptions.IgnoreCase);
+
+                if (!match.Success)
+                {
+                    result = UserInformationResult.InvalidEmail;
+                }
+            }
+
+            if (user.PhoneNumber == "" || user.PhoneNumber == null)
+            {
+                result = UserInformationResult.InvalidPhoneNumber;
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
 
             return result;
