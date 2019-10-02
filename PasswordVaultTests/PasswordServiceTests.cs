@@ -1,14 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PasswordVault.Desktop.Winforms;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PasswordVault.Data;
 using PasswordVault.Service;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVaultTests
 {
