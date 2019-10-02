@@ -311,12 +311,14 @@ namespace PasswordVault.Data
 
             if (!File.Exists(_usersCsvPath))
             {
-                File.Create(_usersCsvPath);
+                var myFile = File.Create(_usersCsvPath);
+                myFile.Close();
             }
 
             if (!File.Exists(_passwordsCsvPath))
             {
-                File.Create(_passwordsCsvPath);
+                var myFile = File.Create(_passwordsCsvPath);
+                myFile.Close();
             }
         }
 

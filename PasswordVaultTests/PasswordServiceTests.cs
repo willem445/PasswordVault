@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PasswordVault.Data;
+using PasswordVault.Service;
+using PasswordVault.Models;
 
 namespace PasswordVaultTests
 {
@@ -24,7 +27,7 @@ namespace PasswordVaultTests
             CreateUserResult result;
             User user;
 
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             result = passwordService.CreateNewUser(user);
             Assert.AreEqual(CreateUserResult.Successful, result);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
@@ -47,7 +50,7 @@ namespace PasswordVaultTests
             User user;
 
             // Mock a user model that would be coming from the UI
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
 
             deleteResult = passwordService.DeleteUser(user);
             Assert.AreEqual(DeleteUserResult.Failed, deleteResult);
@@ -76,11 +79,11 @@ namespace PasswordVaultTests
             // Mock a user model that would be coming from the UI
             User[] users = 
             {
-                new User("testAccount0", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount2", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount3", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount4", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
+                new User("testAccount0", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount2", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount3", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount4", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
             };
 
             Int32 addedUsersCount = 1;
@@ -117,7 +120,7 @@ namespace PasswordVaultTests
             DeleteUserResult deleteResult;
 
             // Mock a user model that would be coming from the UI
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "111-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
 
             createResult = passwordService.CreateNewUser(user);
             Assert.AreEqual(CreateUserResult.Successful, createResult);
@@ -168,11 +171,11 @@ namespace PasswordVaultTests
             // Mock a user model that would be coming from the UI
             User[] users =
             {
-                new User("testAccount0", "testPassword1@1", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount1", "testPassword1@2", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount2", "testPassword1@3", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount3", "testPassword1@4", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
-                new User("testAccount4", "testPassword1@5", "testFirstName", "testLastName", "111-111-1111", "test@test.com"),
+                new User("testAccount0", "testPassword1@1", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount1", "testPassword1@2", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount2", "testPassword1@3", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount3", "testPassword1@4", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount4", "testPassword1@5", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
             };
 
             // Mock a password model that would be coming from the UI

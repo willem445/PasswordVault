@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using PasswordVault.Models;
+using PasswordVault.Service;
 
 /*=================================================================================================
 DESCRIPTION
@@ -171,7 +169,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void DeletePassword(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             if (result != null)
@@ -185,7 +183,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void EditPasswordInit(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             if (result != null)
@@ -234,7 +232,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CopyPassword(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
@@ -248,7 +246,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ViewPassword(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
@@ -259,7 +257,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void NavigateToWebsite(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             string uri = result.Website;
@@ -273,7 +271,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CopyUsername(DataGridViewRow dgvrow)
         {
-            Password password = (Password)dgvrow;
+            Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
             System.Windows.Forms.Clipboard.SetText(result.Username);
@@ -319,6 +317,21 @@ namespace PasswordVault.Desktop.Winforms
             int index = passwords.FindIndex(x => (x.Application == application) && (x.Username == username) &&  (x.Email == email) && (x.Description == description) && (x.Website == website));
 
             return index;
+        }
+
+        private Password ConvertDgvRowToPassword(DataGridViewRow dgvrow)
+        {
+            Password p = new Password
+            (
+                dgvrow.Cells[0].Value.ToString(),
+                dgvrow.Cells[1].Value.ToString(),
+                dgvrow.Cells[2].Value.ToString(),
+                dgvrow.Cells[3].Value.ToString(),
+                dgvrow.Cells[4].Value.ToString(),
+                null
+            );
+
+            return p;
         }
 
         /*=================================================================================================

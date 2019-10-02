@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Ninject;
 using System.Reflection;
+using PasswordVault.Service;
 
 namespace PasswordVault.Desktop.Winforms
 {
