@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Ninject;
 using System.Reflection;
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     static class Program
     {

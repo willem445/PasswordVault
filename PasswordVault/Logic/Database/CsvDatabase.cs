@@ -12,7 +12,7 @@ DESCRIPTION
  * TODO - 9 - Make these async Tasks
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     /*=================================================================================================
 	ENUMERATIONS

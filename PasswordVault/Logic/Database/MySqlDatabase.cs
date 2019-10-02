@@ -11,7 +11,7 @@ DESCRIPTION
 /* https://stackoverflow.com/questions/10283780/equivalent-of-mssql-identity-column-in-mysql
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     /*=================================================================================================
 	ENUMERATIONS

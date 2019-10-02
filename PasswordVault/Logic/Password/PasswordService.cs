@@ -12,7 +12,7 @@ DESCRIPTION
 /* Serves as the bridge between the database and the presenters
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     /*=================================================================================================
 	ENUMERATIONS

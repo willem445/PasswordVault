@@ -1,4 +1,4 @@
-﻿namespace PasswordVault
+﻿namespace PasswordVault.Desktop.Winforms
 {
     partial class LoginView
     {

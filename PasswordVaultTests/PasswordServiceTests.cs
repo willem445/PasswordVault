@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PasswordVault;
+using PasswordVault.Desktop.Winforms;
 using System;
 using System.Collections.Generic;
 using System.IO;

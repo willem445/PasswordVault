@@ -15,7 +15,7 @@ DESCRIPTION
  * TODO - 9 - Create INI file to store database configuration etc.
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     /*=================================================================================================
     ENUMERATIONS

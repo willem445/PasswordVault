@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     public partial class AboutView : Form
     {

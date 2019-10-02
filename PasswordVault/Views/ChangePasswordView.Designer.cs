@@ -1,4 +1,4 @@
-﻿namespace PasswordVault
+﻿namespace PasswordVault.Desktop.Winforms
 {
     partial class ChangePasswordView
     {
@@ -40,7 +40,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.passwordStrengthLabel = new System.Windows.Forms.Label();
             this.generatePasswordButton = new System.Windows.Forms.Button();
-            this.passwordStrengthProgressBar = new PasswordVault.AdvancedProgressBar();
+            this.passwordStrengthProgressBar = new PasswordVault.Desktop.Winforms.AdvancedProgressBar();
             this.statusLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 

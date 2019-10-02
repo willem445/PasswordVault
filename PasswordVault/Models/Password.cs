@@ -15,7 +15,7 @@ DESCRIPTION
  * TODO - 5 - Add category field 
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     /*=================================================================================================
 	ENUMERATIONS

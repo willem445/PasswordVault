@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace PasswordVault
+namespace PasswordVault.Desktop.Winforms
 {
     partial class MainView
     {
@@ -31,7 +31,7 @@ namespace PasswordVault
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip = new PasswordVault.AdvancedMenuStrip();
+            this.menuStrip = new PasswordVault.Desktop.Winforms.AdvancedMenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +61,7 @@ namespace PasswordVault
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.filterLabel = new System.Windows.Forms.Label();
             this.editCancelButton = new System.Windows.Forms.Button();
-            this.filterComboBox = new PasswordVault.AdvancedComboBox();
+            this.filterComboBox = new PasswordVault.Desktop.Winforms.AdvancedComboBox();
             this.minimizeButton = new System.Windows.Forms.Label();
             this.emailTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
