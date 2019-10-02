@@ -9,7 +9,7 @@ using PasswordVault.Desktop.Winforms;
 namespace PasswordVaultTests
 {
     [TestClass()]
-    public class PasswordServiceTests
+    public class DeleteUserTests
     {
         /// <summary>
         /// 
@@ -154,7 +154,7 @@ namespace PasswordVaultTests
         /// </summary>
         [TestMethod()]
         
-        public void DeleteUserWithMuPasswords()
+        public void DeleteUserWithMultiplePasswords()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
             IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
@@ -228,23 +228,5 @@ namespace PasswordVaultTests
                 }
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [TestMethod()]
-        public void AddUserPasswordTest()
-        {
-
-        }
-
-
-
     }
 }
-
-/*=================================================================================================
-DESCRIPTION
-*================================================================================================*/
-/* 
- ------------------------------------------------------------------------------------------------*/
