@@ -1,4 +1,4 @@
-﻿using PasswordVault.Service;
+﻿using PasswordVault.Services;
 using PasswordVault.Models;
 
 /*=================================================================================================

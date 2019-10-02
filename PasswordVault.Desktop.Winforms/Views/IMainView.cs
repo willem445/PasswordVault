@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PasswordVault.Models;
-using PasswordVault.Service;
+using PasswordVault.Services;
 
 namespace PasswordVault.Desktop.Winforms
 {

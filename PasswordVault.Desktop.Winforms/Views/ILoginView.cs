@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PasswordVault.Service;
+using PasswordVault.Services;
 
 namespace PasswordVault.Desktop.Winforms
 {

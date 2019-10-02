@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PasswordVault.Models;
 
-namespace PasswordVault.Service
+namespace PasswordVault.Services
 {
     public interface IPasswordService
     {

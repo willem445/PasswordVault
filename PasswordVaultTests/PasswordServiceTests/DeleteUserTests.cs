@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using PasswordVault.Data;
-using PasswordVault.Service;
+using PasswordVault.Services;
 using PasswordVault.Models;
 using PasswordVault.Desktop.Winforms;
 

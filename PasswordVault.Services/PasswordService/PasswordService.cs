@@ -7,7 +7,7 @@ using PasswordVault.Models;
 using PasswordVault.Data;
 using System.Text.RegularExpressions;
 
-namespace PasswordVault.Service
+namespace PasswordVault.Services
 {
     /*=================================================================================================
 	ENUMERATIONS
