@@ -11,7 +11,7 @@ namespace PasswordVault.Services
         CreateUserResult CreateNewUser(User user);
         string GetCurrentUsername();
         User GetCurrentUser();
-        ChangeUserPasswordResult ChangeUserPassword(string newPassword);
+        ChangeUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword);
         bool VerifyCurrentUserPassword(string password);
         DeleteUserResult DeleteUser(User user);
         UserInformationResult EditUser(User user);

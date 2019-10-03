@@ -4,9 +4,8 @@ using System.Linq;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
-using PasswordVault.Desktop.Winforms;
 
-namespace PasswordVaultTests
+namespace PasswordVault.ServicesTests
 {
     [TestClass()]
     public class DeleteUserTests

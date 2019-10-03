@@ -78,28 +78,9 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ModifyPassword(string originalPassword, string password, string confirmPassword)
         {
-            ChangeUserPasswordResult result = ChangeUserPasswordResult.Failed;
+            ChangeUserPasswordResult passresult = _passwordService.ChangeUserPassword(originalPassword, password, confirmPassword);
 
-            if (password == confirmPassword)
-            {
-                bool validPassword = _passwordService.VerifyCurrentUserPassword(originalPassword);
-
-                if (validPassword)
-                {
-                    ChangeUserPasswordResult passresult = _passwordService.ChangeUserPassword(password);
-
-                    if (passresult == ChangeUserPasswordResult.Success)
-                    {
-                        result = ChangeUserPasswordResult.Success;
-                    }
-                }              
-            }
-            else
-            {
-                result = ChangeUserPasswordResult.PasswordsDoNotMatch;
-            }
-
-            _changePasswordView.DisplayChangePasswordResult(result);
+            _changePasswordView.DisplayChangePasswordResult(passresult);
         }
 
         /*************************************************************************************************/

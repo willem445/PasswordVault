@@ -397,43 +397,55 @@ namespace PasswordVault.Services
         }
 
         /*************************************************************************************************/
-        public ChangeUserPasswordResult ChangeUserPassword(string newPassword)
+        public ChangeUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword)
         {
             ChangeUserPasswordResult result = ChangeUserPasswordResult.Failed;
 
             if (IsLoggedIn())
             {
-                ChangeUserPasswordResult verifyPass = VerifyPasswordRequirements(newPassword);
-                if (verifyPass != ChangeUserPasswordResult.Success)
+                if (newPassword == confirmPassword)
                 {
-                    result = verifyPass;
+                    bool validPassword = VerifyCurrentUserPassword(originalPassword);
+
+                    if (validPassword)
+                    {
+                        ChangeUserPasswordResult verifyPass = VerifyPasswordRequirements(newPassword);
+                        if (verifyPass != ChangeUserPasswordResult.Success)
+                        {
+                            result = verifyPass;
+                        }
+                        else
+                        {
+                            User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
+                            UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
+
+                            User newUser = new User(
+                                user.GUID,
+                                _encryptDecrypt.Encrypt(_currentUser.PlainTextRandomKey, newPassword), // Encrypt the random key with the users password
+                                user.Username,
+                                newEncryptedData.Iterations.ToString(),
+                                newEncryptedData.Salt,
+                                newEncryptedData.Hash,
+                                user.FirstName,
+                                user.LastName,
+                                user.PhoneNumber,
+                                user.Email
+                            );
+
+                            if (_dbcontext.ModifyUser(user, newUser))
+                            {
+                                result = ChangeUserPasswordResult.Success;
+                            }
+                            else
+                            {
+                                result = ChangeUserPasswordResult.Failed;
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
-                    UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
-
-                    User newUser = new User(
-                        user.GUID,
-                        _encryptDecrypt.Encrypt(_currentUser.PlainTextRandomKey, newPassword), // Encrypt the random key with the users password
-                        user.Username,
-                        newEncryptedData.Iterations.ToString(),
-                        newEncryptedData.Salt,
-                        newEncryptedData.Hash,
-                        user.FirstName,
-                        user.LastName,
-                        user.PhoneNumber,
-                        user.Email
-                    );
-
-                    if (_dbcontext.ModifyUser(user, newUser))
-                    {
-                        result = ChangeUserPasswordResult.Success;
-                    }
-                    else
-                    {
-                        result = ChangeUserPasswordResult.Failed;
-                    }
+                    result = ChangeUserPasswordResult.PasswordsDoNotMatch;
                 }
             }
 
@@ -731,17 +743,17 @@ namespace PasswordVault.Services
             if (passphrase == "" || passphrase == null)
             {
                 isNotEmptyOrNull = false;
-                result = ChangeUserPasswordResult.Failed;
+                return ChangeUserPasswordResult.Failed;
             }
 
             if (passphrase.Length >= MAXIMUM_PASSWORD_LENGTH)
             {
-                result = ChangeUserPasswordResult.LengthRequirementNotMet;
+                result = ChangeUserPasswordResult.Failed;
             }
 
             if (passphrase.Length <= MINIMUM_PASSWORD_LENGTH)
             {
-                result = ChangeUserPasswordResult.Failed;
+                result = ChangeUserPasswordResult.LengthRequirementNotMet;        
             }
 
             if (isNotEmptyOrNull)
