@@ -25,6 +25,11 @@ namespace PasswordVault.Services
         UsernameTaken,
         UsernameNotValid,
         PasswordNotValid,
+        NoSpecialCharacter,
+        LengthRequirementNotMet,
+        NoNumber,
+        NoUpperCaseCharacter,
+        NoLowerCaseCharacter,
         FirstNameNotValid,
         LastNameNotValid,
         PhoneNumberNotValid,
@@ -227,15 +232,49 @@ namespace PasswordVault.Services
             else
             {
                 UserInformationResult verifyUser = VerifyUserInformation(user);
+                ChangeUserPasswordResult verifyPassword = VerifyPasswordRequirements(user.PlainTextPassword);
 
                 // Verify that username and password pass requirements
                 if (!VerifyUsernameRequirements(user.Username))
                 {
                     createUserResult = CreateUserResult.UsernameNotValid;
                 }
-                else if (VerifyPasswordRequirements(user.PlainTextPassword) != ChangeUserPasswordResult.Success)
+                else if (verifyPassword != ChangeUserPasswordResult.Success)
                 {
-                    createUserResult = CreateUserResult.PasswordNotValid;
+                    switch (verifyPassword)
+                    {
+                        case ChangeUserPasswordResult.Failed:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+
+                        case ChangeUserPasswordResult.LengthRequirementNotMet:
+                            createUserResult = CreateUserResult.LengthRequirementNotMet;
+                            break;
+
+                        case ChangeUserPasswordResult.NoLowerCaseCharacter:
+                            createUserResult = CreateUserResult.NoLowerCaseCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.NoNumber:
+                            createUserResult = CreateUserResult.NoNumber;
+                            break;
+
+                        case ChangeUserPasswordResult.NoSpecialCharacter:
+                            createUserResult = CreateUserResult.NoSpecialCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.NoUpperCaseCharacter:
+                            createUserResult = CreateUserResult.NoUpperCaseCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.PasswordsDoNotMatch:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+
+                        default:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+                    }
                 }
                 else if (verifyUser != UserInformationResult.Success)
                 {

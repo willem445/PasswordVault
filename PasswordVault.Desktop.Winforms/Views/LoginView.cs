@@ -240,6 +240,26 @@ namespace PasswordVault.Desktop.Winforms
                     UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
+                case CreateUserResult.NoLowerCaseCharacter:
+                    UIHelper.UpdateStatusLabel("Password must have lower case!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.LengthRequirementNotMet:
+                    UIHelper.UpdateStatusLabel(string.Format("Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.NoNumber:
+                    UIHelper.UpdateStatusLabel("Password must have number!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.NoSpecialCharacter:
+                    UIHelper.UpdateStatusLabel("Password must have special character!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
+                case CreateUserResult.NoUpperCaseCharacter:
+                    UIHelper.UpdateStatusLabel("Password must have upper case!", createNewUserResultLabel, ErrorLevel.Error);
+                    break;
+
                 case CreateUserResult.Successful:
                     UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
                     createUsernameTextBox.Text = "";
