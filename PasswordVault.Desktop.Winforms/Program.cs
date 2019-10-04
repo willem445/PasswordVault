@@ -4,6 +4,9 @@ using Ninject;
 using System.Reflection;
 using PasswordVault.Services;
 
+//TEST
+using PasswordVault.Data;
+
 namespace PasswordVault.Desktop.Winforms
 {
     static class Program
@@ -30,6 +33,8 @@ namespace PasswordVault.Desktop.Winforms
             MainPresenter mainViewPresenter = new MainPresenter(mainView, passwordService);
             ChangePasswordPresenter changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, passwordService);
             EditUserPresenter editUserPresenter = new EditUserPresenter(editUserView, passwordService);
+
+            IDatabase database = new SQLiteDatabase();
 
             Application.Run((System.Windows.Forms.Form)mainView);
         }

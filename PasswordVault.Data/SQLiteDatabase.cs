@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
+using Dapper;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,6 +42,7 @@ namespace PasswordVault.Data
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private string DB_FILE = Environment.CurrentDirectory + "\\PasswordDb.sqlite";
 
         /*=================================================================================================
 		PROPERTIES
@@ -47,13 +50,22 @@ namespace PasswordVault.Data
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+        private SQLiteConnection DbConnection
+        {
+            get { return new SQLiteConnection("Data Source=" + DB_FILE); }
+        }
+
+        private string DbFile
+        {
+            get { return DB_FILE; }
+        }
 
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
         public SQLiteDatabase()
         {
-
+            CreateDatabase();
         }
 
         /*=================================================================================================
@@ -124,6 +136,58 @@ namespace PasswordVault.Data
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        private void VerifyDbExists()
+        {
+            if (!File.Exists(DbFile))
+            {
+                
+            }
+        }
+
+        /*************************************************************************************************/
+        private void CreateDatabase()
+        {
+            using (var dbConn = DbConnection)
+            {
+                dbConn.Open();
+
+                dbConn.Execute(@"
+                    CREATE TABLE IF NOT EXISTS [Users] (
+                        [GUID] TEXT NOT NULL PRIMARY KEY,
+                        [EncryptedKey] TEXT NOT NULL,
+                        [Username] TEXT NOT NULL,
+                        [Iterations] INTEGER NOT NULL,
+                        [Salt] TEXT NOT NULL,
+                        [Hash] TEXT NOT NULL,
+                        [FirstName] TEXT NOT NULL,
+                        [LastName] TEXT NOT NULL,
+                        [PhoneNumber] TEXT NOT NULL,
+                        [Email] TEXT NOT NULL
+                    )");
+
+                dbConn.Execute(@"
+                    CREATE TABLE IF NOT EXISTS [Passwords] (
+                        [UserGUID] TEXT NOT NULL REFERENCES Users(GUID), 
+                        [UniqueID] INTEGER NOT NULL,
+                        [Appliction] TEXT NOT NULL,
+                        [Username] TEXT NOT NULL,
+                        [Email] TEXT NOT NULL,
+                        [Description] TEXT NOT NULL,
+                        [Website] TEXT NOT NULL,
+                        [Passphrase] TEXT NOT NULL
+                    )");
+
+                dbConn.Execute(@"
+                INSERT INTO Users
+                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
+                VALUES
+                    ('1234', 'fasdfdasf', 'willem445', '1000', 'adsg', 'sdgsdfg', 'Wille', 'hoff', '222-222-2222', 'will@test.com') 
+                ");
+
+                var user = dbConn.Query<User>(
+                    "SELECT * FROM Users WHERE GUID = '1234'");
+            }
+        }
 
         /*=================================================================================================
 		STATIC METHODS
