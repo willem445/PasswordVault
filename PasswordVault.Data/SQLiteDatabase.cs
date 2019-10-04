@@ -79,7 +79,27 @@ namespace PasswordVault.Data
 
         public bool AddUser(User user)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            using (var dbConn = DbConnection)
+            {
+                dbConn.Open();
+
+                int dbresult = dbConn.Execute(string.Format(@"
+                    INSERT INTO Users
+                        (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
+                    VALUES
+                        ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}') 
+                    ", user.GUID, user.EncryptedKey, user.Username, user.Iterations, user.Salt, user.Hash, user.FirstName, user.LastName, user.PhoneNumber, user.Email));
+
+                if (dbresult != 0)
+                {
+                    result = true;
+                }
+            }
+
+
+            return result;
         }
 
         public bool DeletePassword(DatabasePassword password)
@@ -99,7 +119,22 @@ namespace PasswordVault.Data
 
         public User GetUserByGUID(string guid)
         {
-            throw new NotImplementedException();
+            User result = null;
+
+            using (var dbConn = DbConnection)
+            {
+                dbConn.Open();
+
+                var user = dbConn.Query<User>(string.Format(
+                    "SELECT * FROM Users WHERE GUID = '{0}'", guid));
+
+                if (user.Count() == 1)
+                {
+                    result = user.ElementAt(0);
+                }
+            }
+
+            return result;
         }
 
         public User GetUserByUsername(string username)
@@ -175,17 +210,7 @@ namespace PasswordVault.Data
                         [Description] TEXT NOT NULL,
                         [Website] TEXT NOT NULL,
                         [Passphrase] TEXT NOT NULL
-                    )");
-
-                dbConn.Execute(@"
-                INSERT INTO Users
-                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
-                VALUES
-                    ('1234', 'fasdfdasf', 'willem445', '1000', 'adsg', 'sdgsdfg', 'Wille', 'hoff', '222-222-2222', 'will@test.com') 
-                ");
-
-                var user = dbConn.Query<User>(
-                    "SELECT * FROM Users WHERE GUID = '1234'");
+                    )");             
             }
         }
 
