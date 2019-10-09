@@ -34,8 +34,6 @@ namespace PasswordVault.Desktop.Winforms
             ChangePasswordPresenter changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, passwordService);
             EditUserPresenter editUserPresenter = new EditUserPresenter(editUserView, passwordService);
 
-            IDatabase database = new SQLiteDatabase();
-
             Application.Run((System.Windows.Forms.Form)mainView);
         }
     }

@@ -63,7 +63,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<ICSVWriter>().To<CSVWriter>();
             Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
             Bind<ICSVUserManager>().To<CSVUserManager>();
-            Bind<IDatabase>().To<CsvDatabase>().InSingletonScope();
+            Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
             Bind<IEncryption>().To<RijndaelManagedEncryption>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
