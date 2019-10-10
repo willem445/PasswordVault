@@ -4,9 +4,6 @@ using Ninject;
 using System.Reflection;
 using PasswordVault.Services;
 
-//TEST
-using PasswordVault.Data;
-
 namespace PasswordVault.Desktop.Winforms
 {
     static class Program
