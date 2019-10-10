@@ -4,8 +4,6 @@ using System.Data.SQLite;
 using Dapper;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PasswordVault.Models;
 
 /*=================================================================================================
@@ -42,7 +40,7 @@ namespace PasswordVault.Data
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private string DB_FILE = Environment.CurrentDirectory + "\\PasswordDb.sqlite";
+        private string DB_FILE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault") + "\\PasswordDb.sqlite";
 
         /*=================================================================================================
 		PROPERTIES
@@ -66,22 +64,6 @@ namespace PasswordVault.Data
         public SQLiteDatabase()
         {
             VerifyDbExists();
-
-            //User user = new User("1", "5567", "will", "1000", "sdf", "sdfsdf", "will", "hoffman", "222-222-2222", "email");
-            //User user2 = new User("12", "5567", "will1", "1000", "sdf", "sdfsdf", "will", "hoffman", "222-222-2222", "email");
-            //User user3 = new User("13", "5567", "will2", "1000", "sdf", "sdfsdf", "will", "hoffman", "222-222-2222", "email");
-
-            //User modify = new User("13", "5", "will", "5", "5", "5", "5", "5", "5", "5");
-
-            //AddUser(user);
-            //AddUser(user2);
-            //AddUser(user3);
-
-            //GetAllUsers();
-
-            //ModifyUser(user3, modify);
-
-            //GetAllUsers();
         }
 
         /*=================================================================================================
@@ -399,7 +381,8 @@ namespace PasswordVault.Data
                     Email = modifiedPassword.Email,
                     Description = modifiedPassword.Description,
                     Website = modifiedPassword.Website,
-                    Passphrase = modifiedPassword.Passphrase
+                    Passphrase = modifiedPassword.Passphrase,
+                    UniqueID = password.UniqueID
                 });
 
                 if (dbResult > 0)
@@ -442,6 +425,10 @@ namespace PasswordVault.Data
         {
             if (!File.Exists(DbFile))
             {
+                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault"));
+                var file = File.Create(DbFile);
+                file.Close();
+
                 CreateDatabase();
             }
         }
