@@ -40,7 +40,7 @@
             // 
             this.closeButton.AutoSize = true;
             this.closeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.closeButton.Location = new System.Drawing.Point(317, 9);
+            this.closeButton.Location = new System.Drawing.Point(359, 9);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(14, 13);
             this.closeButton.TabIndex = 28;
@@ -86,7 +86,7 @@
             this.moveWindowPanel.Controls.Add(this.versionLabel);
             this.moveWindowPanel.Location = new System.Drawing.Point(1, 1);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(310, 28);
+            this.moveWindowPanel.Size = new System.Drawing.Size(352, 28);
             this.moveWindowPanel.TabIndex = 33;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
@@ -97,7 +97,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(342, 115);
+            this.ClientSize = new System.Drawing.Size(385, 115);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.iconLinkLabel);
             this.Controls.Add(this.aboutLabel);

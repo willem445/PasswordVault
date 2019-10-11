@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace PasswordVault.Desktop.Winforms
@@ -49,9 +51,23 @@ namespace PasswordVault.Desktop.Winforms
             aboutLabel.ForeColor = Color.FromArgb(242, 242, 242);
 
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            var attribute = Assembly.GetExecutingAssembly()
+                    .GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false)
+                    .Cast<AssemblyDescriptionAttribute>().FirstOrDefault();
+
             DateTime buildDate = new DateTime(2000, 1, 1)
                                     .AddDays(version.Build).AddSeconds(version.Revision * 2);
-            string display = $"{version} ({buildDate})";
+
+            string display;
+            if (!string.IsNullOrEmpty(attribute.Description))
+            {
+                display = $"{version} {attribute.Description} ({buildDate})";
+            }
+            else
+            {
+                display = $"{version} ({buildDate})";
+            }
+            
 
             versionLabel.Text = "Version: " + display;
             versionLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
