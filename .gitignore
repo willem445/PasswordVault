@@ -3,7 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-PasswordVault/CSV/*
+passwords.csv
+users.csv
+*.vscode
 
 # User-specific files
 *.rsuser
