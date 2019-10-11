@@ -74,11 +74,13 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (user != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"INSERT INTO Users 
+                    string query = @"INSERT INTO Users 
                                     (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
                                  VALUES(
                                     @GUID,
@@ -92,23 +94,24 @@ namespace PasswordVault.Data
                                     @PhoneNumber,
                                     @Email)";
 
-                int dbresult = dbConn.Execute(query, new
-                {
-                    GUID = user.GUID,
-                    EncryptedKey = user.EncryptedKey,
-                    Username = user.Username,
-                    Iterations = user.Iterations,
-                    Salt = user.Salt,
-                    Hash = user.Hash,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    Email = user.Email
-                });
+                    int dbresult = dbConn.Execute(query, new
+                    {
+                        GUID = user.GUID,
+                        EncryptedKey = user.EncryptedKey,
+                        Username = user.Username,
+                        Iterations = user.Iterations,
+                        Salt = user.Salt,
+                        Hash = user.Hash,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        PhoneNumber = user.PhoneNumber,
+                        Email = user.Email
+                    });
 
-                if (dbresult != 0)
-                {
-                    result = true;
+                    if (dbresult != 0)
+                    {
+                        result = true;
+                    }
                 }
             }
 
@@ -120,18 +123,21 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (user != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"DELETE FROM Users
+                    string query = @"DELETE FROM Users
                                  WHERE GUID = @Guid";
 
-                var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
+                    var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
 
-                if (dbResult == 1)
-                {
-                    result = true;
+                    if (dbResult == 1)
+                    {
+                        result = true;
+                    }
                 }
             }
 
@@ -143,11 +149,13 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (user != null && modifiedUser != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"UPDATE Users 
+                    string query = @"UPDATE Users 
                                  SET EncryptedKey = @EncryptedKey, 
                                      Iterations = @Iterations, 
                                      Salt = @Salt,
@@ -156,23 +164,25 @@ namespace PasswordVault.Data
                                      LastName = @LastName,
                                      PhoneNumber = @PhoneNumber,
                                      Email = @Email
-                                 WHERE GUID = @GUID"; 
+                                 WHERE GUID = @GUID";
 
-                var dbResult = dbConn.Execute(query, new { 
-                    EncryptedKey = modifiedUser.EncryptedKey,
-                    Iterations = modifiedUser.Iterations,
-                    Salt = modifiedUser.Salt,
-                    Hash = modifiedUser.Hash,
-                    FirstName = modifiedUser.FirstName, 
-                    LastName = modifiedUser.LastName,
-                    PhoneNumber = modifiedUser.PhoneNumber,
-                    Email = modifiedUser.Email,
-                    GUID = user.GUID 
-                });
+                    var dbResult = dbConn.Execute(query, new
+                    {
+                        EncryptedKey = modifiedUser.EncryptedKey,
+                        Iterations = modifiedUser.Iterations,
+                        Salt = modifiedUser.Salt,
+                        Hash = modifiedUser.Hash,
+                        FirstName = modifiedUser.FirstName,
+                        LastName = modifiedUser.LastName,
+                        PhoneNumber = modifiedUser.PhoneNumber,
+                        Email = modifiedUser.Email,
+                        GUID = user.GUID
+                    });
 
-                if (dbResult > 0)
-                {
-                    result = true;
+                    if (dbResult > 0)
+                    {
+                        result = true;
+                    }
                 }
             }
 
@@ -192,7 +202,7 @@ namespace PasswordVault.Data
 
                 var user = dbConn.Query<User>(query);
 
-                if (user.Count() > 0)
+                if (user.Any())
                 {
                     result = user.ToList<User>();
                 }
@@ -213,11 +223,11 @@ namespace PasswordVault.Data
                 string query = @"SELECT * FROM Users
                                  WHERE GUID = @GUID";
 
-                var user = dbConn.Query<User>(query, new { Guid = guid });
+                var user = dbConn.Query<User>(query, new { Guid = guid }).FirstOrDefault();
 
-                if (user.Count() == 1)
+                if (user != null)
                 {
-                    result = user.ElementAt(0);
+                    result = user;
                 }
             }
 
@@ -236,11 +246,11 @@ namespace PasswordVault.Data
                 string query = @"SELECT * FROM Users
                                  WHERE Username = @Username";
 
-                var user = dbConn.Query<User>(query, new { Username = username });
+                var user = dbConn.Query<User>(query, new { Username = username }).FirstOrDefault();
 
-                if (user.Count() == 1)
+                if (user != null)
                 {
-                    result = user.ElementAt(0);
+                    result = user;
                 }
             }
 
@@ -261,7 +271,7 @@ namespace PasswordVault.Data
 
                 var dbresult = dbConn.Query<User>(query, new { GUID = guid });
 
-                if (dbresult.Count() > 0)
+                if (dbresult.Any())
                 {
                     result = true;
                 }
@@ -284,7 +294,7 @@ namespace PasswordVault.Data
 
                 var dbresult = dbConn.Query<User>(query, new { Username = username });
 
-                if (dbresult.Count() > 0)
+                if (dbresult.Any())
                 {
                     result = true;
                 }
@@ -307,7 +317,7 @@ namespace PasswordVault.Data
 
                 var dbresult = dbConn.Query<DatabasePassword>(query, new { Guid = guid });
 
-                if (dbresult.Count() > 0)
+                if (dbresult.Any())
                 {
                     result = dbresult.ToList<DatabasePassword>();
                 }
@@ -321,11 +331,13 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (password != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"INSERT INTO Passwords 
+                    string query = @"INSERT INTO Passwords 
                                     (UserGUID, Application, Username, Email, Description, Website, Passphrase)
                                  VALUES(
                                     @UserGUID,
@@ -336,20 +348,21 @@ namespace PasswordVault.Data
                                     @Website,
                                     @Passphrase)";
 
-                int dbresult = dbConn.Execute(query, new
-                {
-                    UserGUID = password.UserGUID,
-                    Application = password.Application,
-                    Username = password.Username,
-                    Email = password.Email,
-                    Description = password.Description,
-                    Website = password.Website,
-                    Passphrase = password.Passphrase,
-                });
+                    int dbresult = dbConn.Execute(query, new
+                    {
+                        UserGUID = password.UserGUID,
+                        Application = password.Application,
+                        Username = password.Username,
+                        Email = password.Email,
+                        Description = password.Description,
+                        Website = password.Website,
+                        Passphrase = password.Passphrase,
+                    });
 
-                if (dbresult != 0)
-                {
-                    result = true;
+                    if (dbresult != 0)
+                    {
+                        result = true;
+                    }
                 }
             }
 
@@ -361,11 +374,13 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (password != null && modifiedPassword != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"UPDATE Passwords 
+                    string query = @"UPDATE Passwords 
                                  SET Application = @Application, 
                                      Username = @Username, 
                                      Email = @Email,
@@ -374,20 +389,21 @@ namespace PasswordVault.Data
                                      Passphrase = @Passphrase
                                  WHERE UniqueID = @UniqueID";
 
-                var dbResult = dbConn.Execute(query, new
-                {
-                    Application = modifiedPassword.Application,
-                    Username = modifiedPassword.Username,
-                    Email = modifiedPassword.Email,
-                    Description = modifiedPassword.Description,
-                    Website = modifiedPassword.Website,
-                    Passphrase = modifiedPassword.Passphrase,
-                    UniqueID = password.UniqueID
-                });
+                    var dbResult = dbConn.Execute(query, new
+                    {
+                        Application = modifiedPassword.Application,
+                        Username = modifiedPassword.Username,
+                        Email = modifiedPassword.Email,
+                        Description = modifiedPassword.Description,
+                        Website = modifiedPassword.Website,
+                        Passphrase = modifiedPassword.Passphrase,
+                        UniqueID = password.UniqueID
+                    });
 
-                if (dbResult > 0)
-                {
-                    result = true;
+                    if (dbResult > 0)
+                    {
+                        result = true;
+                    }
                 }
             }
 
@@ -399,18 +415,21 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            using (var dbConn = DbConnection)
+            if (password != null)
             {
-                dbConn.Open();
+                using (var dbConn = DbConnection)
+                {
+                    dbConn.Open();
 
-                string query = @"DELETE FROM Passwords
+                    string query = @"DELETE FROM Passwords
                                  WHERE UniqueID = @UniqueID";
 
-                var dbResult = dbConn.Execute(query, new { UniqueID = password.UniqueID });
+                    var dbResult = dbConn.Execute(query, new { UniqueID = password.UniqueID });
 
-                if (dbResult == 1)
-                {
-                    result = true;
+                    if (dbResult == 1)
+                    {
+                        result = true;
+                    }
                 }
             }
 

@@ -97,28 +97,28 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private void FilterChanged(string filterText, PasswordFilterOptions passwordFilterOption)
+        private void FilterChanged(string filterText, PasswordFilterOption passwordFilterOption)
         {
             List<Password> result = new List<Password>();
             List<Password> passwords = _passwordService.GetPasswords();
 
-            if (filterText != "")
+            if (!string.IsNullOrEmpty(filterText))
             {
                 switch (passwordFilterOption)
                 {
-                    case PasswordFilterOptions.Application:
+                    case PasswordFilterOption.Application:
                         result = (from Password password in passwords
                                   where password.Application.Contains(filterText)
                                   select password).ToList<Password>();
                         break;
 
-                    case PasswordFilterOptions.Description:
+                    case PasswordFilterOption.Description:
                         result = (from Password password in passwords
                                   where password.Description.Contains(filterText)
                                   select password).ToList<Password>();
                         break;
 
-                    case PasswordFilterOptions.Website:
+                    case PasswordFilterOption.Website:
                         result = (from Password password in passwords
                                   where password.Website.Contains(filterText)
                                   select password).ToList<Password>();
@@ -237,7 +237,7 @@ namespace PasswordVault.Desktop.Winforms
 
             string passphrase = _passwordService.DecryptPassword(result).Passphrase;
 
-            if ((passphrase != "") && (passphrase != null))
+            if (!string.IsNullOrEmpty(passphrase))
             {
                 System.Windows.Forms.Clipboard.SetText(passphrase);
             }          
@@ -319,7 +319,8 @@ namespace PasswordVault.Desktop.Winforms
             return index;
         }
 
-        private Password ConvertDgvRowToPassword(DataGridViewRow dgvrow)
+        /*************************************************************************************************/
+        private static Password ConvertDgvRowToPassword(DataGridViewRow dgvrow)
         {
             Password p = new Password
             (

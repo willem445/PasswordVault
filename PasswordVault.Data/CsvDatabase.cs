@@ -51,11 +51,14 @@ namespace PasswordVault.Data
         private string _usersCsvPath = USERS_CSV_PATH;
         private string _passwordsCsvPath = PASSWORDS_CSV_PATH;
 
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
+#pragma warning disable CA1044 // Properties should not be write only
         public string UsersCsvPathOverride
+#pragma warning restore CA1044 // Properties should not be write only
         {
             set
             {
@@ -65,7 +68,9 @@ namespace PasswordVault.Data
             }
         }
 
+#pragma warning disable CA1044 // Properties should not be write only
         public string PasswordCsvPathOverride
+#pragma warning restore CA1044 // Properties should not be write only
         {
             set
             {
@@ -82,6 +87,16 @@ namespace PasswordVault.Data
 		*================================================================================================*/
         public CsvDatabase(ICSVUserManager csvUserManager, ICSVPasswordManager csvPasswordManager)
         {
+            if (csvUserManager == null)
+            {
+                throw new ArgumentNullException(nameof(csvUserManager));
+            }
+
+            if (csvPasswordManager == null)
+            {
+                throw new ArgumentNullException(nameof(csvPasswordManager));
+            }
+
             _csvUserManager = csvUserManager;
             _csvPasswordManager = csvPasswordManager;
 
@@ -112,18 +127,22 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
         public bool ModifyUser(User user, User modifiedUser)
         {
-            int index = GetIndexOfUser(user.GUID);
             bool result = false;
 
-            if (index != -1)
+            if (user != null && modifiedUser != null)
             {
-                _encryptedUsers[index] = modifiedUser;
-                _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-                result = true;
-            }
-            else
-            {
-                result = false;
+                int index = GetIndexOfUser(user.GUID);
+
+                if (index != -1)
+                {
+                    _encryptedUsers[index] = modifiedUser;
+                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
             return result;
@@ -132,20 +151,24 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
         public bool DeleteUser(User user)
         {
-            int index = GetIndexOfUser(user.GUID);
             bool result = false;
 
-            if (index != -1)
+            if (user != null)
             {
-                _encryptedUsers.RemoveAt(index);
-                _encryptedPasswords.RemoveAll(x => x.UserGUID == user.GUID);
-                _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
-                _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
-                result = true;
-            }
-            else
-            {
-                result = false;
+                int index = GetIndexOfUser(user.GUID);
+
+                if (index != -1)
+                {
+                    _encryptedUsers.RemoveAt(index);
+                    _encryptedPasswords.RemoveAll(x => x.UserGUID == user.GUID);
+                    _csvUserManager.UpdateUsersCSVFile(_usersCsvPath, _encryptedUsers);
+                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
             return result;
@@ -197,25 +220,29 @@ namespace PasswordVault.Data
             Int64 uniqueID = 0;
             bool result = false;
 
-            if (_encryptedPasswords.Count != 0)
+            if (password != null)
             {
-                uniqueID = _encryptedPasswords[_encryptedPasswords.Count - 1].UniqueID + 1;
+                if (_encryptedPasswords.Count != 0)
+                {
+                    uniqueID = _encryptedPasswords[_encryptedPasswords.Count - 1].UniqueID + 1;
+                }
+
+                DatabasePassword newPassword = new DatabasePassword(
+                    uniqueID,
+                    password.UserGUID,
+                    password.Application,
+                    password.Username,
+                    password.Email,
+                    password.Description,
+                    password.Website,
+                    password.Passphrase);
+
+                _encryptedPasswords.Add(newPassword);
+                _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+
+                result = true;
             }
 
-            DatabasePassword newPassword = new DatabasePassword(
-                uniqueID,
-                password.UserGUID,
-                password.Application,
-                password.Username,
-                password.Email,
-                password.Description,
-                password.Website,
-                password.Passphrase);
-
-            _encryptedPasswords.Add(newPassword);
-            _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
-
-            result = true;
             return result;
         }
 
@@ -224,17 +251,20 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            int index = GetIndexOfPassword(password.UniqueID);
+            if (password != null && modifiedPassword != null)
+            {
+                int index = GetIndexOfPassword(password.UniqueID);
 
-            if (index != -1)
-            {
-                _encryptedPasswords[index] = modifiedPassword;
-                _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
-                result = true;
-            }
-            else
-            {
-                result = false;
+                if (index != -1)
+                {
+                    _encryptedPasswords[index] = modifiedPassword;
+                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
             return result;
@@ -245,17 +275,20 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            int index = GetIndexOfPassword(password.UniqueID);
+            if (password != null)
+            {
+                int index = GetIndexOfPassword(password.UniqueID);
 
-            if (index != -1)
-            {
-                _encryptedPasswords.RemoveAt(index);
-                _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
-                result = true;
-            }
-            else
-            {
-                result = false;
+                if (index != -1)
+                {
+                    _encryptedPasswords.RemoveAt(index);
+                    _csvPasswordManager.UpdatePasswordCSVFile(_passwordsCsvPath, _encryptedPasswords);
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                }
             }
 
             return result;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 using PasswordVault.Services;
 
@@ -245,7 +246,7 @@ namespace PasswordVault.Desktop.Winforms
                     break;
 
                 case CreateUserResult.LengthRequirementNotMet:
-                    UIHelper.UpdateStatusLabel(string.Format("Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel(string.Format(CultureInfo.CurrentCulture, "Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
                 case CreateUserResult.NoNumber:
@@ -418,15 +419,15 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
-            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.CloseButtonColor);
-            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.CloseButtonColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
@@ -452,13 +453,13 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void createPhoneNumberTextBox_TextChanged(object sender, EventArgs e)
         {
-            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void createPhoneNumberTextBox_Leave(object sender, EventArgs e)
         {
-            if (createPhoneNumberTextBox.Text == "")
+            if (string.IsNullOrEmpty(createPhoneNumberTextBox.Text))
             {
                 createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
                 createPhoneNumberTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
@@ -468,13 +469,13 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void createEmailTextBox_TextChanged(object sender, EventArgs e)
         {
-            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void createEmailTextBox_Leave(object sender, EventArgs e)
         {
-            if (createEmailTextBox.Text == "")
+            if (string.IsNullOrEmpty(createEmailTextBox.Text))
             {
                 createEmailTextBox.Text = "example@provider.com";
                 createEmailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
@@ -487,7 +488,7 @@ namespace PasswordVault.Desktop.Winforms
             if (createPhoneNumberTextBox.Text == "xxx-xxx-xxxx")
             {
                 createPhoneNumberTextBox.Text = "";
-                createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 
@@ -497,7 +498,7 @@ namespace PasswordVault.Desktop.Winforms
             if (createEmailTextBox.Text == "example@provider.com")
             {
                 createEmailTextBox.Text = "";
-                createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 

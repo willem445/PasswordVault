@@ -59,59 +59,59 @@ namespace PasswordVault.Desktop.Winforms
             InitializeComponent();
 
             // Configure form UI
-            BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure labels
-            statusLabel.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
-            statusLabel.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            statusLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            statusLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             statusLabel.Text = "";
 
-            label2.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
-            label2.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            label2.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label2.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label3.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
-            label3.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            label3.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label3.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label4.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
-            label4.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            label4.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label4.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label5.Font = UIHelper.GetFont(UIHelper.UIFontSizes.DefaultFontSize);
-            label5.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            label5.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label5.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
             // Configure buttons
-            modifyButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            modifyButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            modifyButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            modifyButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             modifyButton.FlatStyle = FlatStyle.Flat;
-            modifyButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.ButtonFontSize);
-            modifyButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultBackgroundColor);
+            modifyButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            modifyButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             modifyButton.FlatAppearance.BorderSize = 1;
             modifyButton.Enabled = false;
 
-            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
-            closeButton.Font = UIHelper.GetFont(UIHelper.UIFontSizes.CloseButtonFontSize);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
             // Configure textbox
-            firstNameTextbox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            firstNameTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            firstNameTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            firstNameTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             firstNameTextbox.BorderStyle = BorderStyle.FixedSingle;
-            firstNameTextbox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
+            firstNameTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            lastNameTextbox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            lastNameTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            lastNameTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            lastNameTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             lastNameTextbox.BorderStyle = BorderStyle.FixedSingle;
-            lastNameTextbox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
+            lastNameTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            emailTextBox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            emailTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             emailTextBox.BorderStyle = BorderStyle.FixedSingle;
-            emailTextBox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
+            emailTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            phoneNumberTextbox.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            phoneNumberTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             phoneNumberTextbox.BorderStyle = BorderStyle.FixedSingle;
-            phoneNumberTextbox.Font = UIHelper.GetFont(UIHelper.UIFontSizes.TextBoxFontSize);
+            phoneNumberTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
         }
 
         /*=================================================================================================
@@ -160,6 +160,11 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayUser(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             firstNameTextbox.Text = user.FirstName;
             lastNameTextbox.Text = user.LastName;
             emailTextBox.Text = user.Email;
@@ -220,15 +225,15 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void closeButton_MouseEnter(object sender, EventArgs e)
         {
-            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.CloseButtonColor);
-            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.CloseButtonColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void closeButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = UIHelper.GetColorFromCode(UIHelper.UIColors.ControlBackgroundColor);
-            closeButton.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
@@ -238,11 +243,11 @@ namespace PasswordVault.Desktop.Winforms
 
             if (((TextBox)sender).Name == phoneNumberTextbox.Name)
             {
-                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
             else if (((TextBox)sender).Name == emailTextBox.Name)
             {
-                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 
@@ -267,7 +272,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void phoneNumberTextbox_Leave(object sender, EventArgs e)
         {
-            if (phoneNumberTextbox.Text == "")
+            if (string.IsNullOrEmpty(phoneNumberTextbox.Text))
             {
                 phoneNumberTextbox.Text = "xxx-xxx-xxxx";
                 phoneNumberTextbox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
@@ -277,7 +282,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void emailTextBox_Leave(object sender, EventArgs e)
         {
-            if (emailTextBox.Text == "")
+            if (string.IsNullOrEmpty(emailTextBox.Text))
             {
                 emailTextBox.Text = "example@provider.com";
                 emailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
@@ -290,7 +295,7 @@ namespace PasswordVault.Desktop.Winforms
             if (phoneNumberTextbox.Text == "xxx-xxx-xxxx")
             {
                 phoneNumberTextbox.Text = "";
-                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 
@@ -300,7 +305,7 @@ namespace PasswordVault.Desktop.Winforms
             if (emailTextBox.Text == "example@provider.com")
             {
                 emailTextBox.Text = "";
-                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIHelper.UIColors.DefaultFontColor);
+                emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 

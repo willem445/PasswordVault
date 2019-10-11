@@ -82,7 +82,9 @@ namespace PasswordVault.Services
             var saltStringBytes = Generate256BitsOfRandomEntropy();
             var ivStringBytes = Generate256BitsOfRandomEntropy();
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
+#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             {
                 var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
@@ -125,7 +127,9 @@ namespace PasswordVault.Services
             // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
             var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((_keySize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((_keySize / 8) * 2)).ToArray();
 
+#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
+#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             {
                 var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
@@ -157,6 +161,7 @@ namespace PasswordVault.Services
             RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             byte[] randomBytes = new byte[keyLength];
             rngCryptoServiceProvider.GetBytes(randomBytes);
+            rngCryptoServiceProvider.Dispose();
             return Convert.ToBase64String(randomBytes);
         }
 

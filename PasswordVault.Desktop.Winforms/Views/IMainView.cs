@@ -12,7 +12,7 @@ namespace PasswordVault.Desktop.Winforms
 {
     interface IMainView
     {
-        event Action<string, PasswordFilterOptions> FilterChangedEvent;
+        event Action<string, PasswordFilterOption> FilterChangedEvent;
         event Action RequestPasswordsOnLoginEvent;
         event Action LogoutEvent;
         event Action DeleteAccountEvent;

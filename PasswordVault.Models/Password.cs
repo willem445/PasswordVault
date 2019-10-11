@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace PasswordVault.Models
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
-    public enum PasswordFilterOptions
+    public enum PasswordFilterOption
     {
         Application = 0,
         Description = 1,
@@ -104,7 +105,7 @@ namespace PasswordVault.Models
         /*************************************************************************************************/
         public virtual string GetPasswordString()
         {
-            return string.Format("{0},{1},{2},{3},{4},{5}", Application, Username, Email, Description, Website, Passphrase);
+            return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5}", Application, Username, Email, Description, Website, Passphrase);
         }
 
         /*************************************************************************************************/

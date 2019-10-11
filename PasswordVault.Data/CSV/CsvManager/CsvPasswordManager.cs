@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -103,6 +104,11 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
         public void UpdatePasswordCSVFile(string filename, List<DatabasePassword> encryptedPasswords)
         {
+            if (encryptedPasswords == null)
+            {
+                throw new ArgumentNullException(nameof(encryptedPasswords));
+            }
+
             _writer.Initialize(filename);
 
             foreach (var password in encryptedPasswords)
@@ -124,9 +130,9 @@ namespace PasswordVault.Data
 
             string[] fields = line.Split(',');
 
-            if (fields.Count() == (int)CsvPasswordIndexes.NumIndexes)
+            if (fields.Length == (int)CsvPasswordIndexes.NumIndexes)
             {
-                pass = new DatabasePassword(Convert.ToInt64(fields[(int)CsvPasswordIndexes.UniqueId]),
+                pass = new DatabasePassword(Convert.ToInt64(fields[(int)CsvPasswordIndexes.UniqueId], CultureInfo.CurrentCulture),
                                                             fields[(int)CsvPasswordIndexes.UserId],
                                                             fields[(int)CsvPasswordIndexes.Application],
                                                             fields[(int)CsvPasswordIndexes.Username],
@@ -148,7 +154,7 @@ namespace PasswordVault.Data
             {
                 result = false;
             }
-            else if (line.Split(',').Count() == (int)CsvPasswordIndexes.NumIndexes)
+            else if (line.Split(',').Length == (int)CsvPasswordIndexes.NumIndexes)
             {
                 result = true;
             }

@@ -1,4 +1,5 @@
 ﻿using PasswordVault.Services;
+using System;
 
 /*=================================================================================================
 DESCRIPTION
@@ -49,6 +50,16 @@ namespace PasswordVault.Desktop.Winforms
 		*================================================================================================*/
         public ChangePasswordPresenter(IChangePasswordView changePasswordView, IPasswordService passwordService)
         {
+            if (changePasswordView == null)
+            {
+                throw new ArgumentNullException(nameof(changePasswordView));
+            }
+
+            if (passwordService == null)
+            {
+                throw new ArgumentNullException(nameof(passwordService));
+            }
+
             _changePasswordView = changePasswordView;
             _passwordService = passwordService;
 
