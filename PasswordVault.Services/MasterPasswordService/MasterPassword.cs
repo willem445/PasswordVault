@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -21,7 +22,9 @@ namespace PasswordVault.Services
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
+#pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct UserEncrypedData
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public UserEncrypedData(string salt, string hash, int iterations, string uniqueGUID, string randomGeneratedKey)
         {
@@ -95,12 +98,18 @@ namespace PasswordVault.Services
             byte[] salt = new byte[_saltArraySize];
             saltCellar.GetBytes(salt);
             string saltString = Convert.ToBase64String(salt);
+            saltCellar.Dispose();
 
             // Hash
-            Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, salt);
-            hashTool.IterationCount = _hashIterationCount;
+#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
+            Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, salt)
+            {
+#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
+                IterationCount = _hashIterationCount
+            };
             byte[] hash = hashTool.GetBytes(_hashArraySize);
             string hashString = Convert.ToBase64String(hash);
+            hashTool.Dispose();
 
             // Iterations
             int iterations = _hashIterationCount;
@@ -119,7 +128,7 @@ namespace PasswordVault.Services
         {
             string formatted = "";
 
-            formatted = string.Format("{0},{1},{2},{3},{4}", data.UniqueGUID, data.RandomGeneratedKey, data.Iterations, data.Salt, data.Hash);
+            formatted = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4}", data.UniqueGUID, data.RandomGeneratedKey, data.Iterations, data.Salt, data.Hash);
 
             return formatted;
         }
@@ -129,9 +138,12 @@ namespace PasswordVault.Services
         {
             byte[] originalSalt = Convert.FromBase64String(salt);
             byte[] originalHash = Convert.FromBase64String(hash);
+#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, originalSalt);
+#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             hashTool.IterationCount = iterationCount;
             byte[] newHash = hashTool.GetBytes(_hashArraySize);
+            hashTool.Dispose();
 
             uint differences = (uint)originalHash.Length ^ (uint)newHash.Length;
             for (int position = 0; position < Math.Min(originalHash.Length,

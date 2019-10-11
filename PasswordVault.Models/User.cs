@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -131,7 +132,7 @@ namespace PasswordVault.Models
         {
             string userString = "";
 
-            userString = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
+            userString = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
 
             return userString;
         }

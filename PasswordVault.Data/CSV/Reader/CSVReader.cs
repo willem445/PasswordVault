@@ -24,7 +24,7 @@ namespace PasswordVault.Data
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    public class CSVReader : ICSVReader
+    public class CSVReader : ICSVReader, IDisposable
     {
         /*=================================================================================================
 		CONSTANTS
@@ -54,6 +54,12 @@ namespace PasswordVault.Data
         public CSVReader()
         {
 
+        }
+
+        ~CSVReader()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
 
         /*=================================================================================================
@@ -90,10 +96,27 @@ namespace PasswordVault.Data
             }
         }
 
+        public void Dispose()
+        {      
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_streamReader != null)
+                {
+                    _streamReader.Dispose();
+                    _streamReader = null;
+                }
+            }        
+        }
 
         /*=================================================================================================
 		STATIC METHODS

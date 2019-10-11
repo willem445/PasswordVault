@@ -105,6 +105,11 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
         public void UpdateUsersCSVFile(string filename, List<User> encryptedUsers)
         {
+            if (encryptedUsers == null)
+            {
+                throw new ArgumentNullException(nameof(encryptedUsers));
+            }
+
             _writer.Initialize(filename);
 
             foreach (var user in encryptedUsers)
@@ -125,7 +130,7 @@ namespace PasswordVault.Data
 
             string[] fields = line.Split(',');
 
-            if (fields.Count() == (int)CsvUserIndexes.NumIndexes)
+            if (fields.Length == (int)CsvUserIndexes.NumIndexes)
             {
                 user = new User(fields[(int)CsvUserIndexes.UniqueId],
                                 fields[(int)CsvUserIndexes.EncryptedKey],
@@ -151,7 +156,7 @@ namespace PasswordVault.Data
             {
                 result = false;
             }
-            else if (line.Split(',').Count() == (int)CsvUserIndexes.NumIndexes)
+            else if (line.Split(',').Length == (int)CsvUserIndexes.NumIndexes)
             {
                 result = true;
             }

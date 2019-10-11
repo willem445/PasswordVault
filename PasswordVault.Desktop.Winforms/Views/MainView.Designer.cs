@@ -19,7 +19,14 @@ namespace PasswordVault.Desktop.Winforms
             if (disposing && (components != null))
             {
                 components.Dispose();
+                
             }
+
+            if (passwordContextMenuStrip != null)
+            {
+                passwordContextMenuStrip.Dispose();
+            }
+
             base.Dispose(disposing);
         }
 

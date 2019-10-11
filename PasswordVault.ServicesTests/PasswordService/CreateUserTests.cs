@@ -68,9 +68,7 @@ namespace PasswordVault.ServicesTests
             IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult createUserResult;
-            ChangeUserPasswordResult changeUserPasswordResult;
-            LoginResult loginResult;
-            LogOutResult logoutResult;
+
             User user;
 
             user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
@@ -91,9 +89,6 @@ namespace PasswordVault.ServicesTests
             IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
 
             CreateUserResult createUserResult;
-            ChangeUserPasswordResult changeUserPasswordResult;
-            LoginResult loginResult;
-            LogOutResult logoutResult;
             User user;
 
             // Test success

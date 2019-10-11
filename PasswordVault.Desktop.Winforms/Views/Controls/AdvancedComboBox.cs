@@ -43,7 +43,6 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private const int WM_PAINT = 0xF;
-        private int buttonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
         private Color _borderColor = Color.Black;
         private ButtonBorderStyle _borderStyle = ButtonBorderStyle.Solid;
 
@@ -111,15 +110,23 @@ namespace PasswordVault.Desktop.Winforms
 
             ComboBox combo = sender as ComboBox;
             if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-                e.Graphics.FillRectangle(new SolidBrush(HighlightColor),
-                                         e.Bounds);
+            {
+                var brush = new SolidBrush(HighlightColor);
+                e.Graphics.FillRectangle(brush, e.Bounds);
+                brush.Dispose();
+            }          
             else
-                e.Graphics.FillRectangle(new SolidBrush(combo.BackColor),
-                                         e.Bounds);
+            {
+                var brush = new SolidBrush(combo.BackColor);
+                e.Graphics.FillRectangle(brush, e.Bounds);
+                brush.Dispose();
+            }
 
+            var brush2 = new SolidBrush(combo.ForeColor);
             e.Graphics.DrawString(combo.Items[e.Index].ToString(), e.Font,
-                                  new SolidBrush(combo.ForeColor),
+                                  brush2,
                                   new Point(e.Bounds.X, e.Bounds.Y));
+            brush2.Dispose();
 
             e.DrawFocusRectangle();
         }

@@ -67,7 +67,6 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IEncryption>().To<RijndaelManagedEncryption>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
-            Bind<IMessageWriter>().To<WinFormsMessageWriter>();
             Bind<ILoginView>().To<LoginView>().InSingletonScope();
             Bind<IMainView>().To<MainView>().InSingletonScope();
             Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();

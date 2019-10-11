@@ -69,7 +69,6 @@ namespace PasswordVault.ServicesTests
 
             CreateUserResult createUserResult;
             LoginResult loginResult;
-            LogOutResult logoutResult;
             UserInformationResult modifyUserResult;
             User user;
             User userResult;

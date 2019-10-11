@@ -83,6 +83,7 @@ namespace PasswordVault.Desktop.Winforms
             rec.Height -= 4;
             brush = new LinearGradientBrush(rec, this.ForeColor, this.BackColor, LinearGradientMode.Vertical);
             e.Graphics.FillRectangle(brush, 2, 2, rec.Width, rec.Height);
+            brush.Dispose();
         }
 
         /*************************************************************************************************/
