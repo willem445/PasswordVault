@@ -283,11 +283,11 @@ namespace PasswordVault.Desktop.Winforms
             List<Password> passwords = _passwordService.GetPasswords();
 
             Password result = (from Password password in passwords
-                               where password.Application.Contains(application)
-                               where password.Username.Contains(username)
-                               where password.Email.Contains(email)
-                               where password.Description.Contains(description)
-                               where password.Website.Contains(website)
+                               where password.Application == application
+                               where password.Username == username
+                               where password.Email == email
+                               where password.Description == description
+                               where password.Website == website
                                select password).FirstOrDefault();
 
             return result;
@@ -299,11 +299,11 @@ namespace PasswordVault.Desktop.Winforms
             List<Password> passwords = _passwordService.GetPasswords();
 
             Password result = (from Password queryPassword in passwords
-                               where queryPassword.Application.Contains(password.Application)
-                               where queryPassword.Username.Contains(password.Username)
-                               where queryPassword.Email.Contains(password.Email)
-                               where queryPassword.Description.Contains(password.Description)
-                               where queryPassword.Website.Contains(password.Website)
+                               where queryPassword.Application == password.Application
+                               where queryPassword.Username == password.Username
+                               where queryPassword.Email == password.Email
+                               where queryPassword.Description == password.Description
+                               where queryPassword.Website == password.Website
                                select queryPassword).FirstOrDefault();
 
             return result;
