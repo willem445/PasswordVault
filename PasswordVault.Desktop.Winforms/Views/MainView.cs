@@ -189,7 +189,7 @@ namespace PasswordVault.Desktop.Winforms
             editButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
             editButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             editButton.FlatAppearance.BorderSize = 1;
-          
+
             editCancelButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             editCancelButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             editCancelButton.FlatStyle = FlatStyle.Flat;
@@ -287,42 +287,42 @@ namespace PasswordVault.Desktop.Winforms
             copyUsernameToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             copyUsernameToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             copyUsernameToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            copyUsernameToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
+            copyUsernameToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyUsernameToolStripItem);
 
             var copyPasswordToolStripItem = new ToolStripMenuItem("Copy Password");
             copyPasswordToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             copyPasswordToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             copyPasswordToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            copyPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-copy-48.png"));
+            copyPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-copy-48.png"));
             passwordContextMenuStrip.Items.Add(copyPasswordToolStripItem);
 
             var websiteToolStripItem = new ToolStripMenuItem("Visit Website");
             websiteToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             websiteToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             websiteToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            websiteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-link-100.png"));
+            websiteToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-link-100.png"));
             passwordContextMenuStrip.Items.Add(websiteToolStripItem);
 
             var showPasswordToolStripItem = new ToolStripMenuItem("Show Password");
             showPasswordToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             showPasswordToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             showPasswordToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            showPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-show-property-60.png"));
+            showPasswordToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-show-property-60.png"));
             passwordContextMenuStrip.Items.Add(showPasswordToolStripItem);
 
             var editToolStripItem = new ToolStripMenuItem("Edit");
             editToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             editToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             editToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            editToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-edit-48.png"));
+            editToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-edit-48.png"));
             passwordContextMenuStrip.Items.Add(editToolStripItem);
 
             var deleteToolStripItem = new ToolStripMenuItem("Delete");
             deleteToolStripItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             deleteToolStripItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             deleteToolStripItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            deleteToolStripItem.Image = Bitmap.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Resources\icons8-delete-60.png"));
+            deleteToolStripItem.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-delete-60.png"));
             passwordContextMenuStrip.Items.Add(deleteToolStripItem);
 
             passwordContextMenuStrip.Items[0].Click += CopyUser_Click;
@@ -333,7 +333,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordContextMenuStrip.Items[5].Click += DeleteButton_Click;
             #endregion
 
-            userStatusLabel.Text = "Not logged in.";
+            userStatusLabel.Text = "Not logged in.";          
         }
 
         /*=================================================================================================
