@@ -42,7 +42,6 @@ namespace PasswordVault.Desktop.Winforms
             {
                 MessageBox.Show(e.Message);
                 MessageBox.Show(e.StackTrace);
-                MessageBox.Show(e.InnerException.ToString());
             }
 
 

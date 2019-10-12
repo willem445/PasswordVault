@@ -24,5 +24,6 @@ namespace PasswordVault.Data
         bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword);
         bool DeletePassword(DatabasePassword password);
         List<DatabasePassword> GetUserPasswordsByGUID(string guid);
+        Int64 GetLastUniqueId();
     }
 }
