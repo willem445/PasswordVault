@@ -539,7 +539,7 @@ namespace PasswordVault.Services
                             // Update the passwordservice list.
                             // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
                             // since the database autoincrements the unique ID.
-                            UpdatePasswordListFromDB();
+                            UpdatePasswordListFromDB(password);
 
                             addResult = AddPasswordResult.Success;
                         }
@@ -688,6 +688,25 @@ namespace PasswordVault.Services
 
                 _passwordList.Add(password);
             }
+        }
+
+        /*************************************************************************************************/
+        private void UpdatePasswordListFromDB(Password password)
+        {
+            Int64 uniqueID = _dbcontext.GetLastUniqueId();
+
+            Password newPassword = new Password
+            (
+                uniqueID, 
+                password.Application, 
+                password.Username, 
+                password.Email, 
+                password.Description, 
+                password.Description, 
+                password.Passphrase
+            );
+
+            _passwordList.Add(newPassword);
         }
 
         /*************************************************************************************************/

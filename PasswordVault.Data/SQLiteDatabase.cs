@@ -41,6 +41,7 @@ namespace PasswordVault.Data
 
         /*PRIVATE*****************************************************************************************/
         private string DB_FILE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault") + "\\PasswordDb.sqlite";
+        private Int64 _lastUniqueId = 0;
 
         /*=================================================================================================
 		PROPERTIES
@@ -346,9 +347,10 @@ namespace PasswordVault.Data
                                     @Email,
                                     @Description,
                                     @Website,
-                                    @Passphrase)";
+                                    @Passphrase);
+                                 SELECT last_insert_rowid()";
 
-                    int dbresult = dbConn.Execute(query, new
+                    int dbresult = dbConn.Query<int>(query, new
                     {
                         UserGUID = password.UserGUID,
                         Application = password.Application,
@@ -357,11 +359,12 @@ namespace PasswordVault.Data
                         Description = password.Description,
                         Website = password.Website,
                         Passphrase = password.Passphrase,
-                    });
+                    }).Single();
 
-                    if (dbresult != 0)
+                    if (dbresult >= 0)
                     {
                         result = true;
+                        _lastUniqueId = dbresult;
                     }
                 }
             }
@@ -434,6 +437,12 @@ namespace PasswordVault.Data
             }
 
             return result;
+        }
+
+        /*************************************************************************************************/
+        public Int64 GetLastUniqueId()
+        {
+            return _lastUniqueId;
         }
 
         /*=================================================================================================

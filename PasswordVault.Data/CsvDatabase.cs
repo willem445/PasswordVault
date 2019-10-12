@@ -51,6 +51,7 @@ namespace PasswordVault.Data
         private string _usersCsvPath = USERS_CSV_PATH;
         private string _passwordsCsvPath = PASSWORDS_CSV_PATH;
 
+        private Int64 _lastUniqueId = 0;
 
         /*=================================================================================================
 		PROPERTIES
@@ -243,6 +244,8 @@ namespace PasswordVault.Data
                 result = true;
             }
 
+            _lastUniqueId = uniqueID;
+
             return result;
         }
 
@@ -302,6 +305,12 @@ namespace PasswordVault.Data
                                              select password).ToList<DatabasePassword>();
             return result;
         }
+
+        /*************************************************************************************************/
+        public Int64 GetLastUniqueId()
+        {
+            return _lastUniqueId;
+    }
 
         /*=================================================================================================
 		PRIVATE METHODS

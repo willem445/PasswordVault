@@ -120,6 +120,11 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
+        public Int64 GetLastUniqueId()
+        {
+            throw new NotImplementedException();
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/

@@ -14,8 +14,10 @@ namespace PasswordVault.Desktop.Winforms
         [STAThread]
         static void Main()
         {
+#if (!DEBUG)
             try
             {
+#endif
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -36,16 +38,15 @@ namespace PasswordVault.Desktop.Winforms
 
                 Application.Run((Form)mainView);
 
-                kernal.Dispose();         
+                kernal.Dispose();
+#if (!DEBUG)
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 MessageBox.Show(e.StackTrace);
-                MessageBox.Show(e.InnerException.ToString());
             }
-
-
+#endif
         }
     }
 }
