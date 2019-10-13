@@ -14,6 +14,9 @@ namespace PasswordVault.ServicesTests
     [TestClass]
     public class ChangePasswordTests
     {
+        IDatabase db;
+        IPasswordService passwordService;
+
         public ChangePasswordTests()
         {
             //
@@ -50,23 +53,27 @@ namespace PasswordVault.ServicesTests
         // Use ClassCleanup to run code after all tests in a class have run
         // [ClassCleanup()]
         // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
+
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            db = DatabaseFactory.GetDatabase(Database.InMemory);
+            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+        }
+
         // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            ((InMemoryDatabase)db).LocalPasswordDbAccess.Clear();
+            ((InMemoryDatabase)db).LocalUserDbAccess.Clear();
+            passwordService.Logout();
+        }
         #endregion
 
         [TestMethod]
         public void ChangeUserPasswordTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createUserResult;
             ChangeUserPasswordResult changeUserPasswordResult;
             LoginResult loginResult;

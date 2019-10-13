@@ -10,15 +10,31 @@ namespace PasswordVault.ServicesTests
     [TestClass()]
     public class DeleteUserTests
     {
+        IDatabase db;
+        IPasswordService passwordService;
+
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            db = DatabaseFactory.GetDatabase(Database.InMemory);
+            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+        }
+
+        // Use TestCleanup to run code after each test has run
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            ((InMemoryDatabase)db).LocalPasswordDbAccess.Clear();
+            ((InMemoryDatabase)db).LocalUserDbAccess.Clear();
+            passwordService.Logout();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         [TestMethod()]
         public void CreateUserTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult result;
             User user;
 
@@ -37,9 +53,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteSingleUserTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
             User user;
@@ -65,9 +78,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteMultipleUsersTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
 
@@ -106,9 +116,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteUserWithPasswords()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             User user;
             CreateUserResult createResult;
             LoginResult loginResult;
@@ -155,9 +162,6 @@ namespace PasswordVault.ServicesTests
         
         public void DeleteUserWithMultiplePasswords()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             LoginResult loginResult;
             DeleteUserResult deleteResult;

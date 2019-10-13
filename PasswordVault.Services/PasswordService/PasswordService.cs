@@ -72,6 +72,8 @@ namespace PasswordVault.Services
         ApplicationError,
         UsernameError,
         EmailError,
+        DescriptionError,
+        WebsiteError,
         PassphraseError,
         DuplicatePassword,
         Failed,
@@ -539,7 +541,7 @@ namespace PasswordVault.Services
                             // Update the passwordservice list.
                             // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
                             // since the database autoincrements the unique ID.
-                            UpdatePasswordListFromDB(password);
+                            UpdatePasswordListFromDB(encryptPassword);
 
                             addResult = AddPasswordResult.Success;
                         }
@@ -702,7 +704,7 @@ namespace PasswordVault.Services
                 password.Username, 
                 password.Email, 
                 password.Description, 
-                password.Description, 
+                password.Website, 
                 password.Passphrase
             );
 
@@ -903,9 +905,27 @@ namespace PasswordVault.Services
                     result = AddPasswordResult.ApplicationError;
                 }
 
-                if (password.Email.Length != 0)
+                if (password.Description == null)
                 {
-                    if (!password.Email.Contains("@") && !password.Email.Contains("."))
+                    result = AddPasswordResult.DescriptionError;
+                }
+
+                if (password.Website == null)
+                {
+                    result = AddPasswordResult.WebsiteError;
+                }
+                else if (string.IsNullOrEmpty(password.Website))
+                {
+                    
+                }
+
+                if (string.IsNullOrEmpty(password.Email))
+                {
+                    result = AddPasswordResult.EmailError;
+                }
+                else if (password.Email.Length != 0)
+                {
+                    if (!password.Email.Contains("@") || !password.Email.Contains("."))
                     {
                         result = AddPasswordResult.EmailError;
                     }
