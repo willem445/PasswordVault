@@ -111,6 +111,7 @@ namespace PasswordVault.Services
         private const int DEFAULT_PASSWORD_LENGTH = 20;
         private const int MINIMUM_PASSWORD_LENGTH = 12;
         private const int MAXIMUM_PASSWORD_LENGTH = 200;
+        private const int MAXIMUM_PASSWORD_FIELD_LENGTH = 500;
 
         /*=================================================================================================
 		FIELDS
@@ -820,14 +821,12 @@ namespace PasswordVault.Services
         {
             ChangeUserPasswordResult result = ChangeUserPasswordResult.Success;
 
-            bool isNotEmptyOrNull = true;
             bool containsNumber = false;
             bool containsLowerCase = false;
             bool containsUpperCase = false;
 
             if (string.IsNullOrEmpty(passphrase))
             {
-                isNotEmptyOrNull = false;
                 return ChangeUserPasswordResult.Failed;
             }
 
@@ -841,22 +840,19 @@ namespace PasswordVault.Services
                 result = ChangeUserPasswordResult.LengthRequirementNotMet;        
             }
 
-            if (isNotEmptyOrNull)
+            foreach (var character in passphrase)
             {
-                foreach (var character in passphrase)
+                if (char.IsUpper(character))
                 {
-                    if (char.IsUpper(character))
-                    {
-                        containsUpperCase = true;
-                    }
-                    else if (char.IsLower(character))
-                    {
-                        containsLowerCase = true;
-                    }
-                    else if (char.IsDigit(character))
-                    {
-                        containsNumber = true;
-                    }
+                    containsUpperCase = true;
+                }
+                else if (char.IsLower(character))
+                {
+                    containsLowerCase = true;
+                }
+                else if (char.IsDigit(character))
+                {
+                    containsNumber = true;
                 }
             }
 
@@ -890,36 +886,39 @@ namespace PasswordVault.Services
 
             if (password != null)
             {
-                if (string.IsNullOrEmpty(password.Passphrase))
+                if (string.IsNullOrEmpty(password.Passphrase) || password.Passphrase.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.PassphraseError;
                 }
 
-                if (string.IsNullOrEmpty(password.Username))
+                if (string.IsNullOrEmpty(password.Username) || password.Username.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.UsernameError;
                 }
 
-                if (string.IsNullOrEmpty(password.Application))
+                if (string.IsNullOrEmpty(password.Application) || password.Application.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.ApplicationError;
                 }
 
-                if (password.Description == null)
+                if (password.Description == null || password.Description.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.DescriptionError;
                 }
 
-                if (password.Website == null)
+                if (password.Website == null || password.Website.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.WebsiteError;
                 }
-                else if (string.IsNullOrEmpty(password.Website))
+                else if (password.Website.Length != 0)
                 {
-                    
+                    if (!UriUtilities.IsValidUri(password.Website))
+                    {
+                        result = AddPasswordResult.WebsiteError;
+                    }
                 }
 
-                if (string.IsNullOrEmpty(password.Email))
+                if (password.Email == null || password.Email.Length > MAXIMUM_PASSWORD_FIELD_LENGTH)
                 {
                     result = AddPasswordResult.EmailError;
                 }

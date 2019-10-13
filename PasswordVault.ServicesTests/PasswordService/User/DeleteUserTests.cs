@@ -134,10 +134,10 @@ namespace PasswordVault.ServicesTests
             // Mock a password model that would be coming from the UI
             Password[] passwords =
             {
-                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
+                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
             };
 
             Int32 addedPasswordsCount = 1;
@@ -180,10 +180,10 @@ namespace PasswordVault.ServicesTests
             // Mock a password model that would be coming from the UI
             Password[] passwords =
             {
-                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
+                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
             };
 
             // Add each user to the database, log in, add each password to each user, logout
