@@ -2,6 +2,9 @@
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PasswordVault.Data;
+using PasswordVault.Services;
+using PasswordVault.Models;
 
 namespace PasswordVault.ServicesTests
 {
@@ -11,6 +14,14 @@ namespace PasswordVault.ServicesTests
     [TestClass]
     public class DeletePasswordTests
     {
+        IDatabase db;
+        IPasswordService passwordService;
+        CreateUserResult createUserResult;
+        LoginResult loginResult;
+        LogOutResult logoutResult;
+        AddPasswordResult addPasswordResult;
+        User user;
+
         public DeletePasswordTests()
         {
             //
@@ -47,19 +58,37 @@ namespace PasswordVault.ServicesTests
         // Use ClassCleanup to run code after all tests in a class have run
         // [ClassCleanup()]
         // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
+
+        // Use TestInitialize to run code before running each test
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            db = DatabaseFactory.GetDatabase(Database.InMemory);
+            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+
+            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            createUserResult = passwordService.CreateNewUser(user);
+            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
+
+            loginResult = passwordService.Login("testAccount", "testPassword1@");
+            Assert.AreEqual(LoginResult.Successful, loginResult);
+        }
+
         // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            ((InMemoryDatabase)db).LocalPasswordDbAccess.Clear();
+            ((InMemoryDatabase)db).LocalUserDbAccess.Clear();
+
+            logoutResult = passwordService.Logout();
+            Assert.AreEqual(LogOutResult.Success, logoutResult);
+        }
         #endregion
 
         [TestMethod]
-        public void TestMethod1()
+        public void DeletePasswordTest()
         {
             //
             // TODO: Add test logic here

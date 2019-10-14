@@ -609,15 +609,17 @@ namespace PasswordVault.Services
 
                         if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
                             (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
-                        {
-                            Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword);
-
+                        {                          
                             int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
 
                             if (index != -1)
                             {
+                                Password modifiedWithUniqueID = new Password(_passwordList[index].UniqueID, modifiedPassword.Application, modifiedPassword.Username, modifiedPassword.Email, modifiedPassword.Description, modifiedPassword.Website, modifiedPassword.Passphrase);
+                                Password originalWithUniqueID = new Password(_passwordList[index].UniqueID, originalPassword.Application, originalPassword.Username, originalPassword.Email, originalPassword.Description, originalPassword.Website, originalPassword.Passphrase);
+                                Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedWithUniqueID);
+
                                 _passwordList[index] = modifiedEncryptedPassword;
-                                _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalPassword), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                                _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalWithUniqueID), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
                                 result = AddPasswordResult.Success;
                             }
                         }
