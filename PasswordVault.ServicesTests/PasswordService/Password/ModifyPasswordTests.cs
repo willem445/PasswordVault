@@ -262,6 +262,27 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual("https://www.website-modified.com", decryptedPass.Website);
             Assert.AreEqual("passphrase-modified", decryptedPass.Passphrase); // verify that password is decrypted
 
+            // Test null values
+            addPasswordResult = passwordService.ModifyPassword(null, password);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
+            addPasswordResult = passwordService.ModifyPassword(newPassword, null);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
+            addPasswordResult = passwordService.ModifyPassword(null, null);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
+            // Test value that does not exist
+            Password password3 = new Password("x", "x", "x@email.com", "x", "https://www.x.com", "x");
+            Password password4 = new Password("x2", "x", "x@email.com", "x", "https://www.x.com", "x");
+            addPasswordResult = passwordService.ModifyPassword(password3, password4);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
+            // Test identical passwords
+            password = new Password("x", "x", "x@email.com", "x", "https://www.x.com", "x");
+            addPasswordResult = passwordService.ModifyPassword(password, password);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
             // Test duplicate password
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
@@ -341,6 +362,16 @@ namespace PasswordVault.ServicesTests
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
             Assert.AreEqual(AddPasswordResult.PassphraseError, addPasswordResult);
+
+            // Test logged out
+            logoutResult = passwordService.Logout();
+            Assert.AreEqual(LogOutResult.Success, logoutResult);
+
+            addPasswordResult = passwordService.ModifyPassword(newPassword, password);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+
+            loginResult = passwordService.Login("testAccount", "testPassword1@");
+            Assert.AreEqual(LoginResult.Successful, loginResult);
 
         }
     }

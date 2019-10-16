@@ -33,24 +33,6 @@ namespace PasswordVault.ServicesTests
         /// 
         /// </summary>
         [TestMethod()]
-        public void CreateUserTest()
-        {
-            CreateUserResult result;
-            User user;
-
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
-            result = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, result);
-            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
-
-            result = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.UsernameTaken, result);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [TestMethod()]
         public void DeleteSingleUserTest()
         {
             CreateUserResult createResult;
@@ -65,6 +47,10 @@ namespace PasswordVault.ServicesTests
 
             createResult = passwordService.CreateNewUser(user);
             Assert.AreEqual(CreateUserResult.Successful, createResult);
+            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
+
+            deleteResult = passwordService.DeleteUser(null);
+            Assert.AreEqual(DeleteUserResult.Failed, deleteResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             deleteResult = passwordService.DeleteUser(user);

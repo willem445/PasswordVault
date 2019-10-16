@@ -72,7 +72,7 @@ namespace PasswordVault.ServicesTests
         #endregion
 
         [TestMethod]
-        public void CreateUserTest()
+        public void ModifyUserTest()
         {
             CreateUserResult createUserResult;
             LoginResult loginResult;
@@ -85,6 +85,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(CreateUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
+            // Test modify while logged out
             modifyUserResult = passwordService.EditUser(new User(null, null, "testFirstName2", "testLastName2", "222-111-2222", "test2@test.com"));
             Assert.AreEqual(UserInformationResult.Failed, modifyUserResult);
 
@@ -96,6 +97,11 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(userResult.PhoneNumber, "222-111-1111");
             Assert.AreEqual(userResult.Email, "test@test.com");
 
+            // Test null user
+            modifyUserResult = passwordService.EditUser(null);
+            Assert.AreEqual(UserInformationResult.Failed, modifyUserResult);
+
+            // Test successful edit
             modifyUserResult = passwordService.EditUser(new User(null, null, "testFirstName2", "testLastName2", "222-111-2222", "test2@test.com"));
             Assert.AreEqual(UserInformationResult.Success, modifyUserResult);
 

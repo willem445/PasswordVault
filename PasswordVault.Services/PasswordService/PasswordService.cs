@@ -137,9 +137,9 @@ namespace PasswordVault.Services
 		*================================================================================================*/
         public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryption encryptDecrypt)
         {
-            _dbcontext = dbcontext;
-            _masterPassword = masterPassword;
-            _encryptDecrypt = encryptDecrypt;
+            _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
+            _masterPassword = masterPassword ?? throw new ArgumentNullException(nameof(masterPassword));
+            _encryptDecrypt = encryptDecrypt ?? throw new ArgumentNullException(nameof(encryptDecrypt));
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -152,6 +152,11 @@ namespace PasswordVault.Services
         public LoginResult Login(string username, string password)
         {
             LoginResult loginResult = LoginResult.Failed;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                return LoginResult.Failed;
+            }
 
             if (!IsLoggedIn())
             {
@@ -228,106 +233,108 @@ namespace PasswordVault.Services
         {
             CreateUserResult createUserResult = CreateUserResult.Failed;
 
-            if (user != null)
+            if (user == null)
             {
-                User queryResult = _dbcontext.GetUserByUsername(user.Username);
+                return CreateUserResult.Failed;
+            }
 
-                if (queryResult != null)
+            User queryResult = _dbcontext.GetUserByUsername(user.Username);
+
+            if (queryResult != null)
+            {
+                createUserResult = CreateUserResult.UsernameTaken;
+            }
+            else
+            {
+                UserInformationResult verifyUser = VerifyUserInformation(user);
+                ChangeUserPasswordResult verifyPassword = VerifyPasswordRequirements(user.PlainTextPassword);
+
+                // Verify that username and password pass requirements
+                if (!VerifyUsernameRequirements(user.Username))
                 {
-                    createUserResult = CreateUserResult.UsernameTaken;
+                    createUserResult = CreateUserResult.UsernameNotValid;
+                }
+                else if (verifyPassword != ChangeUserPasswordResult.Success)
+                {
+                    switch (verifyPassword)
+                    {
+                        case ChangeUserPasswordResult.Failed:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+
+                        case ChangeUserPasswordResult.LengthRequirementNotMet:
+                            createUserResult = CreateUserResult.LengthRequirementNotMet;
+                            break;
+
+                        case ChangeUserPasswordResult.NoLowerCaseCharacter:
+                            createUserResult = CreateUserResult.NoLowerCaseCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.NoNumber:
+                            createUserResult = CreateUserResult.NoNumber;
+                            break;
+
+                        case ChangeUserPasswordResult.NoSpecialCharacter:
+                            createUserResult = CreateUserResult.NoSpecialCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.NoUpperCaseCharacter:
+                            createUserResult = CreateUserResult.NoUpperCaseCharacter;
+                            break;
+
+                        case ChangeUserPasswordResult.PasswordsDoNotMatch:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+
+                        default:
+                            createUserResult = CreateUserResult.PasswordNotValid;
+                            break;
+                    }
+                }
+                else if (verifyUser != UserInformationResult.Success)
+                {
+                    switch (verifyUser)
+                    {
+                        case UserInformationResult.InvalidEmail:
+                            createUserResult = CreateUserResult.EmailNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidFirstName:
+                            createUserResult = CreateUserResult.FirstNameNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidLastName:
+                            createUserResult = CreateUserResult.LastNameNotValid;
+                            break;
+
+                        case UserInformationResult.InvalidPhoneNumber:
+                            createUserResult = CreateUserResult.PhoneNumberNotValid;
+                            break;
+
+                        case UserInformationResult.Failed:
+                            createUserResult = CreateUserResult.Failed;
+                            break;
+                    }
                 }
                 else
                 {
-                    UserInformationResult verifyUser = VerifyUserInformation(user);
-                    ChangeUserPasswordResult verifyPassword = VerifyPasswordRequirements(user.PlainTextPassword);
+                    createUserResult = CreateUserResult.Successful;
+                    UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(user.PlainTextPassword);
 
-                    // Verify that username and password pass requirements
-                    if (!VerifyUsernameRequirements(user.Username))
-                    {
-                        createUserResult = CreateUserResult.UsernameNotValid;
-                    }
-                    else if (verifyPassword != ChangeUserPasswordResult.Success)
-                    {
-                        switch (verifyPassword)
-                        {
-                            case ChangeUserPasswordResult.Failed:
-                                createUserResult = CreateUserResult.PasswordNotValid;
-                                break;
+                    User newUser = new User(
+                        newEncryptedData.UniqueGUID, // Leave unique guid in plaintext
+                        _encryptDecrypt.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
+                        user.Username, // Leave username in plaintext
+                        newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture), // Leave iterations in plaintext
+                        newEncryptedData.Salt,
+                        newEncryptedData.Hash,
+                        _encryptDecrypt.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        _encryptDecrypt.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey) // Encrypt with decrypted random key
+                        );
 
-                            case ChangeUserPasswordResult.LengthRequirementNotMet:
-                                createUserResult = CreateUserResult.LengthRequirementNotMet;
-                                break;
-
-                            case ChangeUserPasswordResult.NoLowerCaseCharacter:
-                                createUserResult = CreateUserResult.NoLowerCaseCharacter;
-                                break;
-
-                            case ChangeUserPasswordResult.NoNumber:
-                                createUserResult = CreateUserResult.NoNumber;
-                                break;
-
-                            case ChangeUserPasswordResult.NoSpecialCharacter:
-                                createUserResult = CreateUserResult.NoSpecialCharacter;
-                                break;
-
-                            case ChangeUserPasswordResult.NoUpperCaseCharacter:
-                                createUserResult = CreateUserResult.NoUpperCaseCharacter;
-                                break;
-
-                            case ChangeUserPasswordResult.PasswordsDoNotMatch:
-                                createUserResult = CreateUserResult.PasswordNotValid;
-                                break;
-
-                            default:
-                                createUserResult = CreateUserResult.PasswordNotValid;
-                                break;
-                        }
-                    }
-                    else if (verifyUser != UserInformationResult.Success)
-                    {
-                        switch (verifyUser)
-                        {
-                            case UserInformationResult.InvalidEmail:
-                                createUserResult = CreateUserResult.EmailNotValid;
-                                break;
-
-                            case UserInformationResult.InvalidFirstName:
-                                createUserResult = CreateUserResult.FirstNameNotValid;
-                                break;
-
-                            case UserInformationResult.InvalidLastName:
-                                createUserResult = CreateUserResult.LastNameNotValid;
-                                break;
-
-                            case UserInformationResult.InvalidPhoneNumber:
-                                createUserResult = CreateUserResult.PhoneNumberNotValid;
-                                break;
-
-                            case UserInformationResult.Failed:
-                                createUserResult = CreateUserResult.Failed;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        createUserResult = CreateUserResult.Successful;
-                        UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(user.PlainTextPassword);
-
-                        User newUser = new User(
-                            newEncryptedData.UniqueGUID, // Leave unique guid in plaintext
-                            _encryptDecrypt.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
-                            user.Username, // Leave username in plaintext
-                            newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture), // Leave iterations in plaintext
-                            newEncryptedData.Salt,
-                            newEncryptedData.Hash,
-                            _encryptDecrypt.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                            _encryptDecrypt.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                            _encryptDecrypt.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                            _encryptDecrypt.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey) // Encrypt with decrypted random key
-                            );
-
-                        _dbcontext.AddUser(newUser);
-                    }
+                    _dbcontext.AddUser(newUser);
                 }
             }
 
@@ -339,23 +346,25 @@ namespace PasswordVault.Services
         {
             DeleteUserResult result = DeleteUserResult.Failed;
 
-            if (user != null)
+            if (user == null)
             {
-                User getUser = _dbcontext.GetUserByUsername(user.Username);
+                return DeleteUserResult.Failed;
+            }
 
-                if (getUser != null)
-                {
-                    bool success = _dbcontext.DeleteUser(getUser);
+            User getUser = _dbcontext.GetUserByUsername(user.Username);
 
-                    if (success)
-                    {
-                        result = DeleteUserResult.Success;
-                    }
-                }
-                else
+            if (getUser != null)
+            {
+                bool success = _dbcontext.DeleteUser(getUser);
+
+                if (success)
                 {
-                    result = DeleteUserResult.Failed;
+                    result = DeleteUserResult.Success;
                 }
+            }
+            else
+            {
+                result = DeleteUserResult.Failed;
             }
 
             return result;
@@ -366,57 +375,59 @@ namespace PasswordVault.Services
         {
             UserInformationResult result = UserInformationResult.Failed;
 
-            if (user != null)
+            if (user == null)
             {
-                if (IsLoggedIn())
+                return UserInformationResult.Failed;
+            }
+
+            if (IsLoggedIn())
+            {
+                var validation = VerifyUserInformation(user);
+
+                if (validation == UserInformationResult.Success)
                 {
-                    var validation = VerifyUserInformation(user);
+                    User dbUser = _dbcontext.GetUserByGUID(_currentUser.GUID);
 
-                    if (validation == UserInformationResult.Success)
+                    User newCurrentUser = new User(
+                        _currentUser.GUID,
+                        _currentUser.Username,
+                        _currentUser.PlainTextRandomKey,
+                        user.FirstName,
+                        user.LastName,
+                        user.PhoneNumber,
+                        user.Email,
+                        true);
+
+                    _currentUser = newCurrentUser;
+
+                    User modifiedUser = new User
+                    (
+                        dbUser.GUID,
+                        dbUser.EncryptedKey,
+                        dbUser.Username,
+                        dbUser.Iterations,
+                        dbUser.Salt,
+                        dbUser.Hash,
+                        _encryptDecrypt.Encrypt(user.FirstName, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.LastName, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.PhoneNumber, _currentUser.PlainTextRandomKey),
+                        _encryptDecrypt.Encrypt(user.Email, _currentUser.PlainTextRandomKey)
+                    );
+
+                    bool success = _dbcontext.ModifyUser(dbUser, modifiedUser);
+
+                    if (success)
                     {
-                        User dbUser = _dbcontext.GetUserByGUID(_currentUser.GUID);
-
-                        User newCurrentUser = new User(
-                            _currentUser.GUID,
-                            _currentUser.Username,
-                            _currentUser.PlainTextRandomKey,
-                            user.FirstName,
-                            user.LastName,
-                            user.PhoneNumber,
-                            user.Email,
-                            true);
-
-                        _currentUser = newCurrentUser;
-
-                        User modifiedUser = new User
-                        (
-                            dbUser.GUID,
-                            dbUser.EncryptedKey,
-                            dbUser.Username,
-                            dbUser.Iterations,
-                            dbUser.Salt,
-                            dbUser.Hash,
-                            _encryptDecrypt.Encrypt(user.FirstName, _currentUser.PlainTextRandomKey),
-                            _encryptDecrypt.Encrypt(user.LastName, _currentUser.PlainTextRandomKey),
-                            _encryptDecrypt.Encrypt(user.PhoneNumber, _currentUser.PlainTextRandomKey),
-                            _encryptDecrypt.Encrypt(user.Email, _currentUser.PlainTextRandomKey)
-                        );
-
-                        bool success = _dbcontext.ModifyUser(dbUser, modifiedUser);
-
-                        if (success)
-                        {
-                            result = UserInformationResult.Success; // TODO - return other results
-                        }
-                        else
-                        {
-                            result = UserInformationResult.Failed;
-                        }
+                        result = UserInformationResult.Success; // TODO - return other results
                     }
                     else
                     {
-                        result = validation;
+                        result = UserInformationResult.Failed;
                     }
+                }
+                else
+                {
+                    result = validation;
                 }
             }
 
@@ -453,6 +464,11 @@ namespace PasswordVault.Services
         public ChangeUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword)
         {
             ChangeUserPasswordResult result = ChangeUserPasswordResult.Failed;
+
+            if (string.IsNullOrEmpty(originalPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            {
+                return ChangeUserPasswordResult.Failed;
+            }
 
             if (IsLoggedIn())
             {
@@ -510,10 +526,16 @@ namespace PasswordVault.Services
         {
             bool result = false;
 
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
             User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
-
-            result = _masterPassword.VerifyPassword(password, user.Salt, user.Hash, Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
-
+            result = _masterPassword.VerifyPassword(password, 
+                                                    user.Salt, user.Hash, 
+                                                    Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
+                      
             return result;
         }
 
@@ -522,42 +544,44 @@ namespace PasswordVault.Services
         {
             AddPasswordResult addResult = AddPasswordResult.Failed;
 
-            if (password != null)
+            if (password == null)
             {
-                if (IsLoggedIn())
+                return AddPasswordResult.Failed;
+            }
+               
+            if (IsLoggedIn())
+            {           
+                AddPasswordResult verifyResult = VerifyAddPasswordFields(password);
+
+                if (verifyResult == AddPasswordResult.Success)
                 {
-                    AddPasswordResult verifyResult = VerifyAddPasswordFields(password);
+                    List<Password> queryResult = (from Password pass in _passwordList
+                                                    where pass.Application == password.Application
+                                                    select pass).ToList<Password>();
 
-                    if (verifyResult == AddPasswordResult.Success)
+                    if (queryResult.Count <= 0) // Verify that new password is not a duplicate of an existing one
                     {
-                        List<Password> queryResult = (from Password pass in _passwordList
-                                                      where pass.Application == password.Application
-                                                      select pass).ToList<Password>();
+                        Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
+                        _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
 
-                        if (queryResult.Count <= 0) // Verify that new password is not a duplicate of an existing one
-                        {
-                            Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
-                            _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
+                        // Update the passwordservice list.
+                        // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
+                        // since the database autoincrements the unique ID.
+                        UpdatePasswordListFromDB(encryptPassword);
 
-                            // Update the passwordservice list.
-                            // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
-                            // since the database autoincrements the unique ID.
-                            UpdatePasswordListFromDB(encryptPassword);
-
-                            addResult = AddPasswordResult.Success;
-                        }
-                        else
-                        {
-                            addResult = AddPasswordResult.DuplicatePassword;
-                        }
+                        addResult = AddPasswordResult.Success;
                     }
                     else
                     {
-                        addResult = verifyResult;
+                        addResult = AddPasswordResult.DuplicatePassword;
                     }
                 }
+                else
+                {
+                    addResult = verifyResult;
+                }                      
             }
-
+            
             return addResult;
         }
 
@@ -566,8 +590,13 @@ namespace PasswordVault.Services
         {
             DeletePasswordResult result = DeletePasswordResult.Failed;
 
-            if (IsLoggedIn())
+            if (password == null)
             {
+                return DeletePasswordResult.Failed;
+            }
+
+            if (IsLoggedIn())
+            {                              
                 Password queryResult = (from Password pass in _passwordList
                                         where pass.Application == password.Application
                                         where pass.Username == password.Username
@@ -595,45 +624,48 @@ namespace PasswordVault.Services
         {
             AddPasswordResult result = AddPasswordResult.Failed;
 
-            if (originalPassword != null && modifiedPassword != null)
+            if (originalPassword == null || modifiedPassword == null)
             {
-                if (IsLoggedIn())
+                return AddPasswordResult.Failed;
+            }
+
+            if (IsLoggedIn())
+            {                                
+                AddPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
+
+                if (verifyResult == AddPasswordResult.Success)
                 {
-                    AddPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
+                    List<Password> modifiedPasswordResult = (from Password pass in _passwordList
+                                                                where pass.Application == modifiedPassword.Application
+                                                                select pass).ToList<Password>();
 
-                    if (verifyResult == AddPasswordResult.Success)
+                    if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
+                        (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
                     {
-                        List<Password> modifiedPasswordResult = (from Password pass in _passwordList
-                                                                 where pass.Application == modifiedPassword.Application
-                                                                 select pass).ToList<Password>();
+                        int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && 
+                                                                    (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
 
-                        if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
-                            (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
-                        {                          
-                            int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
-
-                            if (index != -1)
-                            {
-                                Password modifiedWithUniqueID = new Password(_passwordList[index].UniqueID, modifiedPassword.Application, modifiedPassword.Username, modifiedPassword.Email, modifiedPassword.Description, modifiedPassword.Website, modifiedPassword.Passphrase);
-                                Password originalWithUniqueID = new Password(_passwordList[index].UniqueID, originalPassword.Application, originalPassword.Username, originalPassword.Email, originalPassword.Description, originalPassword.Website, originalPassword.Passphrase);
-                                Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedWithUniqueID);
-
-                                _passwordList[index] = modifiedEncryptedPassword;
-                                _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalWithUniqueID), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
-                                result = AddPasswordResult.Success;
-                            }
-                        }
-                        else
+                        if (index != -1)
                         {
-                            result = AddPasswordResult.DuplicatePassword;
+                            Password modifiedWithUniqueID = new Password(_passwordList[index].UniqueID, modifiedPassword.Application, modifiedPassword.Username, modifiedPassword.Email, modifiedPassword.Description, modifiedPassword.Website, modifiedPassword.Passphrase);
+                            Password originalWithUniqueID = new Password(_passwordList[index].UniqueID, originalPassword.Application, originalPassword.Username, originalPassword.Email, originalPassword.Description, originalPassword.Website, originalPassword.Passphrase);
+                            Password modifiedEncryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedWithUniqueID);
+
+                            _passwordList[index] = modifiedEncryptedPassword;
+                            _dbcontext.ModifyPassword(ConvertToEncryptedDatabasePassword(originalWithUniqueID), ConvertToEncryptedDatabasePassword(modifiedEncryptedPassword));
+                            result = AddPasswordResult.Success;
                         }
                     }
                     else
                     {
-                        result = verifyResult;
+                        result = AddPasswordResult.DuplicatePassword;
                     }
                 }
-            }
+                else
+                {
+                    result = verifyResult;
+                }                          
+            }         
 
             return result;
         }

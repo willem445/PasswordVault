@@ -100,7 +100,12 @@ namespace PasswordVault.ServicesTests
             createUserResult = passwordService.CreateNewUser(user);
             Assert.AreEqual(CreateUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
-            
+
+            // Test null user
+            createUserResult = passwordService.CreateNewUser(null);
+            Assert.AreEqual(CreateUserResult.Failed, createUserResult);
+            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
+
             // Test user names
             user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
