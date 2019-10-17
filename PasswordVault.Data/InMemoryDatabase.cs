@@ -93,7 +93,7 @@ namespace PasswordVault.Data
                     password.Website,
                     password.Passphrase);
 
-                _localPasswordDb.Add(password);
+                _localPasswordDb.Add(newPassword);
             }
 
             _lastUniqueId = uniqueID;

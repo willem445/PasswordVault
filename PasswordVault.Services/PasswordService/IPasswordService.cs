@@ -17,8 +17,8 @@ namespace PasswordVault.Services
         UserInformationResult EditUser(User user);
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();
-        AddPasswordResult AddPassword(Password unencryptedPassword);
-        DeletePasswordResult DeletePassword(Password encryptedPassword);
+        AddPasswordResult AddPassword(Password password);
+        DeletePasswordResult DeletePassword(Password password);
         AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
         Password DecryptPassword(Password password);

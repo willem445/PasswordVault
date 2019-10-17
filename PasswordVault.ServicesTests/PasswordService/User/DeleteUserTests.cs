@@ -10,25 +10,23 @@ namespace PasswordVault.ServicesTests
     [TestClass()]
     public class DeleteUserTests
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        [TestMethod()]
-        public void CreateUserTest()
+        IDatabase db;
+        IPasswordService passwordService;
+
+        [TestInitialize()]
+        public void MyTestInitialize()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            db = DatabaseFactory.GetDatabase(Database.InMemory);
+            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+        }
 
-            CreateUserResult result;
-            User user;
-
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
-            result = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, result);
-            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
-
-            result = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.UsernameTaken, result);
+        // Use TestCleanup to run code after each test has run
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            ((InMemoryDatabase)db).LocalPasswordDbAccess.Clear();
+            ((InMemoryDatabase)db).LocalUserDbAccess.Clear();
+            passwordService.Logout();
         }
 
         /// <summary>
@@ -37,9 +35,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteSingleUserTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
             User user;
@@ -54,6 +49,10 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(CreateUserResult.Successful, createResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
+            deleteResult = passwordService.DeleteUser(null);
+            Assert.AreEqual(DeleteUserResult.Failed, deleteResult);
+            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
+
             deleteResult = passwordService.DeleteUser(user);
             Assert.AreEqual(DeleteUserResult.Success, deleteResult);
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
@@ -65,9 +64,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteMultipleUsersTest()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             DeleteUserResult deleteResult;
 
@@ -106,9 +102,6 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteUserWithPasswords()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             User user;
             CreateUserResult createResult;
             LoginResult loginResult;
@@ -127,10 +120,10 @@ namespace PasswordVault.ServicesTests
             // Mock a password model that would be coming from the UI
             Password[] passwords =
             {
-                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
+                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
             };
 
             Int32 addedPasswordsCount = 1;
@@ -155,9 +148,6 @@ namespace PasswordVault.ServicesTests
         
         public void DeleteUserWithMultiplePasswords()
         {
-            IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
-            IPasswordService passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
-
             CreateUserResult createResult;
             LoginResult loginResult;
             DeleteUserResult deleteResult;
@@ -176,10 +166,10 @@ namespace PasswordVault.ServicesTests
             // Mock a password model that would be coming from the UI
             Password[] passwords =
             {
-                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
-                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "www.FakeStore.com", "123456"),
+                new Password("FakeStore0", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore1", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore2", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
+                new Password("FakeStore3", "NewUsername", "email@FakeStore.com", "This is my FakeStore account.", "https://www.website.com", "123456"),
             };
 
             // Add each user to the database, log in, add each password to each user, logout
