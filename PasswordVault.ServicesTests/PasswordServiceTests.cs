@@ -98,5 +98,90 @@ namespace PasswordVault.ServicesTests
             db = DatabaseFactory.GetDatabase(Database.InMemory);
             PasswordService ps = new PasswordService(db, new MasterPassword(), null);
         }
+
+        [TestMethod]
+        public void GetCurrentUserTest()
+        {
+            loginResult = passwordService.Login("testAccount", "testPassword1@");
+            Assert.AreEqual(LoginResult.Successful, loginResult);
+
+            User user = passwordService.GetCurrentUser();
+            Assert.AreEqual("testAccount", user.Username);
+            Assert.AreEqual("testFirstName", user.FirstName);
+            Assert.AreEqual("testLastName", user.LastName);
+            Assert.AreEqual("222-111-1111", user.PhoneNumber);
+            Assert.AreEqual("test@test.com", user.Email);
+            Assert.AreEqual(true, user.ValidUser);
+
+            logoutResult = passwordService.Logout();
+            Assert.AreEqual(LogOutResult.Success, logoutResult);
+
+            user = passwordService.GetCurrentUser();
+            Assert.AreEqual(false, user.ValidUser);
+        }
+
+        [TestMethod]
+        public void GetCurrentUserNameTest()
+        {
+            loginResult = passwordService.Login("testAccount", "testPassword1@");
+            Assert.AreEqual(LoginResult.Successful, loginResult);
+
+            string username = passwordService.GetCurrentUsername();
+            Assert.AreEqual("testAccount", username);
+
+            logoutResult = passwordService.Logout();
+            Assert.AreEqual(LogOutResult.Success, logoutResult);
+
+            username = passwordService.GetCurrentUsername();
+            Assert.AreEqual("", username);
+        }
+
+        [TestMethod]
+        public void VerifyCurrentUserPasswordTest()
+        {
+            loginResult = passwordService.Login("testAccount", "testPassword1@");
+            Assert.AreEqual(LoginResult.Successful, loginResult);
+
+            bool verifyResult;
+
+            verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1@");
+            Assert.AreEqual(true, verifyResult);
+
+            verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1");
+            Assert.AreEqual(false, verifyResult);
+
+            verifyResult = passwordService.VerifyCurrentUserPassword("");
+            Assert.AreEqual(false, verifyResult);
+
+            verifyResult = passwordService.VerifyCurrentUserPassword(null);
+            Assert.AreEqual(false, verifyResult);
+
+            logoutResult = passwordService.Logout();
+            Assert.AreEqual(LogOutResult.Success, logoutResult);
+
+            verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1");
+            Assert.AreEqual(false, verifyResult);
+        }
+
+        [TestMethod]
+        public void GeneratePasswordKeyTest()
+        {
+            string passphrase = passwordService.GeneratePasswordKey();
+            Assert.AreEqual(27, passphrase.Length);
+        }
+
+        [TestMethod]
+        public void GetMinimumPasswordTest()
+        {
+            var num = passwordService.GetMinimumPasswordLength();
+            Assert.AreEqual(12, num);
+        }
+
+        [ExpectedException(typeof(ArgumentNullException), "Expected null arg exception.")]
+        [TestMethod]
+        public void DecryptPasswordTest()
+        {
+            var result = passwordService.DecryptPassword(null);
+        }
     }
 }

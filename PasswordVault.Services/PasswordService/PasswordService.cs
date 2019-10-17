@@ -65,6 +65,7 @@ namespace PasswordVault.Services
         NoUpperCaseCharacter,
         NoLowerCaseCharacter,
         PasswordsDoNotMatch,
+        InvalidPassword,
     }
 
     public enum AddPasswordResult
@@ -511,6 +512,10 @@ namespace PasswordVault.Services
                             }
                         }
                     }
+                    else
+                    {
+                        result = ChangeUserPasswordResult.InvalidPassword;
+                    }
                 }
                 else
                 {
@@ -531,11 +536,18 @@ namespace PasswordVault.Services
                 return false;
             }
 
-            User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
-            result = _masterPassword.VerifyPassword(password, 
-                                                    user.Salt, user.Hash, 
-                                                    Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
-                      
+            if (IsLoggedIn())
+            {
+                User user = _dbcontext.GetUserByGUID(_currentUser.GUID);
+
+                if (user != null)
+                {
+                    result = _masterPassword.VerifyPassword(password,
+                                                        user.Salt, user.Hash,
+                                                        Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
+                }                       
+            }
+
             return result;
         }
 
@@ -700,7 +712,7 @@ namespace PasswordVault.Services
         /*************************************************************************************************/
         public string GeneratePasswordKey()
         {
-            return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH);
+            return _encryptDecrypt.CreateKey(DEFAULT_PASSWORD_LENGTH).Trim('=');
         }
 
         /*=================================================================================================

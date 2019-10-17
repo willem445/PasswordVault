@@ -124,6 +124,10 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual("https://www.website.com", decryptedPass.Website);
             Assert.AreEqual("passphrase", decryptedPass.Passphrase); // verify that password is decrypted
 
+            // Test null password
+            addPasswordResult = passwordService.AddPassword(null);
+            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            
             // Test duplicate password
             password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);

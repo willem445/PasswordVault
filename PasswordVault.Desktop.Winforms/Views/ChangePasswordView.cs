@@ -220,9 +220,19 @@ namespace PasswordVault.Desktop.Winforms
                     statusLabel.ForeColor = Color.Red;
                     break;
 
+                case ChangeUserPasswordResult.InvalidPassword:
+                    statusLabel.Text = "Password not correct!";
+                    statusLabel.ForeColor = Color.Red;
+                    break;
+
                 case ChangeUserPasswordResult.Success:
                     ClearChangePasswordView();
                     this.Close();
+                    break;
+
+                default:
+                    statusLabel.Text = "Failed!";
+                    statusLabel.ForeColor = Color.Red;
                     break;
             }
         }

@@ -104,6 +104,36 @@ namespace PasswordVault.ServicesTests
             loginResult = passwordService.Login("testAccount", "testPassword1@2");
             Assert.AreEqual(LoginResult.Successful, loginResult);
 
+            // Test null and empty
+            changeUserPasswordResult = passwordService.ChangeUserPassword("", "1@3aA", "1@3aA");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword(null, "1@3aA", "1@3aA");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "", "1@3aA");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", null, "1@3aA");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aA", "");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aA", null);
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword(null, null, null);
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            changeUserPasswordResult = passwordService.ChangeUserPassword("", "", "");
+            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+
+            // Test invalid password
+            changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@", "1@3aA", "1@3aA");
+            Assert.AreEqual(ChangeUserPasswordResult.InvalidPassword, changeUserPasswordResult);
+
+            // Test length requirement
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aA", "1@3aA");
             Assert.AreEqual(ChangeUserPasswordResult.LengthRequirementNotMet, changeUserPasswordResult);
 
@@ -140,5 +170,6 @@ namespace PasswordVault.ServicesTests
             loginResult = passwordService.Login("testAccount", "testPassword1@2~`!@#$%^&*()_+{}[]|@\'';:.>,</?\"");
             Assert.AreEqual(LoginResult.Successful, loginResult);
         }
+
     }
 }
