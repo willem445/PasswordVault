@@ -42,25 +42,25 @@ namespace PasswordVault.Models.Standard
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public Int64 UniqueID { get; protected set; }
+        public Int64 UniqueID { get; set; }
 
         [Browsable(true)]
-        public string Application { get; protected set; }
+        public string Application { get; set; }
 
         [Browsable(true)]
-        public string Username { get; protected set; }
+        public string Username { get; set; }
 
         [Browsable(true)]
-        public string Email { get; protected set; }
+        public string Email { get; set; }
 
         [Browsable(true)]
-        public string Description { get; protected set; }
+        public string Description { get; set; }
 
         [Browsable(true)]
-        public string Website { get; protected set; }
+        public string Website { get; set; }
 
         [Browsable(false)]
-        public string Passphrase { get; protected set; }
+        public string Passphrase { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 

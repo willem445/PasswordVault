@@ -13,15 +13,20 @@ namespace PasswordVault.WebApi.Controllers
     [ApiController]
     public class PasswordController : ControllerBase
     {
-        // GET: api/Password/5
+        private IDatabase _dbContext = null;
+
+        public PasswordController(IDatabase dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        // GET: password/uuid
         [HttpGet("{uuid}", Name = "Get")]
         public IEnumerable<Password> Get(string uuid)
         {
-            IDatabase _dbcontext = new SQLiteDatabase();
-
             List<Password> passwords = new List<Password>();
 
-            foreach (var item in _dbcontext.GetUserPasswordsByGUID(uuid))
+            foreach (var item in _dbContext.GetUserPasswordsByGUID(uuid))
             {
                 Password password = new Password(
                     item.UniqueID,
@@ -39,22 +44,34 @@ namespace PasswordVault.WebApi.Controllers
             return passwords;
         }
 
-        // POST: api/Password
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST: password/add
+        [HttpPost("add")]
+        public Int64 Post([FromBody]DatabasePassword addDatabasePassword)
         {
+            _dbContext.AddPassword(addDatabasePassword);
+
+            return 0;
         }
 
-        // PUT: api/Password/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST: password/modify
+        [HttpPost("modify")]
+        public IActionResult Post([FromBody]List<DatabasePassword> passwords)
         {
+            if (passwords.Count != 2 || passwords == null || passwords[0] == null || passwords[1] == null)
+            {
+                return BadRequest();
+            }
+
+            _dbContext.ModifyPassword(passwords[0], passwords[1]);
+
+            return Ok();
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE: password/uuid/uniqueid
+        [HttpDelete("{useruuid}/{uniqueid}")]
+        public void Delete(string useruuid, Int64 uniqueid)
         {
+            _dbContext.DeletePassword(new DatabasePassword(uniqueid, useruuid, null, null, null, null, null, null));
         }
     }
 }

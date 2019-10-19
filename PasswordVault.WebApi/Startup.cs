@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PasswordVault.Data.Standard;
+using PasswordVault.Models.Standard;
 
 namespace PasswordVault.WebApi
 {
@@ -25,6 +27,7 @@ namespace PasswordVault.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IDatabase, SQLiteDatabase>();
             services.AddControllers();
         }
 
