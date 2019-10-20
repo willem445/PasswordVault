@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -60,8 +58,6 @@ namespace PasswordVault.Models
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
-
-
 
         /*PRIVATE*****************************************************************************************/
 
@@ -148,4 +144,4 @@ namespace PasswordVault.Models
         /*************************************************************************************************/
 
     } // User CLASS
-} // PasswordVault.Models NAMESPACE
+} // PasswordVault.Models.Standard NAMESPACE

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using Dapper;
 using System.IO;
 using System.Linq;
 using PasswordVault.Models;
+using Dapper;
+using System.Data.SQLite;
 
 /*=================================================================================================
 DESCRIPTION
@@ -492,7 +492,7 @@ namespace PasswordVault.Data
                         [Description] TEXT NOT NULL,
                         [Website] TEXT NOT NULL,
                         [Passphrase] TEXT NOT NULL
-                    )");             
+                    )");
             }
         }
 
@@ -502,4 +502,4 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
 
     } // SQLiteDatabase CLASS
-} // PasswordVault.Data NAMESPACE
+} // PasswordVault.Data.Standard NAMESPACE

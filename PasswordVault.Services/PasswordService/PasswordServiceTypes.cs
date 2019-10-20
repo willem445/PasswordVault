@@ -9,7 +9,7 @@ DESCRIPTION
 /* 
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault.Services.Standard
+namespace PasswordVault.Services
 {
     public enum LoginResult
     {

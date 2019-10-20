@@ -1,98 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PasswordVault.Models;
-using PasswordVault.Data;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using PasswordVault.Data;
+using PasswordVault.Models;
+
+/*=================================================================================================
+DESCRIPTION
+*================================================================================================*/
+/* 
+ ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault.Services
 {
     /*=================================================================================================
 	ENUMERATIONS
 	*================================================================================================*/
-    public enum LoginResult
-    {
-        PasswordIncorrect,
-        UsernameDoesNotExist,
-        Successful,
-        Failed
-    }
-
-    public enum CreateUserResult
-    {
-        UsernameTaken,
-        UsernameNotValid,
-        PasswordNotValid,
-        NoSpecialCharacter,
-        LengthRequirementNotMet,
-        NoNumber,
-        NoUpperCaseCharacter,
-        NoLowerCaseCharacter,
-        FirstNameNotValid,
-        LastNameNotValid,
-        PhoneNumberNotValid,
-        EmailNotValid,
-        Successful,
-        Failed,
-    }
-
-    public enum DeleteUserResult
-    {
-        Success,
-        Failed,
-    }
-
-    public enum UserInformationResult
-    {
-        Success,
-        Failed,
-        InvalidFirstName,
-        InvalidLastName,
-        InvalidPhoneNumber,
-        InvalidEmail,
-    }
-
-    public enum ChangeUserPasswordResult
-    {
-        Failed,
-        Success,
-        NoSpecialCharacter,
-        LengthRequirementNotMet,
-        NoNumber,
-        NoUpperCaseCharacter,
-        NoLowerCaseCharacter,
-        PasswordsDoNotMatch,
-        InvalidPassword,
-    }
-
-    public enum AddPasswordResult
-    {
-        ApplicationError,
-        UsernameError,
-        EmailError,
-        DescriptionError,
-        WebsiteError,
-        PassphraseError,
-        DuplicatePassword,
-        Failed,
-        Success,
-    }
-
-    public enum DeletePasswordResult
-    {
-        PasswordDoesNotExist,
-        Success,
-        Failed
-    }
-
-    public enum LogOutResult
-    {
-        Success,
-        Failed
-    }
 
     /*=================================================================================================
 	STRUCTS
@@ -124,7 +48,7 @@ namespace PasswordVault.Services
         private List<Password> _passwordList;            // stores the current users passwords and binds to datagridview
         private IDatabase _dbcontext;                    // Method of storing the passwords (ie. csv file or database)
         private IMasterPassword _masterPassword;
-        private IEncryption _encryptDecrypt;
+        private IEncryptionService _encryptDecrypt;
 
         /*=================================================================================================
 		PROPERTIES
@@ -136,7 +60,7 @@ namespace PasswordVault.Services
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryption encryptDecrypt)
+        public PasswordService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptionService encryptDecrypt)
         {
             _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
             _masterPassword = masterPassword ?? throw new ArgumentNullException(nameof(masterPassword));
@@ -545,7 +469,7 @@ namespace PasswordVault.Services
                     result = _masterPassword.VerifyPassword(password,
                                                         user.Salt, user.Hash,
                                                         Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
-                }                       
+                }
             }
 
             return result;
@@ -560,16 +484,16 @@ namespace PasswordVault.Services
             {
                 return AddPasswordResult.Failed;
             }
-               
+
             if (IsLoggedIn())
-            {           
+            {
                 AddPasswordResult verifyResult = VerifyAddPasswordFields(password);
 
                 if (verifyResult == AddPasswordResult.Success)
                 {
                     List<Password> queryResult = (from Password pass in _passwordList
-                                                    where pass.Application == password.Application
-                                                    select pass).ToList<Password>();
+                                                  where pass.Application == password.Application
+                                                  select pass).ToList<Password>();
 
                     if (queryResult.Count <= 0) // Verify that new password is not a duplicate of an existing one
                     {
@@ -591,9 +515,9 @@ namespace PasswordVault.Services
                 else
                 {
                     addResult = verifyResult;
-                }                      
+                }
             }
-            
+
             return addResult;
         }
 
@@ -608,7 +532,7 @@ namespace PasswordVault.Services
             }
 
             if (IsLoggedIn())
-            {                              
+            {
                 Password queryResult = (from Password pass in _passwordList
                                         where pass.Application == password.Application
                                         where pass.Username == password.Username
@@ -642,19 +566,19 @@ namespace PasswordVault.Services
             }
 
             if (IsLoggedIn())
-            {                                
+            {
                 AddPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
 
                 if (verifyResult == AddPasswordResult.Success)
                 {
                     List<Password> modifiedPasswordResult = (from Password pass in _passwordList
-                                                                where pass.Application == modifiedPassword.Application
-                                                                select pass).ToList<Password>();
+                                                             where pass.Application == modifiedPassword.Application
+                                                             select pass).ToList<Password>();
 
                     if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
                         (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
                     {
-                        int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) && 
+                        int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) &&
                                                                     (x.Username == originalPassword.Username) && (x.Description == originalPassword.Description) && (x.Website == originalPassword.Website));
 
                         if (index != -1)
@@ -676,8 +600,8 @@ namespace PasswordVault.Services
                 else
                 {
                     result = verifyResult;
-                }                          
-            }         
+                }
+            }
 
             return result;
         }
@@ -746,12 +670,12 @@ namespace PasswordVault.Services
 
             Password newPassword = new Password
             (
-                uniqueID, 
-                password.Application, 
-                password.Username, 
-                password.Email, 
-                password.Description, 
-                password.Website, 
+                uniqueID,
+                password.Application,
+                password.Username,
+                password.Email,
+                password.Description,
+                password.Website,
                 password.Passphrase
             );
 
@@ -883,7 +807,7 @@ namespace PasswordVault.Services
 
             if (passphrase.Length <= MINIMUM_PASSWORD_LENGTH)
             {
-                result = ChangeUserPasswordResult.LengthRequirementNotMet;        
+                result = ChangeUserPasswordResult.LengthRequirementNotMet;
             }
 
             foreach (var character in passphrase)
@@ -1009,4 +933,4 @@ namespace PasswordVault.Services
         }
 
     } // PasswordService CLASS
-}
+} // PasswordVault.Services.Standard NAMESPACE

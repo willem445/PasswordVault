@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PasswordVault.Data.Standard;
-using PasswordVault.Models.Standard;
+using PasswordVault.Data;
+using PasswordVault.Models;
 
 namespace PasswordVault.WebApi.Controllers
 {

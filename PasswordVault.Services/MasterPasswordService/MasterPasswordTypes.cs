@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace PasswordVault.Services.Standard
+namespace PasswordVault.Services
 {
 #pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct UserEncrypedData

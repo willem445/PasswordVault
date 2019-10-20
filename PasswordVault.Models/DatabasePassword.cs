@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -47,7 +45,7 @@ namespace PasswordVault.Models
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public string UserGUID { get; }
+        public string UserGUID { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -62,7 +60,7 @@ namespace PasswordVault.Models
         public DatabasePassword(Int64 uniqueID, string useruuid, string application, string username, string email, string description, string website, string passphrase)
         {
             UniqueID = uniqueID;
-            UserGUID = useruuid;       
+            UserGUID = useruuid;
             Application = application;
             Username = username;
             Email = email;
@@ -102,4 +100,4 @@ namespace PasswordVault.Models
         /*************************************************************************************************/
 
     } // DatabasePassword CLASS
-} // PasswordVault.Models NAMESPACE
+} // PasswordVault.Models.Standard NAMESPACE
