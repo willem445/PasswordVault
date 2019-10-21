@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PasswordVault.Data;
@@ -9,6 +10,7 @@ using PasswordVault.Models;
 
 namespace PasswordVault.WebApi.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class PasswordController : ControllerBase
@@ -48,9 +50,9 @@ namespace PasswordVault.WebApi.Controllers
         [HttpPost("add")]
         public Int64 Post([FromBody]DatabasePassword addDatabasePassword)
         {
-            _dbContext.AddPassword(addDatabasePassword);
+            Int64 uniqueID = _dbContext.AddPassword(addDatabasePassword);
 
-            return 0;
+            return uniqueID;
         }
 
         // POST: password/modify

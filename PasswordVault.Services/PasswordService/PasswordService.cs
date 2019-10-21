@@ -498,12 +498,12 @@ namespace PasswordVault.Services
                     if (queryResult.Count <= 0) // Verify that new password is not a duplicate of an existing one
                     {
                         Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password); // Need to first encrypt the password
-                        _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
+                        Int64 uniqueID = _dbcontext.AddPassword(ConvertToEncryptedDatabasePassword(encryptPassword)); // Add the encrypted password to the database
 
                         // Update the passwordservice list.
                         // This solves issue when deleting a newly added password where the unique ID hasn't been updated in the service.
                         // since the database autoincrements the unique ID.
-                        UpdatePasswordListFromDB(encryptPassword);
+                        UpdatePasswordListFromDB(encryptPassword, uniqueID);
 
                         addResult = AddPasswordResult.Success;
                     }
@@ -664,10 +664,8 @@ namespace PasswordVault.Services
         }
 
         /*************************************************************************************************/
-        private void UpdatePasswordListFromDB(Password password)
+        private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)
         {
-            Int64 uniqueID = _dbcontext.GetLastUniqueId();
-
             Password newPassword = new Password
             (
                 uniqueID,

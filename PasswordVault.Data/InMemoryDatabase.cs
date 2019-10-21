@@ -15,7 +15,6 @@ namespace PasswordVault.Data
         /*FIELDS***********************************************************/
         private List<DatabasePassword> _localPasswordDb;
         private List<User> _localUserDb;
-        private Int64 _lastUniqueId = 0;
 
         /*PROPERTIES*******************************************************/
         public List<DatabasePassword> LocalPasswordDbAccess
@@ -42,7 +41,7 @@ namespace PasswordVault.Data
         }
 
         /*PUBLIC METHODS***************************************************/
-        public bool AddPassword(DatabasePassword password)
+        public Int64 AddPassword(DatabasePassword password)
         {
             Int64 uniqueID = 0;
 
@@ -66,9 +65,7 @@ namespace PasswordVault.Data
                 _localPasswordDb.Add(newPassword);
             }
 
-            _lastUniqueId = uniqueID;
-
-            return true;
+            return uniqueID;
         }
 
         public bool AddUser(User user)
@@ -158,12 +155,7 @@ namespace PasswordVault.Data
         {
             bool exists = _localUserDb.Exists(x => x.Username == username);
             return exists;
-        }
-
-        public Int64 GetLastUniqueId()
-        {
-            return _lastUniqueId;
-        }        
+        }     
 
         /*PRIVATE METHODS**************************************************/
 

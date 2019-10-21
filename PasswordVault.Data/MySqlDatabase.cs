@@ -23,7 +23,7 @@ namespace PasswordVault.Data
         }
 
         /*PUBLIC METHODS***************************************************/
-        public bool AddPassword(DatabasePassword password)
+        public Int64 AddPassword(DatabasePassword password)
         {
             throw new NotImplementedException();
         }
@@ -79,11 +79,6 @@ namespace PasswordVault.Data
         }
 
         public bool UserExistsByUsername(string username)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Int64 GetLastUniqueId()
         {
             throw new NotImplementedException();
         }

@@ -46,6 +46,7 @@ namespace PasswordVault.Models
         public string PlainTextRandomKey { get; }
         public string PlainTextPassword { get; }
         public bool ValidUser { get; set; }
+        public string Token { get; set; }
 
         // Properties stored in database
         public string GUID { get; } // unique Id assigned to each user, this unique id is the PK for password table
