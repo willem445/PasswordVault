@@ -32,9 +32,7 @@ namespace PasswordVault.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddControllers();
-
-            
+            services.AddControllers();   
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -61,7 +59,7 @@ namespace PasswordVault.WebApi
                 };
             });
 
-            services.AddScoped<IEncryptionService, RijndaelManagedEncryption>();
+            services.AddScoped<IEncryptionService, AesEncryption>();
             services.AddScoped<IMasterPassword, MasterPassword>();
             services.AddSingleton<IDatabase, SQLiteDatabase>();
             services.AddScoped<IUserService, UserService>();

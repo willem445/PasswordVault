@@ -474,27 +474,31 @@ namespace PasswordVault.Desktop.Winforms
             switch(result)
             {
                 case AddPasswordResult.Failed:
-                    UIHelper.UpdateStatusLabel("Add password failed.", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Add password failed.", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.DuplicatePassword:
-                    UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.UsernameError:
-                    UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.ApplicationError:
-                    UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.PassphraseError:
-                    UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.EmailError:
-                    UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Neutral);
+                    UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Error);
+                    break;
+
+                case AddPasswordResult.WebsiteError:
+                    UIHelper.UpdateStatusLabel("Invalid website!", userStatusLabel, ErrorLevel.Error);
                     break;
 
                 case AddPasswordResult.Success:
