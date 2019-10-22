@@ -24,8 +24,15 @@ namespace PasswordVault.WebApi.Controllers
 
         // GET: password/uuid
         [HttpGet("{uuid}", Name = "Get")]
-        public IEnumerable<Password> Get(string uuid)
+        public IActionResult Get(string uuid)
         {
+            var userUuid = User.Identity.Name;
+
+            if (userUuid != uuid)
+            {
+                return BadRequest();
+            }
+
             List<Password> passwords = new List<Password>();
 
             foreach (var item in _dbContext.GetUserPasswordsByGUID(uuid))
@@ -43,37 +50,65 @@ namespace PasswordVault.WebApi.Controllers
                 passwords.Add(password);
             }
 
-            return passwords;
+            return Ok(passwords);
         }
 
         // POST: password/add
-        [HttpPost("add")]
-        public Int64 Post([FromBody]DatabasePassword addDatabasePassword)
+        [HttpPost("{uuid}/add")]
+        public IActionResult Post(string uuid, [FromBody]DatabasePassword addDatabasePassword)
         {
+            var userUuid = User.Identity.Name;
+
+            if (userUuid != uuid)
+            {
+                return BadRequest();
+            }
+
+            if (addDatabasePassword == null)
+            {
+                return BadRequest();
+            }
+
             Int64 uniqueID = _dbContext.AddPassword(addDatabasePassword);
 
-            return uniqueID;
+            return Ok(uniqueID);
         }
 
         // POST: password/modify
-        [HttpPost("modify")]
-        public IActionResult Post([FromBody]List<DatabasePassword> passwords)
+        [HttpPost("{uuid}/modify")]
+        public IActionResult Post(string uuid, [FromBody]List<DatabasePassword> passwords)
         {
+            var userUuid = User.Identity.Name;
+
+            if (userUuid != uuid)
+            {
+                return BadRequest();
+            }
+
             if (passwords.Count != 2 || passwords == null || passwords[0] == null || passwords[1] == null)
             {
                 return BadRequest();
             }
 
-            _dbContext.ModifyPassword(passwords[0], passwords[1]);
+            bool result = _dbContext.ModifyPassword(passwords[0], passwords[1]);
 
             return Ok();
         }
 
         // DELETE: password/uuid/uniqueid
-        [HttpDelete("{useruuid}/{uniqueid}")]
-        public void Delete(string useruuid, Int64 uniqueid)
+        [HttpDelete("{uuid}/{uniqueid}")]
+        public IActionResult Delete(string uuid, Int64 uniqueid)
         {
-            _dbContext.DeletePassword(new DatabasePassword(uniqueid, useruuid, null, null, null, null, null, null));
+            var userUuid = User.Identity.Name;
+
+            if (userUuid != uuid)
+            {
+                return BadRequest();
+            }
+
+            bool result = _dbContext.DeletePassword(new DatabasePassword(uniqueid, uuid, null, null, null, null, null, null));
+
+            return Ok();
         }
     }
 }

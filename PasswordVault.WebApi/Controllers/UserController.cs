@@ -31,10 +31,17 @@ namespace PasswordVault.WebApi.Controllers
             return Ok(user);
         }
 
-        [HttpGet]
-        public Int64 Get()
-        {
-            return 10;
-        }
+        //[HttpGet("{uuid}", Name = "Get")]
+        //public IActionResult Get(string uuid)
+        //{
+        //    var userUuid = User.Identity.Name;
+
+        //    if (userUuid != uuid)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    return Ok(10);
+        //}
     }
 }
