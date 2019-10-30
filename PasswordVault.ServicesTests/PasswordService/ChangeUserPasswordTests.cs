@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
@@ -11,7 +11,6 @@ namespace PasswordVault.ServicesTests
     /// <summary>
     /// Summary description for ChangePasswordTests
     /// </summary>
-    [TestClass]
     public class ChangePasswordTests
     {
         public ChangePasswordTests()
@@ -19,24 +18,6 @@ namespace PasswordVault.ServicesTests
             //
             // TODO: Add constructor logic here
             //
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
         }
 
         #region Additional test attributes
@@ -61,7 +42,7 @@ namespace PasswordVault.ServicesTests
         //
         #endregion
 
-        [TestMethod]
+        [Fact]
         public void ChangeUserPasswordTest()
         {
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
@@ -75,63 +56,63 @@ namespace PasswordVault.ServicesTests
 
             user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
-            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
+            Assert.Equal(CreateUserResult.Successful, createUserResult);
+            Assert.Single(((InMemoryDatabase)db).LocalUserDbAccess);
 
             // Not logged in
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@", "testPassword1@2", "testPassword1@2");
-            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.Equal(LoginResult.Successful, loginResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@", "testPassword1@2", "testPassword1@2");
-            Assert.AreEqual(ChangeUserPasswordResult.Success, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Success, changeUserPasswordResult);
 
             logoutResult = passwordService.Logout();
-            Assert.AreEqual(LogOutResult.Success, logoutResult);
+            Assert.Equal(LogOutResult.Success, logoutResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.PasswordIncorrect, loginResult);
+            Assert.Equal(LoginResult.PasswordIncorrect, loginResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@2");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.Equal(LoginResult.Successful, loginResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aA", "1@3aA");
-            Assert.AreEqual(ChangeUserPasswordResult.LengthRequirementNotMet, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.LengthRequirementNotMet, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3AAAAAAAAAAAAA", "1@3AAAAAAAAAAAAA");
-            Assert.AreEqual(ChangeUserPasswordResult.NoLowerCaseCharacter, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.NoLowerCaseCharacter, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "a@GAAAAAAAAAAAAA", "a@GAAAAAAAAAAAAA");
-            Assert.AreEqual(ChangeUserPasswordResult.NoNumber, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.NoNumber, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1A3aaaaaaaaaaaaa", "1A3aaaaaaaaaaaaa");
-            Assert.AreEqual(ChangeUserPasswordResult.NoSpecialCharacter, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.NoSpecialCharacter, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aaaaaaaaaaaaa", "1@3aaaaaaaaaaaaa");
-            Assert.AreEqual(ChangeUserPasswordResult.NoUpperCaseCharacter, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.NoUpperCaseCharacter, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "1@3aaaaaaaaaaaaa", "1@3aaaaaaaaaaaaaZ");
-            Assert.AreEqual(ChangeUserPasswordResult.PasswordsDoNotMatch, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.PasswordsDoNotMatch, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "", "");
-            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", null, null);
-            Assert.AreEqual(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Failed, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@2", "testPassword1@", "testPassword1@");
-            Assert.AreEqual(ChangeUserPasswordResult.Success, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Success, changeUserPasswordResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@", "testPassword1@2~`!@#$%^&*()_+{}[]|@\'';:.>,</?\"", "testPassword1@2~`!@#$%^&*()_+{}[]|@\'';:.>,</?\"");
-            Assert.AreEqual(ChangeUserPasswordResult.Success, changeUserPasswordResult);
+            Assert.Equal(ChangeUserPasswordResult.Success, changeUserPasswordResult);
 
             logoutResult = passwordService.Logout();
-            Assert.AreEqual(LogOutResult.Success, logoutResult);
+            Assert.Equal(LogOutResult.Success, logoutResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@2~`!@#$%^&*()_+{}[]|@\'';:.>,</?\"");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.Equal(LoginResult.Successful, loginResult);
         }
     }
 }
