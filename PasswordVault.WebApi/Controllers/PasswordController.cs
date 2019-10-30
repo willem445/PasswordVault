@@ -22,6 +22,23 @@ namespace PasswordVault.WebApi.Controllers
             _dbContext = dbContext;
         }
 
+        // GET MINIMUM PASSWORD LENGTH
+        [AllowAnonymous]
+        [HttpGet("minpasswordlength", Name = "GetMinPassLength")]
+        public IActionResult GetPasswordMinimumLength()
+        {
+            return Ok(15);
+        }
+
+        // GENERATE PASSWORD
+        [AllowAnonymous]
+        [HttpGet("generatepassword", Name = "GeneratePassword")]
+        public IActionResult Get()
+        {
+            return Ok(16);
+        }
+
+        // GET PASSWORDS
         // GET: password/uuid
         [HttpGet("{uuid}", Name = "Get")]
         public IActionResult Get(string uuid)
@@ -35,24 +52,25 @@ namespace PasswordVault.WebApi.Controllers
 
             List<Password> passwords = new List<Password>();
 
-            foreach (var item in _dbContext.GetUserPasswordsByGUID(uuid))
-            {
-                Password password = new Password(
-                    item.UniqueID,
-                    item.Application,
-                    item.Username,
-                    item.Email,
-                    item.Description,
-                    item.Website,
-                    item.Passphrase 
-                );
+            //foreach (var item in _dbContext.GetUserPasswordsByGUID(uuid))
+            //{
+            //    Password password = new Password(
+            //        item.UniqueID,
+            //        item.Application,
+            //        item.Username,
+            //        item.Email,
+            //        item.Description,
+            //        item.Website,
+            //        item.Passphrase 
+            //    );
 
-                passwords.Add(password);
-            }
+            //    passwords.Add(password);
+            //}
 
             return Ok(passwords);
         }
 
+        // ADD PASSWORD
         // POST: password/add
         [HttpPost("{uuid}/add")]
         public IActionResult Post(string uuid, [FromBody]DatabasePassword addDatabasePassword)
@@ -74,6 +92,7 @@ namespace PasswordVault.WebApi.Controllers
             return Ok(uniqueID);
         }
 
+        // MODIFY PASSWORD
         // POST: password/modify
         [HttpPost("{uuid}/modify")]
         public IActionResult Post(string uuid, [FromBody]List<DatabasePassword> passwords)
@@ -85,16 +104,17 @@ namespace PasswordVault.WebApi.Controllers
                 return BadRequest();
             }
 
-            if (passwords.Count != 2 || passwords == null || passwords[0] == null || passwords[1] == null)
-            {
-                return BadRequest();
-            }
+            //if (passwords.Count != 2 || passwords == null || passwords[0] == null || passwords[1] == null)
+            //{
+            //    return BadRequest();
+            //}
 
-            bool result = _dbContext.ModifyPassword(passwords[0], passwords[1]);
+            //bool result = _dbContext.ModifyPassword(passwords[0], passwords[1]);
 
             return Ok();
         }
 
+        // DELETE PASSWORD
         // DELETE: password/uuid/uniqueid
         [HttpDelete("{uuid}/{uniqueid}")]
         public IActionResult Delete(string uuid, Int64 uniqueid)

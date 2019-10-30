@@ -62,7 +62,7 @@ namespace PasswordVault.WebApi
             services.AddScoped<IEncryptionService, AesEncryption>();
             services.AddScoped<IMasterPassword, MasterPassword>();
             services.AddSingleton<IDatabase, SQLiteDatabase>();
-            services.AddScoped<IUserService, UserService>();
+            //services.AddScoped<IUserWebService, UserWebService>();
 
         }
 
