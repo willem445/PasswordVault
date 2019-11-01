@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -108,19 +109,19 @@ namespace PasswordVault.Desktop.Winforms
                 {
                     case PasswordFilterOption.Application:
                         result = (from Password password in passwords
-                                  where password.Application.Contains(filterText)
+                                  where password.Application?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
                                   select password).ToList<Password>();
                         break;
 
                     case PasswordFilterOption.Description:
                         result = (from Password password in passwords
-                                  where password.Description.Contains(filterText)
+                                  where password.Description?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
                                   select password).ToList<Password>();
                         break;
 
                     case PasswordFilterOption.Website:
                         result = (from Password password in passwords
-                                  where password.Website.Contains(filterText)
+                                  where password.Website?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
                                   select password).ToList<Password>();
                         break;
                 }
