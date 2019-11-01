@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -24,7 +22,7 @@ namespace PasswordVault.Services
     /*=================================================================================================
 	CLASSES
 	*================================================================================================*/
-    class UriUtilities
+    static class UriUtilities
     {
         /*=================================================================================================
 		CONSTANTS
@@ -50,10 +48,6 @@ namespace PasswordVault.Services
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public UriUtilities()
-        {
-
-        }
 
         /*=================================================================================================
 		PUBLIC METHODS
@@ -89,4 +83,4 @@ namespace PasswordVault.Services
         }
 
     } // UriUtilities CLASS
-} // PasswordVault.Services NAMESPACE
+} // PasswordVault.Services.Standard NAMESPACE

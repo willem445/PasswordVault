@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -48,6 +46,7 @@ namespace PasswordVault.Models
         public string PlainTextRandomKey { get; }
         public string PlainTextPassword { get; }
         public bool ValidUser { get; set; }
+        public string Token { get; set; }
 
         // Properties stored in database
         public string GUID { get; } // unique Id assigned to each user, this unique id is the PK for password table
@@ -60,8 +59,6 @@ namespace PasswordVault.Models
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
-
-
 
         /*PRIVATE*****************************************************************************************/
 
@@ -148,4 +145,4 @@ namespace PasswordVault.Models
         /*************************************************************************************************/
 
     } // User CLASS
-} // PasswordVault.Models NAMESPACE
+} // PasswordVault.Models.Standard NAMESPACE

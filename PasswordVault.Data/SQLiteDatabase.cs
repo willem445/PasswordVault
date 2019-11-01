@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using Dapper;
 using System.IO;
 using System.Linq;
 using PasswordVault.Models;
+using Dapper;
+using System.Data.SQLite;
 
 /*=================================================================================================
 DESCRIPTION
@@ -41,7 +41,6 @@ namespace PasswordVault.Data
 
         /*PRIVATE*****************************************************************************************/
         private string DB_FILE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault") + "\\PasswordDb.sqlite";
-        private Int64 _lastUniqueId = 0;
 
         /*=================================================================================================
 		PROPERTIES
@@ -328,9 +327,10 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool AddPassword(DatabasePassword password)
+        public Int64 AddPassword(DatabasePassword password)
         {
             bool result = false;
+            Int64 uniqueID = -1;
 
             if (password != null)
             {
@@ -364,12 +364,12 @@ namespace PasswordVault.Data
                     if (dbresult >= 0)
                     {
                         result = true;
-                        _lastUniqueId = dbresult;
+                        uniqueID = dbresult;
                     }
                 }
             }
 
-            return result;
+            return uniqueID;
         }
 
         /*************************************************************************************************/
@@ -439,12 +439,6 @@ namespace PasswordVault.Data
             return result;
         }
 
-        /*************************************************************************************************/
-        public Int64 GetLastUniqueId()
-        {
-            return _lastUniqueId;
-        }
-
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -492,7 +486,7 @@ namespace PasswordVault.Data
                         [Description] TEXT NOT NULL,
                         [Website] TEXT NOT NULL,
                         [Passphrase] TEXT NOT NULL
-                    )");             
+                    )");
             }
         }
 
@@ -502,4 +496,4 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
 
     } // SQLiteDatabase CLASS
-} // PasswordVault.Data NAMESPACE
+} // PasswordVault.Data.Standard NAMESPACE

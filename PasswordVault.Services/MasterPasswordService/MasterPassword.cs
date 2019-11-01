@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 /*=================================================================================================
 DESCRIPTION
@@ -22,25 +17,6 @@ namespace PasswordVault.Services
     /*=================================================================================================
 	STRUCTS
 	*================================================================================================*/
-#pragma warning disable CA1815 // Override equals and operator equals on value types
-    public struct UserEncrypedData
-#pragma warning restore CA1815 // Override equals and operator equals on value types
-    {
-        public UserEncrypedData(string salt, string hash, int iterations, string uniqueGUID, string randomGeneratedKey)
-        {
-            Salt = salt;
-            Hash = hash;
-            Iterations = iterations;
-            UniqueGUID = uniqueGUID;
-            RandomGeneratedKey = randomGeneratedKey;
-        }
-
-        public string Salt { get; }
-        public string Hash { get; }
-        public int Iterations { get; }
-        public string UniqueGUID { get; }
-        public string RandomGeneratedKey { get; }
-    }
 
     /*=================================================================================================
 	CLASSES
@@ -181,4 +157,4 @@ namespace PasswordVault.Services
         /*************************************************************************************************/
 
     } // UserPasswordHash CLASS
-} // PasswordVault.Service NAMESPACE
+} // PasswordVault.Services.Standard NAMESPACE

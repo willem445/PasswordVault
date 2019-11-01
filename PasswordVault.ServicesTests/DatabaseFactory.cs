@@ -19,8 +19,7 @@ namespace PasswordVault.ServicesTests
 	*================================================================================================*/
     public enum Database
     {
-        InMemory,
-        CSV, 
+        InMemory, 
         MySQL,
         SQLLite,
     }
@@ -71,19 +70,6 @@ namespace PasswordVault.ServicesTests
             {
                 case Database.InMemory:
                     result = new InMemoryDatabase();
-                    break;
-
-                case Database.CSV:
-                    result = new CsvDatabase(
-                        new CSVUserManager(
-                            new CSVReader(),
-                            new CSVWriter()
-                            ),
-                        new CSVPasswordManager(
-                            new CSVReader(),
-                            new CSVWriter()
-                            )
-                        );
                     break;
 
                 case Database.MySQL:

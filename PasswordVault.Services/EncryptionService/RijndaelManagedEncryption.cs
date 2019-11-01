@@ -1,31 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-
-/*=================================================================================================
-DESCRIPTION
-*================================================================================================*/
-/* 
- ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault.Services
 {
-    /*=================================================================================================
-	ENUMERATIONS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	STRUCTS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	CLASSES
-	*================================================================================================*/
-    public class RijndaelManagedEncryption : IEncryption
+    public class RijndaelManagedEncryption : IEncryptionService
     {
         /*=================================================================================================
 		CONSTANTS
@@ -132,7 +113,7 @@ namespace PasswordVault.Services
 #pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             {
                 var keyBytes = password.GetBytes(_keySize / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                using (var symmetricKey = new RijndaelManaged()) 
                 {
                     symmetricKey.BlockSize = 256;
                     symmetricKey.Mode = CipherMode.CBC;
@@ -186,4 +167,4 @@ namespace PasswordVault.Services
         /*************************************************************************************************/
 
     } // RijndaelManagedEncryption CLASS
-} // PasswordVault.Service NAMESPACE
+}

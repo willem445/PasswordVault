@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PasswordVault.Models;
 
 namespace PasswordVault.Services
@@ -15,12 +16,12 @@ namespace PasswordVault.Services
         bool VerifyCurrentUserPassword(string password);
         DeleteUserResult DeleteUser(User user);
         UserInformationResult EditUser(User user);
-        int GetMinimumPasswordLength();
-        string GeneratePasswordKey();
         AddPasswordResult AddPassword(Password password);
         DeletePasswordResult DeletePassword(Password password);
         AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
         Password DecryptPassword(Password password);
+        int GetMinimumPasswordLength();
+        string GeneratePasswordKey();
     }
 }

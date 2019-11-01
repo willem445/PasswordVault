@@ -59,12 +59,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public override void Load()
         {
-            Bind<ICSVReader>().To<CSVReader>();
-            Bind<ICSVWriter>().To<CSVWriter>();
-            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
-            Bind<ICSVUserManager>().To<CSVUserManager>();
             Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
-            Bind<IEncryption>().To<RijndaelManagedEncryption>();
+            Bind<IEncryptionService>().To<AesEncryption>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
             Bind<ILoginView>().To<LoginView>().InSingletonScope();

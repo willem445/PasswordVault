@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PasswordVault.Models;
 
 namespace PasswordVault.Data
@@ -20,10 +17,14 @@ namespace PasswordVault.Data
         bool UserExistsByGUID(string guid);
 
         // User passwords
-        bool AddPassword(DatabasePassword password);
+        /// <summary>
+        /// Add a password to a database.
+        /// </summary>
+        /// <param name="password">Database password object to add.</param>
+        /// <returns></returns>
+        Int64 AddPassword(DatabasePassword password);
         bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword);
         bool DeletePassword(DatabasePassword password);
         List<DatabasePassword> GetUserPasswordsByGUID(string guid);
-        Int64 GetLastUniqueId();
     }
 }
