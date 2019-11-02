@@ -157,9 +157,9 @@ namespace PasswordVault.Desktop.Winforms
         private void AddPassword(string application, string username, string email, string description, string website, string passphrase)
         {
             Password uiPassword = new Password(application, username, email, description, website, passphrase);
-            AddPasswordResult result = _passwordService.AddPassword(uiPassword);
+            AddModifyPasswordResult result = _passwordService.AddPassword(uiPassword);
 
-            if (result == AddPasswordResult.Success)
+            if (result == AddModifyPasswordResult.Success)
             {
                 UpdatePasswordsUI();
             }
@@ -199,9 +199,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, email, description, website, passphrase);
 
-            AddPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
+            AddModifyPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
 
-            if (result == AddPasswordResult.Success)
+            if (result == AddModifyPasswordResult.Success)
             {
                 _editPassword = null;
             }

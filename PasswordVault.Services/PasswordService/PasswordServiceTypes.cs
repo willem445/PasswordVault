@@ -11,62 +11,7 @@ DESCRIPTION
 
 namespace PasswordVault.Services
 {
-    public enum LoginResult
-    {
-        PasswordIncorrect,
-        UsernameDoesNotExist,
-        Successful,
-        Failed
-    }
-
-    public enum CreateUserResult
-    {
-        UsernameTaken,
-        UsernameNotValid,
-        PasswordNotValid,
-        NoSpecialCharacter,
-        LengthRequirementNotMet,
-        NoNumber,
-        NoUpperCaseCharacter,
-        NoLowerCaseCharacter,
-        FirstNameNotValid,
-        LastNameNotValid,
-        PhoneNumberNotValid,
-        EmailNotValid,
-        Successful,
-        Failed,
-    }
-
-    public enum DeleteUserResult
-    {
-        Success,
-        Failed,
-    }
-
-    public enum UserInformationResult
-    {
-        Success,
-        Failed,
-        InvalidFirstName,
-        InvalidLastName,
-        InvalidPhoneNumber,
-        InvalidEmail,
-    }
-
-    public enum ChangeUserPasswordResult
-    {
-        Failed,
-        Success,
-        NoSpecialCharacter,
-        LengthRequirementNotMet,
-        NoNumber,
-        NoUpperCaseCharacter,
-        NoLowerCaseCharacter,
-        PasswordsDoNotMatch,
-        InvalidPassword,
-    }
-
-    public enum AddPasswordResult
+    public enum AddModifyPasswordResult
     {
         ApplicationError,
         UsernameError,
@@ -82,12 +27,6 @@ namespace PasswordVault.Services
     public enum DeletePasswordResult
     {
         PasswordDoesNotExist,
-        Success,
-        Failed
-    }
-
-    public enum LogOutResult
-    {
         Success,
         Failed
     }

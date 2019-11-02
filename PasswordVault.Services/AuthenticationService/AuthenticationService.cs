@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    public class PasswordService
+    class AuthenticationService
     {
         /*CONSTANTS********************************************************/
 
@@ -15,7 +15,7 @@ namespace PasswordVault.Services
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public PasswordService()
+        public AuthenticationService()
         {
 
         }
@@ -26,5 +26,5 @@ namespace PasswordVault.Services
 
         /*STATIC METHODS***************************************************/
 
-    } // PasswordService CLASS
+    } // AuthenticationService CLASS
 }

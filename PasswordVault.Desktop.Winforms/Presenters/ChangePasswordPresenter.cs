@@ -89,7 +89,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ModifyPassword(string originalPassword, string password, string confirmPassword)
         {
-            ChangeUserPasswordResult passresult = _passwordService.ChangeUserPassword(originalPassword, password, confirmPassword);
+            ValidateUserPasswordResult passresult = _passwordService.ChangeUserPassword(originalPassword, password, confirmPassword);
 
             _changePasswordView.DisplayChangePasswordResult(passresult);
         }

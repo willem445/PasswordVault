@@ -19,7 +19,7 @@ namespace PasswordVault.ServicesTests
         CreateUserResult createUserResult;
         LoginResult loginResult;
         LogOutResult logoutResult;
-        AddPasswordResult addPasswordResult;
+        AddModifyPasswordResult addPasswordResult;
         User user;
 
         public ModifyPasswordTests()
@@ -118,7 +118,7 @@ namespace PasswordVault.ServicesTests
             Password password2 = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             logoutResult = passwordService.Logout();
@@ -129,12 +129,12 @@ namespace PasswordVault.ServicesTests
 
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(4, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             Password newPassword = new Password("App1-modified", "username-modified", "email-modified@email.com", "descriptions-modified", "https://www.website-modified.com", "passphrase-modified");
             addPasswordResult = passwordService.ModifyPassword(password, newPassword);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(4, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             passwords = passwordService.GetPasswords();
@@ -226,7 +226,7 @@ namespace PasswordVault.ServicesTests
             Password password2 = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
             passwords = passwordService.GetPasswords();
             Assert.AreEqual("App1", passwordService.GetPasswords()[0].Application);
@@ -245,7 +245,7 @@ namespace PasswordVault.ServicesTests
 
             Password newPassword = new Password("App1-modified", "username-modified", "email-modified@email.com", "descriptions-modified", "https://www.website-modified.com", "passphrase-modified");
             addPasswordResult = passwordService.ModifyPassword(password, newPassword);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
             passwords = passwordService.GetPasswords();
             Assert.AreEqual("App1-modified", passwordService.GetPasswords()[0].Application);
@@ -264,111 +264,111 @@ namespace PasswordVault.ServicesTests
 
             // Test null values
             addPasswordResult = passwordService.ModifyPassword(null, password);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             addPasswordResult = passwordService.ModifyPassword(newPassword, null);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             addPasswordResult = passwordService.ModifyPassword(null, null);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             // Test value that does not exist
             Password password3 = new Password("x", "x", "x@email.com", "x", "https://www.x.com", "x");
             Password password4 = new Password("x2", "x", "x@email.com", "x", "https://www.x.com", "x");
             addPasswordResult = passwordService.ModifyPassword(password3, password4);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             // Test identical passwords
             password = new Password("x", "x", "x@email.com", "x", "https://www.x.com", "x");
             addPasswordResult = passwordService.ModifyPassword(password, password);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             // Test duplicate password
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.DuplicatePassword, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.DuplicatePassword, addPasswordResult);
 
             // Test application field
             password = new Password("", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.ApplicationError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.ApplicationError, addPasswordResult);
 
             password = new Password(null, "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.ApplicationError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.ApplicationError, addPasswordResult);
 
             // Test user name field
             password = new Password("App2", "", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.UsernameError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.UsernameError, addPasswordResult);
 
             password = new Password("App2", null, "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.UsernameError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.UsernameError, addPasswordResult);
 
             // Test email field
             password = new Password("App2", "username", "emailemail.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
 
             password = new Password("App2", "username", "email@emailcom", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
 
             password = new Password("App2", "username", null, "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
 
             // Test description field
             password = new Password("App2", "username", "email@email.com", null, "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.DescriptionError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.DescriptionError, addPasswordResult);
 
             // Test website field
             password = new Password("App2", "username", "email@email.com", "descriptions", null, "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.WebsiteError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.WebsiteError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "descriptions", "w", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.WebsiteError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.WebsiteError, addPasswordResult);
 
             // Test passphrase field
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.PassphraseError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.PassphraseError, addPasswordResult);
 
             // Test max length
             password = new Password("fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.ApplicationError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.ApplicationError, addPasswordResult);
 
             password = new Password("App2", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.UsernameError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.UsernameError, addPasswordResult);
 
             password = new Password("App2", "username", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.DescriptionError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.DescriptionError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff.com", "passphrase");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.WebsiteError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.WebsiteError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.PassphraseError, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.PassphraseError, addPasswordResult);
 
             // Test logged out
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
             addPasswordResult = passwordService.ModifyPassword(newPassword, password);
-            Assert.AreEqual(AddPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@");
             Assert.AreEqual(LoginResult.Successful, loginResult);
