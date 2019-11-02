@@ -29,12 +29,12 @@ namespace PasswordVault.Desktop.Winforms
                 var mainView = kernal.Get<IMainView>();
                 var changePasswordView = kernal.Get<IChangePasswordView>();
                 var editUserView = kernal.Get<IEditUserView>();
-                var passwordService = kernal.Get<IPasswordService>();
+                var serviceWrapper = kernal.Get<IDesktopServiceWrapper>();
 
-                var loginPresenter = new LoginPresenter(loginView, passwordService);
-                var mainViewPresenter = new MainPresenter(mainView, passwordService);
-                var changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, passwordService);
-                var editUserPresenter = new EditUserPresenter(editUserView, passwordService);
+                var loginPresenter = new LoginPresenter(loginView, serviceWrapper);
+                var mainViewPresenter = new MainPresenter(mainView, serviceWrapper);
+                var changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, serviceWrapper);
+                var editUserPresenter = new EditUserPresenter(editUserView, serviceWrapper);
 
                 Application.Run((Form)mainView);
 

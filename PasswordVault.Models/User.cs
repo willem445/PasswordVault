@@ -35,7 +35,7 @@ namespace PasswordVault.Models
         private const int MINIMUM_PASSWORD_LENGTH = 15;
 
         public string PlainTextRandomKey { get; }
-        public string PlainTextPassword { get; }
+        public string PlainTextPassword { get; set; }
         public bool ValidUser { get; set; }
         public string Token { get; set; }
 
@@ -231,6 +231,11 @@ namespace PasswordVault.Models
             }
 
             return result;
+        }
+
+        public static int GetMinimumPasswordLength()
+        {
+            return MINIMUM_PASSWORD_LENGTH;
         }
 
         private static bool IsValidUSPhoneNumber(string strPhone)

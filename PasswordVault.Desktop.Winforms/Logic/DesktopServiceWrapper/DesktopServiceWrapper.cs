@@ -20,27 +20,49 @@ namespace PasswordVault.Desktop.Winforms
         /*CONSTANTS********************************************************/
 
         /*FIELDS***********************************************************/
+        private User _currentUser;                       // Current user's username and password
+        private List<Password> _passwordList;            // stores the current users passwords and binds to datagridview
+
+        private IPasswordService _passwordService;
+        private IUserService _userService;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public DesktopServiceWrapper()
+        public DesktopServiceWrapper(IPasswordService passwordService, IUserService userService)
         {
-
+            _passwordService = passwordService;
+            _userService = userService;
         }
 
         /*PUBLIC METHODS***************************************************/
+        public AuthenticateResult Login(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LogOutResult Logout()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsLoggedIn()
+        {
+            throw new NotImplementedException();
+        }      
+
+        public AddUserResult CreateNewUser(User user)
+        {
+            AddUserResult result = _userService.AddUser(user);
+            return result;
+        }
+
         public AddModifyPasswordResult AddPassword(Password password)
         {
             throw new NotImplementedException();
         }
 
         public ValidateUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword)
-        {
-            throw new NotImplementedException();
-        }
-
-        public AddUserResult CreateNewUser(User user)
         {
             throw new NotImplementedException();
         }
@@ -82,25 +104,11 @@ namespace PasswordVault.Desktop.Winforms
 
         public int GetMinimumPasswordLength()
         {
-            throw new NotImplementedException();
+            int result = _userService.GetMinimumPasswordLength();
+            return result;
         }
 
         public List<Password> GetPasswords()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsLoggedIn()
-        {
-            throw new NotImplementedException();
-        }
-
-        public AuthenticateResult Login(string username, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public LogOutResult Logout()
         {
             throw new NotImplementedException();
         }

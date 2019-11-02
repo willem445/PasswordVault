@@ -36,7 +36,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
-        private IPasswordService _passwordService;
+        private IDesktopServiceWrapper _serviceWrapper;
 
         /*=================================================================================================
 		PROPERTIES
@@ -48,10 +48,10 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public LoginPresenter(ILoginView loginView, IPasswordService passwordService)
+        public LoginPresenter(ILoginView loginView, IDesktopServiceWrapper serviceWrapper)
         {
             _loginView = loginView;
-            _passwordService = passwordService;
+            _serviceWrapper = serviceWrapper;
 
             _loginView.LoginEvent += Login;
             _loginView.CreateNewUserEvent += CreateNewUser;
@@ -70,9 +70,9 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void Login(string username, string password)
         {
-            LoginResult result = LoginResult.Failed;
+            AuthenticateResult result = AuthenticateResult.Failed;
 
-            result = _passwordService.Login(username, password);
+            result = _serviceWrapper.Login(username, password);
 
             _loginView.DisplayLoginResult(result);
         }
@@ -80,13 +80,13 @@ namespace PasswordVault.Desktop.Winforms
         /********************************************************************************** ***************/
         private void CreateNewUser(string username, string password, string firstName, string lastName, string phoneNumber, string email)
         {
-            CreateUserResult result = CreateUserResult.Failed;
+            AddUserResult result = AddUserResult.Failed;
 
             User user = new User(username, password, firstName, lastName, phoneNumber, email);
 
-            result = _passwordService.CreateNewUser(user);
+            result = _serviceWrapper.CreateNewUser(user);
 
-            _loginView.DisplayCreateNewUserResult(result, _passwordService.GetMinimumPasswordLength());
+            _loginView.DisplayCreateNewUserResult(result, _serviceWrapper.GetMinimumPasswordLength());
         }
 
         /*************************************************************************************************/
@@ -94,7 +94,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             string generatedPassword = "";
 
-            generatedPassword = _passwordService.GeneratePasswordKey();
+            generatedPassword = _serviceWrapper.GeneratePasswordKey();
 
             _loginView.DisplayGeneratePasswordResult(generatedPassword);
         }

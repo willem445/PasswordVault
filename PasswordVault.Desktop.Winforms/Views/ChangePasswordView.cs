@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PasswordVault.Services;
+using PasswordVault.Models;
 
 /*=================================================================================================
 DESCRIPTION

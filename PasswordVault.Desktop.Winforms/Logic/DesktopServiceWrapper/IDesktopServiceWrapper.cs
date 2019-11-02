@@ -8,7 +8,7 @@ using PasswordVault.Services;
 
 namespace PasswordVault.Desktop.Winforms
 {
-    interface IDesktopServiceWrapper
+    public interface IDesktopServiceWrapper
     {
         AuthenticateResult Login(string username, string password);
         LogOutResult Logout();

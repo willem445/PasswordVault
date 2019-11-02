@@ -165,26 +165,26 @@ namespace PasswordVault.Desktop.Winforms
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
-        public void DisplayLoginResult(LoginResult result)
+        public void DisplayLoginResult(AuthenticateResult result)
         {
             switch(result)
             {
-                case LoginResult.PasswordIncorrect:
+                case AuthenticateResult.PasswordIncorrect:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Password incorrect.";
                     break;
 
-                case LoginResult.UsernameDoesNotExist:
+                case AuthenticateResult.UsernameDoesNotExist:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Username doesn't exist.";
                     break;
 
-                case LoginResult.Failed:
+                case AuthenticateResult.Failed:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Login failed.";
                     break;
 
-                case LoginResult.Successful:
+                case AuthenticateResult.Successful:
                     ClearLoginView();
                     DialogResult = DialogResult.OK;
                     this.Close();
@@ -205,63 +205,63 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayCreateNewUserResult(CreateUserResult result, int minimumPasswordLength)
+        public void DisplayCreateNewUserResult(AddUserResult result, int minimumPasswordLength)
         {
             switch(result)
             {
-                case CreateUserResult.UsernameTaken:
+                case AddUserResult.UsernameTaken:
                     UIHelper.UpdateStatusLabel("Username taken!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.Failed:
+                case AddUserResult.Failed:
                     UIHelper.UpdateStatusLabel("Unsuccessful!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.PasswordNotValid:
+                case AddUserResult.PasswordNotValid:
                     UIHelper.UpdateStatusLabel("Password does not meet requirements!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.UsernameNotValid:
+                case AddUserResult.UsernameNotValid:
                     UIHelper.UpdateStatusLabel("Invalid username!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.FirstNameNotValid:
+                case AddUserResult.FirstNameNotValid:
                     UIHelper.UpdateStatusLabel("First name not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.LastNameNotValid:
+                case AddUserResult.LastNameNotValid:
                     UIHelper.UpdateStatusLabel("Last name not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.PhoneNumberNotValid:
+                case AddUserResult.PhoneNumberNotValid:
                     UIHelper.UpdateStatusLabel("Phone number not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.EmailNotValid:
+                case AddUserResult.EmailNotValid:
                     UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoLowerCaseCharacter:
+                case AddUserResult.NoLowerCaseCharacter:
                     UIHelper.UpdateStatusLabel("Password must have lower case!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.LengthRequirementNotMet:
+                case AddUserResult.LengthRequirementNotMet:
                     UIHelper.UpdateStatusLabel(string.Format(CultureInfo.CurrentCulture, "Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoNumber:
+                case AddUserResult.NoNumber:
                     UIHelper.UpdateStatusLabel("Password must have number!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoSpecialCharacter:
+                case AddUserResult.NoSpecialCharacter:
                     UIHelper.UpdateStatusLabel("Password must have special character!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoUpperCaseCharacter:
+                case AddUserResult.NoUpperCaseCharacter:
                     UIHelper.UpdateStatusLabel("Password must have upper case!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.Successful:
+                case AddUserResult.Successful:
                     UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
                     createUsernameTextBox.Text = "";
                     createPasswordTextBox.Text = "";

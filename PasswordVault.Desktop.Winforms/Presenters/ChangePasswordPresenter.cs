@@ -1,4 +1,5 @@
 ﻿using PasswordVault.Services;
+using PasswordVault.Models;
 using System;
 
 /*=================================================================================================
@@ -36,7 +37,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private IChangePasswordView _changePasswordView;
-        private IPasswordService _passwordService;
+        private IDesktopServiceWrapper _serviceWrapper;
 
         /*=================================================================================================
 		PROPERTIES
@@ -48,20 +49,20 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public ChangePasswordPresenter(IChangePasswordView changePasswordView, IPasswordService passwordService)
+        public ChangePasswordPresenter(IChangePasswordView changePasswordView, IDesktopServiceWrapper serviceWrapper)
         {
             if (changePasswordView == null)
             {
                 throw new ArgumentNullException(nameof(changePasswordView));
             }
 
-            if (passwordService == null)
+            if (serviceWrapper == null)
             {
-                throw new ArgumentNullException(nameof(passwordService));
+                throw new ArgumentNullException(nameof(serviceWrapper));
             }
 
             _changePasswordView = changePasswordView;
-            _passwordService = passwordService;
+            _serviceWrapper = serviceWrapper;
 
             _changePasswordView.ChangePasswordEvent += ModifyPassword;
             _changePasswordView.PasswordTextChangedEvent += PasswordTextChanged;
@@ -89,7 +90,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ModifyPassword(string originalPassword, string password, string confirmPassword)
         {
-            ValidateUserPasswordResult passresult = _passwordService.ChangeUserPassword(originalPassword, password, confirmPassword);
+            ValidateUserPasswordResult passresult = _serviceWrapper.ChangeUserPassword(originalPassword, password, confirmPassword);
 
             _changePasswordView.DisplayChangePasswordResult(passresult);
         }
@@ -97,7 +98,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void GeneratePassword()
         {
-            string generatedPassword = _passwordService.GeneratePasswordKey();
+            string generatedPassword = _serviceWrapper.GeneratePasswordKey();
             _changePasswordView.DisplayGeneratedPassword(generatedPassword);
         }
 

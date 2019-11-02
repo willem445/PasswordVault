@@ -6,6 +6,6 @@ namespace PasswordVault.Services
 {
     interface IAuthenticationService
     {
-        AuthenticateResult Authenticate(string username, string password);
+        AuthenticateReturn Authenticate(string username, string password);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PasswordVault.Services;
+using PasswordVault.Models;
 
 namespace PasswordVault.Desktop.Winforms
 {
