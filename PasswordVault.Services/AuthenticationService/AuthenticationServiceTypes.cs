@@ -22,7 +22,7 @@ namespace PasswordVault.Services
             User = user;
         }
 
-        AuthenticateResult Result { get; }
-        User User { get; }
+        public AuthenticateResult Result { get; }
+        public User User { get; }
     }
 }

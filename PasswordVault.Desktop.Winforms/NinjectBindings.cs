@@ -65,6 +65,8 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
             Bind<IUserService>().To<UserService>().InSingletonScope();
+            Bind<IAuthenticationService>().To<AuthenticationService>();
+            Bind<ITokenService>().To<TokenService>();
 
             Bind<IDesktopServiceWrapper>().To<DesktopServiceWrapper>().InSingletonScope();        
             Bind<ILoginView>().To<LoginView>().InSingletonScope();

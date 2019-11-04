@@ -25,31 +25,62 @@ namespace PasswordVault.Desktop.Winforms
 
         private IPasswordService _passwordService;
         private IUserService _userService;
+        private IAuthenticationService _authenticationService;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public DesktopServiceWrapper(IPasswordService passwordService, IUserService userService)
+        public DesktopServiceWrapper(IAuthenticationService authenticationService, IPasswordService passwordService, IUserService userService)
         {
+            _authenticationService = authenticationService;
             _passwordService = passwordService;
             _userService = userService;
         }
 
-        /*PUBLIC METHODS***************************************************/
+        /*PUBLIC METHODS***************************************************/    
         public AuthenticateResult Login(string username, string password)
         {
-            throw new NotImplementedException();
-        }
+            AuthenticateResult loginResult = AuthenticateResult.Failed;
 
+            AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password);
+
+            if (authenticateResult.Result == AuthenticateResult.Successful)
+            {
+                _currentUser = authenticateResult.User;
+            }
+            else
+            {
+                _currentUser = new User(false);
+            }
+
+            loginResult = authenticateResult.Result;
+            return loginResult;
+        }
+ 
         public LogOutResult Logout()
         {
-            throw new NotImplementedException();
-        }
+            LogOutResult result = LogOutResult.Failed;
 
+            if (IsLoggedIn())
+            {
+                _passwordList.Clear();
+                _currentUser = new User(false);
+
+                result = LogOutResult.Success;
+            }
+
+            return result;
+        }
+  
         public bool IsLoggedIn()
         {
-            throw new NotImplementedException();
-        }      
+            if (_currentUser.ValidUser)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public AddUserResult CreateNewUser(User user)
         {

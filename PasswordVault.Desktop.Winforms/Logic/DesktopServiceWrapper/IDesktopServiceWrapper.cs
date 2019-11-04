@@ -10,9 +10,32 @@ namespace PasswordVault.Desktop.Winforms
 {
     public interface IDesktopServiceWrapper
     {
+        /// <summary>
+        /// Verifies that a users password is correct, retrieves user information with
+        /// generated JWT token.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns>Returns AuthenticateResult enum.</returns>
         AuthenticateResult Login(string username, string password);
+
+        /// <summary>
+        /// Logs the current user out and clears user data from memory.
+        /// </summary>
+        /// <returns>Returns LogOutResult enum.</returns>
         LogOutResult Logout();
+
+        /// <summary>
+        /// Checks if a user is currently logged into the application.
+        /// </summary>
+        /// <returns>Returns true if user is logged in.</returns>
         bool IsLoggedIn();
+
+        /// <summary>
+        /// Creates a new user and adds the user to the database.
+        /// </summary>
+        /// <param name="user">User object containing username, password, firstname, lastname, email and phone number.</param>
+        /// <returns>AddUserResult</returns>
         AddUserResult CreateNewUser(User user);
         string GetCurrentUsername();
         User GetCurrentUser();
