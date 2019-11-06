@@ -36,7 +36,9 @@ namespace PasswordVault.Services
 
         public string GeneratePasswordKey(int length)
         {
-            throw new NotImplementedException();
+            string result = KeyGenerator.GetUniqueKey(length);
+
+            return result;
         }
 
         public List<Password> GetPasswords(string userUuid, string decryptionKey)

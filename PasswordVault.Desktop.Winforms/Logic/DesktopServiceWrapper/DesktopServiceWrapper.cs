@@ -18,6 +18,7 @@ namespace PasswordVault.Desktop.Winforms
     class DesktopServiceWrapper : IDesktopServiceWrapper
     {
         /*CONSTANTS********************************************************/
+        private const int GENERATED_PASSWORD_LENGTH = 20;
 
         /*FIELDS***********************************************************/
         private User _currentUser;                       // Current user's username and password
@@ -106,12 +107,14 @@ namespace PasswordVault.Desktop.Winforms
 
         public ValidateUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword)
         {
-            throw new NotImplementedException();
-        }
+            ValidateUserPasswordResult result = ValidateUserPasswordResult.Failed;
 
-        public AddModifyPasswordResult AddPassword(Password password)
-        {
-            throw new NotImplementedException();
+            if (IsLoggedIn())
+            {
+                result = _userService.ChangeUserPassword(_currentUser.GUID, originalPassword, newPassword, confirmPassword, _currentUser.PlainTextRandomKey);
+            }
+
+            return result;
         }
 
         public DeleteUserResult DeleteUser(User user)
@@ -128,20 +131,22 @@ namespace PasswordVault.Desktop.Winforms
 
         public UserInformationResult EditUser(User user)
         {
-            throw new NotImplementedException();
-        }
+            UserInformationResult result = UserInformationResult.Failed;
 
-        public DeletePasswordResult DeletePassword(Password password)
-        {
-            throw new NotImplementedException();
-        }     
+            result = _userService.ModifyUser(_currentUser.GUID, user, _currentUser.PlainTextRandomKey);
 
-        public string GeneratePasswordKey()
-        {
-            string result = "";
-
-            result = _passwordService.GeneratePasswordKey(
-                GetMinimumPasswordLength());
+            if (result == UserInformationResult.Success)
+            {
+                _currentUser = new User(
+                    _currentUser.GUID,
+                    _currentUser.Username,
+                    _currentUser.PlainTextRandomKey,
+                    user.FirstName,
+                    user.LastName,
+                    user.PhoneNumber,
+                    user.Email,
+                    true);
+            }
 
             return result;
         }
@@ -170,20 +175,14 @@ namespace PasswordVault.Desktop.Winforms
             return user;
         }
 
-        public int GetMinimumPasswordLength()
+        public AddModifyPasswordResult AddPassword(Password password)
         {
-            int result = _userService.GetMinimumPasswordLength();
-            return result;
+            throw new NotImplementedException();
         }
 
-        public List<Password> GetPasswords()
+        public DeletePasswordResult DeletePassword(Password password)
         {
-            if (IsLoggedIn())
-            {
-                return _passwordList;
-            }
-
-            return null;
+            throw new NotImplementedException();
         }
 
         public AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
@@ -199,6 +198,31 @@ namespace PasswordVault.Desktop.Winforms
 
             return result;
         }
+
+        public List<Password> GetPasswords()
+        {
+            if (IsLoggedIn())
+            {
+                return _passwordList;
+            }
+
+            return null;
+        }
+
+        public string GeneratePasswordKey()
+        {
+            string result = "";
+
+            result = _passwordService.GeneratePasswordKey(GENERATED_PASSWORD_LENGTH);
+
+            return result;
+        }
+
+        public int GetMinimumPasswordLength()
+        {
+            int result = _userService.GetMinimumPasswordLength();
+            return result;
+        }       
 
         /*PRIVATE METHODS**************************************************/
         private void UpdatePasswordListFromDB()

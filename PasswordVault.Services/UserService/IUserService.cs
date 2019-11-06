@@ -14,9 +14,9 @@ namespace PasswordVault.Services
         /// <returns>AddUserResult</returns>
         AddUserResult AddUser(User user);
         DeleteUserResult DeleteUser(string userUuid);
-        UserInformationResult ModifyUser(string userUuid, User user, string encryptionKey);
-        bool VerifyUserPassword(string userUuid, string password);
-        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword);
+        UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey);
+        bool VerifyUserPassword(string username, string password);
+        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey);
         User GetUser(string userUuid);
         int GetMinimumPasswordLength();
     }

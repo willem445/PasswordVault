@@ -16,15 +16,17 @@ namespace PasswordVault.Services
         private IDatabase _dbcontext;                   
         private IMasterPassword _masterPassword;
         private IEncryptionService _encryptDecrypt;
+        private IAuthenticationService _authenticationService;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public UserService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptionService encryptDecrypt)
+        public UserService(IDatabase dbcontext, IMasterPassword masterPassword, IEncryptionService encryptDecrypt, IAuthenticationService authenticationService)
         {
             _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
             _masterPassword = masterPassword ?? throw new ArgumentNullException(nameof(masterPassword));
             _encryptDecrypt = encryptDecrypt ?? throw new ArgumentNullException(nameof(encryptDecrypt));
+            _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
         /*PUBLIC METHODS***************************************************/
@@ -164,131 +166,125 @@ namespace PasswordVault.Services
         }
 
         /******************************************************************/
-        public UserInformationResult ModifyUser(string userUuid, User user, string encryptionKey)
+        public UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey)
         {
             UserInformationResult result = UserInformationResult.Failed;
 
-            //if (user == null)       
-            //    return UserInformationResult.Failed;
+            if (modifiedUser == null)
+                return UserInformationResult.Failed;
 
-            //var validation = user.VerifyUserInformation();
+            var validation = modifiedUser.VerifyUserInformation();
 
-            //if (validation == UserInformationResult.Success)
-            //{
-            //    User dbUser = _dbcontext.GetUserByGUID(userUuid);
+            if (validation == UserInformationResult.Success)
+            {
+                User dbUser = _dbcontext.GetUserByGUID(userUuid);
 
-            //    User newCurrentUser = new User(
-            //        dbUser.GUID,
-            //        dbUser.Username,
-            //        dbUser.PlainTextRandomKey,
-            //        user.FirstName,
-            //        user.LastName,
-            //        user.PhoneNumber,
-            //        user.Email,
-            //        true);
+                User newModifiedUser = new User
+                (
+                    dbUser.GUID,
+                    dbUser.EncryptedKey,
+                    dbUser.Username,
+                    dbUser.Iterations,
+                    dbUser.Salt,
+                    dbUser.Hash,
+                    _encryptDecrypt.Encrypt(modifiedUser.FirstName,   encryptionKey),
+                    _encryptDecrypt.Encrypt(modifiedUser.LastName,    encryptionKey),
+                    _encryptDecrypt.Encrypt(modifiedUser.PhoneNumber, encryptionKey),
+                    _encryptDecrypt.Encrypt(modifiedUser.Email,       encryptionKey)
+                );
 
-            //    User modifiedUser = new User
-            //    (
-            //        dbUser.GUID,
-            //        dbUser.EncryptedKey,
-            //        dbUser.Username,
-            //        dbUser.Iterations,
-            //        dbUser.Salt,
-            //        dbUser.Hash,
-            //        _encryptDecrypt.Encrypt(user.FirstName, encryptionKey),
-            //        _encryptDecrypt.Encrypt(user.LastName, encryptionKey),
-            //        _encryptDecrypt.Encrypt(user.PhoneNumber, encryptionKey),
-            //        _encryptDecrypt.Encrypt(user.Email, encryptionKey)
-            //    );
+                bool success = _dbcontext.ModifyUser(dbUser, newModifiedUser);
 
-            //    bool success = _dbcontext.ModifyUser(dbUser, modifiedUser);
-
-            //    if (success)
-            //    {
-            //        result = UserInformationResult.Success; // TODO - return other results
-            //    }
-            //    else
-            //    {
-            //        result = UserInformationResult.Failed;
-            //    }
-            //}
-            //else
-            //{
-            //    result = validation;
-            //}
+                if (success)
+                {
+                    result = UserInformationResult.Success; 
+                }
+                else
+                {
+                    result = UserInformationResult.Failed;
+                }
+            }
+            else
+            {
+                result = validation;
+            }
 
             return result;
 
         }
 
         /******************************************************************/
-        public ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword)
+        public ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey)
         {
             ValidateUserPasswordResult result = ValidateUserPasswordResult.Failed;
 
-            //if (string.IsNullOrEmpty(originalPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
-            //{
-            //    return ValidateUserPasswordResult.Failed;
-            //}
+            if (string.IsNullOrEmpty(originalPassword) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            {
+                return ValidateUserPasswordResult.Failed;
+            }
 
-            //if (newPassword == confirmPassword)
-            //{
-            //    bool validPassword = VerifyUserPassword(userUuid, originalPassword);
+            if (newPassword == confirmPassword)
+            {
+                User user = _dbcontext.GetUserByGUID(userUuid);
+                bool validPassword = VerifyUserPassword(user.Username, originalPassword);
 
-            //    if (validPassword)
-            //    {
-            //        ValidateUserPasswordResult verifyPass = new User() { PlainTextPassword = newPassword }.VerifyPlaintextPasswordRequirements();
+                if (validPassword)
+                {
+                    ValidateUserPasswordResult verifyPass = new User() { PlainTextPassword = newPassword }.VerifyPlaintextPasswordRequirements();
 
-            //        if (verifyPass != ValidateUserPasswordResult.Success)
-            //        {
-            //            result = verifyPass;
-            //        }
-            //        else
-            //        {
-            //            User user = _dbcontext.GetUserByGUID(userUuid);
-            //            UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
+                    if (verifyPass != ValidateUserPasswordResult.Success)
+                    {
+                        result = verifyPass;
+                    }
+                    else
+                    {                       
+                        UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
 
-            //            User newUser = new User(
-            //                user.GUID,
-            //                _encryptDecrypt.Encrypt(_currentUser.PlainTextRandomKey, newPassword), // Encrypt the random key with the users password
-            //                user.Username,
-            //                newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture),
-            //                newEncryptedData.Salt,
-            //                newEncryptedData.Hash,
-            //                user.FirstName,
-            //                user.LastName,
-            //                user.PhoneNumber,
-            //                user.Email
-            //            );
+                        User newUser = new User(
+                            user.GUID,
+                            _encryptDecrypt.Encrypt(encryptionKey, newPassword), // Encrypt the random key with the users password
+                            user.Username,
+                            newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.Salt,
+                            newEncryptedData.Hash,
+                            user.FirstName,
+                            user.LastName,
+                            user.PhoneNumber,
+                            user.Email
+                        );
 
-            //            if (_dbcontext.ModifyUser(user, newUser))
-            //            {
-            //                result = ValidateUserPasswordResult.Success;
-            //            }
-            //            else
-            //            {
-            //                result = ValidateUserPasswordResult.Failed;
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        result = ValidateUserPasswordResult.InvalidPassword;
-            //    }
-            //}
-            //else
-            //{
-            //    result = ValidateUserPasswordResult.PasswordsDoNotMatch;
-            //}
+                        if (_dbcontext.ModifyUser(user, newUser))
+                        {
+                            result = ValidateUserPasswordResult.Success;
+                        }
+                        else
+                        {
+                            result = ValidateUserPasswordResult.Failed;
+                        }
+                    }
+                }
+                else
+                {
+                    result = ValidateUserPasswordResult.InvalidPassword;
+                }
+            }
+            else
+            {
+                result = ValidateUserPasswordResult.PasswordsDoNotMatch;
+            }
 
 
             return result;
         }
 
         /******************************************************************/
-        public bool VerifyUserPassword(string userUuid, string password)
+        public bool VerifyUserPassword(string username, string password)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            result = _authenticationService.VerifyUserCredentials(username, password);
+
+            return result;
         }
 
         /******************************************************************/

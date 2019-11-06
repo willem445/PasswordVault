@@ -178,7 +178,7 @@ namespace PasswordVault.Models
 
         public ValidateUserPasswordResult VerifyPlaintextPasswordRequirements()
         {
-            ValidateUserPasswordResult result = ValidateUserPasswordResult.Failed;
+            ValidateUserPasswordResult result = ValidateUserPasswordResult.Success;
 
             bool containsNumber = false;
             bool containsLowerCase = false;
