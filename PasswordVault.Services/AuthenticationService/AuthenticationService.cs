@@ -83,6 +83,28 @@ namespace PasswordVault.Services
             return result;
         }
 
+        public bool VerifyUserCredentials(string username, string password)
+        {
+            bool result = false;
+
+            if (!_dbContext.UserExistsByUsername(username))
+            {
+                result = false;
+            }
+            else
+            {
+                User user = _dbContext.GetUserByUsername(username);
+
+                // Hash password with user.Salt and compare to user.Hash
+                result = _masterPassword.VerifyPassword(password,
+                                                            user.Salt,
+                                                            user.Hash,
+                                                            Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
+            }
+
+            return result;
+        }
+
         /*PRIVATE METHODS**************************************************/
 
         /*STATIC METHODS***************************************************/

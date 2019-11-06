@@ -47,7 +47,6 @@ namespace PasswordVault.Desktop.Winforms
         DeletePasswordResult DeletePassword(Password password);
         AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
-        Password DecryptPassword(Password password);
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();
     }

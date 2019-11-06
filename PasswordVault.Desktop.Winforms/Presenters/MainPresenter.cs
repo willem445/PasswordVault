@@ -189,8 +189,7 @@ namespace PasswordVault.Desktop.Winforms
 
             if (result != null)
             {
-                _editPassword = result;
-                _mainView.DisplayPasswordToEdit(_serviceWrapper.DecryptPassword(_editPassword));
+                _mainView.DisplayPasswordToEdit(result);
             }
         }
 
@@ -236,12 +235,15 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            string passphrase = _serviceWrapper.DecryptPassword(result).Passphrase;
-
-            if (!string.IsNullOrEmpty(passphrase))
+            if (result != null)
             {
-                System.Windows.Forms.Clipboard.SetText(passphrase);
-            }          
+                string passphrase = result.Passphrase;
+
+                if (!string.IsNullOrEmpty(passphrase))
+                {
+                    System.Windows.Forms.Clipboard.SetText(passphrase);
+                }
+            }                    
         }
 
         /*************************************************************************************************/
@@ -249,9 +251,13 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
+            string passphrase = "";
 
-            string passphrase = _serviceWrapper.DecryptPassword(result).Passphrase;
-
+            if (result != null)
+            {
+                passphrase = result.Passphrase;
+            }
+            
             _mainView.DisplayPassword(passphrase);
         }
 
@@ -261,12 +267,15 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            string uri = result.Website;
-
-            if (UriUtilities.IsValidUri(uri))
+            if (result != null)
             {
-                UriUtilities.OpenUri(uri);
-            }
+                string uri = result.Website;
+
+                if (UriUtilities.IsValidUri(uri))
+                {
+                    UriUtilities.OpenUri(uri);
+                }
+            }        
         }
 
         /*************************************************************************************************/
@@ -275,7 +284,10 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            System.Windows.Forms.Clipboard.SetText(result.Username);
+            if (result != null)
+            {
+                System.Windows.Forms.Clipboard.SetText(result.Username);
+            }       
         }
 
         /*************************************************************************************************/
@@ -325,11 +337,11 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password p = new Password
             (
-                dgvrow.Cells[0].Value.ToString(),
-                dgvrow.Cells[1].Value.ToString(),
-                dgvrow.Cells[2].Value.ToString(),
-                dgvrow.Cells[3].Value.ToString(),
-                dgvrow.Cells[4].Value.ToString(),
+                dgvrow.Cells[0].Value?.ToString(),
+                dgvrow.Cells[1].Value?.ToString(),
+                dgvrow.Cells[2].Value?.ToString(),
+                dgvrow.Cells[3].Value?.ToString(),
+                dgvrow.Cells[4].Value?.ToString(),
                 null
             );
 

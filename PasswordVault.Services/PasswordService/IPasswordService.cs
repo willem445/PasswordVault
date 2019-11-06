@@ -10,7 +10,7 @@ namespace PasswordVault.Services
         AddModifyPasswordResult AddPassword(string userUuid, Password password);
         AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword);
         DeletePasswordResult DeletePassword(string userUuid, string passwordUuid);
-        List<Password> GetPasswords(string userUuid);
+        List<Password> GetPasswords(string userUuid, string decryptionKey);
         string GeneratePasswordKey(int length);
     }
 }
