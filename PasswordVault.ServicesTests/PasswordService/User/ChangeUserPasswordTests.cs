@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -15,7 +17,7 @@ namespace PasswordVault.ServicesTests
     public class ChangePasswordTests
     {
         IDatabase db;
-        IPasswordService passwordService;
+        IDesktopServiceWrapper passwordService;
 
         public ChangePasswordTests()
         {
@@ -50,7 +52,7 @@ namespace PasswordVault.ServicesTests
         // [ClassInitialize()]
         // public static void MyClassInitialize(TestContext testContext) { }
         //
-        // Use ClassCleanup to run code after all tests in a class have run
+        // Use ClassCleanup to run code after all tests in a class have run 
         // [ClassCleanup()]
         // public static void MyClassCleanup() { }
 
@@ -58,7 +60,7 @@ namespace PasswordVault.ServicesTests
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
         }
 
         // Use TestCleanup to run code after each test has run
@@ -74,15 +76,15 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void ChangeUserPasswordTest()
         {
-            CreateUserResult createUserResult;
+            AddUserResult createUserResult;
             ValidateUserPasswordResult changeUserPasswordResult;
-            LoginResult loginResult;
+            AuthenticateResult loginResult;
             LogOutResult logoutResult;
             User user;
 
             user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Not logged in
@@ -90,7 +92,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(ValidateUserPasswordResult.Failed, changeUserPasswordResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             changeUserPasswordResult = passwordService.ChangeUserPassword("testPassword1@", "testPassword1@2", "testPassword1@2");
             Assert.AreEqual(ValidateUserPasswordResult.Success, changeUserPasswordResult);
@@ -99,10 +101,10 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.PasswordIncorrect, loginResult);
+            Assert.AreEqual(AuthenticateResult.PasswordIncorrect, loginResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@2");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             // Test null and empty
             changeUserPasswordResult = passwordService.ChangeUserPassword("", "1@3aA", "1@3aA");
@@ -168,7 +170,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
             loginResult = passwordService.Login("testAccount", "testPassword1@2~`!@#$%^&*()_+{}[]|@\'';:.>,</?\"");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
         }
 
     }

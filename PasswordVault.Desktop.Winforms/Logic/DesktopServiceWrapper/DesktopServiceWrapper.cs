@@ -15,7 +15,7 @@ namespace PasswordVault.Desktop.Winforms
         Failed
     }
 
-    class DesktopServiceWrapper : IDesktopServiceWrapper
+    public class DesktopServiceWrapper : IDesktopServiceWrapper
     {
         /*CONSTANTS********************************************************/
         private const int GENERATED_PASSWORD_LENGTH = 20;
