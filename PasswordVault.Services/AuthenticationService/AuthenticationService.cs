@@ -39,7 +39,7 @@ namespace PasswordVault.Services
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                authResult = AuthenticateResult.Failed;
+                return new AuthenticateReturn(AuthenticateResult.Failed, userResult);
             }
 
             if (!_dbContext.UserExistsByUsername(username))

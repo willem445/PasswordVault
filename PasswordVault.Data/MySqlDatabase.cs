@@ -33,7 +33,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public bool DeletePassword(DatabasePassword password)
+        public bool DeletePassword(Int64 passwordUniqueId)
         {
             throw new NotImplementedException();
         }
@@ -63,7 +63,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword modifiedPassword)
         {
             throw new NotImplementedException();
         }

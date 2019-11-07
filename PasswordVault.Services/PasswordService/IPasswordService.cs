@@ -7,9 +7,9 @@ namespace PasswordVault.Services
 {
     public interface IPasswordService
     {
-        AddModifyPasswordResult AddPassword(string userUuid, Password password);
-        AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword);
-        DeletePasswordResult DeletePassword(string userUuid, string passwordUuid);
+        AddPasswordResult AddPassword(string userUuid, Password password, string key);
+        AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key);
+        DeletePasswordResult DeletePassword(Int64 passwordUuid);
         List<Password> GetPasswords(string userUuid, string decryptionKey);
         string GeneratePasswordKey(int length);
     }

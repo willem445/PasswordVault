@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using PasswordVault.Data;
 using PasswordVault.Models;
-using PasswordVault.Data;
+using System;
+using System.Collections.Generic;
 
 namespace PasswordVault.Services
 {
@@ -24,14 +22,75 @@ namespace PasswordVault.Services
             _encryptionService = encryptionService;
         }
 
-        public AddModifyPasswordResult AddPassword(string userUuid, Password password)
+        /*PUBLIC METHODS***************************************************/
+        public AddPasswordResult AddPassword(string userUuid, Password password, string key)
         {
-            throw new NotImplementedException();
+            AddPasswordResult result;
+            AddModifyPasswordResult addResult = AddModifyPasswordResult.Failed;
+            Int64 uniqueId = -1;
+
+            if (password == null)
+            {
+                return new AddPasswordResult(AddModifyPasswordResult.Failed, uniqueId);
+            }
+
+            AddModifyPasswordResult verifyResult = VerifyAddPasswordFields(password);
+
+            if (verifyResult == AddModifyPasswordResult.Success)
+            {
+                Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password, key); // Need to first encrypt the password
+                uniqueId = _dbContext.AddPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptPassword, key));
+                addResult = AddModifyPasswordResult.Success;
+            }
+            else
+            {
+                addResult = verifyResult;
+            }
+
+            result = new AddPasswordResult(addResult, uniqueId);
+            return result;
         }
 
-        public DeletePasswordResult DeletePassword(string userUuid, string passwordUuid)
+        public DeletePasswordResult DeletePassword(Int64 passwordUuid)
         {
-            throw new NotImplementedException();
+            DeletePasswordResult result = DeletePasswordResult.Failed;
+
+            bool dbResult = _dbContext.DeletePassword(passwordUuid);
+
+            if (dbResult)
+            {
+                result = DeletePasswordResult.Success;
+            }
+
+            return result;
+        }
+
+        public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key)
+        {
+            AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
+
+            AddModifyPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
+
+            if (verifyResult == AddModifyPasswordResult.Success)
+            {
+                Password encryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword, key);
+                bool dbResult = _dbContext.ModifyPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptedPassword, key));
+
+                if (dbResult)
+                {
+                    result = AddModifyPasswordResult.Success;
+                }
+                else
+                {
+                    result = AddModifyPasswordResult.Failed;
+                }
+            }
+            else
+            {
+                result = verifyResult;
+            }
+
+            return result;
         }
 
         public string GeneratePasswordKey(int length)
@@ -41,7 +100,7 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public List<Password> GetPasswords(string userUuid, string decryptionKey)
+        public List<Password> GetPasswords(string userUuid, string key)
         {
             List<DatabasePassword> databasePasswords = null;
             List<Password> passwords = new List<Password>();
@@ -52,12 +111,12 @@ namespace PasswordVault.Services
             {
                 Password password = new Password(
                     databasePassword.UniqueID,
-                    _encryptionService.Decrypt(databasePassword.Application, decryptionKey),
-                    _encryptionService.Decrypt(databasePassword.Username,    decryptionKey),
-                    _encryptionService.Decrypt(databasePassword.Email,       decryptionKey),
-                    _encryptionService.Decrypt(databasePassword.Description, decryptionKey),
-                    _encryptionService.Decrypt(databasePassword.Website,     decryptionKey),
-                    _encryptionService.Decrypt(databasePassword.Passphrase,  decryptionKey)
+                    _encryptionService.Decrypt(databasePassword.Application, key),
+                    _encryptionService.Decrypt(databasePassword.Username,    key),
+                    _encryptionService.Decrypt(databasePassword.Email,       key),
+                    _encryptionService.Decrypt(databasePassword.Description, key),
+                    _encryptionService.Decrypt(databasePassword.Website,     key),
+                    _encryptionService.Decrypt(databasePassword.Passphrase,  key)
                     );
 
                 passwords.Add(password);
@@ -66,14 +125,87 @@ namespace PasswordVault.Services
             return passwords;
         }
 
-        public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword)
+        /*PRIVATE METHODS**************************************************/
+        private AddModifyPasswordResult VerifyAddPasswordFields(Password password)
         {
-            throw new NotImplementedException();
+            AddModifyPasswordResult result = AddModifyPasswordResult.Success;
+
+            if (password != null)
+            {
+                if (string.IsNullOrEmpty(password.Passphrase))
+                {
+                    result = AddModifyPasswordResult.PassphraseError;
+                }
+
+                if (string.IsNullOrEmpty(password.Username))
+                {
+                    result = AddModifyPasswordResult.UsernameError;
+                }
+
+                if (string.IsNullOrEmpty(password.Application))
+                {
+                    result = AddModifyPasswordResult.ApplicationError;
+                }
+
+                if (password.Description == null)
+                {
+                    result = AddModifyPasswordResult.DescriptionError;
+                }
+
+                if (password.Website == null)
+                {
+                    result = AddModifyPasswordResult.WebsiteError;
+                }
+                else if (password.Website.Length != 0)
+                {
+                    if (!UriUtilities.IsValidUri(password.Website))
+                    {
+                        result = AddModifyPasswordResult.WebsiteError;
+                    }
+                }
+
+                if (password.Email == null)
+                {
+                    result = AddModifyPasswordResult.EmailError;
+                }
+                else if (password.Email.Length != 0)
+                {
+                    if (!password.Email.Contains("@") || !password.Email.Contains("."))
+                    {
+                        result = AddModifyPasswordResult.EmailError;
+                    }
+                }
+            }
+
+            return result;
         }
 
-        /*PUBLIC METHODS***************************************************/
+        private Password ConvertPlaintextPasswordToEncryptedPassword(Password password, string key)
+        {
+            return new Password(
+                password.UniqueID,
+                password.Application,
+                password.Username,
+                password.Email,
+                password.Description,
+                password.Website,
+                _encryptionService.Encrypt(password.Passphrase, key)
+                );
+        }
 
-        /*PRIVATE METHODS**************************************************/
+        private DatabasePassword ConvertToEncryptedDatabasePassword(string uuid, Password password, string key)
+        {
+            return new DatabasePassword(
+                password.UniqueID,
+                uuid, // TODO - 7 - Change to unique ID - Use unencrypted username for now
+                _encryptionService.Encrypt(password.Application, key),
+                _encryptionService.Encrypt(password.Username,    key),
+                _encryptionService.Encrypt(password.Email,       key),
+                _encryptionService.Encrypt(password.Description, key),
+                _encryptionService.Encrypt(password.Website,     key),
+                password.Passphrase // Password is already encrypted
+                );
+        }
 
         /*STATIC METHODS***************************************************/
 

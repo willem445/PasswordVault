@@ -11,6 +11,18 @@ DESCRIPTION
 
 namespace PasswordVault.Services
 {
+    public struct AddPasswordResult
+    {
+        public AddPasswordResult(AddModifyPasswordResult result, Int64 uniquePasswordID)
+        {
+            Result = result;
+            UniquePasswordID = uniquePasswordID;
+        }
+
+        public AddModifyPasswordResult Result { get; }
+        public Int64 UniquePasswordID { get; }
+    }
+
     public enum AddModifyPasswordResult
     {
         ApplicationError,

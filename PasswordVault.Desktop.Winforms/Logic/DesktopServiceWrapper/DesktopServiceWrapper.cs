@@ -177,24 +177,126 @@ namespace PasswordVault.Desktop.Winforms
 
         public AddModifyPasswordResult AddPassword(Password password)
         {
-            throw new NotImplementedException();
+            AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
+
+            if (password == null)
+            {
+                return AddModifyPasswordResult.Failed;
+            }
+
+            if (IsLoggedIn())
+            {
+                List<Password> queryResult = (from Password pass in _passwordList
+                                              where pass.Application == password.Application
+                                              select pass).ToList<Password>();
+
+                if (queryResult.Count <= 0)
+                {
+                    AddPasswordResult addResult = _passwordService.AddPassword(_currentUser.GUID, password, _currentUser.PlainTextRandomKey);
+
+                    if (addResult.Result == AddModifyPasswordResult.Success)
+                    {
+                        UpdatePasswordListFromDB(password, addResult.UniquePasswordID);
+                        result = AddModifyPasswordResult.Success;
+                    }
+                    else
+                    {
+                        result = addResult.Result;
+                    }
+                }                  
+            }
+
+            return result;
         }
 
         public DeletePasswordResult DeletePassword(Password password)
         {
-            throw new NotImplementedException();
+            DeletePasswordResult result = DeletePasswordResult.Failed;
+
+            if (password == null)
+            {
+                return DeletePasswordResult.Failed;
+            }
+
+            if (IsLoggedIn())
+            {
+                Password queryResult = (from Password pass in _passwordList
+                                        where pass.Application == password.Application
+                                        where pass.Username == password.Username
+                                        where pass.Description == password.Description
+                                        where pass.Website == password.Website
+                                        select pass).FirstOrDefault();
+
+                if (queryResult != null)
+                {
+                    _passwordList.Remove(queryResult);
+                    result = _passwordService.DeletePassword(password.UniqueID);
+                }
+                else
+                {
+                    result = DeletePasswordResult.PasswordDoesNotExist;
+                }
+                    
+            }
+
+            return result;
         }
 
         public AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
         {
             AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
 
-            if (IsLoggedIn())
+            if (originalPassword == null || modifiedPassword == null)
             {
-                _passwordService.ModifyPassword(_currentUser.GUID, modifiedPassword);
+                return AddModifyPasswordResult.Failed;
             }
 
-            throw new NotImplementedException();
+            if (IsLoggedIn())
+            {
+                List<Password> modifiedPasswordResult = (from Password pass in _passwordList
+                                                         where pass.Application == modifiedPassword.Application
+                                                         select pass).ToList<Password>();
+
+                if ((modifiedPasswordResult.Count <= 0) || // verify that another password doesn't have the same application name
+                        (modifiedPassword.Application == originalPassword.Application)) // if the application name of the original and modified match, continue as this is not actually a duplicate
+                {
+                    int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) &&
+                                                             (x.Username == originalPassword.Username) && 
+                                                             (x.Description == originalPassword.Description) && 
+                                                             (x.Website == originalPassword.Website));
+
+                    if (index != -1)
+                    {
+                        Password modifiedWithUniqueID = new Password(_passwordList[index].UniqueID, 
+                                                                     modifiedPassword.Application,
+                                                                     modifiedPassword.Username, 
+                                                                     modifiedPassword.Email,
+                                                                     modifiedPassword.Description, 
+                                                                     modifiedPassword.Website, 
+                                                                     modifiedPassword.Passphrase);
+
+                        AddModifyPasswordResult addResult = _passwordService.ModifyPassword(_currentUser.GUID, modifiedWithUniqueID, _currentUser.PlainTextRandomKey);
+
+                        if (addResult == AddModifyPasswordResult.Success)
+                        {
+                            _passwordList[index] = modifiedWithUniqueID;
+                            result = AddModifyPasswordResult.Success;
+                        }
+                        else
+                        {
+                            result = addResult;
+                        }                    
+                    }
+                    else
+                    {
+                        result = AddModifyPasswordResult.Failed;
+                    }
+                }
+                else
+                {
+                    result = AddModifyPasswordResult.DuplicatePassword;
+                }               
+            }
 
             return result;
         }
@@ -229,6 +331,22 @@ namespace PasswordVault.Desktop.Winforms
         {
             _passwordList.Clear();
             _passwordList = _passwordService.GetPasswords(_currentUser.GUID, _currentUser.PlainTextRandomKey);
+        }
+
+        private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)
+        {
+            Password newPassword = new Password
+            (
+                uniqueID,
+                password.Application,
+                password.Username,
+                password.Email,
+                password.Description,
+                password.Website,
+                password.Passphrase
+            );
+
+            _passwordList.Add(newPassword);
         }
 
         /*STATIC METHODS***************************************************/

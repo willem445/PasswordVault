@@ -189,6 +189,7 @@ namespace PasswordVault.Desktop.Winforms
 
             if (result != null)
             {
+                _editPassword = result;
                 _mainView.DisplayPasswordToEdit(result);
             }
         }
