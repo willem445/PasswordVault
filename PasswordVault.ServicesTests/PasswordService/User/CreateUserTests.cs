@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -15,7 +16,7 @@ namespace PasswordVault.ServicesTests
     public class CreateUserTests
     {
         IDatabase db;
-        IPasswordService passwordService;
+        IDesktopServiceWrapper passwordService;
 
         public CreateUserTests()
         {
@@ -58,7 +59,7 @@ namespace PasswordVault.ServicesTests
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
         }
 
         // Use TestCleanup to run code after each test has run
@@ -74,188 +75,182 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void CreateUserTest()
         {
-            CreateUserResult createUserResult;
+            AddUserResult createUserResult;
 
             User user;
 
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
         }
 
         [TestMethod]
         public void CreateUserValidationTest()
         {
-            CreateUserResult createUserResult;
+            AddUserResult createUserResult;
             User user;
 
             // Test success
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test null user
             createUserResult = passwordService.CreateNewUser(null);
-            Assert.AreEqual(CreateUserResult.Failed, createUserResult);
+            Assert.AreEqual(AddUserResult.Failed, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test user names
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.UsernameTaken, createUserResult);
+            Assert.AreEqual(AddUserResult.UsernameTaken, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.UsernameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.UsernameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User(null, "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User(null, "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.UsernameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.UsernameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test passwords
             user = new User("testAccount1", "testPassword1", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.NoSpecialCharacter, createUserResult);
+            Assert.AreEqual(AddUserResult.NoSpecialCharacter, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", "aaaaaaaaaaaaaa!1", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.NoUpperCaseCharacter, createUserResult);
+            Assert.AreEqual(AddUserResult.NoUpperCaseCharacter, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", "AAAAAAAAAAAAA!a", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.NoNumber, createUserResult);
+            Assert.AreEqual(AddUserResult.NoNumber, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", "AAAAAAAAAAAAA!1", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.NoLowerCaseCharacter, createUserResult);
+            Assert.AreEqual(AddUserResult.NoLowerCaseCharacter, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", "1A@a", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.LengthRequirementNotMet, createUserResult);
+            Assert.AreEqual(AddUserResult.LengthRequirementNotMet, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", "", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PasswordNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PasswordNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             user = new User("testAccount1", null, "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PasswordNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PasswordNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test first names
-            user = new User("testAccount1", "testPassword1@", "", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.FirstNameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.FirstNameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", null, "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", null, "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.FirstNameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.FirstNameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test last names
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "", "222-111-1111", "test@test.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.LastNameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.LastNameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", null, "222-111-1111", "test@test.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", null, "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.LastNameNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.LastNameNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test email
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "testtest.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "testtest.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "testtestcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "testtestcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "example@provider.com");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "example@provider.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", null);
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", null);
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.EmailNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.EmailNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test phone number
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "5555555555555555555", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "5555555555555555555", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "sgsdfgsdfgfdsg", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "sgsdfgsdfgfdsg", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "#$%^#$^#$^%$#^@@#$", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "#$%^#$^#$^%$#^@@#$", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "g-222-111-1111", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "g-222-111-1111", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "xxx-xxx-xxxx", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "xxx-xxx-xxxx", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "", "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "", "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            user = new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", null, "test@testcom");
+            user = new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", null, "test@testcom");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PhoneNumberNotValid, createUserResult);
-            Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
-
-            // Test long password
-            user = new User("testAccount1", "@1Ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "testFirstName", "testLastName", "g-222-111-1111", "test@testcom");
-            createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.PasswordNotValid, createUserResult);
+            Assert.AreEqual(AddUserResult.PhoneNumberNotValid, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test null user
             createUserResult = passwordService.CreateNewUser(null);
-            Assert.AreEqual(CreateUserResult.Failed, createUserResult);
+            Assert.AreEqual(AddUserResult.Failed, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
         }

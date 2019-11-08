@@ -46,25 +46,34 @@ namespace PasswordVault.Desktop.Winforms
         {
             AuthenticateResult loginResult = AuthenticateResult.Failed;
 
-            AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password);
-
-            if (authenticateResult.Result == AuthenticateResult.Successful)
+            if (!IsLoggedIn())
             {
-                _currentUser = authenticateResult.User;
-                UpdatePasswordListFromDB();
-            }
-            else
-            {
-                _currentUser = new User(false);
-            }
+                AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password);
 
-            loginResult = authenticateResult.Result;
+                if (authenticateResult.Result == AuthenticateResult.Successful)
+                {
+                    _currentUser = authenticateResult.User;
+                    UpdatePasswordListFromDB();
+                }
+                else
+                {
+                    _currentUser = new User(false);
+                }
+
+                loginResult = authenticateResult.Result;
+            }
+            
             return loginResult;
         }
 
         public bool VerifyCurrentUserPassword(string password)
         {
             bool result = false;
+
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
 
             if (IsLoggedIn())
             {
@@ -121,11 +130,12 @@ namespace PasswordVault.Desktop.Winforms
         {
             DeleteUserResult result = DeleteUserResult.Failed;
 
-            if (IsLoggedIn())
+            if (user != null)
             {
-                result = _userService.DeleteUser(user.GUID);
+                // presenter handles logging the user out
+                result = _userService.DeleteUser(user.Username);
             }
-            
+                         
             return result;
         }
 
@@ -133,21 +143,29 @@ namespace PasswordVault.Desktop.Winforms
         {
             UserInformationResult result = UserInformationResult.Failed;
 
-            result = _userService.ModifyUser(_currentUser.GUID, user, _currentUser.PlainTextRandomKey);
-
-            if (result == UserInformationResult.Success)
+            if (IsLoggedIn())
             {
-                _currentUser = new User(
-                    _currentUser.GUID,
-                    _currentUser.Username,
-                    _currentUser.PlainTextRandomKey,
-                    user.FirstName,
-                    user.LastName,
-                    user.PhoneNumber,
-                    user.Email,
-                    true);
-            }
+                if (user != null &&
+                !string.IsNullOrEmpty(_currentUser.GUID) &&
+                !string.IsNullOrEmpty(_currentUser.PlainTextRandomKey))
+                {
+                    result = _userService.ModifyUser(_currentUser.GUID, user, _currentUser.PlainTextRandomKey);
 
+                    if (result == UserInformationResult.Success)
+                    {
+                        _currentUser = new User(
+                            _currentUser.GUID,
+                            _currentUser.Username,
+                            _currentUser.PlainTextRandomKey,
+                            user.FirstName,
+                            user.LastName,
+                            user.PhoneNumber,
+                            user.Email,
+                            true);
+                    }
+                }
+            }         
+            
             return result;
         }
 
@@ -203,7 +221,11 @@ namespace PasswordVault.Desktop.Winforms
                     {
                         result = addResult.Result;
                     }
-                }                  
+                }
+                else
+                {
+                    result = AddModifyPasswordResult.DuplicatePassword;
+                }
             }
 
             return result;
@@ -230,7 +252,7 @@ namespace PasswordVault.Desktop.Winforms
                 if (queryResult != null)
                 {
                     _passwordList.Remove(queryResult);
-                    result = _passwordService.DeletePassword(password.UniqueID);
+                    result = _passwordService.DeletePassword(queryResult.UniqueID);
                 }
                 else
                 {

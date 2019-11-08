@@ -146,7 +146,7 @@ namespace PasswordVault.Services
             if (String.IsNullOrEmpty(userUuid))
                 return DeleteUserResult.Failed;
 
-            User getUser = _dbcontext.GetUserByGUID(userUuid);
+            User getUser = _dbcontext.GetUserByUsername(userUuid);
 
             if (getUser != null)
             {

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -15,9 +16,9 @@ namespace PasswordVault.ServicesTests
     public class PasswordServiceTests
     {
         IDatabase db;
-        IPasswordService passwordService;
-        CreateUserResult createUserResult;
-        LoginResult loginResult;
+        IDesktopServiceWrapper passwordService;
+        AddUserResult createUserResult;
+        AuthenticateResult loginResult;
         LogOutResult logoutResult;
         AddModifyPasswordResult addPasswordResult;
         User user;
@@ -62,11 +63,11 @@ namespace PasswordVault.ServicesTests
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
 
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
         }
         // Use TestCleanup to run code after each test has run
@@ -75,35 +76,35 @@ namespace PasswordVault.ServicesTests
         //
         #endregion
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException),"Expected database null exception.")]
-        public void PasswordServiceConstructorDatabaseArgTest()
-        {
-            db = DatabaseFactory.GetDatabase(Database.InMemory);
-            PasswordService ps = new PasswordService(null, new MasterPassword(), new RijndaelManagedEncryption());
-        }
+        //[TestMethod]
+        //[ExpectedException(typeof(ArgumentNullException),"Expected database null exception.")]
+        //public void PasswordServiceConstructorDatabaseArgTest()
+        //{
+        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
+        //    PasswordService ps = new PasswordService(null, new MasterPassword(), new RijndaelManagedEncryption());
+        //}
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException), "Expected master password null exception.")]
-        public void PasswordServiceConstructorMasterPasswordArgTest()
-        {
-            db = DatabaseFactory.GetDatabase(Database.InMemory);
-            PasswordService ps = new PasswordService(db, null, new RijndaelManagedEncryption());
-        }
+        //[TestMethod]
+        //[ExpectedException(typeof(ArgumentNullException), "Expected master password null exception.")]
+        //public void PasswordServiceConstructorMasterPasswordArgTest()
+        //{
+        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
+        //    PasswordService ps = new PasswordService(db, null, new RijndaelManagedEncryption());
+        //}
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException), "Expected encryption null exception.")]
-        public void PasswordServiceConstructorExcryptionArgTest()
-        {
-            db = DatabaseFactory.GetDatabase(Database.InMemory);
-            PasswordService ps = new PasswordService(db, new MasterPassword(), null);
-        }
+        //[TestMethod]
+        //[ExpectedException(typeof(ArgumentNullException), "Expected encryption null exception.")]
+        //public void PasswordServiceConstructorExcryptionArgTest()
+        //{
+        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
+        //    PasswordService ps = new PasswordService(db, new MasterPassword(), null);
+        //}
 
         [TestMethod]
         public void GetCurrentUserTest()
         {
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             User user = passwordService.GetCurrentUser();
             Assert.AreEqual("testAccount", user.Username);
@@ -123,8 +124,8 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void GetCurrentUserNameTest()
         {
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             string username = passwordService.GetCurrentUsername();
             Assert.AreEqual("testAccount", username);
@@ -139,12 +140,12 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void VerifyCurrentUserPasswordTest()
         {
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             bool verifyResult;
 
-            verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1@");
+            verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1@aaaaaaaaa");
             Assert.AreEqual(true, verifyResult);
 
             verifyResult = passwordService.VerifyCurrentUserPassword("testPassword1");
@@ -167,21 +168,14 @@ namespace PasswordVault.ServicesTests
         public void GeneratePasswordKeyTest()
         {
             string passphrase = passwordService.GeneratePasswordKey();
-            Assert.AreEqual(27, passphrase.Length);
+            Assert.AreEqual(20, passphrase.Length);
         }
 
         [TestMethod]
         public void GetMinimumPasswordTest()
         {
             var num = passwordService.GetMinimumPasswordLength();
-            Assert.AreEqual(12, num);
-        }
-
-        [ExpectedException(typeof(ArgumentNullException), "Expected null arg exception.")]
-        [TestMethod]
-        public void DecryptPasswordTest()
-        {
-            var result = passwordService.DecryptPassword(null);
+            Assert.AreEqual(15, num);
         }
     }
 }
