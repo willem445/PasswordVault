@@ -473,7 +473,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayPassword(string password)
         {
-            MessageBox.Show(password);
+            if (!string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show(password);
+            }       
         }
 
         /*************************************************************************************************/
