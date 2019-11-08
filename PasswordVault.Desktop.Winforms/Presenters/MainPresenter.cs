@@ -73,6 +73,7 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
             _mainView.DeleteAccountEvent += DeleteAccount;
+            _mainView.GeneratePasswordEvent += GenerateNewPassword;
         }
 
         /*=================================================================================================
@@ -285,10 +286,19 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            if (result != null)
+            if (result != null && !string.IsNullOrEmpty(result.Username))
             {
                 System.Windows.Forms.Clipboard.SetText(result.Username);
             }       
+        }
+
+        /*************************************************************************************************/
+        private void GenerateNewPassword()
+        {
+            string result = "";
+
+            result = _serviceWrapper.GeneratePasswordKey();
+            _mainView.DisplayGeneratePasswordResult(result);
         }
 
         /*************************************************************************************************/

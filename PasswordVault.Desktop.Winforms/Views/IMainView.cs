@@ -30,6 +30,8 @@ namespace PasswordVault.Desktop.Winforms
         event Action<DataGridViewRow> ShowPasswordEvent;
         event Action<DataGridViewRow> NavigateToWebsiteEvent;
 
+        event Action GeneratePasswordEvent;
+
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);
         void DisplayPasswordToEdit(Password password);
@@ -38,5 +40,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayPassword(string password);
         void DisplayAddPasswordResult(AddModifyPasswordResult result);
         void DisplayDeletePasswordResult(DeletePasswordResult result);
+        void DisplayGeneratePasswordResult(string generatedPassword);
     }
 }
