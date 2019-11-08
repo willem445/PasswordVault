@@ -270,6 +270,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
             passwordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
             passwordDataGridView.AllowUserToOrderColumns = true;
+            passwordDataGridView.AllowUserToAddRows = false;
             passwordDataGridView.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
             passwordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
             passwordDataGridView.EnableHeadersVisualStyles = false;
@@ -428,6 +429,10 @@ namespace PasswordVault.Desktop.Winforms
 
                     break;
             }
+
+            // Fix for #37, update filter when we edit a password
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
 
         /*************************************************************************************************/
@@ -541,6 +546,10 @@ namespace PasswordVault.Desktop.Winforms
                     UIHelper.UpdateStatusLabel("Password deleted.", userStatusLabel, ErrorLevel.Neutral);
                     break;
             }
+
+            // Fix for #37, update filter when we delete a password
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
 
         public void DisplayGeneratePasswordResult(string generatedPassword)
