@@ -69,6 +69,7 @@ namespace PasswordVault.Desktop.Winforms
         public event Action<DataGridViewRow> CopyPasswordEvent;
         public event Action<DataGridViewRow> ShowPasswordEvent;
         public event Action<DataGridViewRow> NavigateToWebsiteEvent;
+        public event Action GeneratePasswordEvent;
 
         /*PRIVATE*****************************************************************************************/
         private ILoginView _loginView;
@@ -449,10 +450,17 @@ namespace PasswordVault.Desktop.Winforms
                     passphraseTextBox.Enabled = false;
                     usernameTextBox.Enabled = false;
                     emailTextBox.Enabled = false;
+                    filterTextBox.Enabled = false;
+                    applicationTextBox.Text = "";
+                    descriptionTextBox.Text = "";
+                    websiteTextBox.Text = "";
+                    passphraseTextBox.Text = "";
+                    usernameTextBox.Text = "";
+                    emailTextBox.Text = "";
+                    filterTextBox.Text = "";
                     addButton.Enabled = false;
                     deleteButton.Enabled = false;
-                    editButton.Enabled = false;
-                    filterTextBox.Enabled = false;
+                    editButton.Enabled = false;                  
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
@@ -465,7 +473,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayPassword(string password)
         {
-            MessageBox.Show(password);
+            if (!string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show(password);
+            }       
         }
 
         /*************************************************************************************************/
@@ -530,6 +541,11 @@ namespace PasswordVault.Desktop.Winforms
                     UIHelper.UpdateStatusLabel("Password deleted.", userStatusLabel, ErrorLevel.Neutral);
                     break;
             }
+        }
+
+        public void DisplayGeneratePasswordResult(string generatedPassword)
+        {
+            passphraseTextBox.Text = generatedPassword;
         }
 
 
@@ -961,9 +977,10 @@ namespace PasswordVault.Desktop.Winforms
             about.Dispose();
         }
 
+        /*************************************************************************************************/
         private void PassphraseTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter) // submit password
             {
                 if (!_editMode)
                 {
@@ -983,6 +1000,29 @@ namespace PasswordVault.Desktop.Winforms
                                        websiteTextBox.Text,
                                        passphraseTextBox.Text);
                 }
+
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        /*************************************************************************************************/
+        private void passphraseTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.G) // generate password
+            {
+                RaiseAddPasswordEvent();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        /*************************************************************************************************/
+        private void RaiseAddPasswordEvent()
+        {
+            if (GeneratePasswordEvent != null)
+            {
+                GeneratePasswordEvent();
             }
         }
 

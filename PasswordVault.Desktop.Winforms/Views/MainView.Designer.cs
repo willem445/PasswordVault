@@ -160,7 +160,7 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.passwordDataGridView.Location = new System.Drawing.Point(12, 145);
             this.passwordDataGridView.Name = "passwordDataGridView";
-            this.passwordDataGridView.Size = new System.Drawing.Size(715, 290);
+            this.passwordDataGridView.Size = new System.Drawing.Size(730, 290);
             this.passwordDataGridView.TabIndex = 1;
             this.passwordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
             this.passwordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
@@ -168,7 +168,7 @@ namespace PasswordVault.Desktop.Winforms
             // addButton
             // 
             this.addButton.Enabled = false;
-            this.addButton.Location = new System.Drawing.Point(733, 98);
+            this.addButton.Location = new System.Drawing.Point(748, 98);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 26;
@@ -179,7 +179,7 @@ namespace PasswordVault.Desktop.Winforms
             // editButton
             // 
             this.editButton.Enabled = false;
-            this.editButton.Location = new System.Drawing.Point(733, 163);
+            this.editButton.Location = new System.Drawing.Point(748, 163);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 5;
@@ -225,8 +225,9 @@ namespace PasswordVault.Desktop.Winforms
             this.passphraseTextBox.Enabled = false;
             this.passphraseTextBox.Location = new System.Drawing.Point(682, 72);
             this.passphraseTextBox.Name = "passphraseTextBox";
-            this.passphraseTextBox.Size = new System.Drawing.Size(126, 20);
+            this.passphraseTextBox.Size = new System.Drawing.Size(141, 20);
             this.passphraseTextBox.TabIndex = 25;
+            this.passphraseTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.passphraseTextBox_KeyDown);
             this.passphraseTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PassphraseTextBox_KeyUp);
             // 
             // label2
@@ -259,7 +260,7 @@ namespace PasswordVault.Desktop.Winforms
             // deleteButton
             // 
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(733, 192);
+            this.deleteButton.Location = new System.Drawing.Point(748, 192);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 15;
@@ -290,7 +291,7 @@ namespace PasswordVault.Desktop.Winforms
             this.userStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 444);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(822, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(835, 22);
             this.statusStrip1.TabIndex = 26;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -303,7 +304,7 @@ namespace PasswordVault.Desktop.Winforms
             // 
             this.closeButton.AutoSize = true;
             this.closeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.closeButton.Location = new System.Drawing.Point(796, 9);
+            this.closeButton.Location = new System.Drawing.Point(809, 9);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(14, 13);
             this.closeButton.TabIndex = 27;
@@ -316,7 +317,7 @@ namespace PasswordVault.Desktop.Winforms
             // 
             this.moveWindowPanel.Location = new System.Drawing.Point(177, 0);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(593, 53);
+            this.moveWindowPanel.Size = new System.Drawing.Size(600, 53);
             this.moveWindowPanel.TabIndex = 28;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
@@ -343,7 +344,7 @@ namespace PasswordVault.Desktop.Winforms
             // editCancelButton
             // 
             this.editCancelButton.Enabled = false;
-            this.editCancelButton.Location = new System.Drawing.Point(652, 98);
+            this.editCancelButton.Location = new System.Drawing.Point(667, 98);
             this.editCancelButton.Name = "editCancelButton";
             this.editCancelButton.Size = new System.Drawing.Size(75, 23);
             this.editCancelButton.TabIndex = 31;
@@ -368,7 +369,7 @@ namespace PasswordVault.Desktop.Winforms
             // 
             this.minimizeButton.AutoSize = true;
             this.minimizeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.minimizeButton.Location = new System.Drawing.Point(776, 9);
+            this.minimizeButton.Location = new System.Drawing.Point(789, 9);
             this.minimizeButton.Name = "minimizeButton";
             this.minimizeButton.Size = new System.Drawing.Size(10, 13);
             this.minimizeButton.TabIndex = 32;
@@ -399,7 +400,7 @@ namespace PasswordVault.Desktop.Winforms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(822, 466);
+            this.ClientSize = new System.Drawing.Size(835, 466);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.emailTextBox);
             this.Controls.Add(this.minimizeButton);
