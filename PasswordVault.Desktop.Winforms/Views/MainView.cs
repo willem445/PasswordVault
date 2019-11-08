@@ -270,6 +270,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordDataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(85, 85, 85);
             passwordDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.RaisedHorizontal;
             passwordDataGridView.AllowUserToOrderColumns = true;
+            passwordDataGridView.AllowUserToAddRows = false;
             passwordDataGridView.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
             passwordDataGridView.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
             passwordDataGridView.EnableHeadersVisualStyles = false;
