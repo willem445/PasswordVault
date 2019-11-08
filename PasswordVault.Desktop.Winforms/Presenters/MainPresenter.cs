@@ -104,37 +104,40 @@ namespace PasswordVault.Desktop.Winforms
             List<Password> result = new List<Password>();
             List<Password> passwords = _serviceWrapper.GetPasswords();
 
-            if (!string.IsNullOrEmpty(filterText))
+            if (passwords != null)
             {
-                switch (passwordFilterOption)
+                if (!string.IsNullOrEmpty(filterText))
                 {
-                    case PasswordFilterOption.Application:
-                        result = (from Password password in passwords
-                                  where password.Application?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
-                                  select password).ToList<Password>();
-                        break;
+                    switch (passwordFilterOption)
+                    {
+                        case PasswordFilterOption.Application:
+                            result = (from Password password in passwords
+                                      where password.Application?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
 
-                    case PasswordFilterOption.Description:
-                        result = (from Password password in passwords
-                                  where password.Description?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
-                                  select password).ToList<Password>();
-                        break;
+                        case PasswordFilterOption.Description:
+                            result = (from Password password in passwords
+                                      where password.Description?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
 
-                    case PasswordFilterOption.Website:
-                        result = (from Password password in passwords
-                                  where password.Website?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
-                                  select password).ToList<Password>();
-                        break;
+                        case PasswordFilterOption.Website:
+                            result = (from Password password in passwords
+                                      where password.Website?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
+                    }
+
+                    BindingList<Password> uiBindingList = new BindingList<Password>(result);
+                    _mainView.DisplayPasswords(uiBindingList);
                 }
-
-                BindingList<Password> uiBindingList = new BindingList<Password>(result);
-                _mainView.DisplayPasswords(uiBindingList);
-            }
-            else
-            {
-                BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
-                _mainView.DisplayPasswords(uiBindingList);
-            }
+                else
+                {
+                    BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
+                    _mainView.DisplayPasswords(uiBindingList);
+                }
+            }       
         }
 
         /*************************************************************************************************/

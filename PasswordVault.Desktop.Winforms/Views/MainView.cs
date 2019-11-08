@@ -428,6 +428,9 @@ namespace PasswordVault.Desktop.Winforms
 
                     break;
             }
+
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
 
         /*************************************************************************************************/
@@ -541,6 +544,9 @@ namespace PasswordVault.Desktop.Winforms
                     UIHelper.UpdateStatusLabel("Password deleted.", userStatusLabel, ErrorLevel.Neutral);
                     break;
             }
+
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
 
         public void DisplayGeneratePasswordResult(string generatedPassword)
