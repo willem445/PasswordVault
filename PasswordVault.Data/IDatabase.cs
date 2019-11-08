@@ -23,8 +23,8 @@ namespace PasswordVault.Data
         /// <param name="password">Database password object to add.</param>
         /// <returns></returns>
         Int64 AddPassword(DatabasePassword password);
-        bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword);
-        bool DeletePassword(DatabasePassword password);
+        bool ModifyPassword(DatabasePassword modifiedPassword);
+        bool DeletePassword(Int64 passwordUniqueId);
         List<DatabasePassword> GetUserPasswordsByGUID(string guid);
     }
 }

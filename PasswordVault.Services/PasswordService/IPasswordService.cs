@@ -1,27 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using PasswordVault.Models;
 
 namespace PasswordVault.Services
 {
     public interface IPasswordService
     {
-        LoginResult Login(string username, string password);
-        LogOutResult Logout();
-        bool IsLoggedIn();
-        CreateUserResult CreateNewUser(User user);
-        string GetCurrentUsername();
-        User GetCurrentUser();
-        ChangeUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword);
-        bool VerifyCurrentUserPassword(string password);
-        DeleteUserResult DeleteUser(User user);
-        UserInformationResult EditUser(User user);
-        AddPasswordResult AddPassword(Password password);
-        DeletePasswordResult DeletePassword(Password password);
-        AddPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
-        List<Password> GetPasswords();
-        Password DecryptPassword(Password password);
-        int GetMinimumPasswordLength();
-        string GeneratePasswordKey();
+        AddPasswordResult AddPassword(string userUuid, Password password, string key);
+        AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key);
+        DeletePasswordResult DeletePassword(Int64 passwordUuid);
+        List<Password> GetPasswords(string userUuid, string decryptionKey);
+        string GeneratePasswordKey(int length);
     }
 }

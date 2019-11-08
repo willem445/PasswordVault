@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -15,11 +16,11 @@ namespace PasswordVault.ServicesTests
     public class DeletePasswordTests
     {
         IDatabase db;
-        IPasswordService passwordService;
-        CreateUserResult createUserResult;
-        LoginResult loginResult;
+        IDesktopServiceWrapper passwordService;
+        AddUserResult createUserResult;
+        AuthenticateResult loginResult;
         LogOutResult logoutResult;
-        AddPasswordResult addPasswordResult;
+        AddModifyPasswordResult addPasswordResult;
         DeletePasswordResult deletePasswordResult;
         User user;
 
@@ -65,15 +66,15 @@ namespace PasswordVault.ServicesTests
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
 
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
         }
 
         // Use TestCleanup to run code after each test has run
@@ -101,7 +102,7 @@ namespace PasswordVault.ServicesTests
         {
             Password password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             deletePasswordResult = passwordService.DeletePassword(null);
@@ -117,7 +118,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             logoutResult = passwordService.Logout();
@@ -127,8 +128,8 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(DeletePasswordResult.Failed, deletePasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
         }
 
         /// <summary>
@@ -144,30 +145,30 @@ namespace PasswordVault.ServicesTests
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
-            user = new User("testAccount2", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount2", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             Password password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             Password password2 = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
-            loginResult = passwordService.Login("testAccount2", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount2", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
             Assert.AreEqual(4, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             deletePasswordResult = passwordService.DeletePassword(password);
@@ -180,20 +181,13 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual("email@email.com", passwordService.GetPasswords()[0].Email);
             Assert.AreEqual("descriptions", passwordService.GetPasswords()[0].Description);
             Assert.AreEqual("https://www.website.com", passwordService.GetPasswords()[0].Website);
-            Assert.AreNotEqual("passphrase", passwordService.GetPasswords()[0].Passphrase); // verify that password is encrypted
-            Password decryptPassword = passwordService.DecryptPassword(passwords[0]);
-            Assert.AreEqual("App2", decryptPassword.Application);
-            Assert.AreEqual("username", decryptPassword.Username);
-            Assert.AreEqual("email@email.com", decryptPassword.Email);
-            Assert.AreEqual("descriptions", decryptPassword.Description);
-            Assert.AreEqual("https://www.website.com", decryptPassword.Website);
-            Assert.AreEqual("passphrase", decryptPassword.Passphrase); // verify that password is decrypted
+            Assert.AreEqual("passphrase", passwordService.GetPasswords()[0].Passphrase); 
 
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
             passwords = passwordService.GetPasswords();
             Assert.AreEqual(2, passwords.Count);
             Assert.AreEqual("App1", passwordService.GetPasswords()[0].Application);
@@ -201,28 +195,14 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual("email@email.com", passwordService.GetPasswords()[0].Email);
             Assert.AreEqual("descriptions", passwordService.GetPasswords()[0].Description);
             Assert.AreEqual("https://www.website.com", passwordService.GetPasswords()[0].Website);
-            Assert.AreNotEqual("passphrase", passwordService.GetPasswords()[0].Passphrase); // verify that password is encrypted
-            decryptPassword = passwordService.DecryptPassword(passwords[0]);
-            Assert.AreEqual("App1", decryptPassword.Application);
-            Assert.AreEqual("username", decryptPassword.Username);
-            Assert.AreEqual("email@email.com", decryptPassword.Email);
-            Assert.AreEqual("descriptions", decryptPassword.Description);
-            Assert.AreEqual("https://www.website.com", decryptPassword.Website);
-            Assert.AreEqual("passphrase", decryptPassword.Passphrase); // verify that password is decrypted
+            Assert.AreEqual("passphrase", passwordService.GetPasswords()[0].Passphrase); // verify that password is encrypted
 
             Assert.AreEqual("App2", passwordService.GetPasswords()[1].Application);
             Assert.AreEqual("username", passwordService.GetPasswords()[1].Username);
             Assert.AreEqual("email@email.com", passwordService.GetPasswords()[1].Email);
             Assert.AreEqual("descriptions", passwordService.GetPasswords()[1].Description);
             Assert.AreEqual("https://www.website.com", passwordService.GetPasswords()[1].Website);
-            Assert.AreNotEqual("passphrase", passwordService.GetPasswords()[1].Passphrase); // verify that password is encrypted
-            decryptPassword = passwordService.DecryptPassword(passwords[1]);
-            Assert.AreEqual("App2", decryptPassword.Application);
-            Assert.AreEqual("username", decryptPassword.Username);
-            Assert.AreEqual("email@email.com", decryptPassword.Email);
-            Assert.AreEqual("descriptions", decryptPassword.Description);
-            Assert.AreEqual("https://www.website.com", decryptPassword.Website);
-            Assert.AreEqual("passphrase", decryptPassword.Passphrase); // verify that password is decrypted
+            Assert.AreEqual("passphrase", passwordService.GetPasswords()[1].Passphrase); // verify that password is encrypted
         }
     }
 }

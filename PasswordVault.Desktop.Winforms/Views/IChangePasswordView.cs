@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PasswordVault.Services;
+using PasswordVault.Models;
 
 namespace PasswordVault.Desktop.Winforms
 {
@@ -15,7 +16,7 @@ namespace PasswordVault.Desktop.Winforms
 
         void ShowChangePassword();
         void DisplayGeneratedPassword(string generatedPassword);
-        void DisplayChangePasswordResult(ChangeUserPasswordResult result);
+        void DisplayChangePasswordResult(ValidateUserPasswordResult result);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
     }
 }

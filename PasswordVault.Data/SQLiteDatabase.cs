@@ -373,11 +373,11 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword modifiedPassword)
         {
             bool result = false;
 
-            if (password != null && modifiedPassword != null)
+            if (modifiedPassword != null)
             {
                 using (var dbConn = DbConnection)
                 {
@@ -400,7 +400,7 @@ namespace PasswordVault.Data
                         Description = modifiedPassword.Description,
                         Website = modifiedPassword.Website,
                         Passphrase = modifiedPassword.Passphrase,
-                        UniqueID = password.UniqueID
+                        UniqueID = modifiedPassword.UniqueID
                     });
 
                     if (dbResult > 0)
@@ -414,28 +414,25 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool DeletePassword(DatabasePassword password)
+        public bool DeletePassword(Int64 passwordUniqueId)
         {
             bool result = false;
 
-            if (password != null)
+            using (var dbConn = DbConnection)
             {
-                using (var dbConn = DbConnection)
+                dbConn.Open();
+
+                string query = @"DELETE FROM Passwords
+                                WHERE UniqueID = @UniqueID";
+
+                var dbResult = dbConn.Execute(query, new { UniqueID = passwordUniqueId });
+
+                if (dbResult == 1)
                 {
-                    dbConn.Open();
-
-                    string query = @"DELETE FROM Passwords
-                                 WHERE UniqueID = @UniqueID";
-
-                    var dbResult = dbConn.Execute(query, new { UniqueID = password.UniqueID });
-
-                    if (dbResult == 1)
-                    {
-                        result = true;
-                    }
+                    result = true;
                 }
             }
-
+            
             return result;
         }
 

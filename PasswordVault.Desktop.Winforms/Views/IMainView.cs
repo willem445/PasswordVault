@@ -33,10 +33,10 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);
         void DisplayPasswordToEdit(Password password);
-        void DisplayAddEditPasswordResult(AddPasswordResult result);
+        void DisplayAddEditPasswordResult(AddModifyPasswordResult result);
         void DisplayLogOutResult(LogOutResult result);
         void DisplayPassword(string password);
-        void DisplayAddPasswordResult(AddPasswordResult result);
+        void DisplayAddPasswordResult(AddModifyPasswordResult result);
         void DisplayDeletePasswordResult(DeletePasswordResult result);
     }
 }

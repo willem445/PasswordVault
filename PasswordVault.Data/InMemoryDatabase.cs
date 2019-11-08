@@ -74,9 +74,9 @@ namespace PasswordVault.Data
             return true;
         }
 
-        public bool DeletePassword(DatabasePassword password)
+        public bool DeletePassword(Int64 passwordUniqueId)
         {
-            _localPasswordDb.RemoveAll(x => x.UniqueID == password.UniqueID);
+            _localPasswordDb.RemoveAll(x => x.UniqueID == passwordUniqueId);
             return true;
         }
        
@@ -107,11 +107,11 @@ namespace PasswordVault.Data
             return _localPasswordDb.Where(x => x.UserGUID == guid).ToList();
         }
         
-        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword modifiedPassword)
         {
             bool result = false;
 
-            int index = _localPasswordDb.FindIndex(x => x.UniqueID == password.UniqueID);
+            int index = _localPasswordDb.FindIndex(x => x.UniqueID == modifiedPassword.UniqueID);
 
             if (index != -1)
             {

@@ -14,9 +14,9 @@ namespace PasswordVault.Desktop.Winforms
         event Action GenerateNewPasswordEvent;
         event Action<string> PasswordChangedEvent;
         event Action LoginSuccessfulEvent;
-        void DisplayLoginResult(LoginResult result);
+        void DisplayLoginResult(AuthenticateResult result);
         void ShowLoginMenu();
-        void DisplayCreateNewUserResult(CreateUserResult result, int minimumPasswordLength);
+        void DisplayCreateNewUserResult(AddUserResult result, int minimumPasswordLength);
         void DisplayGeneratePasswordResult(string generatedPassword);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -11,13 +12,13 @@ namespace PasswordVault.ServicesTests
     public class DeleteUserTests
     {
         IDatabase db;
-        IPasswordService passwordService;
+        IDesktopServiceWrapper passwordService;
 
         [TestInitialize()]
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
         }
 
         // Use TestCleanup to run code after each test has run
@@ -35,18 +36,18 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteSingleUserTest()
         {
-            CreateUserResult createResult;
+            AddUserResult createResult;
             DeleteUserResult deleteResult;
             User user;
 
             // Mock a user model that would be coming from the UI
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
 
             deleteResult = passwordService.DeleteUser(user);
             Assert.AreEqual(DeleteUserResult.Failed, deleteResult);
 
             createResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createResult);
+            Assert.AreEqual(AddUserResult.Successful, createResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             deleteResult = passwordService.DeleteUser(null);
@@ -64,24 +65,24 @@ namespace PasswordVault.ServicesTests
         [TestMethod()]
         public void DeleteMultipleUsersTest()
         {
-            CreateUserResult createResult;
+            AddUserResult createResult;
             DeleteUserResult deleteResult;
 
             // Mock a user model that would be coming from the UI
             User[] users = 
             {
-                new User("testAccount0", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount1", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount2", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount3", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount4", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount0", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount2", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount3", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount4", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
             };
 
             Int32 addedUsersCount = 1;
             foreach (var user in users)
             {
                 createResult = passwordService.CreateNewUser(user);
-                Assert.AreEqual(CreateUserResult.Successful, createResult);
+                Assert.AreEqual(AddUserResult.Successful, createResult);
                 Assert.AreEqual(addedUsersCount, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
                 addedUsersCount++;
             }
@@ -103,19 +104,19 @@ namespace PasswordVault.ServicesTests
         public void DeleteUserWithPasswords()
         {
             User user;
-            CreateUserResult createResult;
-            LoginResult loginResult;
+            AddUserResult createResult;
+            AuthenticateResult loginResult;
             DeleteUserResult deleteResult;
 
             // Mock a user model that would be coming from the UI
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
 
             createResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createResult);
+            Assert.AreEqual(AddUserResult.Successful, createResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             // Mock a password model that would be coming from the UI
             Password[] passwords =
@@ -129,8 +130,8 @@ namespace PasswordVault.ServicesTests
             Int32 addedPasswordsCount = 1;
             foreach (var password in passwords)
             {
-                AddPasswordResult result = passwordService.AddPassword(password);
-                Assert.AreEqual(AddPasswordResult.Success, result);
+                AddModifyPasswordResult result = passwordService.AddPassword(password);
+                Assert.AreEqual(AddModifyPasswordResult.Success, result);
                 Assert.AreEqual(addedPasswordsCount, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
                 addedPasswordsCount++;
             }
@@ -148,19 +149,19 @@ namespace PasswordVault.ServicesTests
         
         public void DeleteUserWithMultiplePasswords()
         {
-            CreateUserResult createResult;
-            LoginResult loginResult;
+            AddUserResult createResult;
+            AuthenticateResult loginResult;
             DeleteUserResult deleteResult;
             LogOutResult logOutResult;
 
             // Mock a user model that would be coming from the UI
             User[] users =
             {
-                new User("testAccount0", "testPassword1@1", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount1", "testPassword1@2", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount2", "testPassword1@3", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount3", "testPassword1@4", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
-                new User("testAccount4", "testPassword1@5", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount0", "testPassword1@aaaaaaaaa1", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount1", "testPassword1@aaaaaaaaa2", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount2", "testPassword1@aaaaaaaaa3", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount3", "testPassword1@aaaaaaaaa4", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
+                new User("testAccount4", "testPassword1@aaaaaaaaa5", "testFirstName", "testLastName", "222-111-1111", "test@test.com"),
             };
 
             // Mock a password model that would be coming from the UI
@@ -178,17 +179,17 @@ namespace PasswordVault.ServicesTests
             foreach (var user in users)
             {
                 createResult = passwordService.CreateNewUser(user);
-                Assert.AreEqual(CreateUserResult.Successful, createResult);
+                Assert.AreEqual(AddUserResult.Successful, createResult);
                 Assert.AreEqual(addedUsersCount, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
                 addedUsersCount++;
 
                 loginResult = passwordService.Login(user.Username, user.PlainTextPassword);
-                Assert.AreEqual(LoginResult.Successful, loginResult);
+                Assert.AreEqual(AuthenticateResult.Successful, loginResult);
            
                 foreach (var password in passwords)
                 {
-                    AddPasswordResult result = passwordService.AddPassword(password);
-                    Assert.AreEqual(AddPasswordResult.Success, result);
+                    AddModifyPasswordResult result = passwordService.AddPassword(password);
+                    Assert.AreEqual(AddModifyPasswordResult.Success, result);
                     Assert.AreEqual(addedPasswordsCount, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
                     addedPasswordsCount++;
                 }
@@ -198,8 +199,8 @@ namespace PasswordVault.ServicesTests
             }
 
             // Login to the account to delete
-            loginResult = passwordService.Login("testAccount0", "testPassword1@1");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount0", "testPassword1@aaaaaaaaa1");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             // Delete the account
             string currentUserGUID = passwordService.GetCurrentUser().GUID;

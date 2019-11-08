@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PasswordVault.Services;
+using PasswordVault.Models;
 
 /*=================================================================================================
 DESCRIPTION
@@ -182,50 +183,50 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayChangePasswordResult(ChangeUserPasswordResult result)
+        public void DisplayChangePasswordResult(ValidateUserPasswordResult result)
         {
             switch(result)
             {
-                case ChangeUserPasswordResult.Failed:
+                case ValidateUserPasswordResult.Failed:
                     statusLabel.Text = "Failed!";
                     break;
 
-                case ChangeUserPasswordResult.PasswordsDoNotMatch:
+                case ValidateUserPasswordResult.PasswordsDoNotMatch:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.LengthRequirementNotMet:
+                case ValidateUserPasswordResult.LengthRequirementNotMet:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.NoLowerCaseCharacter:
+                case ValidateUserPasswordResult.NoLowerCaseCharacter:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.NoNumber:
+                case ValidateUserPasswordResult.NoNumber:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.NoSpecialCharacter:
+                case ValidateUserPasswordResult.NoSpecialCharacter:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.NoUpperCaseCharacter:
+                case ValidateUserPasswordResult.NoUpperCaseCharacter:
                     statusLabel.Text = "Passwords do not match!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.InvalidPassword:
+                case ValidateUserPasswordResult.InvalidPassword:
                     statusLabel.Text = "Password not correct!";
                     statusLabel.ForeColor = Color.Red;
                     break;
 
-                case ChangeUserPasswordResult.Success:
+                case ValidateUserPasswordResult.Success:
                     ClearChangePasswordView();
                     this.Close();
                     break;

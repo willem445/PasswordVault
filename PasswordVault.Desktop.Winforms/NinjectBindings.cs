@@ -60,9 +60,15 @@ namespace PasswordVault.Desktop.Winforms
         public override void Load()
         {
             Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
+
             Bind<IEncryptionService>().To<AesEncryption>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
+            Bind<IUserService>().To<UserService>().InSingletonScope();
+            Bind<IAuthenticationService>().To<AuthenticationService>();
+            Bind<ITokenService>().To<TokenService>();
+
+            Bind<IDesktopServiceWrapper>().To<DesktopServiceWrapper>().InSingletonScope();        
             Bind<ILoginView>().To<LoginView>().InSingletonScope();
             Bind<IMainView>().To<MainView>().InSingletonScope();
             Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();

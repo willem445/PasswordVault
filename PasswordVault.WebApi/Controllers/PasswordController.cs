@@ -126,7 +126,7 @@ namespace PasswordVault.WebApi.Controllers
                 return BadRequest();
             }
 
-            bool result = _dbContext.DeletePassword(new DatabasePassword(uniqueid, uuid, null, null, null, null, null, null));
+            //bool result = _dbContext.DeletePassword(new DatabasePassword(uniqueid, uuid, null, null, null, null, null, null));
 
             return Ok();
         }

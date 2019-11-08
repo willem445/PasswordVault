@@ -3,48 +3,39 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-
-/*=================================================================================================
-DESCRIPTION
-*================================================================================================*/
-/* 
- ------------------------------------------------------------------------------------------------*/
+using System.Text.RegularExpressions;
 
 namespace PasswordVault.Models
 {
-    /*=================================================================================================
-	ENUMERATIONS
-	*================================================================================================*/
+    public enum ValidateUserPasswordResult
+    {
+        Failed,
+        Success,
+        NoSpecialCharacter,
+        LengthRequirementNotMet,
+        NoNumber,
+        NoUpperCaseCharacter,
+        NoLowerCaseCharacter,
+        PasswordsDoNotMatch,
+        InvalidPassword,
+    }
 
-    /*=================================================================================================
-	STRUCTS
-	*================================================================================================*/
+    public enum UserInformationResult
+    {
+        Success,
+        Failed,
+        InvalidFirstName,
+        InvalidLastName,
+        InvalidPhoneNumber,
+        InvalidEmail,
+    }
 
-    /*=================================================================================================
-	CLASSES
-	*================================================================================================*/
     public class User
     {
-        /*=================================================================================================
-		CONSTANTS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
+        private const int MINIMUM_PASSWORD_LENGTH = 15;
 
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		FIELDS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
-
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		PROPERTIES
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
         public string PlainTextRandomKey { get; }
-        public string PlainTextPassword { get; }
+        public string PlainTextPassword { get; set; }
         public bool ValidUser { get; set; }
         public string Token { get; set; }
 
@@ -60,11 +51,6 @@ namespace PasswordVault.Models
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
 
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		CONSTRUCTORS
-		*================================================================================================*/
         public User(string uniqueID, string encryptedKey, string username, string iterations, string salt, string hash, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
         {
             GUID = uniqueID;
@@ -121,10 +107,6 @@ namespace PasswordVault.Models
 
         }
 
-        /*=================================================================================================
-		PUBLIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
         public string GetUserString()
         {
             string userString = "";
@@ -134,15 +116,145 @@ namespace PasswordVault.Models
             return userString;
         }
 
-        /*=================================================================================================
-		PRIVATE METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
+        public bool VerifyUsernameRequirements()
+        {
+            bool result = true;
 
-        /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
+            if (string.IsNullOrEmpty(this.Username))
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        public UserInformationResult VerifyUserInformation()
+        {
+            UserInformationResult result = UserInformationResult.Success;
+
+            if (this != null)
+            {
+                if (string.IsNullOrEmpty(this.FirstName))
+                {
+                    result = UserInformationResult.InvalidFirstName;
+                }
+
+                if (string.IsNullOrEmpty(this.LastName))
+                {
+                    result = UserInformationResult.InvalidLastName;
+                }
+
+                if (string.IsNullOrEmpty(this.Email) || this.Email == "example@provider.com")
+                {
+                    result = UserInformationResult.InvalidEmail;
+                }
+                else
+                {
+                    var regex = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
+
+                    Match match = Regex.Match(this.Email, regex, RegexOptions.IgnoreCase);
+
+                    if (!match.Success)
+                    {
+                        result = UserInformationResult.InvalidEmail;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(this.PhoneNumber) || this.PhoneNumber == "xxx-xxx-xxxx")
+                {
+                    result = UserInformationResult.InvalidPhoneNumber;
+                }
+                else
+                {
+                    if (!IsValidUSPhoneNumber(this.PhoneNumber))
+                    {
+                        result = UserInformationResult.InvalidPhoneNumber;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public ValidateUserPasswordResult VerifyPlaintextPasswordRequirements()
+        {
+            ValidateUserPasswordResult result = ValidateUserPasswordResult.Success;
+
+            bool containsNumber = false;
+            bool containsLowerCase = false;
+            bool containsUpperCase = false;
+
+            if (string.IsNullOrEmpty(this.PlainTextPassword))
+            {
+                return ValidateUserPasswordResult.Failed;
+            }
+
+            if (this.PlainTextPassword.Length <= MINIMUM_PASSWORD_LENGTH)
+            {
+                result = ValidateUserPasswordResult.LengthRequirementNotMet;
+            }
+
+            foreach (var character in this.PlainTextPassword)
+            {
+                if (char.IsUpper(character))
+                {
+                    containsUpperCase = true;
+                }
+                else if (char.IsLower(character))
+                {
+                    containsLowerCase = true;
+                }
+                else if (char.IsDigit(character))
+                {
+                    containsNumber = true;
+                }
+            }
+
+            if (!containsLowerCase)
+            {
+                result = ValidateUserPasswordResult.NoLowerCaseCharacter;
+            }
+
+            if (!containsUpperCase)
+            {
+                result = ValidateUserPasswordResult.NoUpperCaseCharacter;
+            }
+
+            if (!containsNumber)
+            {
+                result = ValidateUserPasswordResult.NoNumber;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(this.PlainTextPassword, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            {
+                result = ValidateUserPasswordResult.NoSpecialCharacter;
+            }
+
+            return result;
+        }
+
+        public static int GetMinimumPasswordLength()
+        {
+            return MINIMUM_PASSWORD_LENGTH;
+        }
+
+        private static bool IsValidUSPhoneNumber(string strPhone)
+        {
+            string regExPattern = @"^[01]?[- .]?(\([2-9]\d{2}\)|[2-9]\d{2})[- .]?\d{3}[- .]?\d{4}$";
+            return MatchStringFromRegex(strPhone, regExPattern);
+        }
+
+        private static bool MatchStringFromRegex(string str, string regexstr)
+        {
+            if (str == null)
+            {
+                throw new ArgumentNullException(nameof(str));
+            }
+
+            str = str.Trim();
+            System.Text.RegularExpressions.Regex pattern = new System.Text.RegularExpressions.Regex(regexstr);
+            return pattern.IsMatch(str);
+        }
 
     } // User CLASS
 } // PasswordVault.Models.Standard NAMESPACE

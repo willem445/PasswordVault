@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PasswordVault.Data;
 using PasswordVault.Services;
 using PasswordVault.Models;
+using PasswordVault.Desktop.Winforms;
 
 namespace PasswordVault.ServicesTests
 {
@@ -15,7 +16,7 @@ namespace PasswordVault.ServicesTests
     public class ModifyUserTests
     {
         IDatabase db;
-        IPasswordService passwordService;
+        IDesktopServiceWrapper passwordService;
 
         public ModifyUserTests()
         {
@@ -58,7 +59,7 @@ namespace PasswordVault.ServicesTests
         public void MyTestInitialize()
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
-            passwordService = new PasswordService(db, new MasterPassword(), new RijndaelManagedEncryption());
+            passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
         }
 
         // Use TestCleanup to run code after each test has run
@@ -74,23 +75,23 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void ModifyUserTest()
         {
-            CreateUserResult createUserResult;
-            LoginResult loginResult;
+            AddUserResult createUserResult;
+            AuthenticateResult loginResult;
             UserInformationResult modifyUserResult;
             User user;
             User userResult;
 
-            user = new User("testAccount", "testPassword1@", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
+            user = new User("testAccount", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com");
             createUserResult = passwordService.CreateNewUser(user);
-            Assert.AreEqual(CreateUserResult.Successful, createUserResult);
+            Assert.AreEqual(AddUserResult.Successful, createUserResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalUserDbAccess.Count);
 
             // Test modify while logged out
             modifyUserResult = passwordService.EditUser(new User(null, null, "testFirstName2", "testLastName2", "222-111-2222", "test2@test.com"));
             Assert.AreEqual(UserInformationResult.Failed, modifyUserResult);
 
-            loginResult = passwordService.Login("testAccount", "testPassword1@");
-            Assert.AreEqual(LoginResult.Successful, loginResult);
+            loginResult = passwordService.Login("testAccount", "testPassword1@aaaaaaaaa");
+            Assert.AreEqual(AuthenticateResult.Successful, loginResult);
             userResult = passwordService.GetCurrentUser();
             Assert.AreEqual(userResult.FirstName, "testFirstName");
             Assert.AreEqual(userResult.LastName, "testLastName");
