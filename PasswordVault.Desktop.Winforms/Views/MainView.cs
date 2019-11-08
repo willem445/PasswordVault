@@ -430,6 +430,7 @@ namespace PasswordVault.Desktop.Winforms
                     break;
             }
 
+            // Fix for #37, update filter when we edit a password
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
             RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
@@ -546,6 +547,7 @@ namespace PasswordVault.Desktop.Winforms
                     break;
             }
 
+            // Fix for #37, update filter when we delete a password
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
             RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
