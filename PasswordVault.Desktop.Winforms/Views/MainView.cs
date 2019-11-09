@@ -422,17 +422,13 @@ namespace PasswordVault.Desktop.Winforms
                     passphraseTextBox.Text = "";
                     applicationTextBox.Focus();
                     UIHelper.UpdateStatusLabel("Password modified.", userStatusLabel, ErrorLevel.Ok);
-                    this.Refresh();
+                    UpdateDataGridViewAfterEdit();
                     break;
 
                 default:
 
                     break;
             }
-
-            // Fix for #37, update filter when we edit a password
-            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
-            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
         }
 
         /*************************************************************************************************/
@@ -544,19 +540,17 @@ namespace PasswordVault.Desktop.Winforms
 
                 case DeletePasswordResult.Success:
                     UIHelper.UpdateStatusLabel("Password deleted.", userStatusLabel, ErrorLevel.Neutral);
-                    break;
-            }
 
-            // Fix for #37, update filter when we delete a password
-            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
-            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
+                    UpdateDataGridViewAfterDelete();
+
+                    break;
+            }   
         }
 
         public void DisplayGeneratePasswordResult(string generatedPassword)
         {
             passphraseTextBox.Text = generatedPassword;
         }
-
 
         /*=================================================================================================
 		PRIVATE METHODS
@@ -886,6 +880,9 @@ namespace PasswordVault.Desktop.Winforms
                 {
                     passwordContextMenuStrip.Show(passwordDataGridView, new Point(e.X, e.Y));
                     _rowIndexCopy = hitTestInfo.RowIndex;
+
+                    passwordDataGridView.Rows[_rowIndexCopy].Selected = true;
+                    passwordDataGridView.Rows[_rowIndexCopy].Cells[0].Selected = true;
                 }                
             }
         }
@@ -1033,6 +1030,35 @@ namespace PasswordVault.Desktop.Winforms
             {
                 GeneratePasswordEvent();
             }
+        }
+
+        /*************************************************************************************************/
+        private void UpdateDataGridViewAfterDelete()
+        {
+            int newDgvIndex = _selectedDgvIndex - 1;
+
+            // Fix for #37, update filter when we delete a password
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
+
+            if (newDgvIndex >= 0)
+            {
+                passwordDataGridView.Rows[newDgvIndex].Selected = true;
+                passwordDataGridView.Rows[newDgvIndex].Cells[0].Selected = true;
+            }
+        }
+
+        /*************************************************************************************************/
+        private void UpdateDataGridViewAfterEdit()
+        {
+            int dgvIndex = _selectedDgvIndex; // Need to store current index before updating filter since index will reset to 0
+
+            // Fix for #37, update filter when we delete a password
+            PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
+            RaiseNewFilterEvent(filterTextBox.Text, filterOption);
+
+            passwordDataGridView.Rows[dgvIndex].Selected = true;
+            passwordDataGridView.Rows[dgvIndex].Cells[0].Selected = true;
         }
 
         /*=================================================================================================
