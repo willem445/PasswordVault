@@ -20,7 +20,6 @@ namespace PasswordVault.ServicesTests
         AddUserResult createUserResult;
         AuthenticateResult loginResult;
         LogOutResult logoutResult;
-        AddModifyPasswordResult addPasswordResult;
         User user;
 
         public PasswordServiceTests()

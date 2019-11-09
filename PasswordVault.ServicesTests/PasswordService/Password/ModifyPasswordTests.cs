@@ -102,7 +102,6 @@ namespace PasswordVault.ServicesTests
         public void MultipleUserModifyTest()
         {
             List<Password> passwords = new List<Password>();
-            Password decryptPassword;
 
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
@@ -193,7 +192,6 @@ namespace PasswordVault.ServicesTests
         public void ModifyPasswordTest()
         {
             List<Password> passwords;
-            Password decryptedPass;
 
             Password password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             Password password2 = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");

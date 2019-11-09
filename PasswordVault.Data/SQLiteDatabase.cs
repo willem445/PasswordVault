@@ -329,7 +329,6 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
         public Int64 AddPassword(DatabasePassword password)
         {
-            bool result = false;
             Int64 uniqueID = -1;
 
             if (password != null)
@@ -363,7 +362,6 @@ namespace PasswordVault.Data
 
                     if (dbresult >= 0)
                     {
-                        result = true;
                         uniqueID = dbresult;
                     }
                 }
