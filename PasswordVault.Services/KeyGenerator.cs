@@ -20,15 +20,20 @@ namespace PasswordVault.Services
         /*CONSTRUCTORS*****************************************************/
 
         /*PUBLIC METHODS***************************************************/
-        public static string GetUniqueKey(int size)
+        /// <summary>
+        /// Generates a random key of given length.
+        /// </summary>
+        /// <param name="length">Desired length of key.</param>
+        /// <returns>Random key string.</returns>
+        public static string GetUniqueKey(int length)
         {
-            byte[] data = new byte[4 * size];
+            byte[] data = new byte[4 * length];
             using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
             {
                 crypto.GetBytes(data);
             }
-            StringBuilder result = new StringBuilder(size);
-            for (int i = 0; i < size; i++)
+            StringBuilder result = new StringBuilder(length);
+            for (int i = 0; i < length; i++)
             {
                 var rnd = BitConverter.ToUInt32(data, i * 4);
                 var idx = rnd % chars.Length;
