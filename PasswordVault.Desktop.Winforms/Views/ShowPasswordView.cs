@@ -40,19 +40,20 @@ namespace PasswordVault.Desktop.Winforms
         {
             InitializeComponent();
 
-            BackColor = Color.FromArgb(35, 35, 35);
+            BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
-            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Bold);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
-            showPasswordTextbox.BackColor = Color.FromArgb(63, 63, 63);
-            showPasswordTextbox.ForeColor = Color.FromArgb(242, 242, 242);
+
+            showPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            showPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             showPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
+            showPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             showPasswordTextbox.ReadOnly = true;
             showPasswordTextbox.Text = password;
-            showPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             showPasswordTextbox.SelectionStart = 0;
             showPasswordTextbox.SelectionLength = 0;
 
@@ -63,12 +64,12 @@ namespace PasswordVault.Desktop.Winforms
             okButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             okButton.FlatAppearance.BorderSize = 1;
 
-            copyButton.BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            copyButton.BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             copyButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             copyButton.FlatStyle = FlatStyle.Flat;
             copyButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
-            copyButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
-            copyButton.FlatAppearance.BorderSize = 1;
+            copyButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
+            copyButton.FlatAppearance.BorderSize = 0;
             copyButton.Image = Bitmap.FromFile(Path.Combine(Environment.CurrentDirectory, @"Resources\icons8-copy-24.png"));
             copyButton.ImageAlign = ContentAlignment.MiddleCenter;
 
@@ -93,15 +94,15 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(107, 20, 3);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.CloseButtonColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
