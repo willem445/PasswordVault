@@ -105,7 +105,7 @@ namespace PasswordVault.Desktop.Winforms
     public class MyColorTable : ProfessionalColorTable
     {
         public Color MenuItemSelectedColor { get; set; } = Color.FromArgb(0x80, 0x80, 0x80);
-        public Color MenuItemBackgroundColor { get; set; } = Color.FromArgb(63, 63, 63);
+        public Color MenuItemBackgroundColor { get; set; } = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
 
         public override Color ToolStripDropDownBackground
         {

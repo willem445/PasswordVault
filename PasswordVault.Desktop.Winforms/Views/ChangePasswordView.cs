@@ -63,59 +63,59 @@ namespace PasswordVault.Desktop.Winforms
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure buttons
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
-            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Bold);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
-            changePasswordButton.BackColor = Color.FromArgb(63, 63, 63);
-            changePasswordButton.ForeColor = Color.FromArgb(242, 242, 242);
+            changePasswordButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            changePasswordButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             changePasswordButton.FlatStyle = FlatStyle.Flat;
-            changePasswordButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
-            changePasswordButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            changePasswordButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            changePasswordButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             changePasswordButton.FlatAppearance.BorderSize = 1;
 
-            generatePasswordButton.BackColor = Color.FromArgb(63, 63, 63);
-            generatePasswordButton.ForeColor = Color.FromArgb(242, 242, 242);
+            generatePasswordButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            generatePasswordButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             generatePasswordButton.FlatStyle = FlatStyle.Flat;
-            generatePasswordButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
-            generatePasswordButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            generatePasswordButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            generatePasswordButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             generatePasswordButton.FlatAppearance.BorderSize = 1;
 
             // Configure textbox
-            currentPasswordTextbox.BackColor = Color.FromArgb(63, 63, 63);
-            currentPasswordTextbox.ForeColor = Color.FromArgb(242, 242, 242);
+            currentPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            currentPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             currentPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            currentPasswordTextbox.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            currentPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
 
-            passwordTextbox.BackColor = Color.FromArgb(63, 63, 63);
-            passwordTextbox.ForeColor = Color.FromArgb(242, 242, 242);
+            passwordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            passwordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             passwordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            passwordTextbox.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            passwordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
 
-            confirmPasswordTextbox.BackColor = Color.FromArgb(63, 63, 63);
-            confirmPasswordTextbox.ForeColor = Color.FromArgb(242, 242, 242);
+            confirmPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             confirmPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            confirmPasswordTextbox.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
+            confirmPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
 
             // Configure labels
-            label1.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label1.ForeColor = Color.FromArgb(242, 242, 242);
+            label1.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label1.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label2.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label2.ForeColor = Color.FromArgb(242, 242, 242);
+            label2.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label2.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label3.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label3.ForeColor = Color.FromArgb(242, 242, 242);
+            label3.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label3.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label4.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label4.ForeColor = Color.FromArgb(242, 242, 242);
+            label4.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label4.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            passwordStrengthLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            passwordStrengthLabel.ForeColor = Color.FromArgb(242, 242, 242);
+            passwordStrengthLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            passwordStrengthLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             passwordStrengthLabel.Text = "Weak";
 
-            statusLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            statusLabel.ForeColor = Color.FromArgb(242, 242, 242);
+            statusLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            statusLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             statusLabel.Text = "";
 
             //Configure progressbar

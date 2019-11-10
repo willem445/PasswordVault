@@ -57,6 +57,7 @@ namespace PasswordVault.Desktop.Winforms
             _loginView.CreateNewUserEvent += CreateNewUser;
             _loginView.PasswordChangedEvent += CalculatePasswordComplexity;
             _loginView.GenerateNewPasswordEvent += GeneratePassword;
+            _loginView.DisplayPasswordRequirementsEvent += PasswordRequirements;
         }
 
         /*=================================================================================================
@@ -107,6 +108,12 @@ namespace PasswordVault.Desktop.Winforms
             passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(password.Length, password);
 
             _loginView.DisplayPasswordComplexity(passwordComplexityLevel);
+        }
+
+        private void PasswordRequirements()
+        {
+            int length = _serviceWrapper.GetMinimumPasswordLength();
+            _loginView.DisplayPasswordRequirements(length);
         }
 
         /*=================================================================================================
