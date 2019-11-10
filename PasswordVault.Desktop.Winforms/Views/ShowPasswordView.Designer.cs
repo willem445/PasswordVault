@@ -1,6 +1,6 @@
 ﻿namespace PasswordVault.Desktop.Winforms
 {
-    partial class AboutView
+    partial class ShowPasswordView
     {
         /// <summary>
         /// Required designer variable.
@@ -30,17 +30,16 @@
         {
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
-            this.aboutLabel = new System.Windows.Forms.Label();
-            this.iconLinkLabel = new System.Windows.Forms.LinkLabel();
-            this.versionLabel = new System.Windows.Forms.Label();
-            this.moveWindowPanel.SuspendLayout();
+            this.showPasswordTextbox = new System.Windows.Forms.TextBox();
+            this.okButton = new System.Windows.Forms.Button();
+            this.copyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // closeButton
             // 
             this.closeButton.AutoSize = true;
             this.closeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.closeButton.Location = new System.Drawing.Point(359, 9);
+            this.closeButton.Location = new System.Drawing.Point(340, 9);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(14, 13);
             this.closeButton.TabIndex = 28;
@@ -51,62 +50,56 @@
             // 
             // moveWindowPanel
             // 
-            this.moveWindowPanel.Controls.Add(this.versionLabel);
             this.moveWindowPanel.Location = new System.Drawing.Point(1, 1);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(352, 28);
+            this.moveWindowPanel.Size = new System.Drawing.Size(333, 28);
             this.moveWindowPanel.TabIndex = 33;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
-            // aboutLabel
+            // showPasswordTextbox
             // 
-            this.aboutLabel.AutoSize = true;
-            this.aboutLabel.Location = new System.Drawing.Point(12, 37);
-            this.aboutLabel.Name = "aboutLabel";
-            this.aboutLabel.Size = new System.Drawing.Size(35, 13);
-            this.aboutLabel.TabIndex = 29;
-            this.aboutLabel.Text = "label1";
+            this.showPasswordTextbox.Location = new System.Drawing.Point(12, 39);
+            this.showPasswordTextbox.Name = "showPasswordTextbox";
+            this.showPasswordTextbox.Size = new System.Drawing.Size(322, 20);
+            this.showPasswordTextbox.TabIndex = 34;
             // 
-            // iconLinkLabel
+            // okButton
             // 
-            this.iconLinkLabel.AutoSize = true;
-            this.iconLinkLabel.Location = new System.Drawing.Point(12, 84);
-            this.iconLinkLabel.Name = "iconLinkLabel";
-            this.iconLinkLabel.Size = new System.Drawing.Size(55, 13);
-            this.iconLinkLabel.TabIndex = 30;
-            this.iconLinkLabel.TabStop = true;
-            this.iconLinkLabel.Text = "linkLabel1";
-            this.iconLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.IconLinkLabel_LinkClicked);
+            this.okButton.Location = new System.Drawing.Point(287, 67);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.TabIndex = 35;
+            this.okButton.Text = "Okay";
+            this.okButton.UseVisualStyleBackColor = true;
+            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // versionLabel
+            // copyButton
             // 
-            this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(11, 8);
-            this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(35, 13);
-            this.versionLabel.TabIndex = 32;
-            this.versionLabel.Text = "label3";
-            this.versionLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VersionLabel_MouseDown);
-            this.versionLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.VersionLabel_MouseMove);
-            this.versionLabel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.VersionLabel_MouseUp);
+            this.copyButton.Location = new System.Drawing.Point(338, 37);
+            this.copyButton.Name = "copyButton";
+            this.copyButton.Size = new System.Drawing.Size(24, 24);
+            this.copyButton.TabIndex = 36;
+            this.copyButton.UseVisualStyleBackColor = true;
+            this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
+            this.copyButton.MouseEnter += new System.EventHandler(this.copyButton_MouseEnter);
+            this.copyButton.MouseLeave += new System.EventHandler(this.copyButton_MouseLeave);
             // 
-            // AboutView
+            // ShowPasswordView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(385, 115);
+            this.ClientSize = new System.Drawing.Size(375, 100);
+            this.Controls.Add(this.copyButton);
+            this.Controls.Add(this.okButton);
+            this.Controls.Add(this.showPasswordTextbox);
             this.Controls.Add(this.moveWindowPanel);
-            this.Controls.Add(this.iconLinkLabel);
-            this.Controls.Add(this.aboutLabel);
             this.Controls.Add(this.closeButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "AboutView";
+            this.Name = "ShowPasswordView";
             this.Text = "AboutView";
-            this.moveWindowPanel.ResumeLayout(false);
-            this.moveWindowPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -116,8 +109,8 @@
 
         private System.Windows.Forms.Label closeButton;
         private System.Windows.Forms.Panel moveWindowPanel;
-        private System.Windows.Forms.Label versionLabel;
-        private System.Windows.Forms.Label aboutLabel;
-        private System.Windows.Forms.LinkLabel iconLinkLabel;
+        private System.Windows.Forms.TextBox showPasswordTextbox;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button copyButton;
     }
 }

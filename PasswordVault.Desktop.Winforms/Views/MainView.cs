@@ -476,7 +476,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (!string.IsNullOrEmpty(password))
             {
-                MessageBox.Show(password);
+                ShowPasswordView showPasswordView = new ShowPasswordView(password);
+                showPasswordView.ShowDialog();
+                showPasswordView.Dispose();
             }       
         }
 
