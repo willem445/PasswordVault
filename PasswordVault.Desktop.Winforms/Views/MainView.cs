@@ -935,14 +935,14 @@ namespace PasswordVault.Desktop.Winforms
         private void MinimizeButton_MouseEnter(object sender, EventArgs e)
         {
             minimizeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlHighLightColor);
-            minimizeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            minimizeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void MinimizeButton_MouseLeave(object sender, EventArgs e)
         {
-            minimizeButton.BackColor = Color.FromArgb(63, 63, 63);
-            minimizeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            minimizeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            minimizeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/

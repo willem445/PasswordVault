@@ -14,10 +14,12 @@ namespace PasswordVault.Desktop.Winforms
         event Action GenerateNewPasswordEvent;
         event Action<string> PasswordChangedEvent;
         event Action LoginSuccessfulEvent;
+        event Action DisplayPasswordRequirementsEvent;
         void DisplayLoginResult(AuthenticateResult result);
         void ShowLoginMenu();
         void DisplayCreateNewUserResult(AddUserResult result, int minimumPasswordLength);
         void DisplayGeneratePasswordResult(string generatedPassword);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
+        void DisplayPasswordRequirements(int passwordLength);
     }
 }

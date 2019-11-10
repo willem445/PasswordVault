@@ -39,16 +39,16 @@ namespace PasswordVault.Desktop.Winforms
         {
             InitializeComponent();
 
-            BackColor = Color.FromArgb(35, 35, 35);
+            BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
-            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Bold);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
             aboutLabel.Text = "This application is still under development.\nUse at your own risk!\n";
-            aboutLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            aboutLabel.ForeColor = Color.FromArgb(242, 242, 242);
+            aboutLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            aboutLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             var attribute = Assembly.GetExecutingAssembly()
@@ -70,13 +70,13 @@ namespace PasswordVault.Desktop.Winforms
             
 
             versionLabel.Text = "Version: " + display;
-            versionLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            versionLabel.ForeColor = Color.FromArgb(242, 242, 242);
+            versionLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            versionLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
             iconLinkLabel.Text = "This application utilizes icons from Icon8.";
-            iconLinkLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            iconLinkLabel.ForeColor = Color.FromArgb(242, 242, 242);
-            iconLinkLabel.LinkColor = Color.FromArgb(242, 242, 242);
+            iconLinkLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            iconLinkLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            iconLinkLabel.LinkColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*=================================================================================================
@@ -97,14 +97,14 @@ namespace PasswordVault.Desktop.Winforms
         private void CloseButton_MouseEnter(object sender, EventArgs e)
         {
             closeButton.BackColor = Color.FromArgb(107, 20, 3);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
         private void CloseButton_MouseLeave(object sender, EventArgs e)
         {
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
         }
 
         /*************************************************************************************************/
