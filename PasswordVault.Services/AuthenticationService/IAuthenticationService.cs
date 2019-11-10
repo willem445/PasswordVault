@@ -4,6 +4,9 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
+    /// <summary>
+    /// Methods to authenticate a user.
+    /// </summary>
     public interface IAuthenticationService
     {
         /// <summary>

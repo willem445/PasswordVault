@@ -136,16 +136,6 @@ namespace PasswordVault.Services
             }
         }
 
-        /*************************************************************************************************/
-        public string CreateKey(int keyLength)
-        {
-            RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            byte[] randomBytes = new byte[keyLength];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
-            rngCryptoServiceProvider.Dispose();
-            return Convert.ToBase64String(randomBytes);
-        }
-
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
