@@ -48,7 +48,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private const int INVALID_INDEX = -1;
-        private const int EMPTY_DGV = 1;
+        private const int EMPTY_DGV = 0;
 
         /*=================================================================================================
 		FIELDS
@@ -881,10 +881,14 @@ namespace PasswordVault.Desktop.Winforms
                 if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
                 {
                     passwordContextMenuStrip.Show(passwordDataGridView, new Point(e.X, e.Y));
-                    _rowIndexCopy = hitTestInfo.RowIndex;
-
-                    passwordDataGridView.Rows[_rowIndexCopy].Selected = true;
+                    _rowIndexCopy = hitTestInfo.RowIndex;       
+                    
                     passwordDataGridView.Rows[_rowIndexCopy].Cells[0].Selected = true;
+
+                    // PasswordDataGridView_SelectionChanged uses the old selected cell value for some reason after 
+                    // manually setting the selected cell. Manually set the _selectedDgvIndex here to update the 
+                    // selected cell to the correct index.
+                    _selectedDgvIndex = _rowIndexCopy;
                 }                
             }
         }
