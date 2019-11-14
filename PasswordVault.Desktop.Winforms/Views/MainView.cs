@@ -75,6 +75,7 @@ namespace PasswordVault.Desktop.Winforms
         private ILoginView _loginView;
         private IChangePasswordView _changePasswordView;
         private IEditUserView _editUserView;
+        private IConfirmDeleteUserView _confirmDeleteUserView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -107,11 +108,12 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView)
         {
             _loginView = loginView ?? throw new ArgumentNullException(nameof(loginView));
             _changePasswordView = changePasswordView ?? throw new ArgumentNullException(nameof(changePasswordView));
             _editUserView = editUserView ?? throw new ArgumentNullException(nameof(editUserView));
+            _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _dgvPasswordList = new BindingList<Password>();
@@ -621,7 +623,11 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RaiseDeleteAccountEvent();
+            _confirmDeleteUserView.ShowView();
+            //ConfirmDeleteUserView confirmDeleteUserView = new ConfirmDeleteUserView();
+            //confirmDeleteUserView.ShowDialog();
+            //confirmDeleteUserView.Dispose();
+            //RaiseDeleteAccountEvent();
         }
 
         /*************************************************************************************************/

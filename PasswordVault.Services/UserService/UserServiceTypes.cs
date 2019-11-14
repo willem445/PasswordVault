@@ -27,6 +27,7 @@ namespace PasswordVault.Services
     public enum DeleteUserResult
     {
         Success,
+        IncorrectPassword,
         Failed,
     }
 }

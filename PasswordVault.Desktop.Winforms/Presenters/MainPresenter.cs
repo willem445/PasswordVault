@@ -89,13 +89,13 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void DeleteAccount()
         {
-            User user = _serviceWrapper.GetCurrentUser();
-            LogOutResult result = LogoutUser();
+            //User user = _serviceWrapper.GetCurrentUser();
+            //LogOutResult result = LogoutUser();
 
-            if (result == LogOutResult.Success)
-            {
-                _serviceWrapper.DeleteUser(user);
-            }         
+            //if (result == LogOutResult.Success)
+            //{
+            //    _serviceWrapper.DeleteUser(user);
+            //}         
         }
 
         /*************************************************************************************************/
