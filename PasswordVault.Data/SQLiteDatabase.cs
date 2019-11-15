@@ -130,9 +130,19 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"DELETE FROM Users
-                                 WHERE GUID = @Guid";
+                                     WHERE GUID = @Guid";
 
                     var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
+
+                    if (dbResult == 1)
+                    {
+                        result = true;
+                    }
+
+                    query = @"DELETE FROM Passwords
+                              WHERE UserGUID = @UserGUID";
+
+                    dbResult = dbConn.Execute(query, new { UserGUID = user.GUID });
 
                     if (dbResult == 1)
                     {

@@ -30,13 +30,13 @@
         {
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.deleteAccountButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.confirmPasswordTextbox = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.warningLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
             this.moveWindowPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -65,6 +65,16 @@
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(11, 8);
+            this.label2.MaximumSize = new System.Drawing.Size(375, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.TabIndex = 38;
+            this.label2.Text = "Are you sure?";
             // 
             // label1
             // 
@@ -102,6 +112,8 @@
             this.confirmPasswordTextbox.Name = "confirmPasswordTextbox";
             this.confirmPasswordTextbox.Size = new System.Drawing.Size(358, 20);
             this.confirmPasswordTextbox.TabIndex = 37;
+            this.confirmPasswordTextbox.Enter += new System.EventHandler(this.confirmPasswordTextbox_Enter);
+            this.confirmPasswordTextbox.Leave += new System.EventHandler(this.confirmPasswordTextbox_Leave);
             // 
             // panel1
             // 
@@ -119,16 +131,6 @@
             this.warningLabel.Size = new System.Drawing.Size(50, 13);
             this.warningLabel.TabIndex = 38;
             this.warningLabel.Text = "Warning!";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(11, 8);
-            this.label2.MaximumSize = new System.Drawing.Size(375, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(72, 13);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "Are you sure?";
             // 
             // resultLabel
             // 

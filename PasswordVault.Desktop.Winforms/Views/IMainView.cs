@@ -15,7 +15,6 @@ namespace PasswordVault.Desktop.Winforms
         event Action<string, PasswordFilterOption> FilterChangedEvent;
         event Action RequestPasswordsOnLoginEvent;
         event Action LogoutEvent;
-        event Action DeleteAccountEvent;
 
         event Action<string, string, string, string, string, string> AddPasswordEvent;
         event Action<int> MovePasswordUpEvent;

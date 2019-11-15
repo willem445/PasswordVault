@@ -11,6 +11,7 @@ namespace PasswordVault.Desktop.Winforms
     {
         event Action<string> ConfirmPasswordEvent; // Notify presenter to verify password
         event Action DeleteAccountEvent; // Notify presenter to delete password
+        event Action FormClosingEvent;
         
         event Action ConfirmPasswordSuccessEvent; // Notify mainform to logout of account
         event Action DeleteSuccessEvent; // Notify mainform of result

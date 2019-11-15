@@ -28,6 +28,7 @@ namespace PasswordVault.Desktop.Winforms
                 var loginView = kernal.Get<ILoginView>();
                 var mainView = kernal.Get<IMainView>();
                 var changePasswordView = kernal.Get<IChangePasswordView>();
+                var confirmDeleteUserView = kernal.Get<IConfirmDeleteUserView>();
                 var editUserView = kernal.Get<IEditUserView>();
                 var serviceWrapper = kernal.Get<IDesktopServiceWrapper>();
 
@@ -35,6 +36,7 @@ namespace PasswordVault.Desktop.Winforms
                 var mainViewPresenter = new MainPresenter(mainView, serviceWrapper);
                 var changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, serviceWrapper);
                 var editUserPresenter = new EditUserPresenter(editUserView, serviceWrapper);
+                var confirmDeleteUserPresenter = new ConfirmDeleteUserPresenter(confirmDeleteUserView, serviceWrapper);
 
                 Application.Run((Form)mainView);
 

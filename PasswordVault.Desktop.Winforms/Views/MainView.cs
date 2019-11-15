@@ -57,7 +57,6 @@ namespace PasswordVault.Desktop.Winforms
         public event Action<string, PasswordFilterOption> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
         public event Action LogoutEvent;
-        public event Action DeleteAccountEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
@@ -116,6 +115,9 @@ namespace PasswordVault.Desktop.Winforms
             _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
+            _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
+            _confirmDeleteUserView.DeleteSuccessEvent += DeleteAccountSuccess;
+
             _dgvPasswordList = new BindingList<Password>();
             InitializeComponent();
 
@@ -621,22 +623,32 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
+        /// <summary>
+        /// Show the confirm delete view to confirm that the user would like to delete the account.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _confirmDeleteUserView.ShowView();
-            //ConfirmDeleteUserView confirmDeleteUserView = new ConfirmDeleteUserView();
-            //confirmDeleteUserView.ShowDialog();
-            //confirmDeleteUserView.Dispose();
-            //RaiseDeleteAccountEvent();
         }
 
         /*************************************************************************************************/
-        private void RaiseDeleteAccountEvent()
+        /// <summary>
+        /// If authentication was successfull, we need to first log out user before deleting the account.
+        /// </summary>
+        private void DeleteAccountConfirmPasswordSuccess()
         {
-            if (DeleteAccountEvent != null)
-            {
-                DeleteAccountEvent();
-            }
+            RaiseLogoutEvent();
+        }
+
+        /*************************************************************************************************/
+        /// <summary>
+        /// User account was successfully deleted.
+        /// </summary>
+        private void DeleteAccountSuccess()
+        {
+            UIHelper.UpdateStatusLabel("Account deleted.", userStatusLabel, ErrorLevel.Ok);
         }
 
         /*************************************************************************************************/

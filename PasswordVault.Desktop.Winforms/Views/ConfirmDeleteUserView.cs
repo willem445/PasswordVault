@@ -26,7 +26,8 @@ namespace PasswordVault.Desktop.Winforms
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
 
         public event Action<string> ConfirmPasswordEvent; 
-        public event Action DeleteAccountEvent; 
+        public event Action DeleteAccountEvent;
+        public event Action FormClosingEvent;
         public event Action ConfirmPasswordSuccessEvent; 
         public event Action DeleteSuccessEvent; 
 
@@ -44,7 +45,8 @@ namespace PasswordVault.Desktop.Winforms
         {
             InitializeComponent();
 
-            BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            #region UI
+            BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
             closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
@@ -86,7 +88,7 @@ namespace PasswordVault.Desktop.Winforms
             confirmPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
             confirmPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             confirmPasswordTextbox.Text = "Confirm Password";
-
+            #endregion
 
         }
 
@@ -98,11 +100,6 @@ namespace PasswordVault.Desktop.Winforms
         {
             switch(result)
             {
-                case DeleteUserResult.IncorrectPassword:
-                    resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
-                    resultLabel.Text = "Incorrect password!";
-                    break;
-
                 case DeleteUserResult.Failed:
                     resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
                     resultLabel.Text = "Failed!";
@@ -111,8 +108,8 @@ namespace PasswordVault.Desktop.Winforms
                 case DeleteUserResult.Success:
                     resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusGreenColor);
                     resultLabel.Text = "Success.";
-                    ConfirmPasswordSuccessEvent?.Invoke(); // Notify others that confirm password was successful
-                    DeleteAccountEvent?.Invoke(); // If authentication was successful, delete the account
+                    DeleteSuccessEvent?.Invoke(); // Notify others that confirm password was successful   
+                    this.Close();
                     break;
 
                 default:
@@ -124,11 +121,15 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayConfirmPasswordResult(bool result)
         {
-            throw new NotImplementedException();
-
             if (result == true)
             {
-                DeleteSuccessEvent?.Invoke(); // Notify others that delete was successful
+                ConfirmPasswordSuccessEvent?.Invoke(); // Notify others that authentication was successful
+                DeleteAccountEvent?.Invoke(); // If authentication was successful, delete the account
+            }
+            else
+            {
+                resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
+                resultLabel.Text = "Incorrect password!";
             }
         }
 
@@ -197,8 +198,27 @@ namespace PasswordVault.Desktop.Winforms
 
         private void ConfirmDeleteUserView_FormClosing(object sender, FormClosingEventArgs e)
         {
+            FormClosingEvent?.Invoke();
             this.Hide();
             e.Cancel = true; // this cancels the close event.
+        }
+
+        private void confirmPasswordTextbox_Enter(object sender, EventArgs e)
+        {
+            if (confirmPasswordTextbox.Text == "Confirm Password")
+            {
+                confirmPasswordTextbox.Text = "";
+                confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            }
+        }
+
+        private void confirmPasswordTextbox_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(confirmPasswordTextbox.Text))
+            {
+                confirmPasswordTextbox.Text = "Confirm Password";
+                confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            }
         }
 
         /*=================================================================================================

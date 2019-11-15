@@ -72,7 +72,6 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.CopyUserNameEvent += CopyUsername;
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
-            _mainView.DeleteAccountEvent += DeleteAccount;
             _mainView.GeneratePasswordEvent += GenerateNewPassword;
         }
 
@@ -85,18 +84,6 @@ namespace PasswordVault.Desktop.Winforms
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-
-        /*************************************************************************************************/
-        private void DeleteAccount()
-        {
-            //User user = _serviceWrapper.GetCurrentUser();
-            //LogOutResult result = LogoutUser();
-
-            //if (result == LogOutResult.Success)
-            //{
-            //    _serviceWrapper.DeleteUser(user);
-            //}         
-        }
 
         /*************************************************************************************************/
         private void FilterChanged(string filterText, PasswordFilterOption passwordFilterOption)
