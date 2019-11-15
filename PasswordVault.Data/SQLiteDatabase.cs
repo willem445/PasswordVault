@@ -122,6 +122,8 @@ namespace PasswordVault.Data
         public bool DeleteUser(User user)
         {
             bool result = false;
+            bool userResult = false;
+            bool userPasswordResult = false;
 
             if (user != null)
             {
@@ -130,15 +132,30 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"DELETE FROM Users
-                                 WHERE GUID = @Guid";
+                                     WHERE GUID = @Guid";
 
                     var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
 
                     if (dbResult == 1)
                     {
-                        result = true;
+                        userResult = true;
+                    }
+
+                    query = @"DELETE FROM Passwords
+                              WHERE UserGUID = @UserGUID";
+
+                    dbResult = dbConn.Execute(query, new { UserGUID = user.GUID });
+
+                    if (dbResult == 1)
+                    {
+                        userPasswordResult = true;
                     }
                 }
+            }
+
+            if (userResult && userPasswordResult)
+            {
+                result = true;
             }
 
             return result;

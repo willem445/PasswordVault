@@ -73,6 +73,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IMainView>().To<MainView>().InSingletonScope();
             Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
             Bind<IEditUserView>().To<EditUserView>().InSingletonScope();
+            Bind<IConfirmDeleteUserView>().To<ConfirmDeleteUserView>().InSingletonScope();
         }
 
         /*=================================================================================================

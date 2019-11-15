@@ -48,7 +48,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private const int INVALID_INDEX = -1;
-        private const int EMPTY_DGV = 1;
+        private const int EMPTY_DGV = 0;
 
         /*=================================================================================================
 		FIELDS
@@ -57,7 +57,6 @@ namespace PasswordVault.Desktop.Winforms
         public event Action<string, PasswordFilterOption> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
         public event Action LogoutEvent;
-        public event Action DeleteAccountEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
@@ -75,6 +74,7 @@ namespace PasswordVault.Desktop.Winforms
         private ILoginView _loginView;
         private IChangePasswordView _changePasswordView;
         private IEditUserView _editUserView;
+        private IConfirmDeleteUserView _confirmDeleteUserView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -107,13 +107,17 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView)
         {
             _loginView = loginView ?? throw new ArgumentNullException(nameof(loginView));
             _changePasswordView = changePasswordView ?? throw new ArgumentNullException(nameof(changePasswordView));
             _editUserView = editUserView ?? throw new ArgumentNullException(nameof(editUserView));
+            _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
+            _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
+            _confirmDeleteUserView.DeleteSuccessEvent += DeleteAccountSuccess;
+
             _dgvPasswordList = new BindingList<Password>();
             InitializeComponent();
 
@@ -619,18 +623,32 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
+        /// <summary>
+        /// Show the confirm delete view to confirm that the user would like to delete the account.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RaiseDeleteAccountEvent();
+            _confirmDeleteUserView.ShowView();
         }
 
         /*************************************************************************************************/
-        private void RaiseDeleteAccountEvent()
+        /// <summary>
+        /// If authentication was successfull, we need to first log out user before deleting the account.
+        /// </summary>
+        private void DeleteAccountConfirmPasswordSuccess()
         {
-            if (DeleteAccountEvent != null)
-            {
-                DeleteAccountEvent();
-            }
+            RaiseLogoutEvent();
+        }
+
+        /*************************************************************************************************/
+        /// <summary>
+        /// User account was successfully deleted.
+        /// </summary>
+        private void DeleteAccountSuccess()
+        {
+            UIHelper.UpdateStatusLabel("Account deleted.", userStatusLabel, ErrorLevel.Ok);
         }
 
         /*************************************************************************************************/
@@ -881,10 +899,14 @@ namespace PasswordVault.Desktop.Winforms
                 if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
                 {
                     passwordContextMenuStrip.Show(passwordDataGridView, new Point(e.X, e.Y));
-                    _rowIndexCopy = hitTestInfo.RowIndex;
-
-                    passwordDataGridView.Rows[_rowIndexCopy].Selected = true;
+                    _rowIndexCopy = hitTestInfo.RowIndex;       
+                    
                     passwordDataGridView.Rows[_rowIndexCopy].Cells[0].Selected = true;
+
+                    // PasswordDataGridView_SelectionChanged uses the old selected cell value for some reason after 
+                    // manually setting the selected cell. Manually set the _selectedDgvIndex here to update the 
+                    // selected cell to the correct index.
+                    _selectedDgvIndex = _rowIndexCopy;
                 }                
             }
         }
