@@ -122,6 +122,8 @@ namespace PasswordVault.Data
         public bool DeleteUser(User user)
         {
             bool result = false;
+            bool userResult = false;
+            bool userPasswordResult = false;
 
             if (user != null)
             {
@@ -136,7 +138,7 @@ namespace PasswordVault.Data
 
                     if (dbResult == 1)
                     {
-                        result = true;
+                        userResult = true;
                     }
 
                     query = @"DELETE FROM Passwords
@@ -146,9 +148,14 @@ namespace PasswordVault.Data
 
                     if (dbResult == 1)
                     {
-                        result = true;
+                        userPasswordResult = true;
                     }
                 }
+            }
+
+            if (userResult && userPasswordResult)
+            {
+                result = true;
             }
 
             return result;
