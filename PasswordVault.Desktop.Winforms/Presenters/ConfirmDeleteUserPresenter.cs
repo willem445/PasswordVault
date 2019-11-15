@@ -35,7 +35,9 @@ namespace PasswordVault.Desktop.Winforms
         /*PUBLIC METHODS***************************************************/
         public void VerifyPassword(string password)
         {
-            tempUser = _serviceWrapper.GetCurrentUser();
+            // The user will already be logged out when we get to DeleteAccount so we need to temporarily store
+            // the User object.
+            tempUser = _serviceWrapper.GetCurrentUser(); 
             bool result = _serviceWrapper.VerifyCurrentUserPassword(password);
             _confirmDeleteUserView.DisplayConfirmPasswordResult(result);
 

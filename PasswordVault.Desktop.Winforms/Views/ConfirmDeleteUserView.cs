@@ -184,6 +184,7 @@ namespace PasswordVault.Desktop.Winforms
             _draggingWindow = false;
         }
 
+        /*************************************************************************************************/
         private void cancelButton_Click(object sender, EventArgs e)
         {
             confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
@@ -191,11 +192,13 @@ namespace PasswordVault.Desktop.Winforms
             this.Close();
         }
 
+        /*************************************************************************************************/
         private void deleteAccountButton_Click(object sender, EventArgs e)
         {
             ConfirmPasswordEvent?.Invoke(confirmPasswordTextbox.Text);
         }
 
+        /*************************************************************************************************/
         private void ConfirmDeleteUserView_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormClosingEvent?.Invoke();
@@ -203,6 +206,7 @@ namespace PasswordVault.Desktop.Winforms
             e.Cancel = true; // this cancels the close event.
         }
 
+        /*************************************************************************************************/
         private void confirmPasswordTextbox_Enter(object sender, EventArgs e)
         {
             if (confirmPasswordTextbox.Text == "Confirm Password")
@@ -212,6 +216,7 @@ namespace PasswordVault.Desktop.Winforms
             }
         }
 
+        /*************************************************************************************************/
         private void confirmPasswordTextbox_Leave(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(confirmPasswordTextbox.Text))
