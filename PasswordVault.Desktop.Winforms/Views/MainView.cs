@@ -204,6 +204,13 @@ namespace PasswordVault.Desktop.Winforms
             editCancelButton.Enabled = false;
             editCancelButton.Visible = false;
 
+            clearFilterButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            clearFilterButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            clearFilterButton.FlatStyle = FlatStyle.Flat;
+            clearFilterButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            clearFilterButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            clearFilterButton.FlatAppearance.BorderSize = 1;
+
             closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
@@ -465,7 +472,8 @@ namespace PasswordVault.Desktop.Winforms
                     filterTextBox.Text = "";
                     addButton.Enabled = false;
                     deleteButton.Enabled = false;
-                    editButton.Enabled = false;                  
+                    editButton.Enabled = false;
+                    clearFilterButton.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
@@ -587,6 +595,7 @@ namespace PasswordVault.Desktop.Winforms
             emailTextBox.Enabled = true;
             addButton.Enabled = true;
             deleteButton.Enabled = true;
+            clearFilterButton.Enabled = true;
             editButton.Enabled = true;
             filterComboBox.Enabled = true;
             filterTextBox.Enabled = true;
@@ -1083,6 +1092,12 @@ namespace PasswordVault.Desktop.Winforms
 
             passwordDataGridView.Rows[dgvIndex].Selected = true;
             passwordDataGridView.Rows[dgvIndex].Cells[0].Selected = true;
+        }
+
+        /*************************************************************************************************/
+        private void clearFilterButton_Click(object sender, EventArgs e)
+        {
+            filterTextBox.Text = "";
         }
 
         /*=================================================================================================
