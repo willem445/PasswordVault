@@ -72,6 +72,7 @@ namespace PasswordVault.Desktop.Winforms
             this.minimizeButton = new System.Windows.Forms.Label();
             this.emailTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.clearFilterButton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -395,12 +396,24 @@ namespace PasswordVault.Desktop.Winforms
             this.label6.TabIndex = 34;
             this.label6.Text = "Email";
             // 
+            // clearFilterButton
+            // 
+            this.clearFilterButton.Enabled = false;
+            this.clearFilterButton.Location = new System.Drawing.Point(409, 118);
+            this.clearFilterButton.Name = "clearFilterButton";
+            this.clearFilterButton.Size = new System.Drawing.Size(75, 23);
+            this.clearFilterButton.TabIndex = 35;
+            this.clearFilterButton.Text = "Clear Filter";
+            this.clearFilterButton.UseVisualStyleBackColor = true;
+            this.clearFilterButton.Click += new System.EventHandler(this.clearFilterButton_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(835, 466);
+            this.Controls.Add(this.clearFilterButton);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.emailTextBox);
             this.Controls.Add(this.minimizeButton);
@@ -476,6 +489,7 @@ namespace PasswordVault.Desktop.Winforms
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
         private ToolStripMenuItem changePasswordToolStripMenuItem;
+        private Button clearFilterButton;
     }
 }
 

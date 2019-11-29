@@ -51,7 +51,7 @@ namespace PasswordVault.Desktop.Winforms
             showPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             showPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             showPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            showPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            showPasswordTextbox.Font = UIHelper.GetFont(12.0f);
             showPasswordTextbox.ReadOnly = true;
             showPasswordTextbox.Text = password;
             showPasswordTextbox.SelectionStart = 0;

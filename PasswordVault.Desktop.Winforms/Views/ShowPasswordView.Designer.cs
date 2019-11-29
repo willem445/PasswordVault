@@ -60,14 +60,15 @@
             // 
             // showPasswordTextbox
             // 
+            this.showPasswordTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.showPasswordTextbox.Location = new System.Drawing.Point(12, 39);
             this.showPasswordTextbox.Name = "showPasswordTextbox";
-            this.showPasswordTextbox.Size = new System.Drawing.Size(322, 20);
+            this.showPasswordTextbox.Size = new System.Drawing.Size(322, 26);
             this.showPasswordTextbox.TabIndex = 34;
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(287, 67);
+            this.okButton.Location = new System.Drawing.Point(287, 76);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 35;
@@ -77,9 +78,9 @@
             // 
             // copyButton
             // 
-            this.copyButton.Location = new System.Drawing.Point(338, 37);
+            this.copyButton.Location = new System.Drawing.Point(338, 39);
             this.copyButton.Name = "copyButton";
-            this.copyButton.Size = new System.Drawing.Size(24, 24);
+            this.copyButton.Size = new System.Drawing.Size(24, 26);
             this.copyButton.TabIndex = 36;
             this.copyButton.UseVisualStyleBackColor = true;
             this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
@@ -91,7 +92,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(375, 100);
+            this.ClientSize = new System.Drawing.Size(375, 110);
             this.Controls.Add(this.copyButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.showPasswordTextbox);
