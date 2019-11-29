@@ -83,6 +83,7 @@ namespace PasswordVault.Desktop.Winforms
 
         private bool _loggedIn = false;
         private int _selectedDgvIndex = INVALID_INDEX;
+        private int _selectedDgvIndexPriorToPasswordListModification = INVALID_INDEX;
         private bool _editMode = false;
 
         private BindingList<Password> _dgvPasswordList;
@@ -488,6 +489,7 @@ namespace PasswordVault.Desktop.Winforms
                     editToolStripMenuItem.Enabled = false;
                     label7.Visible = false;
                     passwordCountLabel.Visible = false;
+                    passwordCountLabel.Text = "";
                     loginToolStripMenuItem.Text = "Login";
                     UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral);
                     break;
@@ -575,6 +577,11 @@ namespace PasswordVault.Desktop.Winforms
         public void DisplayGeneratePasswordResult(string generatedPassword)
         {
             passphraseTextBox.Text = generatedPassword;
+        }
+
+        public void DisplayPasswordCount(int count)
+        {
+            passwordCountLabel.Text = count.ToString();
         }
 
         /*=================================================================================================
@@ -721,6 +728,9 @@ namespace PasswordVault.Desktop.Winforms
                 _editMode = true;
                 addButton.Text = "Ok";
 
+                // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
+                _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
+
                 DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
                 RaiseEditPasswordEvent(row);
             }             
@@ -806,6 +816,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
+                // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
+                _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
+
                 DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
                 RaiseDeletePasswordEvent(row);
             }
@@ -1081,7 +1094,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void UpdateDataGridViewAfterDelete()
         {
-            int newDgvIndex = _selectedDgvIndex - 1;
+            // Use _selectedDgvIndexPriorToPasswordListModification instead of _selectedDgvIndex because _selectedDgvIndex gets
+            // modified frequently when reloading the password list etc. _selectedDgvIndexPriorToPasswordListModification only gets
+            // updated when edit or delete buttons are clicked.
+            int newDgvIndex = _selectedDgvIndexPriorToPasswordListModification - 1;
 
             // Fix for #37, update filter when we delete a password
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
@@ -1097,7 +1113,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void UpdateDataGridViewAfterEdit()
         {
-            int dgvIndex = _selectedDgvIndex; // Need to store current index before updating filter since index will reset to 0
+            int dgvIndex = _selectedDgvIndexPriorToPasswordListModification; // Need to store current index before updating filter since index will reset to 0
 
             // Fix for #37, update filter when we delete a password
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;

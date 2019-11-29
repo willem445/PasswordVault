@@ -132,9 +132,11 @@ namespace PasswordVault.Desktop.Winforms
         {
             // Get encrypted passwords from the password service and modify to display in UI
             List<Password> passwords = _serviceWrapper.GetPasswords();
+            int count = _serviceWrapper.GetPasswordCount();
 
             BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
             _mainView.DisplayPasswords(uiBindingList);
+            _mainView.DisplayPasswordCount(count);
         }
 
         /*************************************************************************************************/
@@ -155,7 +157,8 @@ namespace PasswordVault.Desktop.Winforms
                 UpdatePasswordsUI();
             }
 
-            _mainView.DisplayAddPasswordResult(result);    
+            _mainView.DisplayAddPasswordResult(result);
+            _mainView.DisplayPasswordCount(_serviceWrapper.GetPasswordCount());
         }
 
         /*************************************************************************************************/
@@ -169,6 +172,7 @@ namespace PasswordVault.Desktop.Winforms
                 DeletePasswordResult deleteResult = _serviceWrapper.DeletePassword(result);
                 UpdatePasswordsUI();
                 _mainView.DisplayDeletePasswordResult(deleteResult);
+                _mainView.DisplayPasswordCount(_serviceWrapper.GetPasswordCount());
             }        
         }
 
