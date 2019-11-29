@@ -145,6 +145,14 @@ namespace PasswordVault.Desktop.Winforms
             label6.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             label6.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
+            label7.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label7.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            label7.Visible = false;
+
+            passwordCountLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            passwordCountLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);         
+            passwordCountLabel.Visible = false;
+
             filterLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             filterLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
@@ -346,7 +354,8 @@ namespace PasswordVault.Desktop.Winforms
             passwordContextMenuStrip.Items[5].Click += DeleteButton_Click;
             #endregion
 
-            userStatusLabel.Text = "Not logged in.";          
+            userStatusLabel.Text = "Not logged in.";
+            passwordCountLabel.Text = "0";
         }
 
         /*=================================================================================================
@@ -477,6 +486,8 @@ namespace PasswordVault.Desktop.Winforms
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
+                    label7.Visible = false;
+                    passwordCountLabel.Visible = false;
                     loginToolStripMenuItem.Text = "Login";
                     UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral);
                     break;
@@ -602,6 +613,8 @@ namespace PasswordVault.Desktop.Winforms
             deleteToolStripMenuItem.Enabled = true;
             changePasswordToolStripMenuItem.Enabled = true;
             editToolStripMenuItem.Enabled = true;
+            label7.Visible = true;
+            passwordCountLabel.Visible = true;
             loginToolStripMenuItem.Text = "Logoff";
 
             RaiseRequestPasswordsOnLoginEvent();
