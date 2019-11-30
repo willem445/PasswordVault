@@ -69,17 +69,6 @@ namespace PasswordVault.Models
             Passphrase = passphrase;
         }
 
-        public DatabasePassword(string userID, string application, string username, string email, string description, string website, string passphrase)
-        {
-            UserGUID = userID;
-            Passphrase = passphrase;
-            Application = application;
-            Username = username;
-            Email = email;
-            Description = description;
-            Website = website;
-        }
-
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
