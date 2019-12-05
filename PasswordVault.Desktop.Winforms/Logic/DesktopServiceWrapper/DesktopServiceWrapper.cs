@@ -27,15 +27,17 @@ namespace PasswordVault.Desktop.Winforms
         private IPasswordService _passwordService;
         private IUserService _userService;
         private IAuthenticationService _authenticationService;
+        private IExportPasswords _exportPasswords;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public DesktopServiceWrapper(IAuthenticationService authenticationService, IPasswordService passwordService, IUserService userService)
+        public DesktopServiceWrapper(IAuthenticationService authenticationService, IPasswordService passwordService, IUserService userService, IExportPasswords exportPasswords)
         {
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _exportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -356,6 +358,15 @@ namespace PasswordVault.Desktop.Winforms
             }
 
             return -1;
+        }
+
+        public ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath)
+        {
+            ExportResult result;
+
+            result = _exportPasswords.Export(fileType, exportPath);
+
+            return result;
         }
 
         /*PRIVATE METHODS**************************************************/
