@@ -346,7 +346,17 @@ namespace PasswordVault.Desktop.Winforms
         {
             int result = _userService.GetMinimumPasswordLength();
             return result;
-        }       
+        }
+
+        public int GetPasswordCount()
+        {
+            if (IsLoggedIn())
+            {
+                return _passwordList.Count;
+            }
+
+            return -1;
+        }
 
         /*PRIVATE METHODS**************************************************/
         private void UpdatePasswordListFromDB()

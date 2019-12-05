@@ -47,6 +47,12 @@ namespace PasswordVault.Desktop.Winforms
         DeletePasswordResult DeletePassword(Password password);
         AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
+
+        /// <summary>
+        /// Returns current number of logged in user's passwords.
+        /// </summary>
+        /// <returns>Number of passwords. -1 if error.</returns>
+        int GetPasswordCount();
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();
     }

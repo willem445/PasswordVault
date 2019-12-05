@@ -40,5 +40,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayAddPasswordResult(AddModifyPasswordResult result);
         void DisplayDeletePasswordResult(DeletePasswordResult result);
         void DisplayGeneratePasswordResult(string generatedPassword);
+        void DisplayPasswordCount(int count);
     }
 }
