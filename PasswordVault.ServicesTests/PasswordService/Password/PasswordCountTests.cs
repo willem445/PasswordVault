@@ -17,10 +17,10 @@ namespace PasswordVault.ServicesTests
     public class PasswordCountTests : PasswordServiceTestBase
     {
         /// <summary>
-        /// 
+        /// Tests that the get password count feature works. 
         /// 
         /// Pass Criteria:
-        /// - 
+        /// - Password count matches number of passwords being stored in DB.
         /// </summary>
         [TestMethod]
         public void PasswordCountTest()
