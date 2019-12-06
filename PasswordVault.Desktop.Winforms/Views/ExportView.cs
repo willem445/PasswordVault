@@ -200,6 +200,7 @@ namespace PasswordVault.Desktop.Winforms
 
         private void exportButton_Click(object sender, EventArgs e)
         {
+            // TODO - Add validation for filtType and move to presenter
             ExportFileTypes fileType = _fileTypes.Where(x => x.Filter.Contains(_fileName.Split('.')[1])).FirstOrDefault().FileType;
             ExportPasswordsEvent?.Invoke(fileType, _fileName);
         }

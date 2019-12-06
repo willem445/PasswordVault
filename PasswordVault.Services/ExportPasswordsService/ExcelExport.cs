@@ -16,11 +16,37 @@ namespace PasswordVault.Services
 
             using (var p = new ExcelPackage())
             {
+                // TODO - Add workbook encryption
                 var ws = p.Workbook.Worksheets.Add("Passwords");
 
+                int headerColCount = 1;
+                int rowCount = 1;
+                List<string> propertyNames = new List<string>();
                 PropertyInfo[] properties = typeof(Password).GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    propertyNames.Add(property.Name);
 
-                ws.Cells[0, 0].Value = "This is cell A1";
+                    ws.Cells[rowCount, headerColCount].Value = property.Name;
+
+                    headerColCount++;
+                }
+
+                rowCount = 2;
+                foreach (var password in passwords)
+                {
+                    int tempColCount = 1;
+
+                    foreach (var propertyName in propertyNames)
+                    {
+                        ws.Cells[rowCount, tempColCount].Value = password.GetType().GetProperty(propertyName).GetValue(password);
+
+                        tempColCount++;
+                    }
+
+                    rowCount++;
+                }
+                  
                 p.SaveAs(new FileInfo(exportPath));
             }
 
