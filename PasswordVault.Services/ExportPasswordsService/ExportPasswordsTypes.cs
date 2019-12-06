@@ -16,4 +16,18 @@ namespace PasswordVault.Services
         Word,
         PDF
     }
+
+    public class SupportedFileTypes
+    {
+        public SupportedFileTypes(ExportFileTypes fileType, string filter, string name)
+        {
+            FileType = fileType;
+            Filter = filter;
+            Name = name;
+        }
+
+        public ExportFileTypes FileType { get; }
+        public string Filter { get; }
+        public string Name { get; }
+    }
 }

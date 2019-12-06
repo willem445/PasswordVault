@@ -364,9 +364,14 @@ namespace PasswordVault.Desktop.Winforms
         {
             ExportResult result;
 
-            result = _exportPasswords.Export(fileType, exportPath);
+            result = _exportPasswords.Export(fileType, exportPath, _passwordList);
 
             return result;
+        }
+
+        public List<SupportedFileTypes> GetSupportedFileTypes()
+        {
+            return _exportPasswords.GetSupportedFileTypes();
         }
 
         /*PRIVATE METHODS**************************************************/

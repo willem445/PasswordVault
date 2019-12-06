@@ -75,6 +75,7 @@ namespace PasswordVault.Desktop.Winforms
         private IChangePasswordView _changePasswordView;
         private IEditUserView _editUserView;
         private IConfirmDeleteUserView _confirmDeleteUserView;
+        private IExportView _exportView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -108,12 +109,13 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView, IExportView exportView)
         {
             _loginView = loginView ?? throw new ArgumentNullException(nameof(loginView));
             _changePasswordView = changePasswordView ?? throw new ArgumentNullException(nameof(changePasswordView));
             _editUserView = editUserView ?? throw new ArgumentNullException(nameof(editUserView));
             _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
+            _exportView = exportView ?? throw new ArgumentNullException(nameof(exportView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
@@ -181,6 +183,10 @@ namespace PasswordVault.Desktop.Winforms
             changePasswordToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             changePasswordToolStripMenuItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             changePasswordToolStripMenuItem.Enabled = false;
+            exportPasswordsToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            exportPasswordsToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            exportPasswordsToolStripMenuItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            exportPasswordsToolStripMenuItem.Enabled = false;
 
             // Configure buttons
             addButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
@@ -486,6 +492,7 @@ namespace PasswordVault.Desktop.Winforms
                     clearFilterButton.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
+                    exportPasswordsToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
                     label7.Visible = false;
                     passwordCountLabel.Visible = false;
@@ -619,6 +626,7 @@ namespace PasswordVault.Desktop.Winforms
             filterTextBox.Enabled = true;
             deleteToolStripMenuItem.Enabled = true;
             changePasswordToolStripMenuItem.Enabled = true;
+            exportPasswordsToolStripMenuItem.Enabled = true;
             editToolStripMenuItem.Enabled = true;
             label7.Visible = true;
             passwordCountLabel.Visible = true;
@@ -1127,6 +1135,12 @@ namespace PasswordVault.Desktop.Winforms
         private void clearFilterButton_Click(object sender, EventArgs e)
         {
             filterTextBox.Text = "";
+        }
+
+        /*************************************************************************************************/
+        private void exportPasswordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _exportView.ShowExportView();
         }
 
         /*=================================================================================================
