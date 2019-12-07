@@ -11,9 +11,6 @@ using System.Globalization;
 DESCRIPTION
 *================================================================================================*/
 /* TODO - 8 - Add new form for adding password with validation, password strength etc
- * TODO - 1 - Generate very strong random key from passphase to encrypt data with (Makes it easier to change passwords) (https://security.stackexchange.com/questions/30193/encrypting-user-data-using-password-and-forgot-my-password)
- * https://security.stackexchange.com/questions/157422/store-encrypted-user-data-in-database
- * TODO - 9 - Create INI file to store database configuration etc.
  ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault.Desktop.Winforms

@@ -10,14 +10,19 @@ namespace PasswordVault.Services
 {
     class ExcelExport : IExport
     {
-        public ExportResult Export(string exportPath, List<Password> passwords)
+        public ExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword)
         {
             ExportResult result = ExportResult.Fail;
 
             using (var p = new ExcelPackage())
             {
                 // TODO - Add workbook encryption
+                var wb = p.Workbook;
+                wb.Protection.SetPassword("Password");
+                p.Encryption.IsEncrypted = true;
+                p.Encryption.Algorithm = EncryptionAlgorithm.AES256;
                 var ws = p.Workbook.Worksheets.Add("Passwords");
+                ws.Protection.SetPassword("Password");
 
                 int headerColCount = 1;
                 int rowCount = 1;
@@ -47,7 +52,7 @@ namespace PasswordVault.Services
                     rowCount++;
                 }
                   
-                p.SaveAs(new FileInfo(exportPath));
+                p.SaveAs(new FileInfo(exportPath), "Password");
             }
 
             return result;

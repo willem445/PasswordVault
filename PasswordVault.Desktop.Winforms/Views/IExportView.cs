@@ -11,7 +11,7 @@ namespace PasswordVault.Desktop.Winforms
     public interface IExportView
     {
         event Action InitializeEvent;
-        event Action<ExportFileTypes, string> ExportPasswordsEvent;
+        event Action<ExportFileTypes, string, string> ExportPasswordsEvent;
 
         void DisplayFileTypes(List<SupportedFileTypes> fileTypes);
         void DisplayExportResult(ExportResult result);

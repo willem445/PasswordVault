@@ -13,17 +13,17 @@ namespace PasswordVault.Services
         {
             _supportedFileTypes = new List<SupportedFileTypes>();
             _supportedFileTypes.Add(new SupportedFileTypes(ExportFileTypes.Excel, "Excel (*.xlsx)|*.xlsx", "Excel"));
-            _supportedFileTypes.Add(new SupportedFileTypes(ExportFileTypes.PDF, "PDF (*.pdf)|*.pdf", "PDF"));
-            _supportedFileTypes.Add(new SupportedFileTypes(ExportFileTypes.Word, "Word (*.docx)|*.docx", "Word"));
+            //_supportedFileTypes.Add(new SupportedFileTypes(ExportFileTypes.PDF, "PDF (*.pdf)|*.pdf", "PDF"));
+            //_supportedFileTypes.Add(new SupportedFileTypes(ExportFileTypes.Word, "Word (*.docx)|*.docx", "Word"));
         }
 
-        public ExportResult Export(ExportFileTypes fileType, string exportPath, List<Password> passwords)
+        public ExportResult Export(ExportFileTypes fileType, string exportPath, List<Password> passwords, string passwordProtection)
         {
             ExportResult result;
 
             IExportFactory exportFactory = new ExportFactory();
             IExport exporter = exportFactory.Get(fileType);
-            result = exporter.Export(exportPath, passwords);
+            result = exporter.Export(exportPath, passwords, passwordProtection);
 
             return result;
         }

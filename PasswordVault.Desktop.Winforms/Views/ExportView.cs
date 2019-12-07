@@ -21,7 +21,7 @@ namespace PasswordVault.Desktop.Winforms
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public event Action<ExportFileTypes, string> ExportPasswordsEvent;
+        public event Action<ExportFileTypes, string, string> ExportPasswordsEvent;
         public event Action InitializeEvent;
 
         /*PRIVATE*****************************************************************************************/
@@ -73,6 +73,17 @@ namespace PasswordVault.Desktop.Winforms
             filePathTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             filePathTextbox.BorderStyle = BorderStyle.FixedSingle;
             filePathTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+
+            exportPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            exportPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
+            exportPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            exportPasswordTextbox.Text = "Enter encryption password";
+            exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            exportPasswordTextbox.Enabled = false;
+
+            encryptionEnabledCheckbox.BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
+            encryptionEnabledCheckbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            encryptionEnabledCheckbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
         }
 
         /*=================================================================================================
@@ -200,15 +211,27 @@ namespace PasswordVault.Desktop.Winforms
 
         private void exportButton_Click(object sender, EventArgs e)
         {
-            // TODO - Add validation for filtType and move to presenter
+            // TODO - data validation
             ExportFileTypes fileType = _fileTypes.Where(x => x.Filter.Contains(_fileName.Split('.')[1])).FirstOrDefault().FileType;
-            ExportPasswordsEvent?.Invoke(fileType, _fileName);
+            ExportPasswordsEvent?.Invoke(fileType, _fileName, exportPasswordTextbox.Text);
         }
 
         private void ExportView_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.Hide();
             e.Cancel = true; // this cancels the close event.
+        }
+
+        private void encryptionEnabledCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (encryptionEnabledCheckbox.Checked)
+            {
+                exportPasswordTextbox.Enabled = true;
+            }
+            else
+            {
+                exportPasswordTextbox.Enabled = false;
+            }
         }
 
         /*=================================================================================================

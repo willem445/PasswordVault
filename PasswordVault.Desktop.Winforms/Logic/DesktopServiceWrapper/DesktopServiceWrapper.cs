@@ -360,11 +360,11 @@ namespace PasswordVault.Desktop.Winforms
             return -1;
         }
 
-        public ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath)
+        public ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath, string passwordProtection)
         {
             ExportResult result;
 
-            result = _exportPasswords.Export(fileType, exportPath, _passwordList);
+            result = _exportPasswords.Export(fileType, exportPath, _passwordList, passwordProtection);
 
             return result;
         }

@@ -34,6 +34,8 @@
             this.filePathTextbox = new System.Windows.Forms.TextBox();
             this.browseFoldersButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
+            this.exportPasswordTextbox = new System.Windows.Forms.TextBox();
+            this.encryptionEnabledCheckbox = new System.Windows.Forms.CheckBox();
             this.moveWindowPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,9 +84,9 @@
             // 
             // browseFoldersButton
             // 
-            this.browseFoldersButton.Location = new System.Drawing.Point(346, 48);
+            this.browseFoldersButton.Location = new System.Drawing.Point(346, 50);
             this.browseFoldersButton.Name = "browseFoldersButton";
-            this.browseFoldersButton.Size = new System.Drawing.Size(27, 23);
+            this.browseFoldersButton.Size = new System.Drawing.Size(27, 20);
             this.browseFoldersButton.TabIndex = 35;
             this.browseFoldersButton.Text = "...";
             this.browseFoldersButton.UseVisualStyleBackColor = true;
@@ -92,7 +94,7 @@
             // 
             // exportButton
             // 
-            this.exportButton.Location = new System.Drawing.Point(298, 86);
+            this.exportButton.Location = new System.Drawing.Point(298, 108);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(75, 23);
             this.exportButton.TabIndex = 36;
@@ -100,12 +102,32 @@
             this.exportButton.UseVisualStyleBackColor = true;
             this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
+            // exportPasswordTextbox
+            // 
+            this.exportPasswordTextbox.Location = new System.Drawing.Point(12, 76);
+            this.exportPasswordTextbox.Name = "exportPasswordTextbox";
+            this.exportPasswordTextbox.Size = new System.Drawing.Size(361, 20);
+            this.exportPasswordTextbox.TabIndex = 37;
+            // 
+            // encryptionEnabledCheckbox
+            // 
+            this.encryptionEnabledCheckbox.AutoSize = true;
+            this.encryptionEnabledCheckbox.Location = new System.Drawing.Point(12, 102);
+            this.encryptionEnabledCheckbox.Name = "encryptionEnabledCheckbox";
+            this.encryptionEnabledCheckbox.Size = new System.Drawing.Size(123, 17);
+            this.encryptionEnabledCheckbox.TabIndex = 38;
+            this.encryptionEnabledCheckbox.Text = "Password Protection";
+            this.encryptionEnabledCheckbox.UseVisualStyleBackColor = true;
+            this.encryptionEnabledCheckbox.CheckedChanged += new System.EventHandler(this.encryptionEnabledCheckbox_CheckedChanged);
+            // 
             // ExportView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(385, 121);
+            this.ClientSize = new System.Drawing.Size(385, 143);
+            this.Controls.Add(this.encryptionEnabledCheckbox);
+            this.Controls.Add(this.exportPasswordTextbox);
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.browseFoldersButton);
             this.Controls.Add(this.filePathTextbox);
@@ -130,5 +152,7 @@
         private System.Windows.Forms.TextBox filePathTextbox;
         private System.Windows.Forms.Button browseFoldersButton;
         private System.Windows.Forms.Button exportButton;
+        private System.Windows.Forms.TextBox exportPasswordTextbox;
+        private System.Windows.Forms.CheckBox encryptionEnabledCheckbox;
     }
 }

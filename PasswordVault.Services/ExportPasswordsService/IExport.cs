@@ -7,6 +7,6 @@ namespace PasswordVault.Services
 {
     interface IExport
     {
-        ExportResult Export(string exportPath, List<Password> passwords);
+        ExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword);
     }
 }

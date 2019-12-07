@@ -29,9 +29,9 @@ namespace PasswordVault.Desktop.Winforms
             _exportView.DisplayFileTypes(supportedFileTypes);
         }
 
-        private void ExportPasswords(ExportFileTypes fileType, string path)
+        private void ExportPasswords(ExportFileTypes fileType, string path, string password)
         {
-            ExportResult result = _serviceWrapper.ExportPasswords(fileType, path);
+            ExportResult result = _serviceWrapper.ExportPasswords(fileType, path, password);
             _exportView.DisplayExportResult(result);
         }
     }
