@@ -12,9 +12,19 @@ namespace PasswordVault.Services
 
     public enum ExportFileTypes
     {
+        Unsupported,
         Excel,
         Word,
         PDF
+    }
+
+    public enum ExportValidationResult
+    {
+        InvalidPassword,
+        FileNotSupported,
+        PathDoesNotExist,
+        Invalid,
+        Valid
     }
 
     public class SupportedFileTypes

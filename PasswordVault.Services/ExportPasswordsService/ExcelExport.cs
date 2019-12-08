@@ -10,51 +10,68 @@ namespace PasswordVault.Services
 {
     class ExcelExport : IExport
     {
-        public ExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword)
+        public ExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword, bool passwordEnabled)
         {
-            ExportResult result = ExportResult.Fail;
+            ExportResult result = ExportResult.Success;
 
-            using (var p = new ExcelPackage())
+            try
             {
-                // TODO - Add workbook encryption
-                var wb = p.Workbook;
-                wb.Protection.SetPassword("Password");
-                p.Encryption.IsEncrypted = true;
-                p.Encryption.Algorithm = EncryptionAlgorithm.AES256;
-                var ws = p.Workbook.Worksheets.Add("Passwords");
-                ws.Protection.SetPassword("Password");
-
-                int headerColCount = 1;
-                int rowCount = 1;
-                List<string> propertyNames = new List<string>();
-                PropertyInfo[] properties = typeof(Password).GetProperties();
-                foreach (PropertyInfo property in properties)
+                using (var p = new ExcelPackage())
                 {
-                    propertyNames.Add(property.Name);
+                    var wb = p.Workbook;
+                    var ws = p.Workbook.Worksheets.Add("Passwords");
 
-                    ws.Cells[rowCount, headerColCount].Value = property.Name;
-
-                    headerColCount++;
-                }
-
-                rowCount = 2;
-                foreach (var password in passwords)
-                {
-                    int tempColCount = 1;
-
-                    foreach (var propertyName in propertyNames)
+                    if (passwordEnabled)
                     {
-                        ws.Cells[rowCount, tempColCount].Value = password.GetType().GetProperty(propertyName).GetValue(password);
+                        wb.Protection.SetPassword(encryptionPassword);
+                        p.Encryption.IsEncrypted = true;
+                        p.Encryption.Algorithm = EncryptionAlgorithm.AES256;
+                        ws.Protection.SetPassword(encryptionPassword);
+                    }
+                    
+                    int headerColCount = 1;
+                    int rowCount = 1;
+                    List<string> propertyNames = new List<string>();
+                    PropertyInfo[] properties = typeof(Password).GetProperties();
+                    foreach (PropertyInfo property in properties)
+                    {
+                        propertyNames.Add(property.Name);
 
-                        tempColCount++;
+                        ws.Cells[rowCount, headerColCount].Value = property.Name;
+
+                        headerColCount++;
                     }
 
-                    rowCount++;
-                }
-                  
-                p.SaveAs(new FileInfo(exportPath), "Password");
-            }
+                    rowCount = 2;
+                    foreach (var password in passwords)
+                    {
+                        int tempColCount = 1;
 
+                        foreach (var propertyName in propertyNames)
+                        {
+                            ws.Cells[rowCount, tempColCount].Value = password.GetType().GetProperty(propertyName).GetValue(password);
+
+                            tempColCount++;
+                        }
+
+                        rowCount++;
+                    }
+
+                    if (passwordEnabled)
+                    {
+                        p.SaveAs(new FileInfo(exportPath), encryptionPassword);
+                    }
+                    else
+                    {
+                        p.SaveAs(new FileInfo(exportPath));
+                    }
+                }
+            }
+            catch
+            {
+                result = ExportResult.Fail;
+            }
+            
             return result;
         }
     }

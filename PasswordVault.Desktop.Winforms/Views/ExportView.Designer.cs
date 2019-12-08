@@ -36,6 +36,7 @@
             this.exportButton = new System.Windows.Forms.Button();
             this.exportPasswordTextbox = new System.Windows.Forms.TextBox();
             this.encryptionEnabledCheckbox = new System.Windows.Forms.CheckBox();
+            this.statusLabel = new System.Windows.Forms.Label();
             this.moveWindowPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -108,6 +109,9 @@
             this.exportPasswordTextbox.Name = "exportPasswordTextbox";
             this.exportPasswordTextbox.Size = new System.Drawing.Size(361, 20);
             this.exportPasswordTextbox.TabIndex = 37;
+            this.exportPasswordTextbox.TextChanged += new System.EventHandler(this.exportPasswordTextbox_TextChanged);
+            this.exportPasswordTextbox.Enter += new System.EventHandler(this.exportPasswordTextbox_Enter);
+            this.exportPasswordTextbox.Leave += new System.EventHandler(this.exportPasswordTextbox_Leave);
             // 
             // encryptionEnabledCheckbox
             // 
@@ -120,12 +124,22 @@
             this.encryptionEnabledCheckbox.UseVisualStyleBackColor = true;
             this.encryptionEnabledCheckbox.CheckedChanged += new System.EventHandler(this.encryptionEnabledCheckbox_CheckedChanged);
             // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(12, 122);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(35, 13);
+            this.statusLabel.TabIndex = 39;
+            this.statusLabel.Text = "status";
+            // 
             // ExportView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(385, 143);
+            this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.encryptionEnabledCheckbox);
             this.Controls.Add(this.exportPasswordTextbox);
             this.Controls.Add(this.exportButton);
@@ -154,5 +168,6 @@
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.TextBox exportPasswordTextbox;
         private System.Windows.Forms.CheckBox encryptionEnabledCheckbox;
+        private System.Windows.Forms.Label statusLabel;
     }
 }

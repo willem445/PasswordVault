@@ -56,7 +56,7 @@ namespace PasswordVault.Desktop.Winforms
         int GetMinimumPasswordLength();
         string GeneratePasswordKey();
 
-        ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath, string passwordProtection);
+        ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath, string passwordProtection, bool passwordEnabled);
 
         List<SupportedFileTypes> GetSupportedFileTypes();
     }

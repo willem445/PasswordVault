@@ -11,10 +11,12 @@ namespace PasswordVault.Desktop.Winforms
     public interface IExportView
     {
         event Action InitializeEvent;
-        event Action<ExportFileTypes, string, string> ExportPasswordsEvent;
+        event Action<ExportFileTypes, string, string, bool> ExportPasswordsEvent;
+        event Action<string, string> DataValidationEvent;
 
         void DisplayFileTypes(List<SupportedFileTypes> fileTypes);
         void DisplayExportResult(ExportResult result);
+        void DisplayValidationResult(ExportValidationResult result, ExportFileTypes fileType);
         void ShowExportView();
 
     }
