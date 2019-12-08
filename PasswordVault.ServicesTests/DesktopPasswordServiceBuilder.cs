@@ -35,8 +35,9 @@ namespace PasswordVault.ServicesTests
             IMasterPassword masterPassword = new MasterPassword();
             IEncryptionService encryptionService = new AesEncryption();
             IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionService, db);
+            IExportPasswords export = new ExportPasswords();
 
-            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth));
+            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth), export);
 
             return desktopServiceWrapper;
         }
@@ -49,8 +50,9 @@ namespace PasswordVault.ServicesTests
             IMasterPassword masterPassword = new MasterPassword();
             IEncryptionService encryptionService = new AesEncryption();
             IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionService, db);
+            IExportPasswords export = new ExportPasswords();
 
-            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth));
+            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth), export);
 
             return desktopServiceWrapper;
         }

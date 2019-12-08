@@ -197,7 +197,7 @@ namespace PasswordVault.Services
         {
             return new DatabasePassword(
                 password.UniqueID,
-                uuid, // TODO - 7 - Change to unique ID - Use unencrypted username for now
+                uuid, 
                 _encryptionService.Encrypt(password.Application, key),
                 _encryptionService.Encrypt(password.Username,    key),
                 _encryptionService.Encrypt(password.Email,       key),

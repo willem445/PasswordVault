@@ -67,6 +67,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IUserService>().To<UserService>().InSingletonScope();
             Bind<IAuthenticationService>().To<AuthenticationService>();
             Bind<ITokenService>().To<TokenService>();
+            Bind<IExportPasswords>().To<ExportPasswords>();
 
             Bind<IDesktopServiceWrapper>().To<DesktopServiceWrapper>().InSingletonScope();        
             Bind<ILoginView>().To<LoginView>().InSingletonScope();
@@ -74,6 +75,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
             Bind<IEditUserView>().To<EditUserView>().InSingletonScope();
             Bind<IConfirmDeleteUserView>().To<ConfirmDeleteUserView>().InSingletonScope();
+            Bind<IExportView>().To<ExportView>().InSingletonScope();
         }
 
         /*=================================================================================================

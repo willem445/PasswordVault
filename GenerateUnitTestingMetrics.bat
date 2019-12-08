@@ -25,7 +25,7 @@ exit /b %errorlevel%
 :RunOpenCoverUnitTestMetrics
 "%~dp0packages\OpenCover.4.7.922\tools\OpenCover.Console.exe" ^
 -register:path32 ^
--target:"F:\Program Files\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" ^
+-target:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" ^
 -targetargs:"%~dp0PasswordVault.ServicesTests\bin\Debug\PasswordVault.ServicesTests.dll /logger:trx;LogFileName=%~dp0PasswordVault.Services.trx" ^
 -filter:"+[PasswordVault.Services*]* -[PasswordVault.ServicesTests]*" ^
 -mergebyhash ^
