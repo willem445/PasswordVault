@@ -553,6 +553,7 @@ namespace PasswordVault.Desktop.Winforms
                     usernameTextBox.Text = "";
                     emailTextBox.Text = "";
                     applicationTextBox.Focus();
+                    UpdateDataGridViewAfterEdit();
                     break;
             }
         }
@@ -1124,8 +1125,11 @@ namespace PasswordVault.Desktop.Winforms
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
             RaiseNewFilterEvent(filterTextBox.Text, filterOption);
 
-            passwordDataGridView.Rows[dgvIndex].Selected = true;
-            passwordDataGridView.Rows[dgvIndex].Cells[0].Selected = true;
+            if (dgvIndex >= 0)
+            {
+                passwordDataGridView.Rows[dgvIndex].Selected = true;
+                passwordDataGridView.Rows[dgvIndex].Cells[0].Selected = true;
+            }        
         }
 
         /*************************************************************************************************/
