@@ -50,6 +50,10 @@ namespace PasswordVault.Models
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
+        public int? PasswordEncryptionService { get; }
+        public int? PasswordBlockSize { get; }
+        public int? PasswordKeySize { get; }
+        public int? PasswordIterations { get; }
 
         public User(string uniqueID, string encryptedKey, string username, string iterations, string salt, string hash, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
         {

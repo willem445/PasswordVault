@@ -11,19 +11,19 @@ namespace PasswordVault.Services
 
         /*FIELDS***********************************************************/
         private IDatabase _dbContext;
-        private IEncryptionService _encryptionService;
+        private IEncryptionServiceFactory _encryptionServiceFactory;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public PasswordService(IDatabase dbContext, IEncryptionService encryptionService)
+        public PasswordService(IDatabase dbContext, IEncryptionServiceFactory encryptionServiceFactory)
         {
             _dbContext = dbContext;
-            _encryptionService = encryptionService;
+            _encryptionServiceFactory = encryptionServiceFactory;
         }
 
         /*PUBLIC METHODS***************************************************/
-        public AddPasswordResult AddPassword(string userUuid, Password password, string key)
+        public AddPasswordResult AddPassword(string userUuid, Password password, string key, EncryptionServiceParameters parameters)
         {
             AddPasswordResult result;
             AddModifyPasswordResult addResult = AddModifyPasswordResult.Failed;
@@ -38,8 +38,8 @@ namespace PasswordVault.Services
 
             if (verifyResult == AddModifyPasswordResult.Success)
             {
-                Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password, key); // Need to first encrypt the password
-                uniqueId = _dbContext.AddPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptPassword, key));
+                Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password, key, parameters); // Need to first encrypt the password
+                uniqueId = _dbContext.AddPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptPassword, key, parameters));
                 addResult = AddModifyPasswordResult.Success;
             }
             else
@@ -65,7 +65,7 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key)
+        public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionServiceParameters parameters)
         {
             AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
 
@@ -73,8 +73,8 @@ namespace PasswordVault.Services
 
             if (verifyResult == AddModifyPasswordResult.Success)
             {
-                Password encryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword, key);
-                bool dbResult = _dbContext.ModifyPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptedPassword, key));
+                Password encryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword, key, parameters);
+                bool dbResult = _dbContext.ModifyPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptedPassword, key, parameters));
 
                 if (dbResult)
                 {
@@ -100,23 +100,24 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public List<Password> GetPasswords(string userUuid, string key)
+        public List<Password> GetPasswords(string userUuid, string key, EncryptionServiceParameters parameters)
         {
             List<DatabasePassword> databasePasswords = null;
             List<Password> passwords = new List<Password>();
 
             databasePasswords = _dbContext.GetUserPasswordsByGUID(userUuid);
+            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
 
             foreach (var databasePassword in databasePasswords)
             {
                 Password password = new Password(
                     databasePassword.UniqueID,
-                    _encryptionService.Decrypt(databasePassword.Application, key),
-                    _encryptionService.Decrypt(databasePassword.Username,    key),
-                    _encryptionService.Decrypt(databasePassword.Email,       key),
-                    _encryptionService.Decrypt(databasePassword.Description, key),
-                    _encryptionService.Decrypt(databasePassword.Website,     key),
-                    _encryptionService.Decrypt(databasePassword.Passphrase,  key)
+                    encryptionService.Decrypt(databasePassword.Application, key),
+                    encryptionService.Decrypt(databasePassword.Username,    key),
+                    encryptionService.Decrypt(databasePassword.Email,       key),
+                    encryptionService.Decrypt(databasePassword.Description, key),
+                    encryptionService.Decrypt(databasePassword.Website,     key),
+                    encryptionService.Decrypt(databasePassword.Passphrase,  key)
                     );
 
                 passwords.Add(password);
@@ -180,8 +181,10 @@ namespace PasswordVault.Services
             return result;
         }
 
-        private Password ConvertPlaintextPasswordToEncryptedPassword(Password password, string key)
+        private Password ConvertPlaintextPasswordToEncryptedPassword(Password password, string key, EncryptionServiceParameters parameters)
         {
+            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+
             return new Password(
                 password.UniqueID,
                 password.Application,
@@ -189,20 +192,22 @@ namespace PasswordVault.Services
                 password.Email,
                 password.Description,
                 password.Website,
-                _encryptionService.Encrypt(password.Passphrase, key)
+                encryptionService.Encrypt(password.Passphrase, key)
                 );
         }
 
-        private DatabasePassword ConvertToEncryptedDatabasePassword(string uuid, Password password, string key)
+        private DatabasePassword ConvertToEncryptedDatabasePassword(string uuid, Password password, string key, EncryptionServiceParameters parameters)
         {
+            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+
             return new DatabasePassword(
                 password.UniqueID,
-                uuid, 
-                _encryptionService.Encrypt(password.Application, key),
-                _encryptionService.Encrypt(password.Username,    key),
-                _encryptionService.Encrypt(password.Email,       key),
-                _encryptionService.Encrypt(password.Description, key),
-                _encryptionService.Encrypt(password.Website,     key),
+                uuid,
+                encryptionService.Encrypt(password.Application, key),
+                encryptionService.Encrypt(password.Username,    key),
+                encryptionService.Encrypt(password.Email,       key),
+                encryptionService.Encrypt(password.Description, key),
+                encryptionService.Encrypt(password.Website,     key),
                 password.Passphrase // Password is already encrypted
                 );
         }

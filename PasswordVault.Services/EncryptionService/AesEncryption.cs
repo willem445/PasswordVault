@@ -33,6 +33,13 @@ namespace PasswordVault.Services
 
         }
 
+        public AesEncryption(int keySize, int blockSize, int iterations)
+        {
+            _keySize = keySize;
+            _derivationIterations = iterations;
+            _blockSize = blockSize;
+        }
+
         /*PUBLIC METHODS***************************************************/
         public string Encrypt(string plainText, string passPhrase)
         {

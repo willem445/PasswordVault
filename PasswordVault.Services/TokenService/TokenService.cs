@@ -27,7 +27,7 @@ namespace PasswordVault.Services
         public TokenService()
         {
             _appsettings = new AppSettings();
-            _appsettings.Secret = "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING"; // TODO - Store this in app settings
+            _appsettings.Secret = "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING"; // TODO - 9 - Store this in app settings
         }
 
         /*PUBLIC METHODS***************************************************/

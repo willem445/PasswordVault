@@ -22,6 +22,7 @@ namespace PasswordVault.Services
 
         /*PRIVATE*****************************************************************************************/
         private int _keySize = 256;
+        private int _blockSize = 256;
         private int _derivationIterations = 2500;
 
         /*=================================================================================================
@@ -46,12 +47,13 @@ namespace PasswordVault.Services
             // Use defaults
         }
 
-        /*************************************************************************************************/
-        public RijndaelManagedEncryption(int keySize, int derivationIterations)
+        public RijndaelManagedEncryption(int keySize, int blockSize, int iterations)
         {
             _keySize = keySize;
-            _derivationIterations = derivationIterations;
+            _derivationIterations = iterations;
+            _blockSize = blockSize;
         }
+
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
@@ -70,7 +72,7 @@ namespace PasswordVault.Services
                 var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = _blockSize;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
@@ -115,7 +117,7 @@ namespace PasswordVault.Services
                 var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged()) 
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = _blockSize;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))

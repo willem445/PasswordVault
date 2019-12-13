@@ -16,7 +16,7 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>Result of adding user.</returns>
-        AddUserResult AddUser(User user);
+        AddUserResult AddUser(User user, EncryptionServiceParameters parameters);
 
         /// <summary>
         /// Deletes user from database.
@@ -34,7 +34,7 @@ namespace PasswordVault.Services
         /// Must contain valid firstname, lastname, phone number and email.</param>
         /// <param name="encryptionKey">Key used to encrypt users data.</param>
         /// <returns>Result of modifying user.</returns>
-        UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey);
+        UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey, EncryptionServiceParameters parameters);
 
         /// <summary>
         /// Verifies a users password.
@@ -54,7 +54,7 @@ namespace PasswordVault.Services
         /// <param name="confirmPassword">Confirm password.</param>
         /// <param name="encryptionKey">Key used for encryption.</param>
         /// <returns>Returns change password result.</returns>
-        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey);
+        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, EncryptionServiceParameters parameters);
 
         /// <summary>
         /// Gets a user from the database by the users unique ID.
@@ -62,6 +62,8 @@ namespace PasswordVault.Services
         /// <param name="userUuid">Users unique ID.</param>
         /// <returns>User obejct from database. Null if not found.</returns>
         User GetUser(string userUuid);
+
+        User GetUserByUsername(string username);
 
         /// <summary>
         /// Gets the minimum password length for a users password.
