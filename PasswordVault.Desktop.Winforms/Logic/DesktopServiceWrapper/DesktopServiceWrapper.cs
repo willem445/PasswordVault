@@ -30,16 +30,23 @@ namespace PasswordVault.Desktop.Winforms
         private IUserService _userService;
         private IAuthenticationService _authenticationService;
         private IExportPasswords _exportPasswords;
+        private IEncryptionConversionFactory _encryptionConversionFactory;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public DesktopServiceWrapper(IAuthenticationService authenticationService, IPasswordService passwordService, IUserService userService, IExportPasswords exportPasswords)
+        public DesktopServiceWrapper(
+            IAuthenticationService authenticationService, 
+            IPasswordService passwordService, 
+            IUserService userService, 
+            IExportPasswords exportPasswords, 
+            IEncryptionConversionFactory encryptionConversionFactory)
         {
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _exportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
+            _encryptionConversionFactory = encryptionConversionFactory ?? throw new ArgumentNullException(nameof(encryptionConversionFactory));
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -75,7 +82,9 @@ namespace PasswordVault.Desktop.Winforms
 
                         if (_encryptionParameters.EncryptionService != ENCRYPTION_SERVICE_DEFAULT)
                         {
-                            // Need to convert between encryption formats
+                            IEncryptionConversion encryptionConversion = _encryptionConversionFactory.Get(_encryptionParameters.EncryptionService, ENCRYPTION_SERVICE_DEFAULT, _passwordService, _userService);
+                            encryptionDefaults = new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults;
+                            encryptionConversion.Convert(_currentUser, _encryptionParameters.EncryptionSizes, encryptionDefaults);
                         }
                         else if (_encryptionParameters.EncryptionSizes.BlockSize != encryptionDefaults.BlockSize ||
                             _encryptionParameters.EncryptionSizes.KeySize != encryptionDefaults.KeySize ||

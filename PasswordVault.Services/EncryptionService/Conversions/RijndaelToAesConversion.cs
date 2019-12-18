@@ -16,20 +16,24 @@ namespace PasswordVault.Services
 
         /*PROPERTIES*******************************************************/
         private IPasswordService _passwordService;
-        private IDatabase _dbContext;
 
         /*CONSTRUCTORS*****************************************************/
-        public RijndaelToAesConversion(IPasswordService passwordService, IDatabase dbContext)
+        public RijndaelToAesConversion(IPasswordService passwordService, IUserService userService)
         {
             _passwordService = passwordService;
-            _dbContext = dbContext;
         }
 
         /*PUBLIC METHODS***************************************************/
         public void Convert(User user, EncryptionSizes originalSizes, EncryptionSizes newSizes)
         {
             EncryptionServiceParameters originalParameters = new EncryptionServiceParameters(EncryptionService.RijndaelManaged, originalSizes);
+            EncryptionServiceParameters newParameters = new EncryptionServiceParameters(EncryptionService.Aes, newSizes);
             List<Password> passwords = _passwordService.GetPasswords(user.GUID, user.PlainTextRandomKey, originalParameters);
+
+            foreach (var password in passwords)
+            {
+                _passwordService.ModifyPassword(user.GUID, password, user.PlainTextRandomKey, newParameters);
+            }
         }
 
         public void Convert(string username, string passphrase)
