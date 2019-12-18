@@ -13,15 +13,15 @@ namespace PasswordVault.Services
             switch (parameters.EncryptionService)
             {
                 case EncryptionService.RijndaelManaged:
-                    encryptionService = new RijndaelManagedEncryption(parameters.KeySize, parameters.BlockSize, parameters.Iterations);
+                    encryptionService = new RijndaelManagedEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
                     break;
 
                 case EncryptionService.Aes:
-                    encryptionService = new AesEncryption(parameters.KeySize, parameters.BlockSize, parameters.Iterations);
+                    encryptionService = new AesEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
                     break;
 
                 default:
-                    encryptionService = new AesEncryption(parameters.KeySize, parameters.BlockSize, parameters.Iterations);
+                    encryptionService = new AesEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
                     break;
             }
 

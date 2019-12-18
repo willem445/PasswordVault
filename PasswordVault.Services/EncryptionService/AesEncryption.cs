@@ -13,31 +13,43 @@ namespace PasswordVault.Services
         /*CONSTANTS********************************************************/
 
         /*FIELDS***********************************************************/
-        private int _keySize = 256;
-        private int _ivSize = 128;
-        private int _blockSize = 128;
-        private int _derivationIterations = 2500;
+        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
+            iterations: 2500,
+            blockSize: 128,
+            keySize: 256
+        );
+
+        private int _keySize;
+        private int _ivSize;
+        private int _blockSize;
+        private int _derivationIterations;
+
+
 
         /*PROPERTIES*******************************************************/
-        public int Iterations
+        public EncryptionSizes EncryptionSizeDefaults
         {
             get
             {
-                return _derivationIterations;
+                return _encryptionSizeDefaults;
             }
         }
 
         /*CONSTRUCTORS*****************************************************/
         public AesEncryption()
         {
-
+            _keySize = _encryptionSizeDefaults.KeySize;
+            _ivSize = _encryptionSizeDefaults.BlockSize;
+            _blockSize = _encryptionSizeDefaults.BlockSize;
+            _derivationIterations = _encryptionSizeDefaults.Iterations;
         }
 
         public AesEncryption(int keySize, int blockSize, int iterations)
         {
-            _keySize = keySize;
+            _keySize = keySize;         
             _derivationIterations = iterations;
             _blockSize = blockSize;
+            _ivSize = blockSize;
         }
 
         /*PUBLIC METHODS***************************************************/

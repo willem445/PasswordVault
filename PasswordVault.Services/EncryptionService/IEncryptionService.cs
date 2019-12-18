@@ -9,10 +9,10 @@ namespace PasswordVault.Services
     public interface IEncryptionService
     {
         /// <summary>
-        /// Gets the number of iterations used during encryption and decryptions.
+        /// Gets the default iterations and bit lengths for the encryption service.
         /// </summary>
-        int Iterations { get; }
-        
+        EncryptionSizes EncryptionSizeDefaults { get; }
+
         /// <summary>
         /// Encrypts a plaintext string with given passphrase.
         /// </summary>

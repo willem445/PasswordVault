@@ -18,6 +18,7 @@ namespace PasswordVault.Desktop.Winforms
     public class DesktopServiceWrapper : IDesktopServiceWrapper
     {
         /*CONSTANTS********************************************************/
+        private const EncryptionService ENCRYPTION_SERVICE_DEFAULT = EncryptionService.Aes;
         private const int GENERATED_PASSWORD_LENGTH = 20;
 
         /*FIELDS***********************************************************/
@@ -59,16 +60,31 @@ namespace PasswordVault.Desktop.Winforms
                     // TODO - 9 - Compare parameters to application default parameters to determine if a conversion needs to take place
                     _encryptionParameters = new EncryptionServiceParameters(
                         (EncryptionService)tempUser.PasswordEncryptionService.Value,
+                        new EncryptionSizes(
                         tempUser.PasswordIterations.Value,
                         tempUser.PasswordBlockSize.Value,
-                        tempUser.PasswordKeySize.Value);
+                        tempUser.PasswordKeySize.Value));
 
                     AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _encryptionParameters);
 
                     if (authenticateResult.Result == AuthenticateResult.Successful)
                     {
                         _currentUser = authenticateResult.User;
-                        UpdatePasswordListFromDB();
+
+                        EncryptionSizes encryptionDefaults = new EncryptionServiceFactory().Get(_encryptionParameters).EncryptionSizeDefaults;
+
+                        if (_encryptionParameters.EncryptionService != ENCRYPTION_SERVICE_DEFAULT)
+                        {
+                            // Need to convert between encryption formats
+                        }
+                        else if (_encryptionParameters.EncryptionSizes.BlockSize != encryptionDefaults.BlockSize ||
+                            _encryptionParameters.EncryptionSizes.KeySize != encryptionDefaults.KeySize ||
+                            _encryptionParameters.EncryptionSizes.Iterations != encryptionDefaults.Iterations)
+                        {
+                            // Need to update old encrypted data to use latest defaults
+                        }
+
+                        UpdatePasswordListFromDB();                      
                     }
                     else
                     {

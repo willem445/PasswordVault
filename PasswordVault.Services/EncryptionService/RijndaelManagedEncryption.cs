@@ -21,20 +21,26 @@ namespace PasswordVault.Services
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private int _keySize = 256;
-        private int _blockSize = 256;
-        private int _derivationIterations = 2500;
+        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
+            iterations: 2500,
+            blockSize: 256,
+            keySize: 256
+        );
+
+        private int _keySize;
+        private int _blockSize;
+        private int _derivationIterations;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public int Iterations
+        public EncryptionSizes EncryptionSizeDefaults 
         {
             get
             {
-                return _derivationIterations;
-            }
+                return _encryptionSizeDefaults;
+            } 
         }
 
         /*PRIVATE*****************************************************************************************/
@@ -44,7 +50,9 @@ namespace PasswordVault.Services
 		*================================================================================================*/
         public RijndaelManagedEncryption()
         {
-            // Use defaults
+            _keySize = _encryptionSizeDefaults.KeySize;
+            _blockSize = _encryptionSizeDefaults.BlockSize;
+            _derivationIterations = _encryptionSizeDefaults.Iterations;
         }
 
         public RijndaelManagedEncryption(int keySize, int blockSize, int iterations)
