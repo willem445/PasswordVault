@@ -33,11 +33,11 @@ namespace PasswordVault.ServicesTests
             IDatabase db = DatabaseFactory.GetDatabase(Database.InMemory);
             ITokenService tokenService = new TokenService();
             IMasterPassword masterPassword = new MasterPassword();
-            IEncryptionService encryptionService = new AesEncryption();
-            IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionService, db);
+            IEncryptionServiceFactory encryptionServiceFactory = new EncryptionServiceFactory();
+            IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionServiceFactory, db);
             IExportPasswords export = new ExportPasswords();
 
-            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth), export);
+            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionServiceFactory), new UserService(db, masterPassword, encryptionServiceFactory, auth), export);
 
             return desktopServiceWrapper;
         }
@@ -48,11 +48,11 @@ namespace PasswordVault.ServicesTests
 
             ITokenService tokenService = new TokenService();
             IMasterPassword masterPassword = new MasterPassword();
-            IEncryptionService encryptionService = new AesEncryption();
-            IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionService, db);
+            IEncryptionServiceFactory encryptionServiceFactory = new EncryptionServiceFactory();
+            IAuthenticationService auth = new AuthenticationService(tokenService, masterPassword, encryptionServiceFactory, db);
             IExportPasswords export = new ExportPasswords();
 
-            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionService), new UserService(db, masterPassword, encryptionService, auth), export);
+            desktopServiceWrapper = new DesktopServiceWrapper(auth, new PasswordService(db, encryptionServiceFactory), new UserService(db, masterPassword, encryptionServiceFactory, auth), export);
 
             return desktopServiceWrapper;
         }
