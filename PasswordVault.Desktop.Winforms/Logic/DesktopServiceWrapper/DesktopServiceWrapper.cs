@@ -68,31 +68,32 @@ namespace PasswordVault.Desktop.Winforms
                         tempUser.PasswordIterations.Value,
                         tempUser.PasswordBlockSize.Value,
                         tempUser.PasswordKeySize.Value));
+                }
 
-                    // Clear out the temp user from memory
-                    tempUser = new User(false);
+                // Clear out the temp user from memory
+                tempUser = new User(false);
 
-                    AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _encryptionParameters);
+                AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _encryptionParameters);
 
-                    if (authenticateResult.Result == AuthenticateResult.Successful)
-                    {
-                        _currentUser = authenticateResult.User;
+                if (authenticateResult.Result == AuthenticateResult.Successful)
+                {
+                    _currentUser = authenticateResult.User;
 
-                        // Check if the users encryption parameters are different from application defaults
-                        // If they are, update the encrypted data to new standard.
-                        CheckEncryptionAlgorithm(password);
+                    // Check if the users encryption parameters are different from application defaults
+                    // If they are, update the encrypted data to new standard.
+                    CheckEncryptionAlgorithm(password);
 
-                        UpdatePasswordListFromDB();                      
-                    }
-                    else
-                    {
-                        // If user credentials are incorrect, clear user and parameters from memory
-                        _currentUser = new User(false);
-                        _encryptionParameters = new EncryptionServiceParameters();
-                    }
+                    UpdatePasswordListFromDB();                      
+                }
+                else
+                {
+                    // If user credentials are incorrect, clear user and parameters from memory
+                    _currentUser = new User(false);
+                    _encryptionParameters = new EncryptionServiceParameters();
+                }
 
-                    loginResult = authenticateResult.Result;
-                }            
+                loginResult = authenticateResult.Result;
+
             }
             
             return loginResult;
@@ -143,7 +144,8 @@ namespace PasswordVault.Desktop.Winforms
 
         public AddUserResult CreateNewUser(User user)
         {
-            AddUserResult result = _userService.AddUser(user, _encryptionParameters);
+            EncryptionServiceParameters encryptionDefaults = new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults);
+            AddUserResult result = _userService.AddUser(user, encryptionDefaults);
             return result;
         }
 
