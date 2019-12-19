@@ -70,8 +70,8 @@ namespace PasswordVault.Services
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
-            var saltStringBytes = Generate256BitsOfRandomEntropy();
-            var ivStringBytes = Generate256BitsOfRandomEntropy();
+            var saltStringBytes = GenerateRandomEntropy(_blockSize);
+            var ivStringBytes = GenerateRandomEntropy(_blockSize);
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 #pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
@@ -150,14 +150,22 @@ namespace PasswordVault.Services
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private byte[] Generate256BitsOfRandomEntropy()
+        private byte[] GenerateRandomEntropy(int bits)
         {
-            var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
+            if ((bits % 8) != 0)
+            {
+                throw new ArgumentException("Must be divisible by 8!", nameof(bits));
+            }
+
+            int numBytes = bits / 8;
+
+            var randomBytes = new byte[numBytes];
             using (var rngCsp = new RNGCryptoServiceProvider())
             {
                 // Fill the array with cryptographically secure random bytes.
                 rngCsp.GetBytes(randomBytes);
             }
+
             return randomBytes;
         }
 
