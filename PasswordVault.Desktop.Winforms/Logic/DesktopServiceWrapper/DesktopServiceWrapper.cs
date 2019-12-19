@@ -84,7 +84,8 @@ namespace PasswordVault.Desktop.Winforms
                         {
                             IEncryptionConversion encryptionConversion = _encryptionConversionFactory.Get(_encryptionParameters.EncryptionService, ENCRYPTION_SERVICE_DEFAULT, _passwordService, _userService);
                             encryptionDefaults = new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults;
-                            encryptionConversion.Convert(_currentUser, _encryptionParameters.EncryptionSizes, encryptionDefaults);
+                            encryptionConversion.Convert(_currentUser, password, _encryptionParameters.EncryptionSizes, encryptionDefaults);
+                            _encryptionParameters = new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, encryptionDefaults);
                         }
                         else if (_encryptionParameters.EncryptionSizes.BlockSize != encryptionDefaults.BlockSize ||
                             _encryptionParameters.EncryptionSizes.KeySize != encryptionDefaults.KeySize ||

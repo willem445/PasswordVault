@@ -128,7 +128,11 @@ namespace PasswordVault.Services
                         encryptionService.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                        encryptionService.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey) // Encrypt with decrypted random key
+                        encryptionService.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
+                        (int)parameters.EncryptionService,
+                        parameters.EncryptionSizes.BlockSize,
+                        parameters.EncryptionSizes.KeySize,
+                        parameters.EncryptionSizes.Iterations
                         );
 
                 _dbcontext.AddUser(newUser);
@@ -192,7 +196,11 @@ namespace PasswordVault.Services
                     encryptionService.Encrypt(modifiedUser.FirstName,   encryptionKey),
                     encryptionService.Encrypt(modifiedUser.LastName,    encryptionKey),
                     encryptionService.Encrypt(modifiedUser.PhoneNumber, encryptionKey),
-                    encryptionService.Encrypt(modifiedUser.Email,       encryptionKey)
+                    encryptionService.Encrypt(modifiedUser.Email,       encryptionKey),
+                    (int)parameters.EncryptionService,
+                    parameters.EncryptionSizes.BlockSize,
+                    parameters.EncryptionSizes.KeySize,
+                    parameters.EncryptionSizes.Iterations
                 );
 
                 bool success = _dbcontext.ModifyUser(dbUser, newModifiedUser);
@@ -253,7 +261,11 @@ namespace PasswordVault.Services
                             user.FirstName,
                             user.LastName,
                             user.PhoneNumber,
-                            user.Email
+                            user.Email,
+                            (int)parameters.EncryptionService,
+                            parameters.EncryptionSizes.BlockSize,
+                            parameters.EncryptionSizes.KeySize,
+                            parameters.EncryptionSizes.Iterations
                         );
 
                         if (_dbcontext.ModifyUser(user, newUser))

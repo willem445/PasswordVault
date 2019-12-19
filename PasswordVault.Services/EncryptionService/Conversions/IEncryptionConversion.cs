@@ -7,6 +7,6 @@ namespace PasswordVault.Services
 {
     public interface IEncryptionConversion
     {
-        void Convert(User user, EncryptionSizes originalSizes, EncryptionSizes newSizes);
+        void Convert(User user, string password, EncryptionSizes originalSizes, EncryptionSizes newSizes);
     }
 }
