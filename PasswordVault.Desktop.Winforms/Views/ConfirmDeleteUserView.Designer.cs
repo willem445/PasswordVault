@@ -38,6 +38,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.warningLabel = new System.Windows.Forms.Label();
             this.resultLabel = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.moveWindowPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -112,8 +113,6 @@
             this.confirmPasswordTextbox.Name = "confirmPasswordTextbox";
             this.confirmPasswordTextbox.Size = new System.Drawing.Size(358, 20);
             this.confirmPasswordTextbox.TabIndex = 37;
-            this.confirmPasswordTextbox.Enter += new System.EventHandler(this.confirmPasswordTextbox_Enter);
-            this.confirmPasswordTextbox.Leave += new System.EventHandler(this.confirmPasswordTextbox_Leave);
             // 
             // panel1
             // 
@@ -141,12 +140,23 @@
             this.resultLabel.Size = new System.Drawing.Size(0, 13);
             this.resultLabel.TabIndex = 38;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 131);
+            this.label3.MaximumSize = new System.Drawing.Size(375, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(93, 13);
+            this.label3.TabIndex = 39;
+            this.label3.Text = "Confirm password:";
+            // 
             // ConfirmDeleteUserView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(385, 218);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.confirmPasswordTextbox);
@@ -180,5 +190,6 @@
         private System.Windows.Forms.Label warningLabel;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label resultLabel;
+        private System.Windows.Forms.Label label3;
     }
 }
