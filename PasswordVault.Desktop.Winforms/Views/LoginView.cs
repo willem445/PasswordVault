@@ -30,6 +30,7 @@ namespace PasswordVault.Desktop.Winforms
         public event Action GenerateNewPasswordEvent;
         public event Action<string> PasswordChangedEvent;
         public event Action LoginSuccessfulEvent;
+        public event Action AuthenticationSuccessfulEvent;
         public event Action DisplayPasswordRequirementsEvent;
 
         /*PRIVATE*****************************************************************************************/
@@ -216,11 +217,11 @@ namespace PasswordVault.Desktop.Winforms
                     break;
 
                 case AuthenticateResult.Successful:
+                    AuthenticationSuccessfulEvent?.Invoke();
                     ClearLoginView();
                     DialogResult = DialogResult.OK;
                     DisableCreateUserForm();
-                    this.Close();
-                    RaiseLoginSuccessfulEvent();
+                    this.Close();               
                     break;
 
                 default:
@@ -228,6 +229,12 @@ namespace PasswordVault.Desktop.Winforms
                     loginResultLabel.Text = "Login failed.";
                     break;
             }
+        }
+
+        /*************************************************************************************************/
+        public void PasswordLoadingDone()
+        {
+            RaiseLoginSuccessfulEvent();
         }
 
         /*************************************************************************************************/

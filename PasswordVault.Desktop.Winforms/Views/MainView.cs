@@ -115,6 +115,7 @@ namespace PasswordVault.Desktop.Winforms
             _exportView = exportView ?? throw new ArgumentNullException(nameof(exportView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
+            _loginView.AuthenticationSuccessfulEvent += AuthenticationSuccessful;
             _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
             _confirmDeleteUserView.DeleteSuccessEvent += DeleteAccountSuccess;
 
@@ -629,8 +630,15 @@ namespace PasswordVault.Desktop.Winforms
             label7.Visible = true;
             passwordCountLabel.Visible = true;
             loginToolStripMenuItem.Text = "Logoff";
+            Cursor = Cursors.Arrow;
 
             RaiseRequestPasswordsOnLoginEvent();
+        }
+
+        private void AuthenticationSuccessful()
+        {
+            Cursor = Cursors.WaitCursor;
+            UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral);
         }
 
         /*************************************************************************************************/

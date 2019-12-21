@@ -31,6 +31,9 @@ namespace PasswordVault.Desktop.Winforms
         private IAuthenticationService _authenticationService;
         private IExportPasswords _exportPasswords;
 
+        public event Action<AuthenticateResult> AuthenticationResultEvent;
+        public event Action DoneLoadingPasswordsEvent;
+
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
@@ -74,6 +77,7 @@ namespace PasswordVault.Desktop.Winforms
                 tempUser = new User(false);
 
                 AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _encryptionParameters);
+                AuthenticationResultEvent?.Invoke(authenticateResult.Result);
 
                 if (authenticateResult.Result == AuthenticateResult.Successful)
                 {
@@ -83,7 +87,9 @@ namespace PasswordVault.Desktop.Winforms
                     // If they are, update the encrypted data to new standard.
                     CheckEncryptionAlgorithm(password);
 
-                    UpdatePasswordListFromDB();                      
+                    var t = Task.Run(() => UpdatePasswordListFromDB());
+                    t.Wait();
+                    DoneLoadingPasswordsEvent?.Invoke();
                 }
                 else
                 {
@@ -411,7 +417,7 @@ namespace PasswordVault.Desktop.Winforms
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            _passwordList = _passwordService.GetPasswords(_currentUser.GUID, _currentUser.PlainTextRandomKey, _encryptionParameters);
+            _passwordList = _passwordService.GetPasswords(_currentUser.GUID, _currentUser.PlainTextRandomKey, _encryptionParameters);         
         }
 
         private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)
