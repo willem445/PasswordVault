@@ -50,8 +50,26 @@ namespace PasswordVault.Models
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
+        public int? PasswordEncryptionService { get; }
+        public int? PasswordBlockSize { get; }
+        public int? PasswordKeySize { get; }
+        public int? PasswordIterations { get; }
 
-        public User(string uniqueID, string encryptedKey, string username, string iterations, string salt, string hash, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
+        public User(string uniqueID, 
+            string encryptedKey, 
+            string username, 
+            string iterations, 
+            string salt, 
+            string hash, 
+            string firstName, 
+            string lastName, 
+            string phoneNumber, 
+            string email,
+            int passwordEncryptionService,
+            int passwordBlockSize,
+            int passwordKeySize,
+            int passwordIterations,
+            bool validUser = false)
         {
             GUID = uniqueID;
             EncryptedKey = encryptedKey;
@@ -63,11 +81,23 @@ namespace PasswordVault.Models
             LastName = lastName;
             PhoneNumber = phoneNumber;
             Email = email;
+            PasswordEncryptionService = passwordEncryptionService;
+            PasswordBlockSize = passwordBlockSize;
+            PasswordKeySize = passwordKeySize;
+            PasswordIterations = passwordIterations;
 
             ValidUser = validUser;
         }
 
-        public User(string uniqueID, string username, string plainTextRandomKey, string firstName, string lastName, string phoneNumber, string email, bool validUser = false)
+        public User(
+            string uniqueID, 
+            string username, 
+            string plainTextRandomKey, 
+            string firstName, 
+            string lastName, 
+            string phoneNumber, 
+            string email, 
+            bool validUser = false)
         {
             GUID = uniqueID;
             Username = username;
@@ -76,7 +106,6 @@ namespace PasswordVault.Models
             LastName = lastName;
             PhoneNumber = phoneNumber;
             Email = email;
-
             ValidUser = validUser;
         }
 

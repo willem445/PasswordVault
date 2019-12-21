@@ -201,6 +201,12 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ConfirmDeleteUserView_FormClosing(object sender, FormClosingEventArgs e)
         {
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            confirmPasswordTextbox.Text = "Confirm Password";
+            confirmPasswordTextbox.Text = "";
+            resultLabel.Text = "";
+            resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+
             FormClosingEvent?.Invoke();
             this.Hide();
             e.Cancel = true; // this cancels the close event.

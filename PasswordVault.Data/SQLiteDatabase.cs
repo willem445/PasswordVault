@@ -81,7 +81,7 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Users 
-                                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
+                                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email, PasswordEncryptionService, PasswordBlockSize, PasswordKeySize, PasswordIterations)
                                  VALUES(
                                     @GUID,
                                     @EncryptedKey,
@@ -92,7 +92,11 @@ namespace PasswordVault.Data
                                     @FirstName,
                                     @LastName,
                                     @PhoneNumber,
-                                    @Email)";
+                                    @Email,
+                                    @PasswordEncryptionService,
+                                    @PasswordBlockSize,
+                                    @PasswordKeySize,
+                                    @PasswordIterations)";
 
                     int dbresult = dbConn.Execute(query, new
                     {
@@ -105,7 +109,11 @@ namespace PasswordVault.Data
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
-                        Email = user.Email
+                        Email = user.Email,
+                        PasswordEncryptionService = user.PasswordEncryptionService,
+                        PasswordBlockSize = user.PasswordBlockSize,
+                        PasswordKeySize = user.PasswordKeySize,
+                        PasswordIterations = user.PasswordIterations,
                     });
 
                     if (dbresult != 0)
@@ -180,7 +188,11 @@ namespace PasswordVault.Data
                                      FirstName = @FirstName,
                                      LastName = @LastName,
                                      PhoneNumber = @PhoneNumber,
-                                     Email = @Email
+                                     Email = @Email,
+                                     PasswordEncryptionService = @PasswordEncryptionService,
+                                     PasswordBlockSize = @PasswordBlockSize,
+                                     PasswordKeySize = @PasswordKeySize,
+                                     PasswordIterations = @PasswordIterations
                                  WHERE GUID = @GUID";
 
                     var dbResult = dbConn.Execute(query, new
@@ -193,6 +205,10 @@ namespace PasswordVault.Data
                         LastName = modifiedUser.LastName,
                         PhoneNumber = modifiedUser.PhoneNumber,
                         Email = modifiedUser.Email,
+                        PasswordEncryptionService = modifiedUser.PasswordEncryptionService,
+                        PasswordBlockSize = modifiedUser.PasswordBlockSize,
+                        PasswordKeySize = modifiedUser.PasswordKeySize,
+                        PasswordIterations = modifiedUser.PasswordIterations,
                         GUID = user.GUID
                     });
 

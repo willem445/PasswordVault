@@ -299,8 +299,10 @@ namespace PasswordVault.Desktop.Winforms
                     createPasswordTextBox.Text = "";
                     createFirstNameTextBox.Text = "";
                     createLastNameTextBox.Text = "";
-                    createEmailTextBox.Text = "";
-                    createPhoneNumberTextBox.Text = "";
+                    createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+                    createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+                    createEmailTextBox.Text = "example@provider.com";
+                    createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
                     break;
 
                 default:       
@@ -493,6 +495,12 @@ namespace PasswordVault.Desktop.Winforms
             createNewUserResultLabel.Text = "";
             createUsernameTextBox.Text = "";
             createPasswordTextBox.Text = "";
+
+            createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+
+            createEmailTextBox.Text = "example@provider.com";
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
         }
 
         /*************************************************************************************************/

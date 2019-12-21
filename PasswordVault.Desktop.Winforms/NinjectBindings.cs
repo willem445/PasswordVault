@@ -61,7 +61,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
 
-            Bind<IEncryptionService>().To<AesEncryption>();
+            Bind<IEncryptionServiceFactory>().To<EncryptionServiceFactory>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
             Bind<IUserService>().To<UserService>().InSingletonScope();

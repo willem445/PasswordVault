@@ -15,22 +15,22 @@ namespace PasswordVault.Services
         /*FIELDS***********************************************************/
         private ITokenService _tokenService;
         private IMasterPassword _masterPassword;
-        private IEncryptionService _encryptionService;
+        private IEncryptionServiceFactory _encryptionServiceFactory;
         private IDatabase _dbContext;
 
         /*PROPERTIES*******************************************************/
 
         /*CONSTRUCTORS*****************************************************/
-        public AuthenticationService(ITokenService tokenService, IMasterPassword masterPassword, IEncryptionService encryptionService, IDatabase dbContext)
+        public AuthenticationService(ITokenService tokenService, IMasterPassword masterPassword, IEncryptionServiceFactory encryptionServiceFactory, IDatabase dbContext)
         {
             _tokenService = tokenService;
             _masterPassword = masterPassword;
-            _encryptionService = encryptionService;
+            _encryptionServiceFactory = encryptionServiceFactory;
             _dbContext = dbContext;        
         }
 
         /*PUBLIC METHODS***************************************************/
-        public AuthenticateReturn Authenticate(string username, string password)
+        public AuthenticateReturn Authenticate(string username, string password, EncryptionServiceParameters parameters)
         {
             AuthenticateReturn result;
 
@@ -58,15 +58,17 @@ namespace PasswordVault.Services
 
                 if (valid)
                 {
-                    string randomKey = _encryptionService.Decrypt(user.EncryptedKey, password);
+                    IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+
+                    string randomKey = encryptionService.Decrypt(user.EncryptedKey, password);
 
                     userResult = new User(user.GUID,
                                           user.Username,
                                           randomKey,
-                                          _encryptionService.Decrypt(user.FirstName, randomKey),
-                                          _encryptionService.Decrypt(user.LastName, randomKey),
-                                          _encryptionService.Decrypt(user.PhoneNumber, randomKey),
-                                          _encryptionService.Decrypt(user.Email, randomKey),
+                                          encryptionService.Decrypt(user.FirstName, randomKey),
+                                          encryptionService.Decrypt(user.LastName, randomKey),
+                                          encryptionService.Decrypt(user.PhoneNumber, randomKey),
+                                          encryptionService.Decrypt(user.Email, randomKey),
                                           true);
 
                     userResult.Token = _tokenService.GenerateJwtToken(user.GUID);
