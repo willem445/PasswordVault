@@ -39,7 +39,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             InitializeComponent();
 
-            BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
             closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
