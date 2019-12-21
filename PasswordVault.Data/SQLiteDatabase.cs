@@ -501,7 +501,11 @@ namespace PasswordVault.Data
                         [FirstName] TEXT NOT NULL,
                         [LastName] TEXT NOT NULL,
                         [PhoneNumber] TEXT NOT NULL,
-                        [Email] TEXT NOT NULL
+                        [Email] TEXT NOT NULL,
+                        [PasswordEncryptionService] INTEGER,
+                        [PasswordBlockSize] INTEGER,
+                        [PasswordKeySize] INTEGER,
+                        [PasswordIterations] INTEGER
                     )");
 
                 dbConn.Execute(@"
