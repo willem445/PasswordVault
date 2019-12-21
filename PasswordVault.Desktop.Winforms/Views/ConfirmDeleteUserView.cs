@@ -66,6 +66,9 @@ namespace PasswordVault.Desktop.Winforms
             label2.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             label2.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
 
+            label3.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            label3.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+
             resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             resultLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
 
@@ -84,10 +87,9 @@ namespace PasswordVault.Desktop.Winforms
             deleteAccountButton.FlatAppearance.BorderSize = 1;
 
             confirmPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             confirmPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
             confirmPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            confirmPasswordTextbox.Text = "Confirm Password";
             #endregion
 
         }
@@ -188,7 +190,7 @@ namespace PasswordVault.Desktop.Winforms
         private void cancelButton_Click(object sender, EventArgs e)
         {
             confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            confirmPasswordTextbox.Text = "Confirm Password";
+            confirmPasswordTextbox.Text = "";
             this.Close();
         }
 
@@ -202,7 +204,6 @@ namespace PasswordVault.Desktop.Winforms
         private void ConfirmDeleteUserView_FormClosing(object sender, FormClosingEventArgs e)
         {
             confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            confirmPasswordTextbox.Text = "Confirm Password";
             confirmPasswordTextbox.Text = "";
             resultLabel.Text = "";
             resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
@@ -210,26 +211,6 @@ namespace PasswordVault.Desktop.Winforms
             FormClosingEvent?.Invoke();
             this.Hide();
             e.Cancel = true; // this cancels the close event.
-        }
-
-        /*************************************************************************************************/
-        private void confirmPasswordTextbox_Enter(object sender, EventArgs e)
-        {
-            if (confirmPasswordTextbox.Text == "Confirm Password")
-            {
-                confirmPasswordTextbox.Text = "";
-                confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void confirmPasswordTextbox_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(confirmPasswordTextbox.Text))
-            {
-                confirmPasswordTextbox.Text = "Confirm Password";
-                confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            }
         }
 
         /*=================================================================================================

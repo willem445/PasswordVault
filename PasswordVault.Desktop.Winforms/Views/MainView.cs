@@ -115,6 +115,7 @@ namespace PasswordVault.Desktop.Winforms
             _exportView = exportView ?? throw new ArgumentNullException(nameof(exportView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
+            _loginView.AuthenticationSuccessfulEvent += AuthenticationSuccessful;
             _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
             _confirmDeleteUserView.DeleteSuccessEvent += DeleteAccountSuccess;
 
@@ -629,8 +630,15 @@ namespace PasswordVault.Desktop.Winforms
             label7.Visible = true;
             passwordCountLabel.Visible = true;
             loginToolStripMenuItem.Text = "Logoff";
+            Cursor = Cursors.Arrow;
 
             RaiseRequestPasswordsOnLoginEvent();
+        }
+
+        private void AuthenticationSuccessful()
+        {
+            Cursor = Cursors.WaitCursor;
+            UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral);
         }
 
         /*************************************************************************************************/
@@ -1109,10 +1117,11 @@ namespace PasswordVault.Desktop.Winforms
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
             RaiseNewFilterEvent(filterTextBox.Text, filterOption);
 
-            if (newDgvIndex >= 0)
+            if (newDgvIndex >= 0 && passwordDataGridView.Rows.Count > newDgvIndex)
             {
                 passwordDataGridView.Rows[newDgvIndex].Selected = true;
                 passwordDataGridView.Rows[newDgvIndex].Cells[0].Selected = true;
+                _selectedDgvIndex = newDgvIndex;
             }
         }
 
@@ -1125,10 +1134,11 @@ namespace PasswordVault.Desktop.Winforms
             PasswordFilterOption filterOption = (PasswordFilterOption)filterComboBox.SelectedValue;
             RaiseNewFilterEvent(filterTextBox.Text, filterOption);
 
-            if (dgvIndex >= 0)
+            if (dgvIndex >= 0 && passwordDataGridView.Rows.Count > dgvIndex)
             {
                 passwordDataGridView.Rows[dgvIndex].Selected = true;
                 passwordDataGridView.Rows[dgvIndex].Cells[0].Selected = true;
+                _selectedDgvIndex = dgvIndex;
             }        
         }
 

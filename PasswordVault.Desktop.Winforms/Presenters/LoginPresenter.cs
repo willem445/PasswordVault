@@ -58,6 +58,8 @@ namespace PasswordVault.Desktop.Winforms
             _loginView.PasswordChangedEvent += CalculatePasswordComplexity;
             _loginView.GenerateNewPasswordEvent += GeneratePassword;
             _loginView.DisplayPasswordRequirementsEvent += PasswordRequirements;
+            _serviceWrapper.AuthenticationResultEvent += AuthenticationResult;
+            _serviceWrapper.DoneLoadingPasswordsEvent += PasswordLoadingDone;
         }
 
         /*=================================================================================================
@@ -71,14 +73,22 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void Login(string username, string password)
         {
-            AuthenticateResult result = AuthenticateResult.Failed;
+            _serviceWrapper.Login(username, password);          
+        }
 
-            result = _serviceWrapper.Login(username, password);
-
+        /*************************************************************************************************/
+        private void AuthenticationResult(AuthenticateResult result)
+        {
             _loginView.DisplayLoginResult(result);
         }
 
-        /********************************************************************************** ***************/
+        /*************************************************************************************************/
+        private void PasswordLoadingDone()
+        {
+            _loginView.PasswordLoadingDone();
+        }
+
+        /*************************************************************************************************/
         private void CreateNewUser(string username, string password, string firstName, string lastName, string phoneNumber, string email)
         {
             AddUserResult result = AddUserResult.Failed;

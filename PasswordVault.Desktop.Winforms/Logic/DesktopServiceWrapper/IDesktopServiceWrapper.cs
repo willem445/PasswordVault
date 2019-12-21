@@ -10,6 +10,9 @@ namespace PasswordVault.Desktop.Winforms
 {
     public interface IDesktopServiceWrapper
     {
+        event Action<AuthenticateResult> AuthenticationResultEvent;
+        event Action DoneLoadingPasswordsEvent;
+
         /// <summary>
         /// Verifies that a users password is correct, retrieves user information with
         /// generated JWT token.
