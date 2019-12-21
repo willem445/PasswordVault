@@ -123,6 +123,8 @@ namespace PasswordVault.Desktop.Winforms
             InitializeComponent();
 
             #region UI
+            this.Icon = new Icon(@"Resources\081vault_101519.ico");
+
             // Configure form UI
             BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
