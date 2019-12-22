@@ -189,7 +189,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             confirmPasswordTextbox.Text = "";
             this.Close();
         }
@@ -203,7 +203,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ConfirmDeleteUserView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             confirmPasswordTextbox.Text = "";
             resultLabel.Text = "";
             resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);

@@ -144,7 +144,7 @@ namespace PasswordVault.Services
         }
 
         /******************************************************************/
-        public DeleteUserResult DeleteUser(string userUuid)
+        public DeleteUserResult DeleteUser(string userUuid, int expectedNumPasswords)
         {
             DeleteUserResult result = DeleteUserResult.Failed;
 
@@ -155,7 +155,7 @@ namespace PasswordVault.Services
 
             if (getUser != null)
             {
-                bool success = _dbcontext.DeleteUser(getUser);
+                bool success = _dbcontext.DeleteUser(getUser, expectedNumPasswords);
 
                 if (success)
                 {

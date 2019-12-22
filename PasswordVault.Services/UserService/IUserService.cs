@@ -23,7 +23,7 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="userUuid">Unique ID of user to delete.</param>
         /// <returns>Result of deleting user.</returns>
-        DeleteUserResult DeleteUser(string userUuid);
+        DeleteUserResult DeleteUser(string userUuid, int expectedNumPasswords);
 
         /// <summary>
         /// Modifies a users information. Firstname, lastname, email and phone number 
