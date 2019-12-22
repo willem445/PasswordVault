@@ -12,7 +12,7 @@ namespace PasswordVault.Data
         List<User> GetAllUsers();
         bool AddUser(User user);
         bool ModifyUser(User user, User modifiedUser);
-        bool DeleteUser(User user);
+        bool DeleteUser(User user, int expectedNumPasswords);
         bool UserExistsByUsername(string username);
         bool UserExistsByGUID(string guid);
 

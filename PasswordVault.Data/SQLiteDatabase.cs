@@ -127,7 +127,7 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool DeleteUser(User user)
+        public bool DeleteUser(User user, int expectedNumPasswords)
         {
             bool result = false;
             bool userResult = false;
@@ -154,7 +154,7 @@ namespace PasswordVault.Data
 
                     dbResult = dbConn.Execute(query, new { UserGUID = user.GUID });
 
-                    if (dbResult == 1)
+                    if (dbResult == expectedNumPasswords)
                     {
                         userPasswordResult = true;
                     }

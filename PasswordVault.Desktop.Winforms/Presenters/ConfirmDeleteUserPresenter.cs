@@ -18,6 +18,7 @@ namespace PasswordVault.Desktop.Winforms
         private IConfirmDeleteUserView _confirmDeleteUserView;
 
         private User tempUser;
+        private int tempPasswordCount;
 
         /*PROPERTIES*******************************************************/
 
@@ -37,7 +38,8 @@ namespace PasswordVault.Desktop.Winforms
         {
             // The user will already be logged out when we get to DeleteAccount so we need to temporarily store
             // the User object.
-            tempUser = _serviceWrapper.GetCurrentUser(); 
+            tempUser = _serviceWrapper.GetCurrentUser();
+            tempPasswordCount = _serviceWrapper.GetPasswordCount();
             bool result = _serviceWrapper.VerifyCurrentUserPassword(password);
             _confirmDeleteUserView.DisplayConfirmPasswordResult(result);
 
@@ -45,11 +47,12 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DeleteAccount()
         {
-            DeleteUserResult result = _serviceWrapper.DeleteUser(tempUser);
+            DeleteUserResult result = _serviceWrapper.DeleteUser(tempUser, tempPasswordCount);
 
             if (result == DeleteUserResult.Success)
             {
                 tempUser = new User();
+                tempPasswordCount = -1;
             }
 
             _confirmDeleteUserView.DisplayDeleteAccountResult(result);
@@ -59,6 +62,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             // If delete account form is closing, clear user from memory
             tempUser = new User();
+            tempPasswordCount = -1;
         }
 
         /*PRIVATE METHODS**************************************************/

@@ -80,7 +80,7 @@ namespace PasswordVault.Data
             return true;
         }
        
-        public bool DeleteUser(User user)
+        public bool DeleteUser(User user, int expectedNumPasswords)
         {
             _localUserDb.RemoveAll(x => x.GUID == user.GUID);
             _localPasswordDb.RemoveAll(x => x.UserGUID == user.GUID);

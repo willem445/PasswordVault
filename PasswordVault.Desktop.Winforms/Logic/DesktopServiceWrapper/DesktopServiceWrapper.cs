@@ -167,14 +167,14 @@ namespace PasswordVault.Desktop.Winforms
             return result;
         }
 
-        public DeleteUserResult DeleteUser(User user)
+        public DeleteUserResult DeleteUser(User user, int expectedPasswordCount)
         {
             DeleteUserResult result = DeleteUserResult.Failed;
 
             if (user != null)
             {
                 // presenter handles logging the user out
-                result = _userService.DeleteUser(user.Username);
+                result = _userService.DeleteUser(user.Username, expectedPasswordCount);
             }
                          
             return result;

@@ -38,7 +38,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public bool DeleteUser(User user)
+        public bool DeleteUser(User user, int expectedNumPasswords)
         {
             throw new NotImplementedException();
         }

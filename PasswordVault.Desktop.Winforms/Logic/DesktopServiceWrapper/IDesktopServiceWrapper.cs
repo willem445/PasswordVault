@@ -44,7 +44,7 @@ namespace PasswordVault.Desktop.Winforms
         User GetCurrentUser();
         ValidateUserPasswordResult ChangeUserPassword(string originalPassword, string newPassword, string confirmPassword);
         bool VerifyCurrentUserPassword(string password);
-        DeleteUserResult DeleteUser(User user);
+        DeleteUserResult DeleteUser(User user, int expectedPasswordCount);
         UserInformationResult EditUser(User user);
         AddModifyPasswordResult AddPassword(Password password);
         DeletePasswordResult DeletePassword(Password password);
