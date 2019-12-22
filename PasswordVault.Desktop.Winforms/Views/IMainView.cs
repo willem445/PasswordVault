@@ -15,7 +15,6 @@ namespace PasswordVault.Desktop.Winforms
         event Action<string, PasswordFilterOption> FilterChangedEvent;
         event Action RequestPasswordsOnLoginEvent;
         event Action LogoutEvent;
-        event Action DeleteAccountEvent;
 
         event Action<string, string, string, string, string, string> AddPasswordEvent;
         event Action<int> MovePasswordUpEvent;
@@ -30,13 +29,17 @@ namespace PasswordVault.Desktop.Winforms
         event Action<DataGridViewRow> ShowPasswordEvent;
         event Action<DataGridViewRow> NavigateToWebsiteEvent;
 
+        event Action GeneratePasswordEvent;
+
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);
         void DisplayPasswordToEdit(Password password);
-        void DisplayAddEditPasswordResult(AddPasswordResult result);
+        void DisplayAddEditPasswordResult(AddModifyPasswordResult result);
         void DisplayLogOutResult(LogOutResult result);
         void DisplayPassword(string password);
-        void DisplayAddPasswordResult(AddPasswordResult result);
+        void DisplayAddPasswordResult(AddModifyPasswordResult result);
         void DisplayDeletePasswordResult(DeletePasswordResult result);
+        void DisplayGeneratePasswordResult(string generatedPassword);
+        void DisplayPasswordCount(int count);
     }
 }

@@ -18,7 +18,7 @@ namespace PasswordVault.Desktop.Winforms
         CONSTANTS
         *================================================================================================*/
         /*PUBLIC******************************************************************************************/
-
+        
         /*PRIVATE*****************************************************************************************/
 
         /*=================================================================================================
@@ -30,10 +30,15 @@ namespace PasswordVault.Desktop.Winforms
         public event Action GenerateNewPasswordEvent;
         public event Action<string> PasswordChangedEvent;
         public event Action LoginSuccessfulEvent;
+        public event Action AuthenticationSuccessfulEvent;
+        public event Action DisplayPasswordRequirementsEvent;
 
         /*PRIVATE*****************************************************************************************/
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
+        private ToolTip toolTip;
+        private Size SmallSize = new Size(279, 258);
+        private Size LargeSize = new Size(549, 400);
 
         /*=================================================================================================
 		PROPERTIES
@@ -51,144 +56,172 @@ namespace PasswordVault.Desktop.Winforms
 
             #region UI
             // Configure form UI
-            BackColor = Color.FromArgb(42, 42, 42);
+            DisableCreateUserForm();
+            BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
-            // Configure buttons
-            closeButton.BackColor = Color.FromArgb(63, 63, 63);
-            closeButton.ForeColor = Color.FromArgb(242, 242, 242);
-            closeButton.Font = new Font("Segoe UI", 12.0f, FontStyle.Bold);
+            // Configure tooltip
+            toolTip = new ToolTip();
+            toolTip.OwnerDraw = true;
+            toolTip.Draw += new DrawToolTipEventHandler(toolTip_Draw);     
 
-            loginButton.BackColor = Color.FromArgb(63, 63, 63);
-            loginButton.ForeColor = Color.FromArgb(242, 242, 242);
+            // Configure buttons
+            closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
+
+            loginButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            loginButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             loginButton.FlatStyle = FlatStyle.Flat;
-            loginButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
-            loginButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            loginButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            loginButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             loginButton.FlatAppearance.BorderSize = 1;
 
-            generatePasswordButton.BackColor = Color.FromArgb(63, 63, 63);
-            generatePasswordButton.ForeColor = Color.FromArgb(242, 242, 242);
+            newUserButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            newUserButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            newUserButton.FlatStyle = FlatStyle.Flat;
+            newUserButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            newUserButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            newUserButton.FlatAppearance.BorderSize = 1;
+
+            generatePasswordButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            generatePasswordButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             generatePasswordButton.FlatStyle = FlatStyle.Flat;
-            generatePasswordButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
-            generatePasswordButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            generatePasswordButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            generatePasswordButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             generatePasswordButton.FlatAppearance.BorderSize = 1;
 
-            createLoginButton.BackColor = Color.FromArgb(63, 63, 63);
-            createLoginButton.ForeColor = Color.FromArgb(242, 242, 242);
+            createLoginButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createLoginButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createLoginButton.FlatStyle = FlatStyle.Flat;
-            createLoginButton.Font = new Font("Segoe UI", 8.0f, FontStyle.Bold);
-            createLoginButton.FlatAppearance.BorderColor = Color.FromArgb(35, 35, 35);
+            createLoginButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            createLoginButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             createLoginButton.FlatAppearance.BorderSize = 1;
 
             // Configure textbox
-            loginUsernameTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            loginUsernameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            loginUsernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            loginUsernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             loginUsernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            loginUsernameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            loginPasswordTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            loginPasswordTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            loginPasswordTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            loginPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             loginPasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
+            loginPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            createUsernameTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createUsernameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createUsernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createUsernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createUsernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createUsernameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            createPasswordTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createPasswordTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createPasswordTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createPasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            createFirstNameTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createFirstNameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createFirstNameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createFirstNameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createFirstNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createFirstNameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            createLastNameTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createLastNameTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createLastNameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createLastNameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createLastNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createLastNameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            createEmailTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createEmailTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createEmailTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createEmailTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createEmailTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createEmailTextBox.Text = "example@provider.com";
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
 
-            createPhoneNumberTextBox.BackColor = Color.FromArgb(63, 63, 63);
-            createPhoneNumberTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+            createPhoneNumberTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             createPhoneNumberTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createPhoneNumberTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
 
             // Configure labels
-            label1.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label1.ForeColor = Color.FromArgb(242, 242, 242);
+            label1.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label1.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label2.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label2.ForeColor = Color.FromArgb(242, 242, 242);
+            label2.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label2.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label3.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label3.ForeColor = Color.FromArgb(242, 242, 242);
+            label3.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label3.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label4.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label4.ForeColor = Color.FromArgb(242, 242, 242);
+            label4.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label4.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label5.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label5.ForeColor = Color.FromArgb(242, 242, 242);
+            label5.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label5.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label6.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label6.ForeColor = Color.FromArgb(242, 242, 242);
+            label6.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label6.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label7.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label7.ForeColor = Color.FromArgb(242, 242, 242);
+            label7.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label7.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            label8.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            label8.ForeColor = Color.FromArgb(242, 242, 242);
+            label8.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            label8.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            loginResultLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            loginResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+            loginResultLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            loginResultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
             loginResultLabel.Visible = false;
 
-            createNewUserResultLabel.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            createNewUserResultLabel.ForeColor = Color.FromArgb(255, 0, 0);
+            createNewUserResultLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            createNewUserResultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
             createNewUserResultLabel.Visible = false;
 
+            newPasswordHelpLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            newPasswordHelpLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            newPasswordHelpLabel.Visible = true;
+            newPasswordHelpLabel.Text = "It is strongly encouraged to use the generate password feature " +
+                                        "when creating a new master password. Your master password should " +
+                                        "be long and random. This password should be memorized or kept safe " +
+                                        "in a secure location.";
+
             // Configure groupbox
-            groupBox1.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            groupBox1.ForeColor = Color.FromArgb(242, 242, 242);
+            groupBox1.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            groupBox1.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
 
-            groupBox2.Font = new Font("Segoe UI", 9.0f, FontStyle.Bold);
-            groupBox2.ForeColor = Color.FromArgb(242, 242, 242);
-            #endregion
-
-            createEmailTextBox.Text = "example@provider.com";
-            createEmailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
-
-            createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
-            createPhoneNumberTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+            groupBox2.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            groupBox2.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            #endregion            
         }
 
         /*=================================================================================================
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
-        public void DisplayLoginResult(LoginResult result)
+        public void DisplayLoginResult(AuthenticateResult result)
         {
             switch(result)
             {
-                case LoginResult.PasswordIncorrect:
+                case AuthenticateResult.PasswordIncorrect:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Password incorrect.";
                     break;
 
-                case LoginResult.UsernameDoesNotExist:
+                case AuthenticateResult.UsernameDoesNotExist:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Username doesn't exist.";
                     break;
 
-                case LoginResult.Failed:
+                case AuthenticateResult.Failed:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Login failed.";
                     break;
 
-                case LoginResult.Successful:
+                case AuthenticateResult.Successful:
+                    AuthenticationSuccessfulEvent?.Invoke();
                     ClearLoginView();
                     DialogResult = DialogResult.OK;
-                    this.Close();
-                    RaiseLoginSuccessfulEvent();
+                    DisableCreateUserForm();
+                    this.Close();               
                     break;
 
                 default:
@@ -199,81 +232,89 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
+        public void PasswordLoadingDone()
+        {
+            RaiseLoginSuccessfulEvent();
+        }
+
+        /*************************************************************************************************/
         public void DisplayGeneratePasswordResult(string generatedPassword)
         {
             createPasswordTextBox.Text = generatedPassword;
         }
 
         /*************************************************************************************************/
-        public void DisplayCreateNewUserResult(CreateUserResult result, int minimumPasswordLength)
+        public void DisplayCreateNewUserResult(AddUserResult result, int minimumPasswordLength)
         {
             switch(result)
             {
-                case CreateUserResult.UsernameTaken:
+                case AddUserResult.UsernameTaken:
                     UIHelper.UpdateStatusLabel("Username taken!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.Failed:
+                case AddUserResult.Failed:
                     UIHelper.UpdateStatusLabel("Unsuccessful!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.PasswordNotValid:
+                case AddUserResult.PasswordNotValid:
                     UIHelper.UpdateStatusLabel("Password does not meet requirements!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.UsernameNotValid:
+                case AddUserResult.UsernameNotValid:
                     UIHelper.UpdateStatusLabel("Invalid username!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.FirstNameNotValid:
+                case AddUserResult.FirstNameNotValid:
                     UIHelper.UpdateStatusLabel("First name not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.LastNameNotValid:
+                case AddUserResult.LastNameNotValid:
                     UIHelper.UpdateStatusLabel("Last name not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.PhoneNumberNotValid:
+                case AddUserResult.PhoneNumberNotValid:
                     UIHelper.UpdateStatusLabel("Phone number not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.EmailNotValid:
+                case AddUserResult.EmailNotValid:
                     UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoLowerCaseCharacter:
+                case AddUserResult.NoLowerCaseCharacter:
                     UIHelper.UpdateStatusLabel("Password must have lower case!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.LengthRequirementNotMet:
+                case AddUserResult.LengthRequirementNotMet:
                     UIHelper.UpdateStatusLabel(string.Format(CultureInfo.CurrentCulture, "Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoNumber:
+                case AddUserResult.NoNumber:
                     UIHelper.UpdateStatusLabel("Password must have number!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoSpecialCharacter:
+                case AddUserResult.NoSpecialCharacter:
                     UIHelper.UpdateStatusLabel("Password must have special character!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.NoUpperCaseCharacter:
+                case AddUserResult.NoUpperCaseCharacter:
                     UIHelper.UpdateStatusLabel("Password must have upper case!", createNewUserResultLabel, ErrorLevel.Error);
                     break;
 
-                case CreateUserResult.Successful:
+                case AddUserResult.Successful:
                     UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
                     createUsernameTextBox.Text = "";
                     createPasswordTextBox.Text = "";
                     createFirstNameTextBox.Text = "";
                     createLastNameTextBox.Text = "";
-                    createEmailTextBox.Text = "";
-                    createPhoneNumberTextBox.Text = "";
+                    createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+                    createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+                    createEmailTextBox.Text = "example@provider.com";
+                    createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
                     break;
 
                 default:       
                     createNewUserResultLabel.Text = "Unsuccessful.";
-                    createNewUserResultLabel.ForeColor = Color.Red;
+                    createNewUserResultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
                     break;
             }
 
@@ -286,7 +327,7 @@ namespace PasswordVault.Desktop.Winforms
             switch (complexity)
             {
                 case PasswordComplexityLevel.Weak:
-                    createPasswordTextBox.ForeColor = Color.Red;
+                    createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
                     break;
 
                 case PasswordComplexityLevel.Mediocre:
@@ -298,13 +339,28 @@ namespace PasswordVault.Desktop.Winforms
                     break;
 
                 case PasswordComplexityLevel.Great:
-                    createPasswordTextBox.ForeColor = Color.Green;
+                    createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusGreenColor);
                     break;
 
                 default:
-                    createPasswordTextBox.ForeColor = Color.FromArgb(242, 242, 242);
+                    createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
                     break;
             }
+        }
+
+        /*************************************************************************************************/
+        public void DisplayPasswordRequirements(int passwordLength)
+        {
+            string message = $"Password Requirements:\r\n" +
+                             $"Contains {passwordLength} characters\r\n" +
+                             $"Contains 1 Uppercase\r\n" +
+                             $"Contains 1 Lowercase\r\n" +
+                             $"Contains 1 Digit\r\n" +
+                             $"Contains 1 symbol (!@#$%^&*()_+=[]{{}};:<>|./?,-)";
+
+            toolTip.InitialDelay = 0;
+            toolTip.Show(string.Empty, createPasswordTextBox);
+            toolTip.Show(message, createPasswordTextBox, 10000);
         }
 
         /*************************************************************************************************/
@@ -325,10 +381,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void RaiseLoginEvent(string username, string password)
         {
-            if (LoginEvent != null)
-            {
-                LoginEvent(username, password);
-            }
+            LoginEvent?.Invoke(username, password);
         }
 
         /*************************************************************************************************/
@@ -411,6 +464,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CloseButton_Click(object sender, EventArgs e)
         {
+            DisableCreateUserForm();
             ClearLoginView();
             this.Close();
             DialogResult = DialogResult.Cancel;
@@ -448,6 +502,12 @@ namespace PasswordVault.Desktop.Winforms
             createNewUserResultLabel.Text = "";
             createUsernameTextBox.Text = "";
             createPasswordTextBox.Text = "";
+
+            createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
+            createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+
+            createEmailTextBox.Text = "example@provider.com";
+            createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
         }
 
         /*************************************************************************************************/
@@ -462,7 +522,7 @@ namespace PasswordVault.Desktop.Winforms
             if (string.IsNullOrEmpty(createPhoneNumberTextBox.Text))
             {
                 createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
-                createPhoneNumberTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+                createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
             }
         }
 
@@ -478,7 +538,7 @@ namespace PasswordVault.Desktop.Winforms
             if (string.IsNullOrEmpty(createEmailTextBox.Text))
             {
                 createEmailTextBox.Text = "example@provider.com";
-                createEmailTextBox.ForeColor = Color.FromArgb(0x6B, 0x6B, 0x6B);
+                createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
             }
         }
 
@@ -502,11 +562,82 @@ namespace PasswordVault.Desktop.Winforms
             }
         }
 
+        private void newUserButton_Click(object sender, EventArgs e)
+        {
+            EnableCreateUserForm();       
+        }
+
+        private void createPasswordTextBox_MouseEnter(object sender, EventArgs e)
+        {
+            //RaiseShowPasswordRequirements();
+        }
+
+        private void createPasswordTextBox_MouseLeave(object sender, EventArgs e)
+        {
+            toolTip.Hide(createPasswordTextBox);
+        }
+
+        private void createPasswordTextBox_Enter(object sender, EventArgs e)
+        {
+            RaiseShowPasswordRequirements();            
+        }
+
+        private void createPasswordTextBox_Leave(object sender, EventArgs e)
+        {
+            toolTip.Hide(createPasswordTextBox);
+        }
+
+        void toolTip_Draw(object sender, DrawToolTipEventArgs e)
+        {
+            Font f = UIHelper.GetFont(8.0f);
+            toolTip.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            toolTip.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            e.DrawBackground();
+            e.DrawBorder();
+            e.Graphics.DrawString(e.ToolTipText, f, Brushes.White, new PointF(2, 2));
+            f.Dispose();
+        }
+
+        private void RaiseShowPasswordRequirements()
+        {
+            DisplayPasswordRequirementsEvent?.Invoke();
+        }
+
+        private void EnableCreateUserForm()
+        {
+            this.Size = LargeSize;
+            moveWindowPanel.Size = new Size(516, 27);
+            closeButton.Location = new Point(524, 9);
+            createUsernameTextBox.Enabled = true;
+            createPasswordTextBox.Enabled = true;
+            createFirstNameTextBox.Enabled = true;
+            createLastNameTextBox.Enabled = true;
+            createEmailTextBox.Enabled = true;
+            createPhoneNumberTextBox.Enabled = true;
+            generatePasswordButton.Enabled = true;
+            createLoginButton.Enabled = true;
+        }
+
+        private void DisableCreateUserForm()
+        {
+            this.Size = SmallSize;
+            moveWindowPanel.Size = new Size(234, 27);
+            closeButton.Location = new Point(254, 9);
+            createUsernameTextBox.Enabled = false;
+            createPasswordTextBox.Enabled = false;
+            createFirstNameTextBox.Enabled = false;
+            createLastNameTextBox.Enabled = false;
+            createEmailTextBox.Enabled = false;
+            createPhoneNumberTextBox.Enabled = false;
+            generatePasswordButton.Enabled = false;
+            createLoginButton.Enabled = false;
+        }
+
         /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
+        STATIC METHODS
+        *================================================================================================*/
         /*************************************************************************************************/
 
 
-    } // LoginForm CLASS
+        } // LoginForm CLASS
 } // LoginForm NAMESPACE

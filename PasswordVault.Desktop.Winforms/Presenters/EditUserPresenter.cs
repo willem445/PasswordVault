@@ -36,7 +36,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private IEditUserView _editUserView;
-        private IPasswordService _passwordService;
+        private IDesktopServiceWrapper _serviceWrapper;
 
         /*=================================================================================================
 		PROPERTIES
@@ -48,10 +48,10 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public EditUserPresenter(IEditUserView editUserView, IPasswordService passwordService)
+        public EditUserPresenter(IEditUserView editUserView, IDesktopServiceWrapper serviceWrapper)
         {
             _editUserView = editUserView;
-            _passwordService = passwordService;
+            _serviceWrapper = serviceWrapper;
 
             _editUserView.ModifyAccountEvent += ModifyUserInformation;
             _editUserView.RequestUserEvent += GetUserInformation;
@@ -69,14 +69,14 @@ namespace PasswordVault.Desktop.Winforms
         private void ModifyUserInformation(string firstName, string lastName, string email, string phoneNumber)
         {
             User user = new User(null, null, firstName, lastName, phoneNumber, email);
-            UserInformationResult result = _passwordService.EditUser(user);
+            UserInformationResult result = _serviceWrapper.EditUser(user);
             _editUserView.DisplayModifyResult(result);
         }
 
         /*************************************************************************************************/
         private void GetUserInformation()
         {
-            User user = _passwordService.GetCurrentUser();
+            User user = _serviceWrapper.GetCurrentUser();
             _editUserView.DisplayUser(user);
         }
 

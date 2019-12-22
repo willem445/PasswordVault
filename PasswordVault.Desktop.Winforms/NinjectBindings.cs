@@ -59,18 +59,23 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public override void Load()
         {
-            Bind<ICSVReader>().To<CSVReader>();
-            Bind<ICSVWriter>().To<CSVWriter>();
-            Bind<ICSVPasswordManager>().To<CSVPasswordManager>();
-            Bind<ICSVUserManager>().To<CSVUserManager>();
             Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
-            Bind<IEncryption>().To<RijndaelManagedEncryption>();
+
+            Bind<IEncryptionServiceFactory>().To<EncryptionServiceFactory>();
             Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
+            Bind<IUserService>().To<UserService>().InSingletonScope();
+            Bind<IAuthenticationService>().To<AuthenticationService>();
+            Bind<ITokenService>().To<TokenService>();
+            Bind<IExportPasswords>().To<ExportPasswords>();
+
+            Bind<IDesktopServiceWrapper>().To<DesktopServiceWrapper>().InSingletonScope();        
             Bind<ILoginView>().To<LoginView>().InSingletonScope();
             Bind<IMainView>().To<MainView>().InSingletonScope();
             Bind<IChangePasswordView>().To<ChangePasswordView>().InSingletonScope();
             Bind<IEditUserView>().To<EditUserView>().InSingletonScope();
+            Bind<IConfirmDeleteUserView>().To<ConfirmDeleteUserView>().InSingletonScope();
+            Bind<IExportView>().To<ExportView>().InSingletonScope();
         }
 
         /*=================================================================================================

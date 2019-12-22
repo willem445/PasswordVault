@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using Dapper;
 using System.IO;
 using System.Linq;
 using PasswordVault.Models;
+using Dapper;
+using System.Data.SQLite;
 
 /*=================================================================================================
 DESCRIPTION
@@ -81,7 +81,7 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Users 
-                                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email)
+                                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email, PasswordEncryptionService, PasswordBlockSize, PasswordKeySize, PasswordIterations)
                                  VALUES(
                                     @GUID,
                                     @EncryptedKey,
@@ -92,7 +92,11 @@ namespace PasswordVault.Data
                                     @FirstName,
                                     @LastName,
                                     @PhoneNumber,
-                                    @Email)";
+                                    @Email,
+                                    @PasswordEncryptionService,
+                                    @PasswordBlockSize,
+                                    @PasswordKeySize,
+                                    @PasswordIterations)";
 
                     int dbresult = dbConn.Execute(query, new
                     {
@@ -105,7 +109,11 @@ namespace PasswordVault.Data
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
-                        Email = user.Email
+                        Email = user.Email,
+                        PasswordEncryptionService = user.PasswordEncryptionService,
+                        PasswordBlockSize = user.PasswordBlockSize,
+                        PasswordKeySize = user.PasswordKeySize,
+                        PasswordIterations = user.PasswordIterations,
                     });
 
                     if (dbresult != 0)
@@ -119,9 +127,11 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool DeleteUser(User user)
+        public bool DeleteUser(User user, int expectedNumPasswords)
         {
             bool result = false;
+            bool userResult = false;
+            bool userPasswordResult = false;
 
             if (user != null)
             {
@@ -130,15 +140,30 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"DELETE FROM Users
-                                 WHERE GUID = @Guid";
+                                     WHERE GUID = @Guid";
 
                     var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
 
                     if (dbResult == 1)
                     {
-                        result = true;
+                        userResult = true;
+                    }
+
+                    query = @"DELETE FROM Passwords
+                              WHERE UserGUID = @UserGUID";
+
+                    dbResult = dbConn.Execute(query, new { UserGUID = user.GUID });
+
+                    if (dbResult == expectedNumPasswords)
+                    {
+                        userPasswordResult = true;
                     }
                 }
+            }
+
+            if (userResult && userPasswordResult)
+            {
+                result = true;
             }
 
             return result;
@@ -163,7 +188,11 @@ namespace PasswordVault.Data
                                      FirstName = @FirstName,
                                      LastName = @LastName,
                                      PhoneNumber = @PhoneNumber,
-                                     Email = @Email
+                                     Email = @Email,
+                                     PasswordEncryptionService = @PasswordEncryptionService,
+                                     PasswordBlockSize = @PasswordBlockSize,
+                                     PasswordKeySize = @PasswordKeySize,
+                                     PasswordIterations = @PasswordIterations
                                  WHERE GUID = @GUID";
 
                     var dbResult = dbConn.Execute(query, new
@@ -176,6 +205,10 @@ namespace PasswordVault.Data
                         LastName = modifiedUser.LastName,
                         PhoneNumber = modifiedUser.PhoneNumber,
                         Email = modifiedUser.Email,
+                        PasswordEncryptionService = modifiedUser.PasswordEncryptionService,
+                        PasswordBlockSize = modifiedUser.PasswordBlockSize,
+                        PasswordKeySize = modifiedUser.PasswordKeySize,
+                        PasswordIterations = modifiedUser.PasswordIterations,
                         GUID = user.GUID
                     });
 
@@ -327,9 +360,9 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool AddPassword(DatabasePassword password)
+        public Int64 AddPassword(DatabasePassword password)
         {
-            bool result = false;
+            Int64 uniqueID = -1;
 
             if (password != null)
             {
@@ -346,9 +379,10 @@ namespace PasswordVault.Data
                                     @Email,
                                     @Description,
                                     @Website,
-                                    @Passphrase)";
+                                    @Passphrase);
+                                 SELECT last_insert_rowid()";
 
-                    int dbresult = dbConn.Execute(query, new
+                    int dbresult = dbConn.Query<int>(query, new
                     {
                         UserGUID = password.UserGUID,
                         Application = password.Application,
@@ -357,24 +391,24 @@ namespace PasswordVault.Data
                         Description = password.Description,
                         Website = password.Website,
                         Passphrase = password.Passphrase,
-                    });
+                    }).Single();
 
-                    if (dbresult != 0)
+                    if (dbresult >= 0)
                     {
-                        result = true;
+                        uniqueID = dbresult;
                     }
                 }
             }
 
-            return result;
+            return uniqueID;
         }
 
         /*************************************************************************************************/
-        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        public bool ModifyPassword(DatabasePassword modifiedPassword)
         {
             bool result = false;
 
-            if (password != null && modifiedPassword != null)
+            if (modifiedPassword != null)
             {
                 using (var dbConn = DbConnection)
                 {
@@ -397,7 +431,7 @@ namespace PasswordVault.Data
                         Description = modifiedPassword.Description,
                         Website = modifiedPassword.Website,
                         Passphrase = modifiedPassword.Passphrase,
-                        UniqueID = password.UniqueID
+                        UniqueID = modifiedPassword.UniqueID
                     });
 
                     if (dbResult > 0)
@@ -411,28 +445,25 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool DeletePassword(DatabasePassword password)
+        public bool DeletePassword(Int64 passwordUniqueId)
         {
             bool result = false;
 
-            if (password != null)
+            using (var dbConn = DbConnection)
             {
-                using (var dbConn = DbConnection)
+                dbConn.Open();
+
+                string query = @"DELETE FROM Passwords
+                                WHERE UniqueID = @UniqueID";
+
+                var dbResult = dbConn.Execute(query, new { UniqueID = passwordUniqueId });
+
+                if (dbResult == 1)
                 {
-                    dbConn.Open();
-
-                    string query = @"DELETE FROM Passwords
-                                 WHERE UniqueID = @UniqueID";
-
-                    var dbResult = dbConn.Execute(query, new { UniqueID = password.UniqueID });
-
-                    if (dbResult == 1)
-                    {
-                        result = true;
-                    }
+                    result = true;
                 }
             }
-
+            
             return result;
         }
 
@@ -470,7 +501,11 @@ namespace PasswordVault.Data
                         [FirstName] TEXT NOT NULL,
                         [LastName] TEXT NOT NULL,
                         [PhoneNumber] TEXT NOT NULL,
-                        [Email] TEXT NOT NULL
+                        [Email] TEXT NOT NULL,
+                        [PasswordEncryptionService] INTEGER,
+                        [PasswordBlockSize] INTEGER,
+                        [PasswordKeySize] INTEGER,
+                        [PasswordIterations] INTEGER
                     )");
 
                 dbConn.Execute(@"
@@ -483,7 +518,7 @@ namespace PasswordVault.Data
                         [Description] TEXT NOT NULL,
                         [Website] TEXT NOT NULL,
                         [Passphrase] TEXT NOT NULL
-                    )");             
+                    )");
             }
         }
 
@@ -493,4 +528,4 @@ namespace PasswordVault.Data
         /*************************************************************************************************/
 
     } // SQLiteDatabase CLASS
-} // PasswordVault.Data NAMESPACE
+} // PasswordVault.Data.Standard NAMESPACE

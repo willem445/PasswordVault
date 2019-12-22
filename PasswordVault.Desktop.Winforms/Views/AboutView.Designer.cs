@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.closeButton = new System.Windows.Forms.Label();
+            this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.aboutLabel = new System.Windows.Forms.Label();
             this.iconLinkLabel = new System.Windows.Forms.LinkLabel();
             this.versionLabel = new System.Windows.Forms.Label();
-            this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.moveWindowPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +48,17 @@
             this.closeButton.Click += new System.EventHandler(this.CloseButton_Click);
             this.closeButton.MouseEnter += new System.EventHandler(this.CloseButton_MouseEnter);
             this.closeButton.MouseLeave += new System.EventHandler(this.CloseButton_MouseLeave);
+            // 
+            // moveWindowPanel
+            // 
+            this.moveWindowPanel.Controls.Add(this.versionLabel);
+            this.moveWindowPanel.Location = new System.Drawing.Point(1, 1);
+            this.moveWindowPanel.Name = "moveWindowPanel";
+            this.moveWindowPanel.Size = new System.Drawing.Size(352, 28);
+            this.moveWindowPanel.TabIndex = 33;
+            this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
+            this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
+            this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
             // 
             // aboutLabel
             // 
@@ -81,17 +92,6 @@
             this.versionLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.VersionLabel_MouseMove);
             this.versionLabel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.VersionLabel_MouseUp);
             // 
-            // moveWindowPanel
-            // 
-            this.moveWindowPanel.Controls.Add(this.versionLabel);
-            this.moveWindowPanel.Location = new System.Drawing.Point(1, 1);
-            this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(352, 28);
-            this.moveWindowPanel.TabIndex = 33;
-            this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
-            this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
-            this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
-            // 
             // AboutView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -115,9 +115,9 @@
         #endregion
 
         private System.Windows.Forms.Label closeButton;
+        private System.Windows.Forms.Panel moveWindowPanel;
+        private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Label aboutLabel;
         private System.Windows.Forms.LinkLabel iconLinkLabel;
-        private System.Windows.Forms.Label versionLabel;
-        private System.Windows.Forms.Panel moveWindowPanel;
     }
 }

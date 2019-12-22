@@ -53,6 +53,7 @@ namespace PasswordVault.Desktop.Winforms
         public const int DefaultBackgroundColor = 0x232323;
         public const int SecondaryFromBackgroundColor = 0x2A2A2A;
         public const int CloseButtonColor = 0xb0270c;
+        public const int GhostTextColor = 0x6B6B6B;
     }
 
     public static class UIHelper

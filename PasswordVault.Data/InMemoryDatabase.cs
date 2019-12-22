@@ -1,45 +1,22 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using PasswordVault.Models;
+
 
 namespace PasswordVault.Data
 {
-    /*=================================================================================================
-	ENUMERATIONS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	STRUCTS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	CLASSES
-	*================================================================================================*/
     public class InMemoryDatabase : IDatabase
     {
-        /*=================================================================================================
-		CONSTANTS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
+        /*CONSTANTS********************************************************/
 
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		FIELDS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
-
-        /*PRIVATE*****************************************************************************************/
+        /*FIELDS***********************************************************/
         private List<DatabasePassword> _localPasswordDb;
         private List<User> _localUserDb;
 
-        /*=================================================================================================
-		PROPERTIES
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
+        /*PROPERTIES*******************************************************/
         public List<DatabasePassword> LocalPasswordDbAccess
         {
             get
@@ -56,79 +33,85 @@ namespace PasswordVault.Data
             }
         }
 
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		CONSTRUCTORS
-		*================================================================================================*/
+        /*CONSTRUCTORS*****************************************************/
         public InMemoryDatabase()
         {
             _localPasswordDb = new List<DatabasePassword>();
             _localUserDb = new List<User>();
         }
 
-        /*=================================================================================================
-		PUBLIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-        public bool AddPassword(DatabasePassword password)
+        /*PUBLIC METHODS***************************************************/
+        public Int64 AddPassword(DatabasePassword password)
         {
-            _localPasswordDb.Add(password);
-            return true;
+            Int64 uniqueID = 0;
+
+            if (password != null)
+            {
+                if (_localPasswordDb.Count != 0)
+                {
+                    uniqueID = _localPasswordDb[_localPasswordDb.Count - 1].UniqueID + 1;
+                }
+
+                DatabasePassword newPassword = new DatabasePassword(
+                    uniqueID,
+                    password.UserGUID,
+                    password.Application,
+                    password.Username,
+                    password.Email,
+                    password.Description,
+                    password.Website,
+                    password.Passphrase);
+
+                _localPasswordDb.Add(newPassword);
+            }
+
+            return uniqueID;
         }
 
-        /*************************************************************************************************/
         public bool AddUser(User user)
         {
             _localUserDb.Add(user);
             return true;
         }
 
-        /*************************************************************************************************/
-        public bool DeletePassword(DatabasePassword password)
+        public bool DeletePassword(Int64 passwordUniqueId)
         {
-            _localPasswordDb.RemoveAll(x => x.UniqueID == password.UniqueID);
+            _localPasswordDb.RemoveAll(x => x.UniqueID == passwordUniqueId);
             return true;
         }
-
-        /*************************************************************************************************/
-        public bool DeleteUser(User user)
+       
+        public bool DeleteUser(User user, int expectedNumPasswords)
         {
             _localUserDb.RemoveAll(x => x.GUID == user.GUID);
             _localPasswordDb.RemoveAll(x => x.UserGUID == user.GUID);
             return true;
         }
-
-        /*************************************************************************************************/
+       
         public List<User> GetAllUsers()
         {
             return _localUserDb;
         }
-
-        /*************************************************************************************************/
+       
         public User GetUserByGUID(string guid)
         {
             return _localUserDb.Where(x => x.GUID == guid).FirstOrDefault();
         }
-
-        /*************************************************************************************************/
+      
         public User GetUserByUsername(string username)
         {
             return _localUserDb.Where(x => x.Username == username).FirstOrDefault();
         }
-
-        /*************************************************************************************************/
+        
         public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
         {
             return _localPasswordDb.Where(x => x.UserGUID == guid).ToList();
         }
-
-        /*************************************************************************************************/
-        public bool ModifyPassword(DatabasePassword password, DatabasePassword modifiedPassword)
+        
+        public bool ModifyPassword(DatabasePassword modifiedPassword)
         {
             bool result = false;
 
-            int index = _localPasswordDb.FindIndex(x => x.UniqueID == password.UniqueID);
+            int index = _localPasswordDb.FindIndex(x => x.UniqueID == modifiedPassword.UniqueID);
 
             if (index != -1)
             {
@@ -142,8 +125,7 @@ namespace PasswordVault.Data
 
             return result;
         }
-
-        /*************************************************************************************************/
+       
         public bool ModifyUser(User user, User modifiedUser)
         {
             bool result = false;
@@ -162,30 +144,22 @@ namespace PasswordVault.Data
 
             return result;
         }
-
-        /*************************************************************************************************/
+        
         public bool UserExistsByGUID(string guid)
         {
             bool exists = _localUserDb.Exists(x => x.GUID == guid);
             return exists;
         }
-
-        /*************************************************************************************************/
+       
         public bool UserExistsByUsername(string username)
         {
             bool exists = _localUserDb.Exists(x => x.Username == username);
             return exists;
-        }
+        }     
 
-        /*=================================================================================================
-		PRIVATE METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
+        /*PRIVATE METHODS**************************************************/
 
-        /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
+        /*STATIC METHODS***************************************************/
 
     } // InMemoryDatabase CLASS
 }

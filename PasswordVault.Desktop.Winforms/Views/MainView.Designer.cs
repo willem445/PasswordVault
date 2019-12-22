@@ -61,8 +61,6 @@ namespace PasswordVault.Desktop.Winforms
             this.deleteButton = new System.Windows.Forms.Button();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.filterTextBox = new System.Windows.Forms.TextBox();
@@ -72,6 +70,13 @@ namespace PasswordVault.Desktop.Winforms
             this.minimizeButton = new System.Windows.Forms.Label();
             this.emailTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.clearFilterButton = new System.Windows.Forms.Button();
+            this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.label7 = new System.Windows.Forms.Label();
+            this.passwordCountLabel = new System.Windows.Forms.Label();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exportPasswordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -97,7 +102,9 @@ namespace PasswordVault.Desktop.Winforms
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loginToolStripMenuItem});
+            this.loginToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.exportPasswordsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 26);
             this.fileToolStripMenuItem.Text = "File";
@@ -105,7 +112,7 @@ namespace PasswordVault.Desktop.Winforms
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
@@ -124,7 +131,7 @@ namespace PasswordVault.Desktop.Winforms
             this.deleteToolStripMenuItem,
             this.changePasswordToolStripMenuItem});
             this.accountToolStripMenuItem.Name = "accountToolStripMenuItem";
-            this.accountToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.accountToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.accountToolStripMenuItem.Text = "Account";
             // 
             // editToolStripMenuItem
@@ -160,7 +167,7 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.passwordDataGridView.Location = new System.Drawing.Point(12, 145);
             this.passwordDataGridView.Name = "passwordDataGridView";
-            this.passwordDataGridView.Size = new System.Drawing.Size(715, 290);
+            this.passwordDataGridView.Size = new System.Drawing.Size(730, 290);
             this.passwordDataGridView.TabIndex = 1;
             this.passwordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
             this.passwordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
@@ -168,7 +175,7 @@ namespace PasswordVault.Desktop.Winforms
             // addButton
             // 
             this.addButton.Enabled = false;
-            this.addButton.Location = new System.Drawing.Point(733, 98);
+            this.addButton.Location = new System.Drawing.Point(748, 98);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 26;
@@ -179,7 +186,7 @@ namespace PasswordVault.Desktop.Winforms
             // editButton
             // 
             this.editButton.Enabled = false;
-            this.editButton.Location = new System.Drawing.Point(733, 163);
+            this.editButton.Location = new System.Drawing.Point(748, 163);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 5;
@@ -225,8 +232,9 @@ namespace PasswordVault.Desktop.Winforms
             this.passphraseTextBox.Enabled = false;
             this.passphraseTextBox.Location = new System.Drawing.Point(682, 72);
             this.passphraseTextBox.Name = "passphraseTextBox";
-            this.passphraseTextBox.Size = new System.Drawing.Size(126, 20);
+            this.passphraseTextBox.Size = new System.Drawing.Size(141, 20);
             this.passphraseTextBox.TabIndex = 25;
+            this.passphraseTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.passphraseTextBox_KeyDown);
             this.passphraseTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PassphraseTextBox_KeyUp);
             // 
             // label2
@@ -259,7 +267,7 @@ namespace PasswordVault.Desktop.Winforms
             // deleteButton
             // 
             this.deleteButton.Enabled = false;
-            this.deleteButton.Location = new System.Drawing.Point(733, 192);
+            this.deleteButton.Location = new System.Drawing.Point(748, 192);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 15;
@@ -284,26 +292,11 @@ namespace PasswordVault.Desktop.Winforms
             this.label5.TabIndex = 17;
             this.label5.Text = "Username (required)";
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.userStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 444);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(822, 22);
-            this.statusStrip1.TabIndex = 26;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // userStatusLabel
-            // 
-            this.userStatusLabel.Name = "userStatusLabel";
-            this.userStatusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
             // closeButton
             // 
             this.closeButton.AutoSize = true;
             this.closeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.closeButton.Location = new System.Drawing.Point(796, 9);
+            this.closeButton.Location = new System.Drawing.Point(809, 9);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(14, 13);
             this.closeButton.TabIndex = 27;
@@ -316,7 +309,7 @@ namespace PasswordVault.Desktop.Winforms
             // 
             this.moveWindowPanel.Location = new System.Drawing.Point(177, 0);
             this.moveWindowPanel.Name = "moveWindowPanel";
-            this.moveWindowPanel.Size = new System.Drawing.Size(593, 53);
+            this.moveWindowPanel.Size = new System.Drawing.Size(600, 53);
             this.moveWindowPanel.TabIndex = 28;
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
@@ -343,7 +336,7 @@ namespace PasswordVault.Desktop.Winforms
             // editCancelButton
             // 
             this.editCancelButton.Enabled = false;
-            this.editCancelButton.Location = new System.Drawing.Point(652, 98);
+            this.editCancelButton.Location = new System.Drawing.Point(667, 98);
             this.editCancelButton.Name = "editCancelButton";
             this.editCancelButton.Size = new System.Drawing.Size(75, 23);
             this.editCancelButton.TabIndex = 31;
@@ -368,7 +361,7 @@ namespace PasswordVault.Desktop.Winforms
             // 
             this.minimizeButton.AutoSize = true;
             this.minimizeButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.minimizeButton.Location = new System.Drawing.Point(776, 9);
+            this.minimizeButton.Location = new System.Drawing.Point(789, 9);
             this.minimizeButton.Name = "minimizeButton";
             this.minimizeButton.Size = new System.Drawing.Size(10, 13);
             this.minimizeButton.TabIndex = 32;
@@ -394,12 +387,72 @@ namespace PasswordVault.Desktop.Winforms
             this.label6.TabIndex = 34;
             this.label6.Text = "Email";
             // 
+            // clearFilterButton
+            // 
+            this.clearFilterButton.Enabled = false;
+            this.clearFilterButton.Location = new System.Drawing.Point(409, 118);
+            this.clearFilterButton.Name = "clearFilterButton";
+            this.clearFilterButton.Size = new System.Drawing.Size(75, 23);
+            this.clearFilterButton.TabIndex = 35;
+            this.clearFilterButton.Text = "Clear Filter";
+            this.clearFilterButton.UseVisualStyleBackColor = true;
+            this.clearFilterButton.Click += new System.EventHandler(this.clearFilterButton_Click);
+            // 
+            // userStatusLabel
+            // 
+            this.userStatusLabel.Name = "userStatusLabel";
+            this.userStatusLabel.Size = new System.Drawing.Size(61, 17);
+            this.userStatusLabel.Text = "userStatus";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.userStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 462);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(835, 22);
+            this.statusStrip1.TabIndex = 26;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 438);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 36;
+            this.label7.Text = "Count:";
+            // 
+            // passwordCountLabel
+            // 
+            this.passwordCountLabel.AutoSize = true;
+            this.passwordCountLabel.Location = new System.Drawing.Point(55, 438);
+            this.passwordCountLabel.Name = "passwordCountLabel";
+            this.passwordCountLabel.Size = new System.Drawing.Size(13, 13);
+            this.passwordCountLabel.TabIndex = 37;
+            this.passwordCountLabel.Text = "0";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // exportPasswordsToolStripMenuItem
+            // 
+            this.exportPasswordsToolStripMenuItem.Name = "exportPasswordsToolStripMenuItem";
+            this.exportPasswordsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportPasswordsToolStripMenuItem.Text = "Export Passwords";
+            this.exportPasswordsToolStripMenuItem.Click += new System.EventHandler(this.exportPasswordsToolStripMenuItem_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(822, 466);
+            this.ClientSize = new System.Drawing.Size(835, 484);
+            this.Controls.Add(this.passwordCountLabel);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.clearFilterButton);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.emailTextBox);
             this.Controls.Add(this.minimizeButton);
@@ -459,8 +512,6 @@ namespace PasswordVault.Desktop.Winforms
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.TextBox usernameTextBox;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel userStatusLabel;
         private System.Windows.Forms.Label closeButton;
         private System.Windows.Forms.Panel moveWindowPanel;
         private System.Windows.Forms.TextBox filterTextBox;
@@ -475,6 +526,13 @@ namespace PasswordVault.Desktop.Winforms
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;
         private ToolStripMenuItem changePasswordToolStripMenuItem;
+        private Button clearFilterButton;
+        private ToolStripStatusLabel userStatusLabel;
+        private StatusStrip statusStrip1;
+        private Label label7;
+        private Label passwordCountLabel;
+        private ToolStripSeparator toolStripMenuItem1;
+        private ToolStripMenuItem exportPasswordsToolStripMenuItem;
     }
 }
 

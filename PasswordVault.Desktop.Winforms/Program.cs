@@ -14,8 +14,10 @@ namespace PasswordVault.Desktop.Winforms
         [STAThread]
         static void Main()
         {
+#if (!DEBUG)
             try
             {
+#endif
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -26,26 +28,29 @@ namespace PasswordVault.Desktop.Winforms
                 var loginView = kernal.Get<ILoginView>();
                 var mainView = kernal.Get<IMainView>();
                 var changePasswordView = kernal.Get<IChangePasswordView>();
+                var confirmDeleteUserView = kernal.Get<IConfirmDeleteUserView>();
                 var editUserView = kernal.Get<IEditUserView>();
-                var passwordService = kernal.Get<IPasswordService>();
+                var exportView = kernal.Get<IExportView>();
+                var serviceWrapper = kernal.Get<IDesktopServiceWrapper>();
 
-                var loginPresenter = new LoginPresenter(loginView, passwordService);
-                var mainViewPresenter = new MainPresenter(mainView, passwordService);
-                var changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, passwordService);
-                var editUserPresenter = new EditUserPresenter(editUserView, passwordService);
+                var loginPresenter = new LoginPresenter(loginView, serviceWrapper);
+                var mainViewPresenter = new MainPresenter(mainView, serviceWrapper);
+                var changePasswordPresenter = new ChangePasswordPresenter(changePasswordView, serviceWrapper);
+                var editUserPresenter = new EditUserPresenter(editUserView, serviceWrapper);
+                var exportPresenter = new ExportPresenter(exportView, serviceWrapper);
+                var confirmDeleteUserPresenter = new ConfirmDeleteUserPresenter(confirmDeleteUserView, serviceWrapper);
 
                 Application.Run((Form)mainView);
 
-                kernal.Dispose();         
+                kernal.Dispose();
+#if (!DEBUG)
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 MessageBox.Show(e.StackTrace);
-                MessageBox.Show(e.InnerException.ToString());
             }
-
-
+#endif
         }
     }
 }

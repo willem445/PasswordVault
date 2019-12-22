@@ -1,31 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-
-/*=================================================================================================
-DESCRIPTION
-*================================================================================================*/
-/* 
- ------------------------------------------------------------------------------------------------*/
 
 namespace PasswordVault.Services
 {
-    /*=================================================================================================
-	ENUMERATIONS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	STRUCTS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	CLASSES
-	*================================================================================================*/
-    public class RijndaelManagedEncryption : IEncryption
+    public class RijndaelManagedEncryption : IEncryptionService
     {
         /*=================================================================================================
 		CONSTANTS
@@ -40,19 +21,26 @@ namespace PasswordVault.Services
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        private int _keySize = 256;
-        private int _derivationIterations = 2500;
+        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
+            iterations: 2500,
+            blockSize: 256,
+            keySize: 256
+        );
+
+        private int _keySize;
+        private int _blockSize;
+        private int _derivationIterations;
 
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public int Iterations
+        public EncryptionSizes EncryptionSizeDefaults 
         {
             get
             {
-                return _derivationIterations;
-            }
+                return _encryptionSizeDefaults;
+            } 
         }
 
         /*PRIVATE*****************************************************************************************/
@@ -62,15 +50,18 @@ namespace PasswordVault.Services
 		*================================================================================================*/
         public RijndaelManagedEncryption()
         {
-            // Use defaults
+            _keySize = _encryptionSizeDefaults.KeySize;
+            _blockSize = _encryptionSizeDefaults.BlockSize;
+            _derivationIterations = _encryptionSizeDefaults.Iterations;
         }
 
-        /*************************************************************************************************/
-        public RijndaelManagedEncryption(int keySize, int derivationIterations)
+        public RijndaelManagedEncryption(int keySize, int blockSize, int iterations)
         {
             _keySize = keySize;
-            _derivationIterations = derivationIterations;
+            _derivationIterations = iterations;
+            _blockSize = blockSize;
         }
+
         /*=================================================================================================
 		PUBLIC METHODS
 		*================================================================================================*/
@@ -79,8 +70,8 @@ namespace PasswordVault.Services
         {
             // Salt and IV is randomly generated each time, but is preprended to encrypted cipher text
             // so that the same Salt and IV values can be used when decrypting.  
-            var saltStringBytes = Generate256BitsOfRandomEntropy();
-            var ivStringBytes = Generate256BitsOfRandomEntropy();
+            var saltStringBytes = GenerateRandomEntropy(_blockSize);
+            var ivStringBytes = GenerateRandomEntropy(_blockSize);
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 #pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
@@ -89,7 +80,7 @@ namespace PasswordVault.Services
                 var keyBytes = password.GetBytes(_keySize / 8);
                 using (var symmetricKey = new RijndaelManaged())
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = _blockSize;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, ivStringBytes))
@@ -132,9 +123,9 @@ namespace PasswordVault.Services
 #pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
             {
                 var keyBytes = password.GetBytes(_keySize / 8);
-                using (var symmetricKey = new RijndaelManaged())
+                using (var symmetricKey = new RijndaelManaged()) 
                 {
-                    symmetricKey.BlockSize = 256;
+                    symmetricKey.BlockSize = _blockSize;
                     symmetricKey.Mode = CipherMode.CBC;
                     symmetricKey.Padding = PaddingMode.PKCS7;
                     using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
@@ -155,28 +146,26 @@ namespace PasswordVault.Services
             }
         }
 
-        /*************************************************************************************************/
-        public string CreateKey(int keyLength)
-        {
-            RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            byte[] randomBytes = new byte[keyLength];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
-            rngCryptoServiceProvider.Dispose();
-            return Convert.ToBase64String(randomBytes);
-        }
-
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private byte[] Generate256BitsOfRandomEntropy()
+        private byte[] GenerateRandomEntropy(int bits)
         {
-            var randomBytes = new byte[32]; // 32 Bytes will give us 256 bits.
+            if ((bits % 8) != 0)
+            {
+                throw new ArgumentException("Must be divisible by 8!", nameof(bits));
+            }
+
+            int numBytes = bits / 8;
+
+            var randomBytes = new byte[numBytes];
             using (var rngCsp = new RNGCryptoServiceProvider())
             {
                 // Fill the array with cryptographically secure random bytes.
                 rngCsp.GetBytes(randomBytes);
             }
+
             return randomBytes;
         }
 
@@ -186,4 +175,4 @@ namespace PasswordVault.Services
         /*************************************************************************************************/
 
     } // RijndaelManagedEncryption CLASS
-} // PasswordVault.Service NAMESPACE
+}

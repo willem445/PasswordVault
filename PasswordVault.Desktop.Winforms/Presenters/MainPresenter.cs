@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -40,7 +41,7 @@ namespace PasswordVault.Desktop.Winforms
 
         /*PRIVATE*****************************************************************************************/
         private IMainView _mainView;
-        private IPasswordService _passwordService;
+        private IDesktopServiceWrapper _serviceWrapper;
 
         private Password _editPassword;
 
@@ -54,10 +55,10 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainPresenter(IMainView mainView, IPasswordService passwordService)
+        public MainPresenter(IMainView mainView, IDesktopServiceWrapper serviceWrapper)
         {
             _mainView = mainView;
-            _passwordService = passwordService;
+            _serviceWrapper = serviceWrapper;
 
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsOnLoginEvent += UpdatePasswordsUI;
@@ -71,7 +72,7 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.CopyUserNameEvent += CopyUsername;
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
-            _mainView.DeleteAccountEvent += DeleteAccount;
+            _mainView.GeneratePasswordEvent += GenerateNewPassword;
         }
 
         /*=================================================================================================
@@ -85,70 +86,63 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
 
         /*************************************************************************************************/
-        private void DeleteAccount()
-        {
-            User user = _passwordService.GetCurrentUser();
-            LogOutResult result = LogoutUser();
-
-            if (result == LogOutResult.Success)
-            {
-                _passwordService.DeleteUser(user);
-            }         
-        }
-
-        /*************************************************************************************************/
         private void FilterChanged(string filterText, PasswordFilterOption passwordFilterOption)
         {
             List<Password> result = new List<Password>();
-            List<Password> passwords = _passwordService.GetPasswords();
+            List<Password> passwords = _serviceWrapper.GetPasswords();
 
-            if (!string.IsNullOrEmpty(filterText))
+            if (passwords != null)
             {
-                switch (passwordFilterOption)
+                if (!string.IsNullOrEmpty(filterText))
                 {
-                    case PasswordFilterOption.Application:
-                        result = (from Password password in passwords
-                                  where password.Application.Contains(filterText)
-                                  select password).ToList<Password>();
-                        break;
+                    switch (passwordFilterOption)
+                    {
+                        case PasswordFilterOption.Application:
+                            result = (from Password password in passwords
+                                      where password.Application?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
 
-                    case PasswordFilterOption.Description:
-                        result = (from Password password in passwords
-                                  where password.Description.Contains(filterText)
-                                  select password).ToList<Password>();
-                        break;
+                        case PasswordFilterOption.Description:
+                            result = (from Password password in passwords
+                                      where password.Description?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
 
-                    case PasswordFilterOption.Website:
-                        result = (from Password password in passwords
-                                  where password.Website.Contains(filterText)
-                                  select password).ToList<Password>();
-                        break;
+                        case PasswordFilterOption.Website:
+                            result = (from Password password in passwords
+                                      where password.Website?.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0
+                                      select password).ToList<Password>();
+                            break;
+                    }
+
+                    BindingList<Password> uiBindingList = new BindingList<Password>(result);
+                    _mainView.DisplayPasswords(uiBindingList);
                 }
-
-                BindingList<Password> uiBindingList = new BindingList<Password>(result);
-                _mainView.DisplayPasswords(uiBindingList);
-            }
-            else
-            {
-                BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
-                _mainView.DisplayPasswords(uiBindingList);
-            }
+                else
+                {
+                    BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
+                    _mainView.DisplayPasswords(uiBindingList);
+                }
+            }       
         }
 
         /*************************************************************************************************/
         private void UpdatePasswordsUI()
         {
             // Get encrypted passwords from the password service and modify to display in UI
-            List<Password> passwords = _passwordService.GetPasswords();
+            List<Password> passwords = _serviceWrapper.GetPasswords();
+            int count = _serviceWrapper.GetPasswordCount();
 
             BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
             _mainView.DisplayPasswords(uiBindingList);
+            _mainView.DisplayPasswordCount(count);
         }
 
         /*************************************************************************************************/
         private void UpdateUsernameWelcomeUI()
         {
-            _mainView.DisplayUserID(_passwordService.GetCurrentUsername());
+            _mainView.DisplayUserID(_serviceWrapper.GetCurrentUsername());
             _mainView.RequestPasswordsOnLoginEvent -= UpdateUsernameWelcomeUI;
         }
 
@@ -156,14 +150,15 @@ namespace PasswordVault.Desktop.Winforms
         private void AddPassword(string application, string username, string email, string description, string website, string passphrase)
         {
             Password uiPassword = new Password(application, username, email, description, website, passphrase);
-            AddPasswordResult result = _passwordService.AddPassword(uiPassword);
+            AddModifyPasswordResult result = _serviceWrapper.AddPassword(uiPassword);
 
-            if (result == AddPasswordResult.Success)
+            if (result == AddModifyPasswordResult.Success)
             {
                 UpdatePasswordsUI();
             }
 
-            _mainView.DisplayAddPasswordResult(result);    
+            _mainView.DisplayAddPasswordResult(result);
+            _mainView.DisplayPasswordCount(_serviceWrapper.GetPasswordCount());
         }
 
         /*************************************************************************************************/
@@ -174,9 +169,10 @@ namespace PasswordVault.Desktop.Winforms
 
             if (result != null)
             {
-                DeletePasswordResult deleteResult = _passwordService.DeletePassword(result);
+                DeletePasswordResult deleteResult = _serviceWrapper.DeletePassword(result);
                 UpdatePasswordsUI();
                 _mainView.DisplayDeletePasswordResult(deleteResult);
+                _mainView.DisplayPasswordCount(_serviceWrapper.GetPasswordCount());
             }        
         }
 
@@ -189,7 +185,7 @@ namespace PasswordVault.Desktop.Winforms
             if (result != null)
             {
                 _editPassword = result;
-                _mainView.DisplayPasswordToEdit(_passwordService.DecryptPassword(_editPassword));
+                _mainView.DisplayPasswordToEdit(result);
             }
         }
 
@@ -198,9 +194,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, email, description, website, passphrase);
 
-            AddPasswordResult result = _passwordService.ModifyPassword(_editPassword, modifiedPassword);
+            AddModifyPasswordResult result = _serviceWrapper.ModifyPassword(_editPassword, modifiedPassword);
 
-            if (result == AddPasswordResult.Success)
+            if (result == AddModifyPasswordResult.Success)
             {
                 _editPassword = null;
             }
@@ -217,7 +213,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private LogOutResult LogoutUser()
         {
-            LogOutResult result = _passwordService.Logout();
+            LogOutResult result = _serviceWrapper.Logout();
 
             if (result == LogOutResult.Success)
             {
@@ -235,12 +231,15 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            string passphrase = _passwordService.DecryptPassword(result).Passphrase;
-
-            if (!string.IsNullOrEmpty(passphrase))
+            if (result != null)
             {
-                System.Windows.Forms.Clipboard.SetText(passphrase);
-            }          
+                string passphrase = result.Passphrase;
+
+                if (!string.IsNullOrEmpty(passphrase))
+                {
+                    System.Windows.Forms.Clipboard.SetText(passphrase);
+                }
+            }                    
         }
 
         /*************************************************************************************************/
@@ -248,9 +247,13 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
+            string passphrase = "";
 
-            string passphrase = _passwordService.DecryptPassword(result).Passphrase;
-
+            if (result != null)
+            {
+                passphrase = result.Passphrase;
+            }
+            
             _mainView.DisplayPassword(passphrase);
         }
 
@@ -260,12 +263,15 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            string uri = result.Website;
-
-            if (UriUtilities.IsValidUri(uri))
+            if (result != null)
             {
-                UriUtilities.OpenUri(uri);
-            }
+                string uri = result.Website;
+
+                if (UriUtilities.IsValidUri(uri))
+                {
+                    UriUtilities.OpenUri(uri);
+                }
+            }        
         }
 
         /*************************************************************************************************/
@@ -274,13 +280,25 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
 
-            System.Windows.Forms.Clipboard.SetText(result.Username);
+            if (result != null && !string.IsNullOrEmpty(result.Username))
+            {
+                System.Windows.Forms.Clipboard.SetText(result.Username);
+            }       
+        }
+
+        /*************************************************************************************************/
+        private void GenerateNewPassword()
+        {
+            string result = "";
+
+            result = _serviceWrapper.GeneratePasswordKey();
+            _mainView.DisplayGeneratePasswordResult(result);
         }
 
         /*************************************************************************************************/
         private Password QueryForFirstPassword(string application, string username, string email, string description, string website)
         {
-            List<Password> passwords = _passwordService.GetPasswords();
+            List<Password> passwords = _serviceWrapper.GetPasswords();
 
             Password result = (from Password password in passwords
                                where password.Application == application
@@ -296,7 +314,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private Password QueryForFirstPassword(Password password)
         {
-            List<Password> passwords = _passwordService.GetPasswords();
+            List<Password> passwords = _serviceWrapper.GetPasswords();
 
             Password result = (from Password queryPassword in passwords
                                where queryPassword.Application == password.Application
@@ -312,7 +330,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private int FindPasswordIndex(string application, string username, string email, string description, string website)
         {
-            List<Password> passwords = _passwordService.GetPasswords();
+            List<Password> passwords = _serviceWrapper.GetPasswords();
 
             int index = passwords.FindIndex(x => (x.Application == application) && (x.Username == username) &&  (x.Email == email) && (x.Description == description) && (x.Website == website));
 
@@ -324,11 +342,11 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password p = new Password
             (
-                dgvrow.Cells[0].Value.ToString(),
-                dgvrow.Cells[1].Value.ToString(),
-                dgvrow.Cells[2].Value.ToString(),
-                dgvrow.Cells[3].Value.ToString(),
-                dgvrow.Cells[4].Value.ToString(),
+                dgvrow.Cells[0].Value?.ToString(),
+                dgvrow.Cells[1].Value?.ToString(),
+                dgvrow.Cells[2].Value?.ToString(),
+                dgvrow.Cells[3].Value?.ToString(),
+                dgvrow.Cells[4].Value?.ToString(),
                 null
             );
 
