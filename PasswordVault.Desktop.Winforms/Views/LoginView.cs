@@ -360,7 +360,7 @@ namespace PasswordVault.Desktop.Winforms
 
             toolTip.InitialDelay = 0;
             toolTip.Show(string.Empty, createPasswordTextBox);
-            toolTip.Show(message, createPasswordTextBox, 0);
+            toolTip.Show(message, createPasswordTextBox, 10000);
         }
 
         /*************************************************************************************************/
@@ -569,7 +569,7 @@ namespace PasswordVault.Desktop.Winforms
 
         private void createPasswordTextBox_MouseEnter(object sender, EventArgs e)
         {
-            RaiseShowPasswordRequirements();
+            //RaiseShowPasswordRequirements();
         }
 
         private void createPasswordTextBox_MouseLeave(object sender, EventArgs e)
