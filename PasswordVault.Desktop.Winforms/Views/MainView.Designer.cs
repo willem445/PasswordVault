@@ -41,6 +41,8 @@ namespace PasswordVault.Desktop.Winforms
             this.menuStrip = new PasswordVault.Desktop.Winforms.AdvancedMenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exportPasswordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.accountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,8 +77,6 @@ namespace PasswordVault.Desktop.Winforms
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.label7 = new System.Windows.Forms.Label();
             this.passwordCountLabel = new System.Windows.Forms.Label();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.exportPasswordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -112,9 +112,21 @@ namespace PasswordVault.Desktop.Winforms
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(163, 6);
+            // 
+            // exportPasswordsToolStripMenuItem
+            // 
+            this.exportPasswordsToolStripMenuItem.Name = "exportPasswordsToolStripMenuItem";
+            this.exportPasswordsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.exportPasswordsToolStripMenuItem.Text = "Export Passwords";
+            this.exportPasswordsToolStripMenuItem.Click += new System.EventHandler(this.exportPasswordsToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -131,7 +143,7 @@ namespace PasswordVault.Desktop.Winforms
             this.deleteToolStripMenuItem,
             this.changePasswordToolStripMenuItem});
             this.accountToolStripMenuItem.Name = "accountToolStripMenuItem";
-            this.accountToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.accountToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.accountToolStripMenuItem.Text = "Account";
             // 
             // editToolStripMenuItem
@@ -432,18 +444,6 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordCountLabel.TabIndex = 37;
             this.passwordCountLabel.Text = "0";
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // exportPasswordsToolStripMenuItem
-            // 
-            this.exportPasswordsToolStripMenuItem.Name = "exportPasswordsToolStripMenuItem";
-            this.exportPasswordsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exportPasswordsToolStripMenuItem.Text = "Export Passwords";
-            this.exportPasswordsToolStripMenuItem.Click += new System.EventHandler(this.exportPasswordsToolStripMenuItem_Click);
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -482,6 +482,7 @@ namespace PasswordVault.Desktop.Winforms
             this.MainMenuStrip = this.menuStrip;
             this.Name = "MainView";
             this.Text = "Password Vault";
+            this.SizeChanged += new System.EventHandler(this.MainView_SizeChanged);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).EndInit();

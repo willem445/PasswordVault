@@ -93,15 +93,6 @@ namespace PasswordVault.Desktop.Winforms
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
-        protected override CreateParams CreateParams // This helps to avoid flickering with custom controls
-        {
-            get
-            {
-                CreateParams handleParam = base.CreateParams;
-                handleParam.ExStyle |= 0x02000000;      // WS_EX_COMPOSITED
-                return handleParam;
-            }
-        }
 
         /*=================================================================================================
 		CONSTRUCTORS
@@ -1154,6 +1145,13 @@ namespace PasswordVault.Desktop.Winforms
         private void exportPasswordsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _exportView.ShowExportView();
+        }
+
+        /*************************************************************************************************/
+        private void MainView_SizeChanged(object sender, EventArgs e)
+        {
+            // This should help with redrawing the form when minimizing
+            this.Refresh();
         }
 
         /*=================================================================================================
