@@ -100,16 +100,6 @@ namespace PasswordVault.Services
         }
 
         /*************************************************************************************************/
-        public string GetFormattedString(UserEncrypedData data)
-        {
-            string formatted = "";
-
-            formatted = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4}", data.UniqueGUID, data.RandomGeneratedKey, data.Iterations, data.Salt, data.Hash);
-
-            return formatted;
-        }
-
-        /*************************************************************************************************/
         public bool VerifyPassword(string password, string salt, string hash, int iterationCount)
         {
             byte[] originalSalt = Convert.FromBase64String(salt);

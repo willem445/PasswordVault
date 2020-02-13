@@ -17,13 +17,6 @@ namespace PasswordVault.Services
         UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password);
 
         /// <summary>
-        /// Formats UserEncrypedData data into comma seperated string.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>Comma seperated string.</returns>
-        string GetFormattedString(UserEncrypedData data);
-
-        /// <summary>
         /// Verifies a password against given hash, salt, and iteration count.
         /// </summary>
         /// <param name="password">Password to verify.</param>

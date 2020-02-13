@@ -43,7 +43,9 @@ namespace PasswordVault.Models
         public string GUID { get; } // unique Id assigned to each user, this unique id is the PK for password table
         public string EncryptedKey { get; } // encrypted version of randomly generated key, encrypted using the plaintext user password  
         public string Username { get; }
-        public string Iterations { get; }
+        public int Iterations { get; }
+        public int MemorySize { get; }
+        public int DegreeOfParallelism { get; }
         public string Salt { get; }
         public string Hash { get; }
         public string FirstName { get; } // use randomly generated key to hash and store
@@ -58,7 +60,9 @@ namespace PasswordVault.Models
         public User(string uniqueID, 
             string encryptedKey, 
             string username, 
-            string iterations, 
+            int iterations,
+            int memorySize,
+            int degreeOfParallelism,
             string salt, 
             string hash, 
             string firstName, 
@@ -75,6 +79,8 @@ namespace PasswordVault.Models
             EncryptedKey = encryptedKey;
             Username = username;
             Iterations = iterations;
+            MemorySize = memorySize;
+            DegreeOfParallelism = degreeOfParallelism;
             Salt = salt;
             Hash = hash;
             FirstName = firstName;
@@ -134,15 +140,6 @@ namespace PasswordVault.Models
         public User()
         {
 
-        }
-
-        public string GetUserString()
-        {
-            string userString = "";
-
-            userString = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
-
-            return userString;
         }
 
         public bool VerifyUsernameRequirements()

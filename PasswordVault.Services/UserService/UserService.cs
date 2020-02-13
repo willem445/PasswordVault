@@ -119,10 +119,12 @@ namespace PasswordVault.Services
                 IEncryptionService encryptionService = _encryptDecryptFactory.Get(parameters);
 
                 User newUser = new User(
-                        newEncryptedData.UniqueGUID, // Leave unique guid in plaintext
+                        newEncryptedData.UserUUID, // Leave unique guid in plaintext
                         encryptionService.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
                         user.Username, // Leave username in plaintext
-                        newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture), // Leave iterations in plaintext
+                        newEncryptedData.Iterations, // Leave iterations in plaintext
+                        newEncryptedData.MemorySize,
+                        newEncryptedData.DegreeOfParallelism,
                         newEncryptedData.Salt,
                         newEncryptedData.Hash,
                         encryptionService.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
@@ -189,8 +191,10 @@ namespace PasswordVault.Services
                 (
                     dbUser.GUID,
                     dbUser.EncryptedKey,
-                    dbUser.Username,
-                    dbUser.Iterations,
+                    dbUser.Username,                   
+                    dbUser.Iterations,                
+                    dbUser.MemorySize,
+                    dbUser.DegreeOfParallelism,
                     dbUser.Salt,
                     dbUser.Hash,
                     encryptionService.Encrypt(modifiedUser.FirstName,   encryptionKey),
@@ -255,7 +259,9 @@ namespace PasswordVault.Services
                             user.GUID,
                             encryptionService.Encrypt(encryptionKey, newPassword), // Encrypt the random key with the users password
                             user.Username,
-                            newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.Iterations,
+                            newEncryptedData.MemorySize,
+                            newEncryptedData.DegreeOfParallelism,
                             newEncryptedData.Salt,
                             newEncryptedData.Hash,
                             user.FirstName,

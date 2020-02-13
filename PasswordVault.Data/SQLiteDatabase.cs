@@ -81,12 +81,14 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Users 
-                                    (GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email, PasswordEncryptionService, PasswordBlockSize, PasswordKeySize, PasswordIterations)
+                                    (GUID, EncryptedKey, Username, Iterations, MemorySize, DegreeOfParallelism, Salt, Hash, FirstName, LastName, PhoneNumber, Email, PasswordEncryptionService, PasswordBlockSize, PasswordKeySize, PasswordIterations)
                                  VALUES(
                                     @GUID,
                                     @EncryptedKey,
                                     @Username,
                                     @Iterations,
+                                    @MemorySize,
+                                    @DegreeOfParallelism,
                                     @Salt,
                                     @Hash,
                                     @FirstName,
@@ -104,6 +106,8 @@ namespace PasswordVault.Data
                         EncryptedKey = user.EncryptedKey,
                         Username = user.Username,
                         Iterations = user.Iterations,
+                        MemorySize = user.MemorySize,
+                        DegreeOfParallelism = user.DegreeOfParallelism,
                         Salt = user.Salt,
                         Hash = user.Hash,
                         FirstName = user.FirstName,
@@ -183,6 +187,8 @@ namespace PasswordVault.Data
                     string query = @"UPDATE Users 
                                  SET EncryptedKey = @EncryptedKey, 
                                      Iterations = @Iterations, 
+                                     MemorySize = @MemorySize,
+                                     DegreeOfParallelism = @DegreeOfParallelism,
                                      Salt = @Salt,
                                      Hash = @Hash,
                                      FirstName = @FirstName,
@@ -199,6 +205,8 @@ namespace PasswordVault.Data
                     {
                         EncryptedKey = modifiedUser.EncryptedKey,
                         Iterations = modifiedUser.Iterations,
+                        MemorySize = modifiedUser.MemorySize,
+                        DegreeOfParallelism = modifiedUser.DegreeOfParallelism,
                         Salt = modifiedUser.Salt,
                         Hash = modifiedUser.Hash,
                         FirstName = modifiedUser.FirstName,
@@ -496,6 +504,8 @@ namespace PasswordVault.Data
                         [EncryptedKey] TEXT NOT NULL,
                         [Username] TEXT NOT NULL,
                         [Iterations] INTEGER NOT NULL,
+                        [MemorySize] INTEGER NOT NULL,
+                        [DegreeOfParallelism] INTEGER NOT NULL,
                         [Salt] TEXT NOT NULL,
                         [Hash] TEXT NOT NULL,
                         [FirstName] TEXT NOT NULL,
