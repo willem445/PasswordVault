@@ -4,6 +4,19 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
+    public enum CipherSuite
+    {
+        Unknown = 0,
+        Aes256CfbPkcs7
+    }
+
+    public enum Mac : byte
+    {
+        Unknown = 0,
+        HMACSHA256 = 1,
+        HMACSHA512 = 2
+    }
+
     public enum EncryptionService
     {
         RijndaelManaged = 0,

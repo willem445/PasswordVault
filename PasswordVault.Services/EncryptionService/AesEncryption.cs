@@ -4,7 +4,13 @@ using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
+/* Encryption/Decryption logic is based on recommended practice written 
+ * by Microsoft.
+ * https://docs.microsoft.com/en-us/dotnet/standard/security/vulnerabilities-cbc-mode 
+ */
 
 namespace PasswordVault.Services
 {
@@ -12,9 +18,9 @@ namespace PasswordVault.Services
     {
         /*CONSTANTS********************************************************/
 
-        /*FIELDS***********************************************************/
-        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
-            iterations: 2500,
+/*FIELDS***********************************************************/
+private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
+            iterations: 5000,
             blockSize: 128,
             keySize: 256
         );
@@ -55,80 +61,154 @@ namespace PasswordVault.Services
         /*PUBLIC METHODS***************************************************/
         public string Encrypt(string plainText, string passPhrase)
         {
-            var saltBytes = GenerateRandomEntropy(_ivSize);
-            var ivBytes = GenerateRandomEntropy(_ivSize);
-            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            var salt = GenerateRandomEntropy(_ivSize);
+            var iv = GenerateRandomEntropy(_ivSize);
+            var plaintext = Encoding.UTF8.GetBytes(plainText);
 
-            using (var password = new Rfc2898DeriveBytes(passPhrase, saltBytes, _derivationIterations))
+            byte[] cipherSuite = { (byte)CipherSuite.Aes256CfbPkcs7, (byte)Mac.HMACSHA256 };
+            byte[] authenticateHash;
+            byte[] cipherText;
+            byte[] cipherkey;
+            byte[] hmackey;
+
+            using (var password = new Rfc2898DeriveBytes(passPhrase, salt, _derivationIterations))
             {
-                var keyBytes = password.GetBytes(_keySize / 8);
+                var keyBytes = password.GetBytes((_keySize * 2) / 8); // multiply key size by 2 since we need two keys
 
-                using (var aes = Aes.Create())
-                {
-                    aes.BlockSize = _blockSize;
-                    aes.Mode = CipherMode.CBC;
-                    aes.Padding = PaddingMode.PKCS7;
-
-                    using (var encryptor = aes.CreateEncryptor(keyBytes, ivBytes))
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                            {
-                                cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-                                cryptoStream.FlushFinalBlock();
-                                // Create the final bytes as a concatenation of the random salt bytes, the random iv bytes and the cipher bytes.
-                                var cipherTextBytes = saltBytes;
-                                cipherTextBytes = cipherTextBytes.Concat(ivBytes).ToArray();
-                                cipherTextBytes = cipherTextBytes.Concat(memoryStream.ToArray()).ToArray();
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Convert.ToBase64String(cipherTextBytes);
-                            }
-                        }
-                    }
-                }
+                cipherkey = keyBytes.Take(_keySize / 8).ToArray();
+                hmackey = keyBytes.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
             }
+
+            /* It is advisable to use a key size that is at least the size of the hash method used, 
+                * otherwise you may degrade the security margin provided by the HMAC method. There may 
+                * be a minor performance penalty if the key size forces the hash algorithm to hash 
+                * multiple blocks.
+                * https://stackoverflow.com/questions/18080445/difference-between-hmacsha256-and-hmacsha512
+            */
+            using (SymmetricAlgorithm cipher = Aes.Create())
+            using (HMAC authGenerator = new HMACSHA256(hmackey))
+            {      
+                cipher.BlockSize = _blockSize;
+                cipher.Mode = CipherMode.CFB;
+                cipher.Padding = PaddingMode.PKCS7;
+
+                using (ICryptoTransform encryptor = cipher.CreateEncryptor(cipherkey, iv))
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                        {
+                            cryptoStream.Write(plaintext, 0, plaintext.Length);
+                            cryptoStream.FlushFinalBlock();
+                            cipherText = memoryStream.ToArray();
+                        }
+                    }                                      
+                }
+
+                authGenerator.TransformBlock(cipherSuite, 0, cipherSuite.Length, null, 0);
+                authGenerator.TransformBlock(salt, 0, salt.Length, null, 0);
+                authGenerator.TransformBlock(iv, 0, iv.Length, null, 0);
+                authGenerator.TransformBlock(cipherText, 0, cipherText.Length, null, 0);
+                authGenerator.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                authenticateHash = authGenerator.Hash;
+            }
+
+            int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherText.Length;
+            byte[] combined = new byte[totalLength];
+            int offset = 0;
+
+            Buffer.BlockCopy(cipherSuite, 0, combined, offset, cipherSuite.Length);
+            offset += cipherSuite.Length;
+            Buffer.BlockCopy(authenticateHash, 0, combined, offset, authenticateHash.Length);
+            offset += authenticateHash.Length;
+            Buffer.BlockCopy(salt, 0, combined, offset, salt.Length);
+            offset += salt.Length;
+            Buffer.BlockCopy(iv, 0, combined, offset, iv.Length);
+            offset += iv.Length;
+            Buffer.BlockCopy(cipherText, 0, combined, offset, cipherText.Length);
+
+            return Convert.ToBase64String(combined);           
         }
 
         public string Decrypt(string cipherText, string passPhrase)
         {
-            // Get the complete stream of bytes that represent:
-            // [32 bytes of Salt] + [32 bytes of IV] + [n bytes of CipherText]
-            var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
-            // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.
-            var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(_ivSize / 8).ToArray();
-            // Get the IV bytes by extracting the next 32 bytes from the supplied cipherText bytes.
-            var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(_ivSize / 8).Take(_ivSize / 8).ToArray();
-            // Get the actual cipher text bytes by removing the first 64 bytes from the cipherText string.
-            var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((_ivSize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((_ivSize / 8) * 2)).ToArray();
+            var cipherRaw = Convert.FromBase64String(cipherText);
+            CipherSuite cipherSuite = (CipherSuite)cipherRaw[0];
+            Mac mac = (Mac)cipherRaw[1];
 
-            using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, _derivationIterations))
+            string plaintext = "";
+
+            using (SymmetricAlgorithm cipher = Aes.Create())
+            using (HMAC authGenerator = new HMACSHA256()) // TODO - should use mac enum to create this
             {
-                var keyBytes = password.GetBytes(_keySize / 8);
+                int headerSizeInBytes = 2;
+                int authSizeInBytes = authGenerator.HashSize / 8;
+                int saltSizeInBytes = _ivSize / 8;
+                int ivSizeInBytes = _ivSize / 8;
+                int blockSizeInBytes = _blockSize / 8;        
+                               
+                int authOffset = headerSizeInBytes;
+                int saltOffset = authOffset + authSizeInBytes;
+                int ivOffset = saltOffset + saltSizeInBytes;
+                int cipherOffset = ivOffset + ivSizeInBytes;
+                int cipherLength = cipherRaw.Length - cipherOffset;
+                int minLen = cipherOffset + blockSizeInBytes;
 
-                using (var aes = Aes.Create())
+                if (cipherRaw.Length < minLen)
                 {
-                    aes.BlockSize = _blockSize;
-                    aes.Mode = CipherMode.CBC;
-                    aes.Padding = PaddingMode.PKCS7;
+                    throw new CryptographicException();
+                }
 
-                    using (var decryptor = aes.CreateDecryptor(keyBytes, ivStringBytes))
+                byte[] salt = new byte[saltSizeInBytes];
+                byte[] cipherkey;
+                byte[] hmackey;
+                Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes);
+                using (var password = new Rfc2898DeriveBytes(passPhrase, salt, _derivationIterations))
+                {
+                    var keyBytes = password.GetBytes((_keySize * 2) / 8); // multiply key size by 2 since we need two keys
+
+                    cipherkey = keyBytes.Take(_keySize / 8).ToArray();
+                    hmackey = keyBytes.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
+                }
+
+                authGenerator.Key = hmackey;
+                authGenerator.TransformBlock(cipherRaw, 0, headerSizeInBytes, null, 0); // suite
+                authGenerator.TransformBlock(cipherRaw, saltOffset, saltSizeInBytes, null, 0); // salt
+                authGenerator.TransformBlock(cipherRaw, ivOffset, ivSizeInBytes, null, 0); // iv
+                authGenerator.TransformBlock(cipherRaw, cipherOffset, cipherLength, null, 0); // cipher
+                authGenerator.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                byte[] genAuth = authGenerator.Hash;
+
+                if (!CryptographicEquals(genAuth, 0, cipherRaw, authOffset, authSizeInBytes))
+                {
+                    throw new CryptographicException();
+                }
+
+                // Proceed with decryption
+                byte[] iv = new byte[ivSizeInBytes];
+                Buffer.BlockCopy(cipherRaw, ivOffset, iv, 0, ivSizeInBytes);
+                cipher.BlockSize = _blockSize;
+                cipher.Mode = CipherMode.CFB;
+                cipher.Padding = PaddingMode.PKCS7;
+
+                using (ICryptoTransform decryptor = cipher.CreateDecryptor(cipherkey, iv))
+                {
+                    using (var memoryStream = new MemoryStream())
                     {
-                        using (var memoryStream = new MemoryStream(cipherTextBytes))
+                        using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Write))
                         {
-                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-                            {
-                                var plainTextBytes = new byte[cipherTextBytes.Length];
-                                var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-                                memoryStream.Close();
-                                cryptoStream.Close();
-                                return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-                            }
+                            byte[] cipherBytes = new byte[cipherLength];
+                            Buffer.BlockCopy(cipherRaw, cipherOffset, cipherBytes, 0, cipherLength);
+
+                            cryptoStream.Write(cipherBytes, 0, cipherBytes.Length);
+                            cryptoStream.FlushFinalBlock();
+                            byte[] plainbytes = memoryStream.ToArray();
+                            plaintext  = Encoding.UTF8.GetString(plainbytes, 0, plainbytes.Length);
                         }
                     }
                 }
             }
+            return plaintext;
         }     
 
         /*PRIVATE METHODS**************************************************/
@@ -149,6 +229,43 @@ namespace PasswordVault.Services
             }
 
             return randomBytes;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+        private static bool CryptographicEquals(
+        byte[] a,
+        int aOffset,
+        byte[] b,
+        int bOffset,
+        int length)
+        {
+            Debug.Assert(a != null);
+            Debug.Assert(b != null);
+            Debug.Assert(length >= 0);
+
+            int result = 0;
+
+            if (a.Length - aOffset < length || b.Length - bOffset < length)
+            {
+                return false;
+            }
+
+            unchecked
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    // Bitwise-OR of subtraction has been found to have the most
+                    // stable execution time.
+                    //
+                    // This cannot overflow because bytes are 1 byte in length, and
+                    // result is 4 bytes.
+                    // The OR propagates all set bytes, so the differences are only
+                    // present in the lowest byte.
+                    result = result | (a[i + aOffset] - b[i + bOffset]);
+                }
+            }
+
+            return result == 0;
         }
 
         /*STATIC METHODS***************************************************/
