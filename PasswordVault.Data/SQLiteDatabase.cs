@@ -40,7 +40,11 @@ namespace PasswordVault.Data
         /*PUBLIC******************************************************************************************/
 
         /*PRIVATE*****************************************************************************************/
+#if DEBUG
+        private string DB_FILE = Path.Combine(Environment.CurrentDirectory, @"..\..\..\PasswordVault.Data\TestDb") + "\\PasswordDb.sqlite";
+#else
         private string DB_FILE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault") + "\\PasswordDb.sqlite";
+#endif
 
         /*=================================================================================================
 		PROPERTIES
@@ -483,7 +487,8 @@ namespace PasswordVault.Data
         {
             if (!File.Exists(DbFile))
             {
-                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault"));
+                var dir = Path.GetDirectoryName(DbFile);
+                Directory.CreateDirectory(dir);
                 var file = File.Create(DbFile);
                 file.Close();
 
