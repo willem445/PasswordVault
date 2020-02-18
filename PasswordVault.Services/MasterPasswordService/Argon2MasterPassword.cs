@@ -9,12 +9,34 @@ namespace PasswordVault.Services
 {
     public class Argon2MasterPassword : IMasterPassword
     {
-        public int _saltArraySize { get; } = 16;
-        public int _hashArraySize { get; } = 32;
-        public int _iterations { get; } = 50;
-        public int _degreeOfParallelism { get; } = 8;
-        public int _memorySize = 1024 * 128; // 128 mb
+        public int SaltArraySize { get; } = 16;
+        public int HashArraySize { get; } = 32;
+        public int Iterations { get; } = 50;
+        public int DegreeOfParallelism { get; } = 8;
+        public int MemorySize { get; } = 1024 * 128; // 128 mb
 
+        private int _randomKeySize { get; } = 64;
+
+        public Argon2MasterPassword()
+        {
+            // Use default settings
+        }
+
+        public Argon2MasterPassword(int iterations, int degreeOfParallelism, int memSize)
+        {
+            Iterations = iterations;
+            DegreeOfParallelism = degreeOfParallelism;
+            MemorySize = memSize;
+        }
+
+        public Argon2MasterPassword(int saltSize, int hashSize, int iterations, int degreeOfParallelism, int memSize)
+        {
+            SaltArraySize = saltSize;
+            HashArraySize = hashSize;
+            Iterations = iterations;
+            DegreeOfParallelism = degreeOfParallelism;
+            MemorySize = memSize;
+        }
 
         public UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password)
         {
@@ -24,9 +46,9 @@ namespace PasswordVault.Services
             string hashString = Convert.ToBase64String(hash);
             string saltString = Convert.ToBase64String(salt);
             var uniqueID = Guid.NewGuid().ToString();
-            string randomGeneratedKey = GenerateRandomKey();
+            string randomGeneratedKey = GenerateRandomKey(_randomKeySize);
 
-            return new UserEncrypedData(saltString, hashString, _iterations, _degreeOfParallelism, _memorySize, uniqueID, randomGeneratedKey);
+            return new UserEncrypedData(saltString, hashString, Iterations, DegreeOfParallelism, MemorySize, uniqueID, randomGeneratedKey);
         }
 
         public bool VerifyPassword(string password, string salt, string hash, int iterationCount)
@@ -39,13 +61,13 @@ namespace PasswordVault.Services
             return originalHash.SequenceEqual(verifyHash);
         }
 
-        public string GenerateRandomKey()
+        public string GenerateRandomKey(int sizeInBytes)
         {
             string token;
 
             using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
             {
-                byte[] tokenData = new byte[64];
+                byte[] tokenData = new byte[sizeInBytes];
                 rng.GetBytes(tokenData);
 
                 token = Convert.ToBase64String(tokenData);
@@ -58,10 +80,13 @@ namespace PasswordVault.Services
         {
             var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password));
             argon2.Salt = salt;
-            argon2.DegreeOfParallelism = _degreeOfParallelism;
-            argon2.Iterations = _iterations;
-            argon2.MemorySize = _memorySize;
-            byte[] hash = argon2.GetBytes(_hashArraySize);
+            argon2.DegreeOfParallelism = DegreeOfParallelism;
+            argon2.Iterations = Iterations;
+            argon2.MemorySize = MemorySize;
+            byte[] hash = argon2.GetBytes(HashArraySize);
+            argon2.Reset();
+            argon2.Dispose();
+            GC.Collect();
             return hash;
         }
 
@@ -69,7 +94,7 @@ namespace PasswordVault.Services
         {
             // Salt
             RNGCryptoServiceProvider saltCellar = new RNGCryptoServiceProvider();
-            byte[] salt = new byte[_saltArraySize];
+            byte[] salt = new byte[SaltArraySize];
             saltCellar.GetBytes(salt);
             string saltString = Convert.ToBase64String(salt);
             saltCellar.Dispose();

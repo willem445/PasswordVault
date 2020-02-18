@@ -30,6 +30,6 @@ namespace PasswordVault.Services
         /// Generates random key using RNGCryptoServiceProvider
         /// </summary>
         /// <returns>Random key string.</returns>
-        string GenerateRandomKey();
+        string GenerateRandomKey(int sizeInBytes);
     }
 }

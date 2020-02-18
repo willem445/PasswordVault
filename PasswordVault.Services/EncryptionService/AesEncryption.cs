@@ -18,8 +18,8 @@ namespace PasswordVault.Services
     {
         /*CONSTANTS********************************************************/
 
-/*FIELDS***********************************************************/
-private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
+        /*FIELDS***********************************************************/
+        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
             iterations: 5000,
             blockSize: 128,
             keySize: 256
@@ -27,10 +27,11 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
 
         private int _keySize;
         private int _ivSize;
+        private int _saltSize;
         private int _blockSize;
         private int _derivationIterations;
 
-
+        private IEncryptionIntegrity _integrityVerification;
 
         /*PROPERTIES*******************************************************/
         public EncryptionSizes EncryptionSizeDefaults
@@ -46,8 +47,11 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
         {
             _keySize = _encryptionSizeDefaults.KeySize;
             _ivSize = _encryptionSizeDefaults.BlockSize;
+            _saltSize = _encryptionSizeDefaults.BlockSize;
             _blockSize = _encryptionSizeDefaults.BlockSize;
             _derivationIterations = _encryptionSizeDefaults.Iterations;
+
+            _integrityVerification = new HmacIntegrity();
         }
 
         public AesEncryption(int keySize, int blockSize, int iterations)
@@ -56,6 +60,9 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
             _derivationIterations = iterations;
             _blockSize = blockSize;
             _ivSize = blockSize;
+            _saltSize = blockSize;
+
+            _integrityVerification = new HmacIntegrity();
         }
 
         /*PUBLIC METHODS***************************************************/
@@ -67,7 +74,7 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
 
             byte[] cipherSuite = { (byte)CipherSuite.Aes256CfbPkcs7, (byte)Mac.HMACSHA256 };
             byte[] authenticateHash;
-            byte[] cipherText;
+            byte[] cipherBytes;
             byte[] cipherkey;
             byte[] hmackey;
 
@@ -86,7 +93,6 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
                 * https://stackoverflow.com/questions/18080445/difference-between-hmacsha256-and-hmacsha512
             */
             using (SymmetricAlgorithm cipher = Aes.Create())
-            using (HMAC authGenerator = new HMACSHA256(hmackey))
             {      
                 cipher.BlockSize = _blockSize;
                 cipher.Mode = CipherMode.CFB;
@@ -100,20 +106,15 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
                         {
                             cryptoStream.Write(plaintext, 0, plaintext.Length);
                             cryptoStream.FlushFinalBlock();
-                            cipherText = memoryStream.ToArray();
+                            cipherBytes = memoryStream.ToArray();
                         }
                     }                                      
                 }
 
-                authGenerator.TransformBlock(cipherSuite, 0, cipherSuite.Length, null, 0);
-                authGenerator.TransformBlock(salt, 0, salt.Length, null, 0);
-                authGenerator.TransformBlock(iv, 0, iv.Length, null, 0);
-                authGenerator.TransformBlock(cipherText, 0, cipherText.Length, null, 0);
-                authGenerator.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-                authenticateHash = authGenerator.Hash;
+                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[1], hmackey, cipherSuite, salt, iv, cipherBytes);
             }
 
-            int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherText.Length;
+            int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherBytes.Length;
             byte[] combined = new byte[totalLength];
             int offset = 0;
 
@@ -125,7 +126,7 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
             offset += salt.Length;
             Buffer.BlockCopy(iv, 0, combined, offset, iv.Length);
             offset += iv.Length;
-            Buffer.BlockCopy(cipherText, 0, combined, offset, cipherText.Length);
+            Buffer.BlockCopy(cipherBytes, 0, combined, offset, cipherBytes.Length);
 
             return Convert.ToBase64String(combined);           
         }
@@ -139,14 +140,13 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
             string plaintext = "";
 
             using (SymmetricAlgorithm cipher = Aes.Create())
-            using (HMAC authGenerator = new HMACSHA256()) // TODO - should use mac enum to create this
             {
                 int headerSizeInBytes = 2;
-                int authSizeInBytes = authGenerator.HashSize / 8;
-                int saltSizeInBytes = _ivSize / 8;
+                int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(mac) / 8;
+                int saltSizeInBytes = _saltSize / 8;
                 int ivSizeInBytes = _ivSize / 8;
-                int blockSizeInBytes = _blockSize / 8;        
-                               
+                int blockSizeInBytes = _blockSize / 8;
+
                 int authOffset = headerSizeInBytes;
                 int saltOffset = authOffset + authSizeInBytes;
                 int ivOffset = saltOffset + saltSizeInBytes;
@@ -154,15 +154,10 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
                 int cipherLength = cipherRaw.Length - cipherOffset;
                 int minLen = cipherOffset + blockSizeInBytes;
 
-                if (cipherRaw.Length < minLen)
-                {
-                    throw new CryptographicException();
-                }
-
                 byte[] salt = new byte[saltSizeInBytes];
                 byte[] cipherkey;
                 byte[] hmackey;
-                Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes);
+                Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes); // Salt has an offset of 2 in raw cipher
                 using (var password = new Rfc2898DeriveBytes(passPhrase, salt, _derivationIterations))
                 {
                     var keyBytes = password.GetBytes((_keySize * 2) / 8); // multiply key size by 2 since we need two keys
@@ -171,21 +166,15 @@ private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
                     hmackey = keyBytes.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
                 }
 
-                authGenerator.Key = hmackey;
-                authGenerator.TransformBlock(cipherRaw, 0, headerSizeInBytes, null, 0); // suite
-                authGenerator.TransformBlock(cipherRaw, saltOffset, saltSizeInBytes, null, 0); // salt
-                authGenerator.TransformBlock(cipherRaw, ivOffset, ivSizeInBytes, null, 0); // iv
-                authGenerator.TransformBlock(cipherRaw, cipherOffset, cipherLength, null, 0); // cipher
-                authGenerator.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-                byte[] genAuth = authGenerator.Hash;
+                bool isVerified = _integrityVerification.VerifyIntegrity(mac, hmackey, cipherRaw, _saltSize, _ivSize, _blockSize);
 
-                if (!CryptographicEquals(genAuth, 0, cipherRaw, authOffset, authSizeInBytes))
+                if (!isVerified)
                 {
                     throw new CryptographicException();
                 }
 
                 // Proceed with decryption
-                byte[] iv = new byte[ivSizeInBytes];
+                byte[] iv = new byte[_ivSize/8];
                 Buffer.BlockCopy(cipherRaw, ivOffset, iv, 0, ivSizeInBytes);
                 cipher.BlockSize = _blockSize;
                 cipher.Mode = CipherMode.CFB;

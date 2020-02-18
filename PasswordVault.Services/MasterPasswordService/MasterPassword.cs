@@ -45,6 +45,8 @@ namespace PasswordVault.Services
         public int _hashIterationCount { get; } = 10000;
         public int _saltArraySize { get; } = 32;
         public int _hashArraySize { get; } = 32;
+        private int _randomKeySize { get; } = 64;
+
 
         /*PRIVATE*****************************************************************************************/
 
@@ -94,7 +96,7 @@ namespace PasswordVault.Services
             var uniqueID = Guid.NewGuid().ToString();
 
             // Random Key
-            string randomGeneratedKey = GenerateRandomKey();
+            string randomGeneratedKey = GenerateRandomKey(_randomKeySize);
 
             return new UserEncrypedData(saltString, hashString, iterations, uniqueID, randomGeneratedKey);
         }
@@ -121,13 +123,13 @@ namespace PasswordVault.Services
         }
 
         /*************************************************************************************************/
-        public string GenerateRandomKey()
+        public string GenerateRandomKey(int sizeInBytes)
         {
             string token;
 
             using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
             {
-                byte[] tokenData = new byte[64];
+                byte[] tokenData = new byte[sizeInBytes];
                 rng.GetBytes(tokenData);
 
                 token = Convert.ToBase64String(tokenData);
