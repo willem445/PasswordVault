@@ -5,7 +5,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
 
 /* Encryption/Decryption logic is based on recommended practice written 
  * by Microsoft.
@@ -20,7 +19,7 @@ namespace PasswordVault.Services
 
         /*FIELDS***********************************************************/
         private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
-            iterations: 5000,
+            iterations: 40,
             blockSize: 128,
             keySize: 256
         );
@@ -30,6 +29,8 @@ namespace PasswordVault.Services
         private int _saltSize;
         private int _blockSize;
         private int _derivationIterations;
+        private int _degreeOfParallelism = 4;
+        private int _memorySize = 1024;
 
         private IEncryptionIntegrity _integrityVerification;
 
@@ -72,19 +73,16 @@ namespace PasswordVault.Services
             var iv = GenerateRandomEntropy(_ivSize);
             var plaintext = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] cipherSuite = { (byte)CipherSuite.Aes256CfbPkcs7, (byte)Mac.HMACSHA256 };
+            byte[] cipherSuite = { (byte)CipherSuite.Aes256CfbPkcs7Argon2Id, (byte)Mac.HMACSHA256 };
             byte[] authenticateHash;
             byte[] cipherBytes;
             byte[] cipherkey;
             byte[] hmackey;
 
-            using (var password = new Rfc2898DeriveBytes(passPhrase, salt, _derivationIterations))
-            {
-                var keyBytes = password.GetBytes((_keySize * 2) / 8); // multiply key size by 2 since we need two keys
-
-                cipherkey = keyBytes.Take(_keySize / 8).ToArray();
-                hmackey = keyBytes.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
-            }
+            IKeyDerivation keyDerivation = KeyDerivationFactory.Get((CipherSuite)cipherSuite[0]);
+            var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, (_keySize * 2) / 8, new KeyDerivationParameters(_derivationIterations, _degreeOfParallelism, _memorySize));
+            cipherkey = combinedKey.Take(_keySize / 8).ToArray();
+            hmackey = combinedKey.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
 
             /* It is advisable to use a key size that is at least the size of the hash method used, 
                 * otherwise you may degrade the security margin provided by the HMAC method. There may 
@@ -158,13 +156,10 @@ namespace PasswordVault.Services
                 byte[] cipherkey;
                 byte[] hmackey;
                 Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes); // Salt has an offset of 2 in raw cipher
-                using (var password = new Rfc2898DeriveBytes(passPhrase, salt, _derivationIterations))
-                {
-                    var keyBytes = password.GetBytes((_keySize * 2) / 8); // multiply key size by 2 since we need two keys
-
-                    cipherkey = keyBytes.Take(_keySize / 8).ToArray();
-                    hmackey = keyBytes.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
-                }
+                IKeyDerivation keyDerivation = KeyDerivationFactory.Get(cipherSuite);
+                var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, (_keySize * 2) / 8, new KeyDerivationParameters(_derivationIterations, _degreeOfParallelism, _memorySize));
+                cipherkey = combinedKey.Take(_keySize / 8).ToArray();
+                hmackey = combinedKey.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
 
                 bool isVerified = _integrityVerification.VerifyIntegrity(mac, hmackey, cipherRaw, _saltSize, _ivSize, _blockSize);
 
@@ -228,10 +223,6 @@ namespace PasswordVault.Services
         int bOffset,
         int length)
         {
-            Debug.Assert(a != null);
-            Debug.Assert(b != null);
-            Debug.Assert(length >= 0);
-
             int result = 0;
 
             if (a.Length - aOffset < length || b.Length - bOffset < length)

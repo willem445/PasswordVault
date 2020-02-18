@@ -7,7 +7,10 @@ namespace PasswordVault.Services
     public enum CipherSuite
     {
         Unknown = 0,
-        Aes256CfbPkcs7
+        Aes256CfbPkcs7Pbkdf2 = 1,
+        Aes128CfbPkcs7Pbkdf2 = 2,
+        Aes128CfbPkcs7Argon2Id = 3,
+        Aes256CfbPkcs7Argon2Id = 3
     }
 
     public enum Mac : byte

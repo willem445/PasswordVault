@@ -11,9 +11,9 @@ namespace PasswordVault.Services
     {
         public int SaltArraySize { get; } = 16;
         public int HashArraySize { get; } = 32;
-        public int Iterations { get; } = 50;
+        public int Iterations { get; } = 20;
         public int DegreeOfParallelism { get; } = 8;
-        public int MemorySize { get; } = 1024 * 128; // 128 mb
+        public int MemorySize { get; } = 1024 * 1024; // 1 gb
 
         private int _randomKeySize { get; } = 64;
 
