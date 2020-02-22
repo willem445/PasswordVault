@@ -4,13 +4,25 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    public enum CipherSuite
+    public enum CipherSuiteIdx
+    {
+        EncryptionAlg = 0,
+        KeyDevAlg=1,
+        KeyDevItr=2,
+        KeyDevMem=6,
+        KeyDevParallel=10,
+        MacAlg=11,
+        NumCipherSuiteBytes=12
+    }
+
+
+    public enum EncryptionAlgorithm
     {
         Unknown = 0,
-        Aes256CfbPkcs7Pbkdf2 = 1,
-        Aes128CfbPkcs7Pbkdf2 = 2,
-        Aes128CfbPkcs7Argon2Id = 3,
-        Aes256CfbPkcs7Argon2Id = 3
+        Aes256CfbPkcs7 = 1,
+        Aes128CfbPkcs7 = 2,
+        Rijndael256CbcPkcs7 = 3,
+        Rijndael128CbcPkcs7 = 4,
     }
 
     public enum Mac : byte
@@ -20,35 +32,22 @@ namespace PasswordVault.Services
         HMACSHA512 = 2
     }
 
-    public enum EncryptionService
+    public class EncryptionParameters
     {
-        RijndaelManaged = 0,
-        Aes = 1,
-    }
-
-    public struct EncryptionSizes
-    {
-        public EncryptionSizes(int iterations, int blockSize, int keySize)
+        public EncryptionParameters(EncryptionAlgorithm algorithm, Mac mac, KeyDerivationParameters keyDerivationParameters, int blocksize, int ivSize)
         {
-            Iterations = iterations;
-            BlockSize = blockSize;
-            KeySize = keySize;
+            Algorithm = algorithm;
+            Mac = mac;
+            KeyDerivationParameters = keyDerivationParameters;
+            BlockSizeBytes = blocksize;
+            IvSizeBytes = ivSize;
         }
 
-        public int Iterations { get; }
-        public int BlockSize { get; }
-        public int KeySize { get; }
-    }
+        public EncryptionAlgorithm Algorithm { get; set; }
+        public Mac Mac { get; set; }
+        public KeyDerivationParameters KeyDerivationParameters { get; set; }
+        public int BlockSizeBytes { get; set; }
+        public int IvSizeBytes { get; set; }
 
-    public struct EncryptionServiceParameters
-    {
-        public EncryptionServiceParameters(EncryptionService encryptionService, EncryptionSizes encryptionSizes)
-        {
-            EncryptionService = encryptionService;
-            EncryptionSizes = encryptionSizes;
-        }
-
-        public EncryptionService EncryptionService { get; }
-        public EncryptionSizes EncryptionSizes { get; }
     }
 }

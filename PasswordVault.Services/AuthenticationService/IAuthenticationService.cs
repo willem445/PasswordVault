@@ -16,7 +16,7 @@ namespace PasswordVault.Services
         /// <param name="password"></param>
         /// <returns>Returns AuthenticateReturn object containing AuthenticateResult enum and User object populated
         /// with UserUuid, username, RandomKey, FirstName, LastName, PhoneNumber and Email in plaintext.</returns>
-        AuthenticateReturn Authenticate(string username, string password, EncryptionServiceParameters parameters);
+        AuthenticateReturn Authenticate(string username, string password, EncryptionParameters parameters);
 
         /// <summary>
         /// Verifies user provided password against DB stored hash and salt if the

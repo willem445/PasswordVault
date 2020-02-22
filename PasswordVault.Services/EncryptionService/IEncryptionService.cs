@@ -9,11 +9,6 @@ namespace PasswordVault.Services
     public interface IEncryptionService
     {
         /// <summary>
-        /// Gets the default iterations and bit lengths for the encryption service.
-        /// </summary>
-        EncryptionSizes EncryptionSizeDefaults { get; }
-
-        /// <summary>
         /// Encrypts a plaintext string with given passphrase.
         /// </summary>
         /// <param name="plainText">Plaintext string to encrypt.</param>

@@ -6,6 +6,6 @@ namespace PasswordVault.Services
 {
     interface IKeyDerivation
     {
-        byte[] DeriveKey(string password, byte[] salt, int numBytes, KeyDerivationParameters parameters);
+        byte[] DeriveKey(string password, byte[] salt, KeyDerivationParameters parameters, int keySizeInBytes = 0);
     }
 }

@@ -203,7 +203,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(AuthenticateResult.Successful, loginResult);
 
             // Delete the account
-            string currentUserGUID = passwordService.GetCurrentUser().GUID;
+            string currentUserGUID = passwordService.GetCurrentUser().Uuid;
             deleteResult = passwordService.DeleteUser(passwordService.GetCurrentUser(), 0);
             Assert.AreEqual(DeleteUserResult.Success, deleteResult);
             Assert.AreEqual(((passwords.Length * users.Length) - passwords.Length), ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
@@ -212,7 +212,7 @@ namespace PasswordVault.ServicesTests
             // Verify that the deleted account's passwords are deleted from the password database table
             foreach (var password in ((InMemoryDatabase)db).LocalPasswordDbAccess)
             {
-                if (password.UserGUID == currentUserGUID)
+                if (password.UserUuid == currentUserGUID)
                 {
                     Assert.Fail();
                 }

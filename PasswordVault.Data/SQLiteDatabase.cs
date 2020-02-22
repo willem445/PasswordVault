@@ -85,43 +85,34 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Users 
-                                    (GUID, EncryptedKey, Username, Iterations, MemorySize, DegreeOfParallelism, Salt, Hash, FirstName, LastName, PhoneNumber, Email, PasswordEncryptionService, PasswordBlockSize, PasswordKeySize, PasswordIterations)
+                                    (Uuid, 
+                                     EncryptedKey, 
+                                     Username, 
+                                     Hash, 
+                                     FirstName, 
+                                     LastName, 
+                                     PhoneNumber, 
+                                     Email)
                                  VALUES(
-                                    @GUID,
+                                    @Uuid,
                                     @EncryptedKey,
                                     @Username,
-                                    @Iterations,
-                                    @MemorySize,
-                                    @DegreeOfParallelism,
-                                    @Salt,
                                     @Hash,
                                     @FirstName,
                                     @LastName,
                                     @PhoneNumber,
-                                    @Email,
-                                    @PasswordEncryptionService,
-                                    @PasswordBlockSize,
-                                    @PasswordKeySize,
-                                    @PasswordIterations)";
+                                    @Email)";
 
                     int dbresult = dbConn.Execute(query, new
                     {
-                        GUID = user.GUID,
+                        Uuid = user.Uuid,
                         EncryptedKey = user.EncryptedKey,
                         Username = user.Username,
-                        Iterations = user.Iterations,
-                        MemorySize = user.MemorySize,
-                        DegreeOfParallelism = user.DegreeOfParallelism,
-                        Salt = user.Salt,
                         Hash = user.Hash,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
                         Email = user.Email,
-                        PasswordEncryptionService = user.PasswordEncryptionService,
-                        PasswordBlockSize = user.PasswordBlockSize,
-                        PasswordKeySize = user.PasswordKeySize,
-                        PasswordIterations = user.PasswordIterations,
                     });
 
                     if (dbresult != 0)
@@ -148,9 +139,9 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"DELETE FROM Users
-                                     WHERE GUID = @Guid";
+                                     WHERE Uuid = @Uuid";
 
-                    var dbResult = dbConn.Execute(query, new { Guid = user.GUID });
+                    var dbResult = dbConn.Execute(query, new { Uuid = user.Uuid });
 
                     if (dbResult == 1)
                     {
@@ -158,9 +149,9 @@ namespace PasswordVault.Data
                     }
 
                     query = @"DELETE FROM Passwords
-                              WHERE UserGUID = @UserGUID";
+                              WHERE UserUuid = @UserUuid";
 
-                    dbResult = dbConn.Execute(query, new { UserGUID = user.GUID });
+                    dbResult = dbConn.Execute(query, new { UserUuid = user.Uuid });
 
                     if (dbResult == expectedNumPasswords)
                     {
@@ -190,38 +181,22 @@ namespace PasswordVault.Data
 
                     string query = @"UPDATE Users 
                                  SET EncryptedKey = @EncryptedKey, 
-                                     Iterations = @Iterations, 
-                                     MemorySize = @MemorySize,
-                                     DegreeOfParallelism = @DegreeOfParallelism,
-                                     Salt = @Salt,
                                      Hash = @Hash,
                                      FirstName = @FirstName,
                                      LastName = @LastName,
                                      PhoneNumber = @PhoneNumber,
-                                     Email = @Email,
-                                     PasswordEncryptionService = @PasswordEncryptionService,
-                                     PasswordBlockSize = @PasswordBlockSize,
-                                     PasswordKeySize = @PasswordKeySize,
-                                     PasswordIterations = @PasswordIterations
-                                 WHERE GUID = @GUID";
+                                     Email = @Email
+                                 WHERE Uuid = @Uuid";
 
                     var dbResult = dbConn.Execute(query, new
                     {
                         EncryptedKey = modifiedUser.EncryptedKey,
-                        Iterations = modifiedUser.Iterations,
-                        MemorySize = modifiedUser.MemorySize,
-                        DegreeOfParallelism = modifiedUser.DegreeOfParallelism,
-                        Salt = modifiedUser.Salt,
                         Hash = modifiedUser.Hash,
                         FirstName = modifiedUser.FirstName,
                         LastName = modifiedUser.LastName,
                         PhoneNumber = modifiedUser.PhoneNumber,
                         Email = modifiedUser.Email,
-                        PasswordEncryptionService = modifiedUser.PasswordEncryptionService,
-                        PasswordBlockSize = modifiedUser.PasswordBlockSize,
-                        PasswordKeySize = modifiedUser.PasswordKeySize,
-                        PasswordIterations = modifiedUser.PasswordIterations,
-                        GUID = user.GUID
+                        Uuid = user.Uuid
                     });
 
                     if (dbResult > 0)
@@ -266,9 +241,9 @@ namespace PasswordVault.Data
                 dbConn.Open();
 
                 string query = @"SELECT * FROM Users
-                                 WHERE GUID = @GUID";
+                                 WHERE Uuid = @Uuid";
 
-                var user = dbConn.Query<User>(query, new { Guid = guid }).FirstOrDefault();
+                var user = dbConn.Query<User>(query, new { Uuid = guid }).FirstOrDefault();
 
                 if (user != null)
                 {
@@ -312,9 +287,9 @@ namespace PasswordVault.Data
                 dbConn.Open();
 
                 string query = @"SELECT * FROM Users
-                                 WHERE GUID = @GUID";
+                                 WHERE Uuid = @Uuid";
 
-                var dbresult = dbConn.Query<User>(query, new { GUID = guid });
+                var dbresult = dbConn.Query<User>(query, new { Uuid = guid });
 
                 if (dbresult.Any())
                 {
@@ -358,9 +333,9 @@ namespace PasswordVault.Data
                 dbConn.Open();
 
                 string query = @"SELECT * FROM Passwords 
-                                 WHERE UserGUID = @Guid";
+                                 WHERE UserUuid = @Uuid";
 
-                var dbresult = dbConn.Query<DatabasePassword>(query, new { Guid = guid });
+                var dbresult = dbConn.Query<DatabasePassword>(query, new { Uuid = guid });
 
                 if (dbresult.Any())
                 {
@@ -383,9 +358,9 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Passwords 
-                                    (UserGUID, Application, Username, Email, Description, Website, Passphrase)
+                                    (UserUuid, Application, Username, Email, Description, Website, Passphrase)
                                  VALUES(
-                                    @UserGUID,
+                                    @UserUuid,
                                     @Application,
                                     @Username,
                                     @Email,
@@ -396,7 +371,7 @@ namespace PasswordVault.Data
 
                     int dbresult = dbConn.Query<int>(query, new
                     {
-                        UserGUID = password.UserGUID,
+                        UserUuid = password.UserUuid,
                         Application = password.Application,
                         Username = password.Username,
                         Email = password.Email,
@@ -505,28 +480,20 @@ namespace PasswordVault.Data
 
                 dbConn.Execute(@"
                     CREATE TABLE IF NOT EXISTS [Users] (
-                        [GUID] TEXT NOT NULL PRIMARY KEY,
+                        [Uuid] TEXT NOT NULL PRIMARY KEY,
                         [EncryptedKey] TEXT NOT NULL,
                         [Username] TEXT NOT NULL,
-                        [Iterations] INTEGER NOT NULL,
-                        [MemorySize] INTEGER NOT NULL,
-                        [DegreeOfParallelism] INTEGER NOT NULL,
-                        [Salt] TEXT NOT NULL,
                         [Hash] TEXT NOT NULL,
                         [FirstName] TEXT NOT NULL,
                         [LastName] TEXT NOT NULL,
                         [PhoneNumber] TEXT NOT NULL,
-                        [Email] TEXT NOT NULL,
-                        [PasswordEncryptionService] INTEGER,
-                        [PasswordBlockSize] INTEGER,
-                        [PasswordKeySize] INTEGER,
-                        [PasswordIterations] INTEGER
+                        [Email] TEXT NOT NULL
                     )");
 
                 dbConn.Execute(@"
                     CREATE TABLE IF NOT EXISTS [Passwords] (
                         [UniqueID] INTEGER PRIMARY KEY,
-                        [UserGUID] TEXT NOT NULL,                
+                        [UserUuid] TEXT NOT NULL,                
                         [Application] TEXT NOT NULL,
                         [Username] TEXT NOT NULL,
                         [Email] TEXT NOT NULL,

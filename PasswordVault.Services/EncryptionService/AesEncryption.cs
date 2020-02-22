@@ -18,84 +18,96 @@ namespace PasswordVault.Services
         /*CONSTANTS********************************************************/
 
         /*FIELDS***********************************************************/
-        private EncryptionSizes _encryptionSizeDefaults = new EncryptionSizes(
-            iterations: 40,
-            blockSize: 128,
-            keySize: 256
+        private EncryptionParameters _defaultParameters = new EncryptionParameters(
+            EncryptionAlgorithm.Aes256CfbPkcs7,
+            Mac.HMACSHA256,
+            new KeyDerivationParameters(
+                KeyDerivationAlgorithm.Argon2Id,
+                32,
+                16,
+                10,
+                8,
+                1024 * 1024
+            ),
+            16,
+            16
         );
 
-        private int _keySize;
-        private int _ivSize;
-        private int _saltSize;
-        private int _blockSize;
-        private int _derivationIterations;
-        private int _degreeOfParallelism = 4;
-        private int _memorySize = 1024;
 
+        private EncryptionParameters _encryptionParameters;
         private IEncryptionIntegrity _integrityVerification;
 
         /*PROPERTIES*******************************************************/
-        public EncryptionSizes EncryptionSizeDefaults
-        {
-            get
-            {
-                return _encryptionSizeDefaults;
-            }
-        }
 
         /*CONSTRUCTORS*****************************************************/
         public AesEncryption()
         {
-            _keySize = _encryptionSizeDefaults.KeySize;
-            _ivSize = _encryptionSizeDefaults.BlockSize;
-            _saltSize = _encryptionSizeDefaults.BlockSize;
-            _blockSize = _encryptionSizeDefaults.BlockSize;
-            _derivationIterations = _encryptionSizeDefaults.Iterations;
-
+            _encryptionParameters = _defaultParameters;
             _integrityVerification = new HmacIntegrity();
         }
 
-        public AesEncryption(int keySize, int blockSize, int iterations)
+        public AesEncryption(EncryptionParameters parameters)
         {
-            _keySize = keySize;         
-            _derivationIterations = iterations;
-            _blockSize = blockSize;
-            _ivSize = blockSize;
-            _saltSize = blockSize;
-
+            _encryptionParameters = parameters;
             _integrityVerification = new HmacIntegrity();
         }
 
         /*PUBLIC METHODS***************************************************/
         public string Encrypt(string plainText, string passPhrase)
         {
-            var salt = GenerateRandomEntropy(_ivSize);
-            var iv = GenerateRandomEntropy(_ivSize);
+            var salt = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.KeyDerivationParameters.SaltSizeBytes);
+            var iv = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.IvSizeBytes);
             var plaintext = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] cipherSuite = { (byte)CipherSuite.Aes256CfbPkcs7Argon2Id, (byte)Mac.HMACSHA256 };
+            byte[] cipherSuite = 
+            { 
+                (byte)_encryptionParameters.Algorithm,
+                (byte)_encryptionParameters.KeyDerivationParameters.Algorithm,
+                (byte)_encryptionParameters.KeyDerivationParameters.Iterations,
+                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 8),
+                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 16),
+                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 24),
+                (byte)_encryptionParameters.KeyDerivationParameters.MemorySize,
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 8),
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 16),
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 24),
+                (byte)_encryptionParameters.KeyDerivationParameters.DegreeOfParallelism,
+                (byte)_encryptionParameters.Mac, 
+                
+            };
             byte[] authenticateHash;
             byte[] cipherBytes;
             byte[] cipherkey;
             byte[] hmackey;
 
-            IKeyDerivation keyDerivation = KeyDerivationFactory.Get((CipherSuite)cipherSuite[0]);
-            var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, (_keySize * 2) / 8, new KeyDerivationParameters(_derivationIterations, _degreeOfParallelism, _memorySize));
-            cipherkey = combinedKey.Take(_keySize / 8).ToArray();
-            hmackey = combinedKey.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
-
-            /* It is advisable to use a key size that is at least the size of the hash method used, 
-                * otherwise you may degrade the security margin provided by the HMAC method. There may 
-                * be a minor performance penalty if the key size forces the hash algorithm to hash 
-                * multiple blocks.
-                * https://stackoverflow.com/questions/18080445/difference-between-hmacsha256-and-hmacsha512
-            */
+            var keysize = _encryptionParameters.KeyDerivationParameters.KeySizeBytes;
+            var hmacsize = _integrityVerification.GetHMACKeySizeInBits(_encryptionParameters.Mac).ToNumBytes();
+            IKeyDerivation keyDerivation = KeyDerivationFactory.Get(_encryptionParameters.KeyDerivationParameters.Algorithm);
+            var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, _encryptionParameters.KeyDerivationParameters, keysize + hmacsize); // hash a key for both aes and hmac
+            cipherkey = combinedKey.Take(keysize).ToArray();
+            hmackey = combinedKey.Skip(keysize).Take(hmacsize).ToArray();
+            
             using (SymmetricAlgorithm cipher = Aes.Create())
             {      
-                cipher.BlockSize = _blockSize;
-                cipher.Mode = CipherMode.CFB;
-                cipher.Padding = PaddingMode.PKCS7;
+                cipher.BlockSize = _encryptionParameters.BlockSizeBytes.ToNumBits();
 
+                switch(_encryptionParameters.Algorithm)
+                {
+                    case EncryptionAlgorithm.Aes128CfbPkcs7:
+                    case EncryptionAlgorithm.Aes256CfbPkcs7:
+                        cipher.Mode = CipherMode.CFB;
+                        cipher.Padding = PaddingMode.PKCS7;
+                        break;
+                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
+                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
+                        cipher.Mode = CipherMode.CBC;
+                        cipher.Padding = PaddingMode.PKCS7;
+                        break;
+                    case EncryptionAlgorithm.Unknown:
+                    default:
+                        throw new Exception();
+                }
+                
                 using (ICryptoTransform encryptor = cipher.CreateEncryptor(cipherkey, iv))
                 {
                     using (var memoryStream = new MemoryStream())
@@ -109,7 +121,7 @@ namespace PasswordVault.Services
                     }                                      
                 }
 
-                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[1], hmackey, cipherSuite, salt, iv, cipherBytes);
+                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[(int)CipherSuiteIdx.MacAlg], hmackey, cipherSuite, salt, iv, cipherBytes);
             }
 
             int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherBytes.Length;
@@ -131,19 +143,46 @@ namespace PasswordVault.Services
 
         public string Decrypt(string cipherText, string passPhrase)
         {
-            var cipherRaw = Convert.FromBase64String(cipherText);
-            CipherSuite cipherSuite = (CipherSuite)cipherRaw[0];
-            Mac mac = (Mac)cipherRaw[1];
-
             string plaintext = "";
+            var cipherRaw = Convert.FromBase64String(cipherText);
 
+            // get parameters from cipher
+            EncryptionAlgorithm encryptionalg = (EncryptionAlgorithm)cipherRaw[(int)CipherSuiteIdx.EncryptionAlg];
+            Mac macalg = (Mac)cipherRaw[(int)CipherSuiteIdx.MacAlg];
+            KeyDerivationAlgorithm keyderivationalg = (KeyDerivationAlgorithm)cipherRaw[(int)CipherSuiteIdx.KeyDevAlg];
+            int keyderivationiterations = (int)((cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+3] << 24) | 
+                (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+2] << 16) | 
+                (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+1] << 8) | 
+                cipherRaw[(int)CipherSuiteIdx.KeyDevItr]);
+            int keyderivationmemory = (int)((cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 3] << 24) | 
+                (cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 2] << 16) | 
+                (cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 1] << 8) | 
+                cipherRaw[(int)CipherSuiteIdx.KeyDevMem]);
+            int keyderivationparallelism = (int)cipherRaw[(int)CipherSuiteIdx.KeyDevParallel];
+  
             using (SymmetricAlgorithm cipher = Aes.Create())
             {
-                int headerSizeInBytes = 2;
-                int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(mac) / 8;
-                int saltSizeInBytes = _saltSize / 8;
-                int ivSizeInBytes = _ivSize / 8;
-                int blockSizeInBytes = _blockSize / 8;
+                int headerSizeInBytes = (int)CipherSuiteIdx.NumCipherSuiteBytes;
+                int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(macalg).ToNumBytes();
+                int hmacKeySizeInBytes = _integrityVerification.GetHMACKeySizeInBits(macalg).ToNumBytes();
+                int saltSizeInBytes = _encryptionParameters.KeyDerivationParameters.SaltSizeBytes; // use the configured salt size, should be 128 bits
+                int ivSizeInBytes = cipher.BlockSize.ToNumBytes(); // iv should match blocksize in AES
+                int blockSizeInBytes = cipher.BlockSize.ToNumBytes(); // 128 bits for AES               
+                int keySizeInBytes = -1;
+                switch (encryptionalg) // key size is based on the algorithm being used
+                {
+                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
+                    case EncryptionAlgorithm.Aes256CfbPkcs7:
+                        keySizeInBytes = 32;
+                        break;
+                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
+                    case EncryptionAlgorithm.Aes128CfbPkcs7:
+                        keySizeInBytes = 16;
+                        break;
+                    case EncryptionAlgorithm.Unknown:
+                    default:
+                        throw new CryptographicException();
+                }
 
                 int authOffset = headerSizeInBytes;
                 int saltOffset = authOffset + authSizeInBytes;
@@ -155,13 +194,15 @@ namespace PasswordVault.Services
                 byte[] salt = new byte[saltSizeInBytes];
                 byte[] cipherkey;
                 byte[] hmackey;
-                Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes); // Salt has an offset of 2 in raw cipher
-                IKeyDerivation keyDerivation = KeyDerivationFactory.Get(cipherSuite);
-                var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, (_keySize * 2) / 8, new KeyDerivationParameters(_derivationIterations, _degreeOfParallelism, _memorySize));
-                cipherkey = combinedKey.Take(_keySize / 8).ToArray();
-                hmackey = combinedKey.Skip(_keySize / 8).Take(_keySize / 8).ToArray();
+                Buffer.BlockCopy(cipherRaw, saltOffset, salt, 0, saltSizeInBytes);
 
-                bool isVerified = _integrityVerification.VerifyIntegrity(mac, hmackey, cipherRaw, _saltSize, _ivSize, _blockSize);
+                KeyDerivationParameters keyDevParams = new KeyDerivationParameters(keyderivationalg, 0, saltSizeInBytes, keyderivationiterations, keyderivationparallelism, keyderivationmemory);
+                IKeyDerivation keyDerivation = KeyDerivationFactory.Get(keyderivationalg);
+                var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, keyDevParams, keySizeInBytes + hmacKeySizeInBytes);
+                cipherkey = combinedKey.Take(keySizeInBytes).ToArray();
+                hmackey = combinedKey.Skip(keySizeInBytes).Take(keySizeInBytes).ToArray();
+
+                bool isVerified = _integrityVerification.VerifyIntegrity(macalg, hmackey, cipherRaw, saltSizeInBytes, ivSizeInBytes, blockSizeInBytes, headerSizeInBytes);
 
                 if (!isVerified)
                 {
@@ -169,11 +210,26 @@ namespace PasswordVault.Services
                 }
 
                 // Proceed with decryption
-                byte[] iv = new byte[_ivSize/8];
+                byte[] iv = new byte[ivSizeInBytes];
                 Buffer.BlockCopy(cipherRaw, ivOffset, iv, 0, ivSizeInBytes);
-                cipher.BlockSize = _blockSize;
-                cipher.Mode = CipherMode.CFB;
-                cipher.Padding = PaddingMode.PKCS7;
+                cipher.BlockSize = blockSizeInBytes*8;
+
+                switch (_encryptionParameters.Algorithm)
+                {
+                    case EncryptionAlgorithm.Aes128CfbPkcs7:
+                    case EncryptionAlgorithm.Aes256CfbPkcs7:
+                        cipher.Mode = CipherMode.CFB;
+                        cipher.Padding = PaddingMode.PKCS7;
+                        break;
+                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
+                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
+                        cipher.Mode = CipherMode.CBC;
+                        cipher.Padding = PaddingMode.PKCS7;
+                        break;
+                    case EncryptionAlgorithm.Unknown:
+                    default:
+                        throw new Exception();
+                }
 
                 using (ICryptoTransform decryptor = cipher.CreateDecryptor(cipherkey, iv))
                 {
@@ -193,60 +249,10 @@ namespace PasswordVault.Services
                 }
             }
             return plaintext;
-        }     
+        }
 
         /*PRIVATE METHODS**************************************************/
-        private byte[] GenerateRandomEntropy(int bits)
-        {
-            if ((bits % 8) != 0)
-            {
-                throw new ArgumentException("Must be divisible by 8!", nameof(bits));
-            }
 
-            int numBytes = bits / 8;
-
-            var randomBytes = new byte[numBytes]; 
-            using (var rngCsp = new RNGCryptoServiceProvider())
-            {
-                // Fill the array with cryptographically secure random bytes.
-                rngCsp.GetBytes(randomBytes);
-            }
-
-            return randomBytes;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-        private static bool CryptographicEquals(
-        byte[] a,
-        int aOffset,
-        byte[] b,
-        int bOffset,
-        int length)
-        {
-            int result = 0;
-
-            if (a.Length - aOffset < length || b.Length - bOffset < length)
-            {
-                return false;
-            }
-
-            unchecked
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    // Bitwise-OR of subtraction has been found to have the most
-                    // stable execution time.
-                    //
-                    // This cannot overflow because bytes are 1 byte in length, and
-                    // result is 4 bytes.
-                    // The OR propagates all set bytes, so the differences are only
-                    // present in the lowest byte.
-                    result = result | (a[i + aOffset] - b[i + bOffset]);
-                }
-            }
-
-            return result == 0;
-        }
 
         /*STATIC METHODS***************************************************/
 

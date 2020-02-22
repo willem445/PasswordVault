@@ -212,7 +212,7 @@ namespace PasswordVault.ServicesTests
 
             for (int i = 0; i < 200; i++)
             {
-                string application = generateKey.GenerateRandomKey(64);
+                string application = KeyGenerator.GetUniqueKey(10);
                 Password password = new Password(application, "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
                 passwords.Add(password);
             }

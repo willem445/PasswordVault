@@ -6,25 +6,20 @@ namespace PasswordVault.Services
 {
     static class KeyDerivationFactory
     {
-        public static IKeyDerivation Get(CipherSuite suite)
+        public static IKeyDerivation Get(KeyDerivationAlgorithm algorithm)
         {
             IKeyDerivation keyDerivation = null;
 
-            switch (suite)
+            switch (algorithm)
             {           
-                case CipherSuite.Aes256CfbPkcs7Pbkdf2:
-                    keyDerivation = new PBKDF2KeyDerivation();
-                    break;
-
-                case CipherSuite.Aes128CfbPkcs7Pbkdf2:
-                    keyDerivation = new PBKDF2KeyDerivation();
-                    break;
-
-                case CipherSuite.Aes128CfbPkcs7Argon2Id:
+                case KeyDerivationAlgorithm.Argon2Id:
                     keyDerivation = new Argon2IdKeyDerivation();
                     break;
 
-                case CipherSuite.Unknown:
+                case KeyDerivationAlgorithm.Pbkdf2:
+                    keyDerivation = new PBKDF2KeyDerivation();
+                    break;
+
                 default:
                     throw new Exception();
             }

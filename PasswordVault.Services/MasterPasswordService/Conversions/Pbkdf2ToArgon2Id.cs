@@ -4,8 +4,7 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    interface IKeyDerivationFactory
+    class Pbkdf2ToArgon2Id
     {
-        IKeyDerivation Get(CipherSuite suite);
     }
 }

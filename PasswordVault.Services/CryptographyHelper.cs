@@ -4,25 +4,40 @@ using System.Runtime.CompilerServices;
 
 namespace PasswordVault.Services
 {
-    static class CryptographyHelper
+    public static class CryptographyHelper
     {
-        static byte[] GenerateRandomEntropy(int bits)
+        public static byte[] GenerateRandomEntropy(int numBytes)
         {
-            if ((bits % 8) != 0)
-            {
-                throw new ArgumentException("Must be divisible by 8!", nameof(bits));
-            }
-
-            int numBytes = bits / 8;
-
             var randomBytes = new byte[numBytes];
             using (var rngCsp = new RNGCryptoServiceProvider())
             {
-                // Fill the array with cryptographically secure random bytes.
                 rngCsp.GetBytes(randomBytes);
             }
-
             return randomBytes;
+        }
+
+        public static string ToBase64(this byte[] bytes)
+        {
+            string result = Convert.ToBase64String(bytes);
+            return result;
+        }
+
+        public static byte[] ToBytes(this string base64String)
+        {
+            byte[] result = Convert.FromBase64String(base64String);
+            return result;
+        }
+
+        public static int ToNumBytes(this int numbits)
+        {
+            int numbytes = numbits / 8;
+            return numbytes;
+        }
+
+        public static int ToNumBits(this int numbytes)
+        {
+            int numbits = numbytes * 8;
+            return numbits;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]

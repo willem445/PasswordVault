@@ -25,17 +25,13 @@ namespace PasswordVault.Services
             return output;
         }
 
-        public bool VerifyIntegrity(Mac hmac, byte[] key, byte[] cipherBytes, int saltSizeInBits, int ivSizeInBits, int blockSizeInBits)
+        public bool VerifyIntegrity(Mac hmac, byte[] key, byte[] cipherBytes, int saltSizeInBytes, int ivSizeInBytes, int blockSizeInBytes, int headerSizeInBytes)
         {
             bool verified = false;
 
             HMAC auth = GetHMAC(hmac, key);
 
-            int headerSizeInBytes = 2;
-            int authSizeInBytes = auth.HashSize / 8;
-            int saltSizeInBytes = saltSizeInBits / 8;
-            int ivSizeInBytes = ivSizeInBits / 8;
-            int blockSizeInBytes = blockSizeInBits / 8;
+            int authSizeInBytes = auth.HashSize.ToNumBytes();
 
             int authOffset = headerSizeInBytes;
             int saltOffset = authOffset + authSizeInBytes;
@@ -57,7 +53,7 @@ namespace PasswordVault.Services
             auth.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
             byte[] genAuth = auth.Hash;
 
-            if (CryptographicEquals(genAuth, 0, cipherBytes, authOffset, authSizeInBytes))
+            if (CryptographyHelper.CryptographicEquals(genAuth, 0, cipherBytes, authOffset, authSizeInBytes))
             {
                 verified = true;
             }
@@ -80,6 +76,32 @@ namespace PasswordVault.Services
             return size;
         }
 
+        public int GetHMACKeySizeInBits(Mac mac)
+        {
+            /* It is advisable to use a key size that is at least the size of the hash method used, 
+                * otherwise you may degrade the security margin provided by the HMAC method. There may 
+                * be a minor performance penalty if the key size forces the hash algorithm to hash 
+                * multiple blocks.
+                * https://stackoverflow.com/questions/18080445/difference-between-hmacsha256-and-hmacsha512
+            */
+            int keysize = -1;
+
+            switch (mac)
+            {          
+                case Mac.HMACSHA256:
+                    keysize = 256;
+                    break;
+                case Mac.HMACSHA512:
+                    keysize = 512;
+                    break;
+                case Mac.Unknown:
+                default:
+                    throw new Exception();
+            }
+
+            return keysize;
+        }
+
         private HMAC GetHMAC(Mac hmac, byte[] hmacKey)
         {
             HMAC returnHmac;
@@ -99,38 +121,6 @@ namespace PasswordVault.Services
             }
 
             return returnHmac;
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
-        private static bool CryptographicEquals(byte[] a,
-                                                int aOffset,
-                                                byte[] b,
-                                                int bOffset,
-                                                int length)
-        {
-            int result = 0;
-
-            if (a.Length - aOffset < length || b.Length - bOffset < length)
-            {
-                return false;
-            }
-
-            unchecked
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    // Bitwise-OR of subtraction has been found to have the most
-                    // stable execution time.
-                    //
-                    // This cannot overflow because bytes are 1 byte in length, and
-                    // result is 4 bytes.
-                    // The OR propagates all set bytes, so the differences are only
-                    // present in the lowest byte.
-                    result = result | (a[i + aOffset] - b[i + bOffset]);
-                }
-            }
-
-            return result == 0;
         }
     }
 }

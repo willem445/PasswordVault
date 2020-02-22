@@ -14,7 +14,7 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="password">Password to generate new user data.</param>
         /// <returns>UserEncrypedData object.</returns>
-        UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password);
+        UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password, MasterPasswordParameters parameters);
 
         /// <summary>
         /// Verifies a password against given hash, salt, and iteration count.
@@ -24,12 +24,8 @@ namespace PasswordVault.Services
         /// <param name="hash">Hash generated.</param>
         /// <param name="iterationCount">Iterations to compute hash.</param>
         /// <returns>Returns true if password matches hash.</returns>
-        bool VerifyPassword(string password, string salt, string hash, int iterationCount);
-
-        /// <summary>
-        /// Generates random key using RNGCryptoServiceProvider
-        /// </summary>
-        /// <returns>Random key string.</returns>
-        string GenerateRandomKey(int sizeInBytes);
+        bool VerifyPassword(string password, string salt, string hash, MasterPasswordParameters parameters);
+        string FlattenHash(UserEncrypedData parameters);
+        UserEncrypedData ExtractParameters(string hash);
     }
 }

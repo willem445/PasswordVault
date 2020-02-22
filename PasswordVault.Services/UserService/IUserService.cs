@@ -16,7 +16,7 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="user">User to add.</param>
         /// <returns>Result of adding user.</returns>
-        AddUserResult AddUser(User user, EncryptionServiceParameters parameters);
+        AddUserResult AddUser(User user, EncryptionParameters parameters, MasterPasswordParameters hashParameters);
 
         /// <summary>
         /// Deletes user from database.
@@ -34,7 +34,7 @@ namespace PasswordVault.Services
         /// Must contain valid firstname, lastname, phone number and email.</param>
         /// <param name="encryptionKey">Key used to encrypt users data.</param>
         /// <returns>Result of modifying user.</returns>
-        UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey, EncryptionServiceParameters parameters);
+        UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey, EncryptionParameters parameters);
 
         /// <summary>
         /// Verifies a users password.
@@ -54,7 +54,7 @@ namespace PasswordVault.Services
         /// <param name="confirmPassword">Confirm password.</param>
         /// <param name="encryptionKey">Key used for encryption.</param>
         /// <returns>Returns change password result.</returns>
-        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, EncryptionServiceParameters parameters);
+        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, EncryptionParameters parameters, MasterPasswordParameters hashParameters);
 
         /// <summary>
         /// Gets a user from the database by the users unique ID.

@@ -6,22 +6,24 @@ namespace PasswordVault.Services
 {
     public class EncryptionServiceFactory : IEncryptionServiceFactory
     {
-        public IEncryptionService Get(EncryptionServiceParameters parameters)
+        public IEncryptionService Get(EncryptionParameters parameters)
         {
             IEncryptionService encryptionService = null;
 
-            switch (parameters.EncryptionService)
+            switch (parameters.Algorithm)
             {
-                case EncryptionService.RijndaelManaged:
-                    encryptionService = new RijndaelManagedEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
+                case EncryptionAlgorithm.Rijndael256CbcPkcs7:
+                case EncryptionAlgorithm.Rijndael128CbcPkcs7:
+                    encryptionService = new RijndaelManagedEncryption();
                     break;
 
-                case EncryptionService.Aes:
-                    encryptionService = new AesEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
+                case EncryptionAlgorithm.Aes256CfbPkcs7:
+                case EncryptionAlgorithm.Aes128CfbPkcs7:
+                    encryptionService = new AesEncryption(parameters);
                     break;
 
                 default:
-                    encryptionService = new AesEncryption(parameters.EncryptionSizes.KeySize, parameters.EncryptionSizes.BlockSize, parameters.EncryptionSizes.Iterations);
+                    encryptionService = new AesEncryption(parameters);
                     break;
             }
 

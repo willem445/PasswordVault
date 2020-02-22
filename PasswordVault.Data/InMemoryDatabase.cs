@@ -54,7 +54,7 @@ namespace PasswordVault.Data
 
                 DatabasePassword newPassword = new DatabasePassword(
                     uniqueID,
-                    password.UserGUID,
+                    password.UserUuid,
                     password.Application,
                     password.Username,
                     password.Email,
@@ -82,8 +82,8 @@ namespace PasswordVault.Data
        
         public bool DeleteUser(User user, int expectedNumPasswords)
         {
-            _localUserDb.RemoveAll(x => x.GUID == user.GUID);
-            _localPasswordDb.RemoveAll(x => x.UserGUID == user.GUID);
+            _localUserDb.RemoveAll(x => x.Uuid == user.Uuid);
+            _localPasswordDb.RemoveAll(x => x.UserUuid == user.Uuid);
             return true;
         }
        
@@ -94,7 +94,7 @@ namespace PasswordVault.Data
        
         public User GetUserByGUID(string guid)
         {
-            return _localUserDb.Where(x => x.GUID == guid).FirstOrDefault();
+            return _localUserDb.Where(x => x.Uuid == guid).FirstOrDefault();
         }
       
         public User GetUserByUsername(string username)
@@ -104,7 +104,7 @@ namespace PasswordVault.Data
         
         public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
         {
-            return _localPasswordDb.Where(x => x.UserGUID == guid).ToList();
+            return _localPasswordDb.Where(x => x.UserUuid == guid).ToList();
         }
         
         public bool ModifyPassword(DatabasePassword modifiedPassword)
@@ -130,7 +130,7 @@ namespace PasswordVault.Data
         {
             bool result = false;
 
-            int index = _localUserDb.FindIndex(x => x.GUID == user.GUID);
+            int index = _localUserDb.FindIndex(x => x.Uuid == user.Uuid);
 
             if (index != -1)
             {
@@ -147,7 +147,7 @@ namespace PasswordVault.Data
         
         public bool UserExistsByGUID(string guid)
         {
-            bool exists = _localUserDb.Exists(x => x.GUID == guid);
+            bool exists = _localUserDb.Exists(x => x.Uuid == guid);
             return exists;
         }
        

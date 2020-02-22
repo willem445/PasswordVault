@@ -30,7 +30,7 @@ namespace PasswordVault.Services
         }
 
         /*PUBLIC METHODS***************************************************/
-        public AddUserResult AddUser(User user, EncryptionServiceParameters parameters)
+        public AddUserResult AddUser(User user, EncryptionParameters parameters, MasterPasswordParameters hashParameters)
         {
             AddUserResult addUserResult = AddUserResult.Failed;
             
@@ -115,26 +115,26 @@ namespace PasswordVault.Services
             }
             else // Successful
             {
-                UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(user.PlainTextPassword);
+                UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(user.PlainTextPassword, hashParameters);
                 IEncryptionService encryptionService = _encryptDecryptFactory.Get(parameters);
 
                 User newUser = new User(
                         newEncryptedData.UserUUID, // Leave unique guid in plaintext
                         encryptionService.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
                         user.Username, // Leave username in plaintext
-                        newEncryptedData.Iterations, // Leave iterations in plaintext
-                        newEncryptedData.MemorySize,
-                        newEncryptedData.DegreeOfParallelism,
-                        newEncryptedData.Salt,
-                        newEncryptedData.Hash,
+                        string.Format(CultureInfo.CurrentCulture, // TODO - master password should flatten this
+                            "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
+                            ((byte)newEncryptedData.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.KeySize.ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture), 
+                            newEncryptedData.MemorySize.ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
+                            newEncryptedData.Salt,
+                            newEncryptedData.Hash),
                         encryptionService.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                        encryptionService.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
-                        (int)parameters.EncryptionService,
-                        parameters.EncryptionSizes.BlockSize,
-                        parameters.EncryptionSizes.KeySize,
-                        parameters.EncryptionSizes.Iterations
+                        encryptionService.Encrypt(user.Email, newEncryptedData.RandomGeneratedKey) // Encrypt with decrypted random key
                         );
 
                 _dbcontext.AddUser(newUser);
@@ -173,7 +173,7 @@ namespace PasswordVault.Services
         }
 
         /******************************************************************/
-        public UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey, EncryptionServiceParameters parameters)
+        public UserInformationResult ModifyUser(string userUuid, User modifiedUser, string encryptionKey, EncryptionParameters parameters)
         {
             UserInformationResult result = UserInformationResult.Failed;
 
@@ -189,22 +189,14 @@ namespace PasswordVault.Services
 
                 User newModifiedUser = new User
                 (
-                    dbUser.GUID,
+                    dbUser.Uuid,
                     dbUser.EncryptedKey,
-                    dbUser.Username,                   
-                    dbUser.Iterations,                
-                    dbUser.MemorySize,
-                    dbUser.DegreeOfParallelism,
-                    dbUser.Salt,
+                    dbUser.Username,                        
                     dbUser.Hash,
                     encryptionService.Encrypt(modifiedUser.FirstName,   encryptionKey),
                     encryptionService.Encrypt(modifiedUser.LastName,    encryptionKey),
                     encryptionService.Encrypt(modifiedUser.PhoneNumber, encryptionKey),
-                    encryptionService.Encrypt(modifiedUser.Email,       encryptionKey),
-                    (int)parameters.EncryptionService,
-                    parameters.EncryptionSizes.BlockSize,
-                    parameters.EncryptionSizes.KeySize,
-                    parameters.EncryptionSizes.Iterations
+                    encryptionService.Encrypt(modifiedUser.Email,       encryptionKey)
                 );
 
                 bool success = _dbcontext.ModifyUser(dbUser, newModifiedUser);
@@ -228,7 +220,13 @@ namespace PasswordVault.Services
         }
 
         /******************************************************************/
-        public ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, EncryptionServiceParameters parameters)
+        public ValidateUserPasswordResult ChangeUserPassword(string userUuid, 
+            string originalPassword, 
+            string newPassword, 
+            string confirmPassword, 
+            string encryptionKey, 
+            EncryptionParameters parameters,
+            MasterPasswordParameters hashParameters)
         {
             ValidateUserPasswordResult result = ValidateUserPasswordResult.Failed;
 
@@ -251,27 +249,29 @@ namespace PasswordVault.Services
                         result = verifyPass;
                     }
                     else
-                    {                       
-                        UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword);
+                    {
+                        UserEncrypedData newEncryptedData = _masterPassword.GenerateNewUserEncryptedDataFromPassword(newPassword, hashParameters);
                         IEncryptionService encryptionService = _encryptDecryptFactory.Get(parameters);
 
                         User newUser = new User(
-                            user.GUID,
+                            user.Uuid,
                             encryptionService.Encrypt(encryptionKey, newPassword), // Encrypt the random key with the users password
                             user.Username,
-                            newEncryptedData.Iterations,
-                            newEncryptedData.MemorySize,
-                            newEncryptedData.DegreeOfParallelism,
-                            newEncryptedData.Salt,
-                            newEncryptedData.Hash,
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
+                                ((byte)newEncryptedData.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
+                                newEncryptedData.KeySize.ToString(CultureInfo.CurrentCulture),
+                                newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture),
+                                newEncryptedData.MemorySize.ToString(CultureInfo.CurrentCulture),
+                                newEncryptedData.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
+                                newEncryptedData.Salt,
+                                newEncryptedData.Hash
+                            ),
                             user.FirstName,
                             user.LastName,
                             user.PhoneNumber,
-                            user.Email,
-                            (int)parameters.EncryptionService,
-                            parameters.EncryptionSizes.BlockSize,
-                            parameters.EncryptionSizes.KeySize,
-                            parameters.EncryptionSizes.Iterations
+                            user.Email
                         );
 
                         if (_dbcontext.ModifyUser(user, newUser))

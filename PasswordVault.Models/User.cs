@@ -40,58 +40,34 @@ namespace PasswordVault.Models
         public string Token { get; set; }
 
         // Properties stored in database
-        public string GUID { get; } // unique Id assigned to each user, this unique id is the PK for password table
+        public string Uuid { get; } // unique Id assigned to each user, this unique id is the PK for password table
         public string EncryptedKey { get; } // encrypted version of randomly generated key, encrypted using the plaintext user password  
         public string Username { get; }
-        public int Iterations { get; }
-        public int MemorySize { get; }
-        public int DegreeOfParallelism { get; }
-        public string Salt { get; }
         public string Hash { get; }
         public string FirstName { get; } // use randomly generated key to hash and store
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
-        public int? PasswordEncryptionService { get; }
-        public int? PasswordBlockSize { get; }
-        public int? PasswordKeySize { get; }
-        public int? PasswordIterations { get; }
 
-        public User(string uniqueID, 
+        public User(
+            string uniqueID, 
             string encryptedKey, 
             string username, 
-            int iterations,
-            int memorySize,
-            int degreeOfParallelism,
-            string salt, 
             string hash, 
             string firstName, 
             string lastName, 
             string phoneNumber, 
             string email,
-            int passwordEncryptionService,
-            int passwordBlockSize,
-            int passwordKeySize,
-            int passwordIterations,
             bool validUser = false)
         {
-            GUID = uniqueID;
+            Uuid = uniqueID;
             EncryptedKey = encryptedKey;
             Username = username;
-            Iterations = iterations;
-            MemorySize = memorySize;
-            DegreeOfParallelism = degreeOfParallelism;
-            Salt = salt;
             Hash = hash;
             FirstName = firstName;
             LastName = lastName;
             PhoneNumber = phoneNumber;
             Email = email;
-            PasswordEncryptionService = passwordEncryptionService;
-            PasswordBlockSize = passwordBlockSize;
-            PasswordKeySize = passwordKeySize;
-            PasswordIterations = passwordIterations;
-
             ValidUser = validUser;
         }
 
@@ -105,7 +81,7 @@ namespace PasswordVault.Models
             string email, 
             bool validUser = false)
         {
-            GUID = uniqueID;
+            Uuid = uniqueID;
             Username = username;
             PlainTextRandomKey = plainTextRandomKey;
             FirstName = firstName;

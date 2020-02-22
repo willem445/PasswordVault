@@ -62,7 +62,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IDatabase>().To<SQLiteDatabase>().InSingletonScope();
 
             Bind<IEncryptionServiceFactory>().To<EncryptionServiceFactory>();
-            Bind<IMasterPassword>().To<Argon2MasterPassword>();
+            Bind<IMasterPassword>().To<MasterPassword>();
             Bind<IPasswordService>().To<PasswordService>().InSingletonScope();
             Bind<IUserService>().To<UserService>().InSingletonScope();
             Bind<IAuthenticationService>().To<AuthenticationService>();

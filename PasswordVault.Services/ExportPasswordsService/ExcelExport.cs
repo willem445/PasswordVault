@@ -25,7 +25,7 @@ namespace PasswordVault.Services
                     {
                         wb.Protection.SetPassword(encryptionPassword);
                         p.Encryption.IsEncrypted = true;
-                        p.Encryption.Algorithm = EncryptionAlgorithm.AES256;
+                        p.Encryption.Algorithm = OfficeOpenXml.EncryptionAlgorithm.AES256;
                     }
                     
                     int headerColCount = 1;
