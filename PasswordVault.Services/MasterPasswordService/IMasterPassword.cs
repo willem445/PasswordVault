@@ -14,7 +14,7 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="password">Password to generate new user data.</param>
         /// <returns>UserEncrypedData object.</returns>
-        UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password, MasterPasswordParameters parameters);
+        UserEncrypedData GenerateMasterHash(string password, MasterPasswordParameters parameters);
 
         /// <summary>
         /// Verifies a password against given hash, salt, and iteration count.

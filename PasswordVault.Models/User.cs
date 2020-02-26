@@ -108,11 +108,6 @@ namespace PasswordVault.Models
             ValidUser = validUser;
         }
 
-        public User(string username)
-        {
-            Username = username;
-        }
-
         public User()
         {
 
@@ -180,23 +175,28 @@ namespace PasswordVault.Models
 
         public ValidateUserPasswordResult VerifyPlaintextPasswordRequirements()
         {
+            return User.VerifyPasswordRequirements(this.PlainTextPassword);
+        }
+
+        public static ValidateUserPasswordResult VerifyPasswordRequirements(string password)
+        {
             ValidateUserPasswordResult result = ValidateUserPasswordResult.Success;
 
             bool containsNumber = false;
             bool containsLowerCase = false;
             bool containsUpperCase = false;
 
-            if (string.IsNullOrEmpty(this.PlainTextPassword))
+            if (string.IsNullOrEmpty(password))
             {
                 return ValidateUserPasswordResult.Failed;
             }
 
-            if (this.PlainTextPassword.Length <= MINIMUM_PASSWORD_LENGTH)
+            if (password.Length <= MINIMUM_PASSWORD_LENGTH)
             {
                 result = ValidateUserPasswordResult.LengthRequirementNotMet;
             }
 
-            foreach (var character in this.PlainTextPassword)
+            foreach (var character in password)
             {
                 if (char.IsUpper(character))
                 {
@@ -227,7 +227,7 @@ namespace PasswordVault.Models
                 result = ValidateUserPasswordResult.NoNumber;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(this.PlainTextPassword, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
             {
                 result = ValidateUserPasswordResult.NoSpecialCharacter;
             }
@@ -256,6 +256,12 @@ namespace PasswordVault.Models
             str = str.Trim();
             System.Text.RegularExpressions.Regex pattern = new System.Text.RegularExpressions.Regex(regexstr);
             return pattern.IsMatch(str);
+        }
+
+        public static string GenerateUserUuid()
+        {
+            var uuid = Guid.NewGuid().ToString();
+            return uuid;
         }
 
     } // User CLASS

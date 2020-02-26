@@ -22,6 +22,7 @@ namespace PasswordVault.Services
         /// Deletes user from database.
         /// </summary>
         /// <param name="userUuid">Unique ID of user to delete.</param>
+        /// <param expectedNumPasswords="userUuid">Number of passwords that are expected to be deleted for the user.</param>
         /// <returns>Result of deleting user.</returns>
         DeleteUserResult DeleteUser(string userUuid, int expectedNumPasswords);
 

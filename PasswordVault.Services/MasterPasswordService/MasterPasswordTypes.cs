@@ -25,20 +25,19 @@ namespace PasswordVault.Services
     public struct UserEncrypedData
 #pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, string hash, int iterations, string uniqueGUID, string randomGeneratedKey)
+        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, string hash, int iterations, string randomGeneratedKey)
         {
             KeyDevAlgorithm = alg;
             KeySize = keysize;
             Salt = salt;
             Hash = hash;
             Iterations = iterations;
-            UserUUID = uniqueGUID;
             RandomGeneratedKey = randomGeneratedKey;
             DegreeOfParallelism = -1;
             MemorySize = -1;            
         }
 
-        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, string hash, int iterations, int degreeOfParallelism, int memorySize, string uuid, string randomGeneratedKey)
+        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, string hash, int iterations, int degreeOfParallelism, int memorySize, string randomGeneratedKey)
         {
             KeyDevAlgorithm = alg;
             KeySize = keysize;
@@ -47,7 +46,6 @@ namespace PasswordVault.Services
             Iterations = iterations;
             DegreeOfParallelism = degreeOfParallelism;
             MemorySize = memorySize;
-            UserUUID = uuid;
             RandomGeneratedKey = randomGeneratedKey;
         }
 
@@ -56,7 +54,6 @@ namespace PasswordVault.Services
         public int Iterations { get; }
         public int DegreeOfParallelism { get; }
         public int MemorySize { get; }
-        public string UserUUID { get; }
         public string RandomGeneratedKey { get; }
         public KeyDerivationAlgorithm KeyDevAlgorithm { get; }
         public int KeySize { get; }

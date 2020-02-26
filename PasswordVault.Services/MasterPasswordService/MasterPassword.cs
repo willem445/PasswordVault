@@ -12,7 +12,7 @@ namespace PasswordVault.Services
 
         }
 
-        public UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password, MasterPasswordParameters parameters)
+        public UserEncrypedData GenerateMasterHash(string password, MasterPasswordParameters parameters)
         {
             if (parameters is null)
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
@@ -27,8 +27,7 @@ namespace PasswordVault.Services
             );
 
             var saltString = salt.ToBase64();
-            var hashString = hash.ToBase64();
-            var uuid = Guid.NewGuid().ToString();
+            var hashString = hash.ToBase64();          
             var randomGeneratedKey = CryptographyHelper.GenerateRandomEntropy(parameters.RandomKeySize).ToBase64();
 
             return new UserEncrypedData(
@@ -39,7 +38,6 @@ namespace PasswordVault.Services
                 parameters.KeyDerivationParameters.Iterations,
                 parameters.KeyDerivationParameters.DegreeOfParallelism,
                 parameters.KeyDerivationParameters.MemorySize,
-                uuid,
                 randomGeneratedKey
             );
         }
@@ -81,7 +79,7 @@ namespace PasswordVault.Services
         }
 
         /// <summary>
-        /// Extracts UserEncryptedData from string stored in database. UUID and RandomGeneratedKey 
+        /// Extracts UserEncryptedData from string stored in database. RandomGeneratedKey 
         /// are set to null since they are not stored in the database field and not needed for
         /// password validation.
         /// </summary>
@@ -101,7 +99,6 @@ namespace PasswordVault.Services
                 iterations :          Convert.ToInt32(raw[2], CultureInfo.CurrentCulture), 
                 degreeOfParallelism : Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
                 memorySize :          Convert.ToInt32(raw[3], CultureInfo.CurrentCulture), 
-                uuid :                null, 
                 randomGeneratedKey :  null);  
 
             return data;
