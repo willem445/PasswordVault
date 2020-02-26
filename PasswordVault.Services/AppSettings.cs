@@ -24,6 +24,26 @@ namespace PasswordVault.Services
 
         private AppSettings()
         {
+#if DEBUG
+            // For debugging, reduce the parameters for faster testing
+            DefaultKeyDerivationParameters = new KeyDerivationParameters(
+                algorithm: KeyDerivationAlgorithm.Argon2Id,
+                keysize: 32, // 256 bit key for AES
+                saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
+                iterations: 5,
+                degreeofparallelism: 2,
+                memorySize: 1024
+            );
+
+            DefaultEncryptionKeyDerivationParameters = new KeyDerivationParameters(
+                algorithm: KeyDerivationAlgorithm.Argon2Id,
+                keysize: 32, // 256 bit key for AES
+                saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
+                iterations: 1,
+                degreeofparallelism: 2,
+                memorySize: 1024 
+            );
+#else
             // tuned for about 15s
             DefaultKeyDerivationParameters = new KeyDerivationParameters(
                 algorithm:KeyDerivationAlgorithm.Argon2Id, 
@@ -43,6 +63,7 @@ namespace PasswordVault.Services
                 degreeofparallelism: 4,
                 memorySize: 1024 // 1mb
             );
+#endif
 
             DefaultMasterPasswordParameters = new MasterPasswordParameters(
                 keyDerivationParameters:DefaultKeyDerivationParameters,

@@ -60,23 +60,5 @@ namespace PasswordVault.Services
         public string RandomGeneratedKey { get; }
         public KeyDerivationAlgorithm KeyDevAlgorithm { get; }
         public int KeySize { get; }
-
-        public string GetFormattedString()
-        {
-            string formatted = "";
-
-            formatted = string.Format(
-                CultureInfo.CurrentCulture, 
-                "{0},{1},{2},{3},{4},{5},{6}",
-                UserUUID, RandomGeneratedKey, Iterations, DegreeOfParallelism, MemorySize, Salt, Hash
-            );
-
-            return formatted;
-        }
-
-        public byte[] GetFormattedMasterPasswordParameters()
-        {
-            throw new NotImplementedException();
-        }
     }
 } // PasswordVault.Services.Standard NAMESPACE

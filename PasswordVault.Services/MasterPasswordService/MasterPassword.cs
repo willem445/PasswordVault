@@ -7,13 +7,16 @@ namespace PasswordVault.Services
 {
     public class MasterPassword : IMasterPassword
     {
-         public MasterPassword()
+        public MasterPassword()
         {
 
         }
 
         public UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password, MasterPasswordParameters parameters)
         {
+            if (parameters is null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
+
             IKeyDerivation hasher = KeyDerivationFactory.Get(parameters.KeyDerivationParameters.Algorithm);
 
             var salt = CryptographyHelper.GenerateRandomEntropy(parameters.KeyDerivationParameters.SaltSizeBytes);
@@ -43,6 +46,9 @@ namespace PasswordVault.Services
 
         public bool VerifyPassword(string password, string salt, string hash, MasterPasswordParameters parameters)
         {
+            if (parameters is null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
+
             IKeyDerivation hasher = KeyDerivationFactory.Get(parameters.KeyDerivationParameters.Algorithm);
             var saltBytes = salt.ToBytes();
             var hashBytes = hash.ToBytes();
@@ -56,35 +62,47 @@ namespace PasswordVault.Services
             return CryptographyHelper.CryptographicEquals(hashBytes, 0, verify, 0, hashBytes.Length);
         }
 
+        /// <summary>
+        /// Flattens UserEncryptedData to be stored in a database.
+        /// </summary>
+        /// <param name="parameters">Masterpassword parameters to flatten.</param>
+        /// <returns>flattened string</returns>
         public string FlattenHash(UserEncrypedData parameters)
         {
-            string flattened = "";
-
-            flattened = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
-                            ((byte)parameters.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
-                            parameters.KeySize.ToString(CultureInfo.CurrentCulture),
-                            parameters.Iterations.ToString(CultureInfo.CurrentCulture),
-                            parameters.MemorySize.ToString(CultureInfo.CurrentCulture),
-                            parameters.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
-                            parameters.Salt,
-                            parameters.Hash);
-
+            string flattened = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
+                ((byte)parameters.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
+                parameters.KeySize.ToString(CultureInfo.CurrentCulture),
+                parameters.Iterations.ToString(CultureInfo.CurrentCulture),
+                parameters.MemorySize.ToString(CultureInfo.CurrentCulture),
+                parameters.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
+                parameters.Salt,
+                parameters.Hash);
             return flattened;
         }
 
-        public UserEncrypedData ExtractParameters(string hash)
+        /// <summary>
+        /// Extracts UserEncryptedData from string stored in database. UUID and RandomGeneratedKey 
+        /// are set to null since they are not stored in the database field and not needed for
+        /// password validation.
+        /// </summary>
+        /// <param name="hash">String stored in database.</param>
+        /// <returns>UserEncryptedData</returns>
+        public UserEncrypedData UnFlattenHash(string hash)
         {
+            if (string.IsNullOrEmpty(hash))
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null or empty!.", (nameof(hash))));
+
             var raw = hash.Split(':');
             UserEncrypedData data = new UserEncrypedData(
-                (KeyDerivationAlgorithm)Convert.ToInt32(raw[0], CultureInfo.CurrentCulture),
-                Convert.ToInt32(raw[1], CultureInfo.CurrentCulture),
-                raw[5], 
-                raw[6], 
-                Convert.ToInt32(raw[2], CultureInfo.CurrentCulture), 
-                Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
-                Convert.ToInt32(raw[3], CultureInfo.CurrentCulture), 
-                null, 
-                null);  
+                alg :                 (KeyDerivationAlgorithm)Convert.ToInt32(raw[0], CultureInfo.CurrentCulture),
+                keysize :             Convert.ToInt32(raw[1], CultureInfo.CurrentCulture),
+                salt :                raw[5], 
+                hash :                raw[6], 
+                iterations :          Convert.ToInt32(raw[2], CultureInfo.CurrentCulture), 
+                degreeOfParallelism : Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
+                memorySize :          Convert.ToInt32(raw[3], CultureInfo.CurrentCulture), 
+                uuid :                null, 
+                randomGeneratedKey :  null);  
 
             return data;
         }

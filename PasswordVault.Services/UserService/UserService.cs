@@ -122,15 +122,7 @@ namespace PasswordVault.Services
                         newEncryptedData.UserUUID, // Leave unique guid in plaintext
                         encryptionService.Encrypt(newEncryptedData.RandomGeneratedKey, user.PlainTextPassword), // Encrypt the random key with the users password
                         user.Username, // Leave username in plaintext
-                        string.Format(CultureInfo.CurrentCulture, // TODO - master password should flatten this
-                            "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
-                            ((byte)newEncryptedData.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
-                            newEncryptedData.KeySize.ToString(CultureInfo.CurrentCulture),
-                            newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture), 
-                            newEncryptedData.MemorySize.ToString(CultureInfo.CurrentCulture),
-                            newEncryptedData.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
-                            newEncryptedData.Salt,
-                            newEncryptedData.Hash),
+                        _masterPassword.FlattenHash(newEncryptedData),
                         encryptionService.Encrypt(user.FirstName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.LastName, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
                         encryptionService.Encrypt(user.PhoneNumber, newEncryptedData.RandomGeneratedKey), // Encrypt with decrypted random key
@@ -257,17 +249,7 @@ namespace PasswordVault.Services
                             user.Uuid,
                             encryptionService.Encrypt(encryptionKey, newPassword), // Encrypt the random key with the users password
                             user.Username,
-                            string.Format(
-                                CultureInfo.CurrentCulture,
-                                "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
-                                ((byte)newEncryptedData.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
-                                newEncryptedData.KeySize.ToString(CultureInfo.CurrentCulture),
-                                newEncryptedData.Iterations.ToString(CultureInfo.CurrentCulture),
-                                newEncryptedData.MemorySize.ToString(CultureInfo.CurrentCulture),
-                                newEncryptedData.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
-                                newEncryptedData.Salt,
-                                newEncryptedData.Hash
-                            ),
+                            _masterPassword.FlattenHash(newEncryptedData),
                             user.FirstName,
                             user.LastName,
                             user.PhoneNumber,

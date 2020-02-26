@@ -65,10 +65,6 @@ namespace PasswordVault.Desktop.Winforms
                 {
                     _currentUser = authenticateResult.User;
 
-                    // Check if the users encryption parameters are different from application defaults
-                    // If they are, update the encrypted data to new standard.
-                    CheckEncryptionAlgorithm(password);
-
                     var t = Task.Run(() => UpdatePasswordListFromDB());
                     t.Wait();
                     DoneLoadingPasswordsEvent?.Invoke();
@@ -78,11 +74,8 @@ namespace PasswordVault.Desktop.Winforms
                     // If user credentials are incorrect, clear user and parameters from memory
                     _currentUser = new User(false);
                 }
-
                 loginResult = authenticateResult.Result;
-
-            }
-            
+            }         
             return loginResult;
         }
 
@@ -124,7 +117,6 @@ namespace PasswordVault.Desktop.Winforms
             {
                 return true;
             }
-
             return false;
         }
 
@@ -420,22 +412,6 @@ namespace PasswordVault.Desktop.Winforms
             );
 
             _passwordList.Add(newPassword);
-        }
-
-        private void CheckEncryptionAlgorithm(string userPassword)
-        {
-            //EncryptionSizes encryptionDefaults = new EncryptionServiceFactory().Get(_encryptionParameters).EncryptionSizeDefaults;
-
-            //if (_encryptionParameters.EncryptionService != ENCRYPTION_SERVICE_DEFAULT ||
-            //    _encryptionParameters.EncryptionSizes.BlockSize != encryptionDefaults.BlockSize ||
-            //    _encryptionParameters.EncryptionSizes.KeySize != encryptionDefaults.KeySize ||
-            //    _encryptionParameters.EncryptionSizes.Iterations != encryptionDefaults.Iterations)
-            //{
-            //    IEncryptionConversion encryptionConversion = new EncryptionAlgorithmConversion(_passwordService, _userService);
-            //    encryptionDefaults = new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults;
-            //    encryptionConversion.Convert(_currentUser, userPassword, _encryptionParameters, new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, encryptionDefaults));
-            //    _encryptionParameters = new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, encryptionDefaults);
-            //}
         }
 
         /*STATIC METHODS***************************************************/

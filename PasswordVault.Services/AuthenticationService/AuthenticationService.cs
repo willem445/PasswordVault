@@ -51,7 +51,7 @@ namespace PasswordVault.Services
                 User user = _dbContext.GetUserByUsername(username);
 
                 // Extract parameters from hash
-                UserEncrypedData unflattened = _masterPassword.ExtractParameters(user.Hash);
+                UserEncrypedData unflattened = _masterPassword.UnFlattenHash(user.Hash);
                 MasterPasswordParameters hashParams = new MasterPasswordParameters(
                     new KeyDerivationParameters(
                         unflattened.KeyDevAlgorithm,
@@ -110,7 +110,7 @@ namespace PasswordVault.Services
                 User user = _dbContext.GetUserByUsername(username);
 
                 // Extract parameters from hash
-                UserEncrypedData unflattened = _masterPassword.ExtractParameters(user.Hash);
+                UserEncrypedData unflattened = _masterPassword.UnFlattenHash(user.Hash);
                 MasterPasswordParameters hashParams = new MasterPasswordParameters(
                     new KeyDerivationParameters(
                         unflattened.KeyDevAlgorithm,

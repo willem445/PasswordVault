@@ -26,6 +26,6 @@ namespace PasswordVault.Services
         /// <returns>Returns true if password matches hash.</returns>
         bool VerifyPassword(string password, string salt, string hash, MasterPasswordParameters parameters);
         string FlattenHash(UserEncrypedData parameters);
-        UserEncrypedData ExtractParameters(string hash);
+        UserEncrypedData UnFlattenHash(string hash);
     }
 }
