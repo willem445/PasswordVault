@@ -24,6 +24,10 @@ namespace PasswordVault.Services
                     keyDerivation = new BcryptKeyDerivation();
                     break;
 
+                case KeyDerivationAlgorithm.Scrypt:
+                    keyDerivation = new ScryptKeyDerivation();
+                    break;
+
                 default:
                     throw new Exception();
             }

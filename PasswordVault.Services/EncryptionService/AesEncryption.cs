@@ -67,10 +67,10 @@ namespace PasswordVault.Services
                 (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 8),
                 (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 16),
                 (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 24),
-                (byte)_encryptionParameters.KeyDerivationParameters.MemorySize,
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 8),
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 16),
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySize >> 24),
+                (byte)_encryptionParameters.KeyDerivationParameters.MemorySizeKb,
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 8),
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 16),
+                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 24),
                 (byte)_encryptionParameters.KeyDerivationParameters.DegreeOfParallelism,
                 (byte)_encryptionParameters.Mac, 
                 
@@ -150,7 +150,7 @@ namespace PasswordVault.Services
             EncryptionAlgorithm encryptionalg = (EncryptionAlgorithm)cipherRaw[(int)CipherSuiteIdx.EncryptionAlg];
             Mac macalg = (Mac)cipherRaw[(int)CipherSuiteIdx.MacAlg];
             KeyDerivationAlgorithm keyderivationalg = (KeyDerivationAlgorithm)cipherRaw[(int)CipherSuiteIdx.KeyDevAlg];
-            int keyderivationiterations = (int)((cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+3] << 24) | 
+            UInt32 keyderivationiterations = (UInt32)((cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+3] << 24) | 
                 (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+2] << 16) | 
                 (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+1] << 8) | 
                 cipherRaw[(int)CipherSuiteIdx.KeyDevItr]);

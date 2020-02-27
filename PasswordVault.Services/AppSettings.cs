@@ -32,7 +32,7 @@ namespace PasswordVault.Services
                 saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
                 iterations: 5,
                 degreeofparallelism: 2,
-                memorySize: 1024
+                memorySizeKb: 1024
             );
 
             DefaultEncryptionKeyDerivationParameters = new KeyDerivationParameters(
@@ -41,7 +41,7 @@ namespace PasswordVault.Services
                 saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
                 iterations: 1,
                 degreeofparallelism: 2,
-                memorySize: 1024 
+                memorySizeKb: 1024 
             );
 #else
             // tuned for about 15s

@@ -37,7 +37,7 @@ namespace PasswordVault.Services
                 hashString,
                 parameters.KeyDerivationParameters.Iterations,
                 parameters.KeyDerivationParameters.DegreeOfParallelism,
-                parameters.KeyDerivationParameters.MemorySize,
+                parameters.KeyDerivationParameters.MemorySizeKb,
                 randomGeneratedKey
             );
         }
@@ -96,7 +96,7 @@ namespace PasswordVault.Services
                 keysize :             Convert.ToInt32(raw[1], CultureInfo.CurrentCulture),
                 salt :                raw[5], 
                 hash :                raw[6], 
-                iterations :          Convert.ToInt32(raw[2], CultureInfo.CurrentCulture), 
+                iterations :          Convert.ToUInt32(raw[2], CultureInfo.CurrentCulture), 
                 degreeOfParallelism : Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
                 memorySize :          Convert.ToInt32(raw[3], CultureInfo.CurrentCulture), 
                 randomGeneratedKey :  null);  

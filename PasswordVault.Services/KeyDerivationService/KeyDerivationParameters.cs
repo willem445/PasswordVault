@@ -14,9 +14,9 @@ namespace PasswordVault.Services
 
     public class KeyDerivationParameters
     {
-        public int Iterations { get; set; }
+        public UInt32 Iterations { get; set; }
         public int DegreeOfParallelism { get; set; }
-        public int MemorySize { get; set; }
+        public int MemorySizeKb { get; set; }
         public int SaltSizeBytes { get; set; }
         public int KeySizeBytes { get; set; }
         public KeyDerivationAlgorithm Algorithm { get; set; }
@@ -26,24 +26,24 @@ namespace PasswordVault.Services
 
         }
 
-        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, int iterations, int degreeofparallelism, int memorySize)
+        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, UInt32 iterations, int degreeofparallelism, int memorySizeKb)
         {
             Algorithm = algorithm;
             KeySizeBytes = keysize;
             SaltSizeBytes = saltsize;
             Iterations = iterations;
             DegreeOfParallelism = degreeofparallelism;
-            MemorySize = memorySize;
+            MemorySizeKb = memorySizeKb;
         }
 
-        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, int iterations)
+        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, UInt32 iterations)
         {
             Algorithm = algorithm;
             KeySizeBytes = keysize;
             SaltSizeBytes = saltsize;
             Iterations = iterations;
             DegreeOfParallelism = -1;
-            MemorySize = -1;
+            MemorySizeKb = -1;
         }
     }
 }
