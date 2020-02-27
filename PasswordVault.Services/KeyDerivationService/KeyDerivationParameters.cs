@@ -7,7 +7,9 @@ namespace PasswordVault.Services
     public enum KeyDerivationAlgorithm
     {
         Argon2Id = 0,
-        Pbkdf2 = 1
+        Pbkdf2 = 1,
+        Bcrypt = 2,
+        Scrypt = 3,
     }
 
     public class KeyDerivationParameters
@@ -24,19 +26,6 @@ namespace PasswordVault.Services
 
         }
 
-        public KeyDerivationParameters(int iterations)
-        {
-            Iterations = iterations;
-        }
-
-        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int iterations, int degreeOfParallelism, int memorySize)
-        {
-            Algorithm = algorithm;
-            Iterations = iterations;
-            DegreeOfParallelism = degreeOfParallelism;
-            MemorySize = memorySize;
-        }
-
         public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, int iterations, int degreeofparallelism, int memorySize)
         {
             Algorithm = algorithm;
@@ -45,6 +34,16 @@ namespace PasswordVault.Services
             Iterations = iterations;
             DegreeOfParallelism = degreeofparallelism;
             MemorySize = memorySize;
+        }
+
+        public KeyDerivationParameters(KeyDerivationAlgorithm algorithm, int keysize, int saltsize, int iterations)
+        {
+            Algorithm = algorithm;
+            KeySizeBytes = keysize;
+            SaltSizeBytes = saltsize;
+            Iterations = iterations;
+            DegreeOfParallelism = -1;
+            MemorySize = -1;
         }
     }
 }

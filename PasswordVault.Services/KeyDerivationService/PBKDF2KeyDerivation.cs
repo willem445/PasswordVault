@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Text;
 
 namespace PasswordVault.Services
@@ -9,11 +10,20 @@ namespace PasswordVault.Services
     {
         public byte[] DeriveKey(string password, byte[] salt, KeyDerivationParameters parameters, int keySizeInBytes = 0)
         {
-            byte[] key = new byte[parameters.KeySizeBytes];
-            using (var derivation = new Rfc2898DeriveBytes(password, salt, parameters.Iterations))
+            int keySize = 0;
+
+            if (keySizeInBytes != 0)
             {
-                key = derivation.GetBytes(parameters.KeySizeBytes); // multiply key size by 2 since we need two keys
+                keySize = keySizeInBytes;
             }
+            else
+            {
+                keySize = parameters.KeySizeBytes;
+            }
+
+            byte[] key = new byte[keySize];
+            key = KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, parameters.Iterations, keySize);
+
             return key;
         }
     }
