@@ -7,6 +7,24 @@ namespace PasswordVault.Services
 {
     class Argon2IdKeyDerivation : IKeyDerivation
     {
+        KeyDerivationParameters _defaultKeyDerivationParameters = new KeyDerivationParameters(
+            algorithm:KeyDerivationAlgorithm.Argon2Id,
+            keysize: 32, 
+            saltsize: 16, 
+            iterations: 10,
+            degreeofparallelism: 8,
+            memorySizeKb: 1048576 // 1gb
+            );
+
+        KeyDerivationParameters _defaultEncryptionKeyDerivationParameters = new KeyDerivationParameters(
+            algorithm: KeyDerivationAlgorithm.Argon2Id,
+            keysize: 32, 
+            saltsize: 16, 
+            iterations: 40,
+            degreeofparallelism: 4,
+            memorySizeKb: 1024 // 1mb
+            );
+
         public byte[] DeriveKey(string password, byte[] salt, KeyDerivationParameters parameters, int keySizeInBytes=0)
         {
             int keySize = 0;
@@ -34,6 +52,25 @@ namespace PasswordVault.Services
             }           
 
             return key;
+        }
+
+        public KeyDerivationParameters GetRecommendedParameters(RecommendedParametersType type)
+        {
+            KeyDerivationParameters result = new KeyDerivationParameters();
+
+            switch (type)
+            {
+                case RecommendedParametersType.Hash:
+                    result = _defaultKeyDerivationParameters;
+                    break;
+                case RecommendedParametersType.Encryption:
+                    result = _defaultEncryptionKeyDerivationParameters;
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
         }
     }
 }

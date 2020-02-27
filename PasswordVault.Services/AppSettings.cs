@@ -51,7 +51,7 @@ namespace PasswordVault.Services
                 saltsize:16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
                 iterations:10,
                 degreeofparallelism:8,
-                memorySize:1048576 // 1gb
+                memorySizeKb:1048576 // 1gb
             );
 
             // tuned for about 100ms
@@ -61,7 +61,7 @@ namespace PasswordVault.Services
                 saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
                 iterations: 40,
                 degreeofparallelism: 4,
-                memorySize: 1024 // 1mb
+                memorySizeKb: 1024 // 1mb
             );
 #endif
 
