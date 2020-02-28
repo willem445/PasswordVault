@@ -69,7 +69,7 @@ namespace PasswordVault.Services
 
                 if (valid)
                 {
-                    IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+                    IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
                     string randomKey = encryptionService.Decrypt(user.EncryptedKey, password);
 

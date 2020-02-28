@@ -16,7 +16,9 @@ namespace PasswordVault.Services
     }
 
 
-    public enum EncryptionAlgorithm
+#pragma warning disable CA1028 // Enum Storage should be Int32 - Ignore since we want this to be a byte
+    public enum EncryptionAlgorithm : byte
+#pragma warning restore CA1028 // Enum Storage should be Int32
     {
         Unknown = 0,
         Aes256CfbPkcs7 = 1,
@@ -25,7 +27,9 @@ namespace PasswordVault.Services
         Rijndael128CbcPkcs7 = 4,
     }
 
+#pragma warning disable CA1028 // Enum Storage should be Int32 - Ignore since we want this to be a byte
     public enum Mac : byte
+#pragma warning restore CA1028 // Enum Storage should be Int32
     {
         Unknown = 0,
         HMACSHA256 = 1,

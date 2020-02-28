@@ -55,6 +55,7 @@
             this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.newUserButton = new System.Windows.Forms.Button();
             this.newPasswordHelpLabel = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -383,5 +384,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button newUserButton;
         private System.Windows.Forms.Label newPasswordHelpLabel;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

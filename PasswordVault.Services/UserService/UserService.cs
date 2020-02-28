@@ -47,7 +47,7 @@ namespace PasswordVault.Services
             if (validation == AddUserResult.Successful)
             {
                 UserEncrypedData masterHash = _masterPassword.GenerateMasterHash(user.PlainTextPassword, hashParameters);
-                IEncryptionService encryptionService = _encryptDecryptFactory.Get(encParameters);
+                IEncryptionService encryptionService = _encryptDecryptFactory.GetEncryptionService(encParameters);
 
                 User newUser = new User(
                         User.GenerateUserUuid(),
@@ -109,8 +109,8 @@ namespace PasswordVault.Services
 
             if (validation == UserInformationResult.Success)
             {
-                User dbUser = _dbcontext.GetUserByGUID(userUuid);
-                IEncryptionService encryptionService = _encryptDecryptFactory.Get(parameters);
+                User dbUser = _dbcontext.GetUserByUuid(userUuid);
+                IEncryptionService encryptionService = _encryptDecryptFactory.GetEncryptionService(parameters);
 
                 User encryptedModifiedUser = new User
                 (
@@ -164,7 +164,7 @@ namespace PasswordVault.Services
 
             if (string.Equals(newPassword, confirmPassword, StringComparison.CurrentCulture))
             {
-                User dbUser = _dbcontext.GetUserByGUID(userUuid);
+                User dbUser = _dbcontext.GetUserByUuid(userUuid);
 
                 if (VerifyUserPassword(dbUser.Username, originalPassword))
                 {
@@ -177,7 +177,7 @@ namespace PasswordVault.Services
                     else
                     {
                         UserEncrypedData newEncryptedData = _masterPassword.GenerateMasterHash(newPassword, hashParameters);
-                        IEncryptionService encryptionService = _encryptDecryptFactory.Get(encParameters);
+                        IEncryptionService encryptionService = _encryptDecryptFactory.GetEncryptionService(encParameters);
 
                         User newUser = new User(
                             dbUser.Uuid,
@@ -223,7 +223,7 @@ namespace PasswordVault.Services
 
             if (!String.IsNullOrEmpty(userUuid))
             {
-                user = _dbcontext.GetUserByGUID(userUuid);
+                user = _dbcontext.GetUserByUuid(userUuid);
             }     
 
             return user;

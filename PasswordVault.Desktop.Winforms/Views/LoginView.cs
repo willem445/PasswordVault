@@ -36,7 +36,6 @@ namespace PasswordVault.Desktop.Winforms
         /*PRIVATE*****************************************************************************************/
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
-        private ToolTip toolTip;
         private Size SmallSize = new Size(279, 258);
         private Size LargeSize = new Size(549, 400);
 
@@ -61,7 +60,6 @@ namespace PasswordVault.Desktop.Winforms
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure tooltip
-            toolTip = new ToolTip();
             toolTip.OwnerDraw = true;
             toolTip.Draw += new DrawToolTipEventHandler(toolTip_Draw);     
 

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace PasswordVault.Services
 {
     public class EncryptionServiceFactory : IEncryptionServiceFactory
     {
-        public IEncryptionService Get(EncryptionParameters parameters)
+        public IEncryptionService GetEncryptionService(EncryptionParameters parameters)
         {
+            if (parameters is null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
+
             IEncryptionService encryptionService = null;
 
             switch (parameters.Algorithm)

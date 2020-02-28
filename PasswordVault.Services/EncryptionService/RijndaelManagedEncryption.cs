@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -139,11 +140,9 @@ namespace PasswordVault.Services
 		*================================================================================================*/
         /*************************************************************************************************/
         private byte[] GenerateRandomEntropy(int bits)
-        {
+        {        
             if ((bits % 8) != 0)
-            {
-                throw new ArgumentException("Must be divisible by 8!", nameof(bits));
-            }
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(bits))));
 
             int numBytes = bits / 8;
 

@@ -7,7 +7,7 @@ namespace PasswordVault.Services
 {
     public interface IExportPasswords
     {
-        ExportResult Export(ExportFileTypes fileType, string exportPath, List<Password> passwords, string passwordProtection, bool passwordEnabled);
+        ExportResult Export(ExportFileType fileType, string exportPath, List<Password> passwords, string passwordProtection, bool passwordEnabled);
         List<SupportedFileTypes> GetSupportedFileTypes();
     }
 }

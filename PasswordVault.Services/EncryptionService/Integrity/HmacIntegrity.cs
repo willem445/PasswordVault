@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace PasswordVault.Services
 {
@@ -117,7 +118,7 @@ namespace PasswordVault.Services
                     break;
 
                 default:
-                    throw new Exception("Not supported HMAC type!");
+                    throw new CryptographicException();
             }
 
             return returnHmac;

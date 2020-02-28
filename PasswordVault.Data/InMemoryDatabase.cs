@@ -92,9 +92,9 @@ namespace PasswordVault.Data
             return _localUserDb;
         }
        
-        public User GetUserByGUID(string guid)
+        public User GetUserByUuid(string uuid)
         {
-            return _localUserDb.Where(x => x.Uuid == guid).FirstOrDefault();
+            return _localUserDb.Where(x => x.Uuid == uuid).FirstOrDefault();
         }
       
         public User GetUserByUsername(string username)
@@ -102,9 +102,9 @@ namespace PasswordVault.Data
             return _localUserDb.Where(x => x.Username == username).FirstOrDefault();
         }
         
-        public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
+        public List<DatabasePassword> GetUserPasswordsByUuid(string uuid)
         {
-            return _localPasswordDb.Where(x => x.UserUuid == guid).ToList();
+            return _localPasswordDb.Where(x => x.UserUuid == uuid).ToList();
         }
         
         public bool ModifyPassword(DatabasePassword modifiedPassword)
@@ -145,9 +145,9 @@ namespace PasswordVault.Data
             return result;
         }
         
-        public bool UserExistsByGUID(string guid)
+        public bool UserExistsByUuid(string uuid)
         {
-            bool exists = _localUserDb.Exists(x => x.Uuid == guid);
+            bool exists = _localUserDb.Exists(x => x.Uuid == uuid);
             return exists;
         }
        

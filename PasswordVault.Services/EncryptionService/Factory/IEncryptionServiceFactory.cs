@@ -6,6 +6,6 @@ namespace PasswordVault.Services
 {
     public interface IEncryptionServiceFactory
     {
-        IEncryptionService Get(EncryptionParameters parameters);
+        IEncryptionService GetEncryptionService(EncryptionParameters parameters);
     }
 }

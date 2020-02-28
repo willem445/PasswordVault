@@ -2,6 +2,7 @@
 using PasswordVault.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PasswordVault.Services
 {
@@ -67,6 +68,9 @@ namespace PasswordVault.Services
 
         public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionParameters parameters)
         {
+            if (string.IsNullOrEmpty(userUuid) || modifiedPassword == null || string.IsNullOrEmpty(key) || parameters == null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Arguments cannot be null or empty."));
+
             AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
 
             AddModifyPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
@@ -105,8 +109,8 @@ namespace PasswordVault.Services
             List<DatabasePassword> databasePasswords = null;
             List<Password> passwords = new List<Password>();
 
-            databasePasswords = _dbContext.GetUserPasswordsByGUID(userUuid);
-            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+            databasePasswords = _dbContext.GetUserPasswordsByUuid(userUuid);
+            IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
             foreach (var databasePassword in databasePasswords)
             {
@@ -183,7 +187,7 @@ namespace PasswordVault.Services
 
         private Password ConvertPlaintextPasswordToEncryptedPassword(Password password, string key, EncryptionParameters parameters)
         {
-            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+            IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
             return new Password(
                 password.UniqueID,
@@ -198,7 +202,7 @@ namespace PasswordVault.Services
 
         private DatabasePassword ConvertToEncryptedDatabasePassword(string uuid, Password password, string key, EncryptionParameters parameters)
         {
-            IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+            IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
             return new DatabasePassword(
                 password.UniqueID,

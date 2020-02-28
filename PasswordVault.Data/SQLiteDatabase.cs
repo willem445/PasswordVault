@@ -232,7 +232,7 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public User GetUserByGUID(string guid)
+        public User GetUserByUuid(string uuid)
         {
             User result = null;
 
@@ -243,7 +243,7 @@ namespace PasswordVault.Data
                 string query = @"SELECT * FROM Users
                                  WHERE Uuid = @Uuid";
 
-                var user = dbConn.Query<User>(query, new { Uuid = guid }).FirstOrDefault();
+                var user = dbConn.Query<User>(query, new { Uuid = uuid }).FirstOrDefault();
 
                 if (user != null)
                 {
@@ -278,7 +278,7 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public bool UserExistsByGUID(string guid)
+        public bool UserExistsByUuid(string uuid)
         {
             bool result = false;
 
@@ -289,7 +289,7 @@ namespace PasswordVault.Data
                 string query = @"SELECT * FROM Users
                                  WHERE Uuid = @Uuid";
 
-                var dbresult = dbConn.Query<User>(query, new { Uuid = guid });
+                var dbresult = dbConn.Query<User>(query, new { Uuid = uuid });
 
                 if (dbresult.Any())
                 {
@@ -324,7 +324,7 @@ namespace PasswordVault.Data
         }
 
         /*************************************************************************************************/
-        public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
+        public List<DatabasePassword> GetUserPasswordsByUuid(string uuid)
         {
             List<DatabasePassword> result = new List<DatabasePassword>();
 
@@ -335,7 +335,7 @@ namespace PasswordVault.Data
                 string query = @"SELECT * FROM Passwords 
                                  WHERE UserUuid = @Uuid";
 
-                var dbresult = dbConn.Query<DatabasePassword>(query, new { Uuid = guid });
+                var dbresult = dbConn.Query<DatabasePassword>(query, new { Uuid = uuid });
 
                 if (dbresult.Any())
                 {

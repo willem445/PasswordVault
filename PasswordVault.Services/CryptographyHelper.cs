@@ -48,6 +48,9 @@ namespace PasswordVault.Services
         int bOffset,
         int length)
         {
+            if (a == null || b == null)
+                throw new CryptographicException();
+
             int result = 0;
 
             if (a.Length - aOffset < length || b.Length - bOffset < length)

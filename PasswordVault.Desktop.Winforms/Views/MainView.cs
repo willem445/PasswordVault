@@ -582,7 +582,7 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswordCount(int count)
         {
-            passwordCountLabel.Text = count.ToString();
+            passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
         }
 
         /*=================================================================================================
