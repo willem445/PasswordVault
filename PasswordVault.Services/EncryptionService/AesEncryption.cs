@@ -165,10 +165,11 @@ namespace PasswordVault.Services
                 int headerSizeInBytes = (int)CipherSuiteIdx.NumCipherSuiteBytes;
                 int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(macalg).ToNumBytes();
                 int hmacKeySizeInBytes = _integrityVerification.GetHMACKeySizeInBits(macalg).ToNumBytes();
-                int saltSizeInBytes = _encryptionParameters.KeyDerivationParameters.SaltSizeBytes; // use the configured salt size, should be 128 bits
+                int saltSizeInBytes = -1; // use the configured salt size, should be 128 bits
                 int ivSizeInBytes = cipher.BlockSize.ToNumBytes(); // iv should match blocksize in AES
                 int blockSizeInBytes = cipher.BlockSize.ToNumBytes(); // 128 bits for AES               
                 int keySizeInBytes = -1;
+
                 switch (encryptionalg) // key size is based on the algorithm being used
                 {
                     case EncryptionAlgorithm.Rijndael256CbcPkcs7:
@@ -180,6 +181,16 @@ namespace PasswordVault.Services
                         keySizeInBytes = 16;
                         break;
                     case EncryptionAlgorithm.Unknown:
+                    default:
+                        throw new CryptographicException();
+                }
+
+                switch (keyderivationalg)
+                {
+                    case KeyDerivationAlgorithm.Argon2Id:
+                    case KeyDerivationAlgorithm.Pbkdf2:
+                        saltSizeInBytes = 16;
+                        break;
                     default:
                         throw new CryptographicException();
                 }

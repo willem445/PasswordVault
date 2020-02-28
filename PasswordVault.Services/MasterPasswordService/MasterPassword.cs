@@ -34,6 +34,7 @@ namespace PasswordVault.Services
                 parameters.KeyDerivationParameters.Algorithm,
                 parameters.KeyDerivationParameters.KeySizeBytes,
                 saltString,
+                parameters.KeyDerivationParameters.SaltSizeBytes,
                 hashString,
                 parameters.KeyDerivationParameters.Iterations,
                 parameters.KeyDerivationParameters.DegreeOfParallelism,
@@ -67,9 +68,10 @@ namespace PasswordVault.Services
         /// <returns>flattened string</returns>
         public string FlattenHash(UserEncrypedData parameters)
         {
-            string flattened = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}",
+            string flattened = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}",
                 ((byte)parameters.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
                 parameters.KeySize.ToString(CultureInfo.CurrentCulture),
+                parameters.SaltSize.ToString(CultureInfo.CurrentCulture),
                 parameters.Iterations.ToString(CultureInfo.CurrentCulture),
                 parameters.MemorySize.ToString(CultureInfo.CurrentCulture),
                 parameters.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
@@ -94,11 +96,12 @@ namespace PasswordVault.Services
             UserEncrypedData data = new UserEncrypedData(
                 alg :                 (KeyDerivationAlgorithm)Convert.ToInt32(raw[0], CultureInfo.CurrentCulture),
                 keysize :             Convert.ToInt32(raw[1], CultureInfo.CurrentCulture),
-                salt :                raw[5], 
-                hash :                raw[6], 
-                iterations :          Convert.ToUInt32(raw[2], CultureInfo.CurrentCulture), 
-                degreeOfParallelism : Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
-                memorySize :          Convert.ToInt32(raw[3], CultureInfo.CurrentCulture), 
+                salt :                raw[6], 
+                saltsize :            Convert.ToInt32(raw[2], CultureInfo.CurrentCulture),
+                hash :                raw[7], 
+                iterations :          Convert.ToUInt32(raw[3], CultureInfo.CurrentCulture), 
+                degreeOfParallelism : Convert.ToInt32(raw[5], CultureInfo.CurrentCulture), 
+                memorySize :          Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
                 randomGeneratedKey :  null);  
 
             return data;

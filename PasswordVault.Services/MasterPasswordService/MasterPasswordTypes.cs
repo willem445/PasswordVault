@@ -19,10 +19,11 @@ namespace PasswordVault.Services
     public struct UserEncrypedData
 #pragma warning restore CA1815 // Override equals and operator equals on value types
     {
-        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, string hash, UInt32 iterations, int degreeOfParallelism, int memorySize, string randomGeneratedKey)
+        public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, int saltsize, string hash, UInt32 iterations, int degreeOfParallelism, int memorySize, string randomGeneratedKey)
         {
             KeyDevAlgorithm = alg;
             KeySize = keysize;
+            SaltSize = saltsize;
             Salt = salt;
             Hash = hash;
             Iterations = iterations;
@@ -39,5 +40,6 @@ namespace PasswordVault.Services
         public string RandomGeneratedKey { get; }
         public KeyDerivationAlgorithm KeyDevAlgorithm { get; }
         public int KeySize { get; }
+        public int SaltSize { get; }
     }
 } // PasswordVault.Services.Standard NAMESPACE

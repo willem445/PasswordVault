@@ -8,8 +8,6 @@ namespace PasswordVault.Services
     {
         Argon2Id = 0,
         Pbkdf2 = 1,
-        Bcrypt = 2,
-        Scrypt = 3,
     }
 
     public class KeyDerivationParameters

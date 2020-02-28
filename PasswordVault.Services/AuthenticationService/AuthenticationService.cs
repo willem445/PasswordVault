@@ -56,17 +56,16 @@ namespace PasswordVault.Services
                     new KeyDerivationParameters(
                         unflattened.KeyDevAlgorithm,
                         unflattened.KeySize,
-                        -1,
+                        unflattened.SaltSize,
                         unflattened.Iterations,
                         unflattened.DegreeOfParallelism,
                         unflattened.MemorySize),
                     -1);
 
-                // Hash password with user.Salt and compare to user.Hash
                 bool valid = _masterPassword.VerifyPassword(password, 
                                                             unflattened.Salt, 
                                                             unflattened.Hash, 
-                                                            hashParams); // Need key size in parameters
+                                                            hashParams);
 
                 if (valid)
                 {
