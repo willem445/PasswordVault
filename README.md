@@ -1,19 +1,43 @@
 # Password Vault
 
-In a world where data breaches and hacking occur regularly, it is extremely important to use long, random, strong passwords unique to each service you sign up for to protect your data. It is very difficult to accomplish this as it is difficult to memorize truely random passwords for the multitude of services that a person will sign up for in their lifetime. Password vault is a tool designed to aid in keeping each account secure. Just remember a single strong password!
+Simple password manager using Argon2 and AES for password protection.
 
-Password vault hashes all user data locally so your plaintext private information will never be visible online. Currently Password Vault is 100% offline using SQLite, all user data stays local to your computer and is not uploaded anywhere.
+## Technology
 
-## Desktop
+### Cipher Suite
 
-![Screenshot](https://i.imgur.com/gBuhMTi.png)
+- Master password hashed with Argon2Id
+  - Salt: 128 bit
+  - Hash: 256 bit
+  - Iterations: 20
+  - Memory size: 1gb
+  - Degree if parallelism: 8
+    - ~30s execution time on Ryzen 2700X
+- Sensitive user data and passwords encrypted using AES with Argon2Id key derivation and authenticated with HMAC256.
+  - Argon2Id
+    - Salt: 128 bit
+    - Iterations: 40
+    - Memory size: 1mb
+    - Degree if parallelism: 4
+      - ~120ms execution on Ryzen 2700X
+  - AES
+    - Key: 256 bit
+    - Iv: 128 bit
+  - HMAC
+    - Key: 256 bit
 
-The desktop application for Password Vault is currently implemented using WinForms. May be migrated to WPF in the future.
+### Storage
 
-## Web
+Data is stored in a local SQLite database using Dapper ORM for mapping.
 
-In Progress
+## Screenshots
 
-## Mobile App
+![Main](docs/resources/main.PNG)
 
-In Progress
+## Build
+
+TODO
+
+## Unit Tests
+
+TODO
