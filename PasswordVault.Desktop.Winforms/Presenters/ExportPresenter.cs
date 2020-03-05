@@ -31,7 +31,7 @@ namespace PasswordVault.Desktop.Winforms
             _exportView.DisplayFileTypes(supportedFileTypes);
         }
 
-        private void ExportPasswords(ExportFileTypes fileType, string path, string password, bool passwordEnabled)
+        private void ExportPasswords(ExportFileType fileType, string path, string password, bool passwordEnabled)
         {
             ExportResult result = _serviceWrapper.ExportPasswords(fileType, path, password, passwordEnabled);
             _exportView.DisplayExportResult(result);
@@ -40,7 +40,7 @@ namespace PasswordVault.Desktop.Winforms
         private void DataValidation(string path, string password)
         {
             ExportValidationResult result = ExportValidationResult.Invalid;
-            ExportFileTypes fileType = ExportFileTypes.Unsupported;
+            ExportFileType fileType = ExportFileType.Unsupported;
 
             List<SupportedFileTypes> supportedFileTypes = _serviceWrapper.GetSupportedFileTypes();
             SupportedFileTypes supportedFile = null;
@@ -70,12 +70,9 @@ namespace PasswordVault.Desktop.Winforms
                 result = ExportValidationResult.FileNotSupported;
             }
 
-            if (password != null)
+            if (string.IsNullOrEmpty(password) || password == "Enter encryption password..")
             {
-                if (password == "" || password == "Enter encryption password..")
-                {
-                    result = ExportValidationResult.InvalidPassword;
-                }
+                result = ExportValidationResult.InvalidPassword;
             }
 
             _exportView.DisplayValidationResult(result, fileType);

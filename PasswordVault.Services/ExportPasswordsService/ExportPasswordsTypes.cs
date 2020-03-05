@@ -10,7 +10,7 @@ namespace PasswordVault.Services
         Fail
     }
 
-    public enum ExportFileTypes
+    public enum ExportFileType
     {
         Unsupported,
         Excel,
@@ -29,14 +29,14 @@ namespace PasswordVault.Services
 
     public class SupportedFileTypes
     {
-        public SupportedFileTypes(ExportFileTypes fileType, string filter, string name)
+        public SupportedFileTypes(ExportFileType fileType, string filter, string name)
         {
             FileType = fileType;
             Filter = filter;
             Name = name;
         }
 
-        public ExportFileTypes FileType { get; }
+        public ExportFileType FileType { get; }
         public string Filter { get; }
         public string Name { get; }
     }

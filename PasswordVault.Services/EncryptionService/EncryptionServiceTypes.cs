@@ -4,35 +4,54 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    public enum EncryptionService
+    public enum CipherSuiteIdx
     {
-        RijndaelManaged = 0,
-        Aes = 1,
+        EncryptionAlg = 0,
+        KeyDevAlg=1,
+        KeyDevItr=2,
+        KeyDevMem=6,
+        KeyDevParallel=10,
+        MacAlg=11,
+        NumCipherSuiteBytes=12
     }
 
-    public struct EncryptionSizes
-    {
-        public EncryptionSizes(int iterations, int blockSize, int keySize)
-        {
-            Iterations = iterations;
-            BlockSize = blockSize;
-            KeySize = keySize;
-        }
 
-        public int Iterations { get; }
-        public int BlockSize { get; }
-        public int KeySize { get; }
+#pragma warning disable CA1028 // Enum Storage should be Int32 - Ignore since we want this to be a byte
+    public enum EncryptionAlgorithm : byte
+#pragma warning restore CA1028 // Enum Storage should be Int32
+    {
+        Unknown = 0,
+        Aes256CfbPkcs7 = 1,
+        Aes128CfbPkcs7 = 2,
+        Rijndael256CbcPkcs7 = 3,
+        Rijndael128CbcPkcs7 = 4,
     }
 
-    public struct EncryptionServiceParameters
+#pragma warning disable CA1028 // Enum Storage should be Int32 - Ignore since we want this to be a byte
+    public enum Mac : byte
+#pragma warning restore CA1028 // Enum Storage should be Int32
     {
-        public EncryptionServiceParameters(EncryptionService encryptionService, EncryptionSizes encryptionSizes)
+        Unknown = 0,
+        HMACSHA256 = 1,
+        HMACSHA512 = 2
+    }
+
+    public class EncryptionParameters
+    {
+        public EncryptionParameters(EncryptionAlgorithm algorithm, Mac mac, KeyDerivationParameters keyDerivationParameters, int blocksize, int ivSize)
         {
-            EncryptionService = encryptionService;
-            EncryptionSizes = encryptionSizes;
+            Algorithm = algorithm;
+            Mac = mac;
+            KeyDerivationParameters = keyDerivationParameters;
+            BlockSizeBytes = blocksize;
+            IvSizeBytes = ivSize;
         }
 
-        public EncryptionService EncryptionService { get; }
-        public EncryptionSizes EncryptionSizes { get; }
+        public EncryptionAlgorithm Algorithm { get; set; }
+        public Mac Mac { get; set; }
+        public KeyDerivationParameters KeyDerivationParameters { get; set; }
+        public int BlockSizeBytes { get; set; }
+        public int IvSizeBytes { get; set; }
+
     }
 }

@@ -6,6 +6,6 @@ namespace PasswordVault.Services
 {
     interface IExportFactory
     {
-        IExport Get(ExportFileTypes exportType);
+        IExport Get(ExportFileType exportType);
     }
 }

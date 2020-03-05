@@ -21,7 +21,7 @@ namespace PasswordVault.Desktop.Winforms
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public event Action<ExportFileTypes, string, string, bool> ExportPasswordsEvent;
+        public event Action<ExportFileType, string, string, bool> ExportPasswordsEvent;
         public event Action InitializeEvent;
         public event Action<string, string> DataValidationEvent;
 
@@ -110,7 +110,7 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayValidationResult(ExportValidationResult result, ExportFileTypes fileType)
+        public void DisplayValidationResult(ExportValidationResult result, ExportFileType fileType)
         {
             switch (result)
             {
@@ -251,6 +251,8 @@ namespace PasswordVault.Desktop.Winforms
             {
                 filePathTextbox.Text = sfd.FileName;
             }
+
+            sfd.Dispose();
         }
 
         /*************************************************************************************************/

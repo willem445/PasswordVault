@@ -18,12 +18,11 @@ namespace PasswordVault.Desktop.Winforms
     public class DesktopServiceWrapper : IDesktopServiceWrapper
     {
         /*CONSTANTS********************************************************/
-        private const EncryptionService ENCRYPTION_SERVICE_DEFAULT = EncryptionService.Aes; // Sets the default implementation for encryption
         private const int GENERATED_PASSWORD_LENGTH = 20;
 
         /*FIELDS***********************************************************/
         private User _currentUser;                       // Current user's username and password
-        private EncryptionServiceParameters _encryptionParameters;
+        private AppSettings _settings = AppSettings.Instance;
         private List<Password> _passwordList;            // stores the current users passwords and binds to datagridview
 
         private IPasswordService _passwordService;
@@ -59,33 +58,12 @@ namespace PasswordVault.Desktop.Winforms
 
             if (!IsLoggedIn())
             {
-                // Temporarily grab the user from database to retreive the encryption parameters
-                User tempUser = _userService.GetUserByUsername(username);
-
-                if (tempUser != null)
-                {
-                    // If the user is valid, store the encryption parameters for the session
-                    _encryptionParameters = new EncryptionServiceParameters(
-                        (EncryptionService)tempUser.PasswordEncryptionService.Value,
-                        new EncryptionSizes(
-                        tempUser.PasswordIterations.Value,
-                        tempUser.PasswordBlockSize.Value,
-                        tempUser.PasswordKeySize.Value));
-                }
-
-                // Clear out the temp user from memory
-                tempUser = new User(false);
-
-                AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _encryptionParameters);
+                AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _settings.DefaultEncryptionParameters);
                 AuthenticationResultEvent?.Invoke(authenticateResult.Result);
 
                 if (authenticateResult.Result == AuthenticateResult.Successful)
                 {
                     _currentUser = authenticateResult.User;
-
-                    // Check if the users encryption parameters are different from application defaults
-                    // If they are, update the encrypted data to new standard.
-                    CheckEncryptionAlgorithm(password);
 
                     var t = Task.Run(() => UpdatePasswordListFromDB());
                     t.Wait();
@@ -95,13 +73,9 @@ namespace PasswordVault.Desktop.Winforms
                 {
                     // If user credentials are incorrect, clear user and parameters from memory
                     _currentUser = new User(false);
-                    _encryptionParameters = new EncryptionServiceParameters();
                 }
-
                 loginResult = authenticateResult.Result;
-
-            }
-            
+            }         
             return loginResult;
         }
 
@@ -130,7 +104,6 @@ namespace PasswordVault.Desktop.Winforms
             {
                 _passwordList.Clear();
                 _currentUser = new User(false);
-                _encryptionParameters = new EncryptionServiceParameters();
 
                 result = LogOutResult.Success;
             }
@@ -144,14 +117,12 @@ namespace PasswordVault.Desktop.Winforms
             {
                 return true;
             }
-
             return false;
         }
 
         public AddUserResult CreateNewUser(User user)
-        {
-            EncryptionServiceParameters encryptionDefaults = new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults);
-            AddUserResult result = _userService.AddUser(user, encryptionDefaults);
+        {          
+            AddUserResult result = _userService.AddUser(user, _settings.DefaultEncryptionParameters, _settings.DefaultMasterPasswordParameters);
             return result;
         }
 
@@ -161,7 +132,14 @@ namespace PasswordVault.Desktop.Winforms
 
             if (IsLoggedIn())
             {
-                result = _userService.ChangeUserPassword(_currentUser.GUID, originalPassword, newPassword, confirmPassword, _currentUser.PlainTextRandomKey, _encryptionParameters);
+                result = _userService.ChangeUserPassword(
+                    _currentUser.Uuid, 
+                    originalPassword, 
+                    newPassword, 
+                    confirmPassword, 
+                    _currentUser.PlainTextRandomKey, 
+                    _settings.DefaultEncryptionParameters, 
+                    _settings.DefaultMasterPasswordParameters);
             }
 
             return result;
@@ -187,15 +165,15 @@ namespace PasswordVault.Desktop.Winforms
             if (IsLoggedIn())
             {
                 if (user != null &&
-                !string.IsNullOrEmpty(_currentUser.GUID) &&
+                !string.IsNullOrEmpty(_currentUser.Uuid) &&
                 !string.IsNullOrEmpty(_currentUser.PlainTextRandomKey))
                 {
-                    result = _userService.ModifyUser(_currentUser.GUID, user, _currentUser.PlainTextRandomKey, _encryptionParameters);
+                    result = _userService.ModifyUser(_currentUser.Uuid, user, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
                     if (result == UserInformationResult.Success)
                     {
                         _currentUser = new User(
-                            _currentUser.GUID,
+                            _currentUser.Uuid,
                             _currentUser.Username,
                             _currentUser.PlainTextRandomKey,
                             user.FirstName,
@@ -251,7 +229,7 @@ namespace PasswordVault.Desktop.Winforms
 
                 if (queryResult.Count <= 0)
                 {
-                    AddPasswordResult addResult = _passwordService.AddPassword(_currentUser.GUID, password, _currentUser.PlainTextRandomKey, _encryptionParameters);
+                    AddPasswordResult addResult = _passwordService.AddPassword(_currentUser.Uuid, password, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
                     if (addResult.Result == AddModifyPasswordResult.Success)
                     {
@@ -338,7 +316,7 @@ namespace PasswordVault.Desktop.Winforms
                                                                      modifiedPassword.Website, 
                                                                      modifiedPassword.Passphrase);
 
-                        AddModifyPasswordResult addResult = _passwordService.ModifyPassword(_currentUser.GUID, modifiedWithUniqueID, _currentUser.PlainTextRandomKey, _encryptionParameters);
+                        AddModifyPasswordResult addResult = _passwordService.ModifyPassword(_currentUser.Uuid, modifiedWithUniqueID, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
                         if (addResult == AddModifyPasswordResult.Success)
                         {
@@ -399,7 +377,7 @@ namespace PasswordVault.Desktop.Winforms
             return -1;
         }
 
-        public ExportResult ExportPasswords(ExportFileTypes fileType, string exportPath, string passwordProtection, bool passwordEnabled)
+        public ExportResult ExportPasswords(ExportFileType fileType, string exportPath, string passwordProtection, bool passwordEnabled)
         {
             ExportResult result;
 
@@ -417,7 +395,7 @@ namespace PasswordVault.Desktop.Winforms
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            _passwordList = _passwordService.GetPasswords(_currentUser.GUID, _currentUser.PlainTextRandomKey, _encryptionParameters);         
+            _passwordList = _passwordService.GetPasswords(_currentUser.Uuid, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);         
         }
 
         private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)
@@ -434,22 +412,6 @@ namespace PasswordVault.Desktop.Winforms
             );
 
             _passwordList.Add(newPassword);
-        }
-
-        private void CheckEncryptionAlgorithm(string userPassword)
-        {
-            EncryptionSizes encryptionDefaults = new EncryptionServiceFactory().Get(_encryptionParameters).EncryptionSizeDefaults;
-
-            if (_encryptionParameters.EncryptionService != ENCRYPTION_SERVICE_DEFAULT ||
-                _encryptionParameters.EncryptionSizes.BlockSize != encryptionDefaults.BlockSize ||
-                _encryptionParameters.EncryptionSizes.KeySize != encryptionDefaults.KeySize ||
-                _encryptionParameters.EncryptionSizes.Iterations != encryptionDefaults.Iterations)
-            {
-                IEncryptionConversion encryptionConversion = new EncryptionAlgorithmConversion(_passwordService, _userService);
-                encryptionDefaults = new EncryptionServiceFactory().Get(new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, new EncryptionSizes())).EncryptionSizeDefaults;
-                encryptionConversion.Convert(_currentUser, userPassword, _encryptionParameters, new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, encryptionDefaults));
-                _encryptionParameters = new EncryptionServiceParameters(ENCRYPTION_SERVICE_DEFAULT, encryptionDefaults);
-            }
         }
 
         /*STATIC METHODS***************************************************/

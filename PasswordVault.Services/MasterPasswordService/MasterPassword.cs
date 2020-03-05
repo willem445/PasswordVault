@@ -1,160 +1,110 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography;
-
-/*=================================================================================================
-DESCRIPTION
-*================================================================================================*/
-/* 
- ------------------------------------------------------------------------------------------------*/
+using System.Text;
 
 namespace PasswordVault.Services
 {
-    /*=================================================================================================
-	ENUMERATIONS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	STRUCTS
-	*================================================================================================*/
-
-    /*=================================================================================================
-	CLASSES
-	*================================================================================================*/
     public class MasterPassword : IMasterPassword
     {
-        /*=================================================================================================
-		CONSTANTS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
-
-        /*PRIVATE*****************************************************************************************/
-
-
-        /*=================================================================================================
-		FIELDS
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
-
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		PROPERTIES
-		*================================================================================================*/
-        /*PUBLIC******************************************************************************************/
-        public int _hashIterationCount { get; } = 10000;
-        public int _saltArraySize { get; } = 32;
-        public int _hashArraySize { get; } = 32;
-
-        /*PRIVATE*****************************************************************************************/
-
-        /*=================================================================================================
-		CONSTRUCTORS
-		*================================================================================================*/
         public MasterPassword()
         {
-            // Use defaults
+
         }
 
-        public MasterPassword(int iterations, int saltArraySize, int hashArraySize)
+        public UserEncrypedData GenerateMasterHash(string password, MasterPasswordParameters parameters)
         {
-            _hashIterationCount = iterations;
-            _saltArraySize = saltArraySize;
-            _hashArraySize = hashArraySize;
+            if (parameters is null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
+
+            IKeyDerivation hasher = KeyDerivationFactory.Get(parameters.KeyDerivationParameters.Algorithm);
+
+            var salt = CryptographyHelper.GenerateRandomEntropy(parameters.KeyDerivationParameters.SaltSizeBytes);
+            var hash = hasher.DeriveKey(
+                password,
+                salt,
+                parameters.KeyDerivationParameters
+            );
+
+            var saltString = salt.ToBase64();
+            var hashString = hash.ToBase64();          
+            var randomGeneratedKey = CryptographyHelper.GenerateRandomEntropy(parameters.RandomKeySize).ToBase64();
+
+            return new UserEncrypedData(
+                parameters.KeyDerivationParameters.Algorithm,
+                parameters.KeyDerivationParameters.KeySizeBytes,
+                saltString,
+                parameters.KeyDerivationParameters.SaltSizeBytes,
+                hashString,
+                parameters.KeyDerivationParameters.Iterations,
+                parameters.KeyDerivationParameters.DegreeOfParallelism,
+                parameters.KeyDerivationParameters.MemorySizeKb,
+                randomGeneratedKey
+            );
         }
 
-        /*=================================================================================================
-		PUBLIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-        public UserEncrypedData GenerateNewUserEncryptedDataFromPassword(string password)
+        public bool VerifyPassword(string password, string salt, string hash, MasterPasswordParameters parameters)
         {
-            // Salt
-            RNGCryptoServiceProvider saltCellar = new RNGCryptoServiceProvider();
-            byte[] salt = new byte[_saltArraySize];
-            saltCellar.GetBytes(salt);
-            string saltString = Convert.ToBase64String(salt);
-            saltCellar.Dispose();
+            if (parameters is null)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null.", (nameof(parameters))));
 
-            // Hash
-#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
-            Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, salt)
-            {
-#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
-                IterationCount = _hashIterationCount
-            };
-            byte[] hash = hashTool.GetBytes(_hashArraySize);
-            string hashString = Convert.ToBase64String(hash);
-            hashTool.Dispose();
+            IKeyDerivation hasher = KeyDerivationFactory.Get(parameters.KeyDerivationParameters.Algorithm);
+            var saltBytes = salt.ToBytes();
+            var hashBytes = hash.ToBytes();
 
-            // Iterations
-            int iterations = _hashIterationCount;
+            var verify = hasher.DeriveKey(
+                password,
+                saltBytes,
+                parameters.KeyDerivationParameters
+            );
 
-            // Guid
-            var uniqueID = Guid.NewGuid().ToString();
-
-            // Random Key
-            string randomGeneratedKey = GenerateRandomKey();
-
-            return new UserEncrypedData(saltString, hashString, iterations, uniqueID, randomGeneratedKey);
+            return CryptographyHelper.CryptographicEquals(hashBytes, 0, verify, 0, hashBytes.Length);
         }
 
-        /*************************************************************************************************/
-        public string GetFormattedString(UserEncrypedData data)
+        /// <summary>
+        /// Flattens UserEncryptedData to be stored in a database.
+        /// </summary>
+        /// <param name="parameters">Masterpassword parameters to flatten.</param>
+        /// <returns>flattened string</returns>
+        public string FlattenHash(UserEncrypedData parameters)
         {
-            string formatted = "";
-
-            formatted = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4}", data.UniqueGUID, data.RandomGeneratedKey, data.Iterations, data.Salt, data.Hash);
-
-            return formatted;
+            string flattened = string.Format(CultureInfo.CurrentCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}",
+                ((byte)parameters.KeyDevAlgorithm).ToString(CultureInfo.CurrentCulture),
+                parameters.KeySize.ToString(CultureInfo.CurrentCulture),
+                parameters.SaltSize.ToString(CultureInfo.CurrentCulture),
+                parameters.Iterations.ToString(CultureInfo.CurrentCulture),
+                parameters.MemorySize.ToString(CultureInfo.CurrentCulture),
+                parameters.DegreeOfParallelism.ToString(CultureInfo.CurrentCulture),
+                parameters.Salt,
+                parameters.Hash);
+            return flattened;
         }
 
-        /*************************************************************************************************/
-        public bool VerifyPassword(string password, string salt, string hash, int iterationCount)
+        /// <summary>
+        /// Extracts UserEncryptedData from string stored in database. RandomGeneratedKey 
+        /// are set to null since they are not stored in the database field and not needed for
+        /// password validation.
+        /// </summary>
+        /// <param name="hash">String stored in database.</param>
+        /// <returns>UserEncryptedData</returns>
+        public UserEncrypedData UnFlattenHash(string hash)
         {
-            byte[] originalSalt = Convert.FromBase64String(salt);
-            byte[] originalHash = Convert.FromBase64String(hash);
-#pragma warning disable CA5379 // Do Not Use Weak Key Derivation Function Algorithm
-            Rfc2898DeriveBytes hashTool = new Rfc2898DeriveBytes(password, originalSalt);
-#pragma warning restore CA5379 // Do Not Use Weak Key Derivation Function Algorithm
-            hashTool.IterationCount = iterationCount;
-            byte[] newHash = hashTool.GetBytes(_hashArraySize);
-            hashTool.Dispose();
+            if (string.IsNullOrEmpty(hash))
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} cannot be null or empty!.", (nameof(hash))));
 
-            uint differences = (uint)originalHash.Length ^ (uint)newHash.Length;
-            for (int position = 0; position < Math.Min(originalHash.Length,
-              newHash.Length); position++)
-                differences |= (uint)(originalHash[position] ^ newHash[position]);
-            bool passwordMatches = (differences == 0);
+            var raw = hash.Split(':');
+            UserEncrypedData data = new UserEncrypedData(
+                alg :                 (KeyDerivationAlgorithm)Convert.ToInt32(raw[0], CultureInfo.CurrentCulture),
+                keysize :             Convert.ToInt32(raw[1], CultureInfo.CurrentCulture),
+                salt :                raw[6], 
+                saltsize :            Convert.ToInt32(raw[2], CultureInfo.CurrentCulture),
+                hash :                raw[7], 
+                iterations :          Convert.ToUInt32(raw[3], CultureInfo.CurrentCulture), 
+                degreeOfParallelism : Convert.ToInt32(raw[5], CultureInfo.CurrentCulture), 
+                memorySize :          Convert.ToInt32(raw[4], CultureInfo.CurrentCulture), 
+                randomGeneratedKey :  null);  
 
-            return passwordMatches;
+            return data;
         }
-
-        /*************************************************************************************************/
-        public string GenerateRandomKey()
-        {
-            string token;
-
-            using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
-            {
-                byte[] tokenData = new byte[64];
-                rng.GetBytes(tokenData);
-
-                token = Convert.ToBase64String(tokenData);
-            }
-
-            return token;
-        }
-
-        /*=================================================================================================
-		PRIVATE METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-
-        /*=================================================================================================
-		STATIC METHODS
-		*================================================================================================*/
-        /*************************************************************************************************/
-
-    } // UserPasswordHash CLASS
-} // PasswordVault.Services.Standard NAMESPACE
+    }
+}

@@ -297,6 +297,8 @@ namespace PasswordVault.Desktop.Winforms
             passwordDataGridView.ColumnHeadersDefaultCellStyle.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             passwordDataGridView.ColumnHeadersDefaultCellStyle.SelectionForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            passwordDataGridView.AdvancedCellBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+            passwordDataGridView.AdvancedCellBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
             passwordDataGridView.ScrollBars = ScrollBars.None;
             passwordDataGridView.MouseWheel += PasswordDataGridView_MouseWheel;
 
@@ -580,7 +582,7 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswordCount(int count)
         {
-            passwordCountLabel.Text = count.ToString();
+            passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
         }
 
         /*=================================================================================================

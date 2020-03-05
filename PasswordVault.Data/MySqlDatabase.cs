@@ -48,7 +48,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public User GetUserByGUID(string guid)
+        public User GetUserByUuid(string uuid)
         {
             throw new NotImplementedException();
         }
@@ -58,7 +58,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public List<DatabasePassword> GetUserPasswordsByGUID(string guid)
+        public List<DatabasePassword> GetUserPasswordsByUuid(string uuid)
         {
             throw new NotImplementedException();
         }
@@ -73,7 +73,7 @@ namespace PasswordVault.Data
             throw new NotImplementedException();
         }
 
-        public bool UserExistsByGUID(string guid)
+        public bool UserExistsByUuid(string uuid)
         {
             throw new NotImplementedException();
         }

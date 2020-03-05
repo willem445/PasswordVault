@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    class KeyGenerator
+    public static class KeyGenerator
     {
         /*CONSTANTS********************************************************/
 

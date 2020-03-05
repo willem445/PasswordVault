@@ -8,13 +8,13 @@ namespace PasswordVault.Data
     {
         // Master users/password
         User GetUserByUsername(string username);
-        User GetUserByGUID(string guid);
+        User GetUserByUuid(string uuid);
         List<User> GetAllUsers();
         bool AddUser(User user);
         bool ModifyUser(User user, User modifiedUser);
         bool DeleteUser(User user, int expectedNumPasswords);
         bool UserExistsByUsername(string username);
-        bool UserExistsByGUID(string guid);
+        bool UserExistsByUuid(string uuid);
 
         // User passwords
         /// <summary>
@@ -25,6 +25,6 @@ namespace PasswordVault.Data
         Int64 AddPassword(DatabasePassword password);
         bool ModifyPassword(DatabasePassword modifiedPassword);
         bool DeletePassword(Int64 passwordUniqueId);
-        List<DatabasePassword> GetUserPasswordsByGUID(string guid);
+        List<DatabasePassword> GetUserPasswordsByUuid(string uuid);
     }
 }

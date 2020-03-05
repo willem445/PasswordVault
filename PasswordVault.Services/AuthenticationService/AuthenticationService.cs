@@ -30,7 +30,7 @@ namespace PasswordVault.Services
         }
 
         /*PUBLIC METHODS***************************************************/
-        public AuthenticateReturn Authenticate(string username, string password, EncryptionServiceParameters parameters)
+        public AuthenticateReturn Authenticate(string username, string password, EncryptionParameters parameters)
         {
             AuthenticateReturn result;
 
@@ -47,22 +47,33 @@ namespace PasswordVault.Services
                 authResult = AuthenticateResult.UsernameDoesNotExist;
             }
             else
-            {
+            {                           
                 User user = _dbContext.GetUserByUsername(username);
 
-                // Hash password with user.Salt and compare to user.Hash
+                // Extract parameters from hash
+                UserEncrypedData unflattened = _masterPassword.UnFlattenHash(user.Hash);
+                MasterPasswordParameters hashParams = new MasterPasswordParameters(
+                    new KeyDerivationParameters(
+                        unflattened.KeyDevAlgorithm,
+                        unflattened.KeySize,
+                        unflattened.SaltSize,
+                        unflattened.Iterations,
+                        unflattened.DegreeOfParallelism,
+                        unflattened.MemorySize),
+                    -1);
+
                 bool valid = _masterPassword.VerifyPassword(password, 
-                                                            user.Salt, 
-                                                            user.Hash, 
-                                                            Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
+                                                            unflattened.Salt, 
+                                                            unflattened.Hash, 
+                                                            hashParams);
 
                 if (valid)
                 {
-                    IEncryptionService encryptionService = _encryptionServiceFactory.Get(parameters);
+                    IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
                     string randomKey = encryptionService.Decrypt(user.EncryptedKey, password);
 
-                    userResult = new User(user.GUID,
+                    userResult = new User(user.Uuid,
                                           user.Username,
                                           randomKey,
                                           encryptionService.Decrypt(user.FirstName, randomKey),
@@ -71,7 +82,7 @@ namespace PasswordVault.Services
                                           encryptionService.Decrypt(user.Email, randomKey),
                                           true);
 
-                    userResult.Token = _tokenService.GenerateJwtToken(user.GUID);
+                    userResult.Token = _tokenService.GenerateJwtToken(user.Uuid);
 
                     authResult = AuthenticateResult.Successful;
                 }
@@ -97,13 +108,25 @@ namespace PasswordVault.Services
             {
                 User user = _dbContext.GetUserByUsername(username);
 
-                // Hash password with user.Salt and compare to user.Hash
-                result = _masterPassword.VerifyPassword(password,
-                                                            user.Salt,
-                                                            user.Hash,
-                                                            Convert.ToInt32(user.Iterations, CultureInfo.CurrentCulture));
-            }
+                // Extract parameters from hash
+                UserEncrypedData unflattened = _masterPassword.UnFlattenHash(user.Hash);
+                MasterPasswordParameters hashParams = new MasterPasswordParameters(
+                    new KeyDerivationParameters(
+                        unflattened.KeyDevAlgorithm,
+                        unflattened.KeySize,
+                        -1,
+                        unflattened.Iterations,
+                        unflattened.DegreeOfParallelism,
+                        unflattened.MemorySize),
+                    -1);
 
+                // Hash password with user.Salt and compare to user.Hash
+                bool valid = _masterPassword.VerifyPassword(password,
+                                                            unflattened.Salt,
+                                                            unflattened.Hash,
+                                                            hashParams);
+                result = valid;
+            }
             return result;
         }
 

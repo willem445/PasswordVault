@@ -45,7 +45,7 @@ namespace PasswordVault.Models
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
         [Browsable(false)]
-        public string UserGUID { get; set; }
+        public string UserUuid { get; set; }
 
         /*PRIVATE*****************************************************************************************/
 
@@ -60,7 +60,7 @@ namespace PasswordVault.Models
         public DatabasePassword(Int64 uniqueID, string useruuid, string application, string username, string email, string description, string website, string passphrase)
         {
             UniqueID = uniqueID;
-            UserGUID = useruuid;
+            UserUuid = useruuid;
             Application = application;
             Username = username;
             Email = email;
@@ -75,7 +75,7 @@ namespace PasswordVault.Models
         /*************************************************************************************************/
         public override string GetPasswordString()
         {
-            return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5},{6},{7}", UniqueID, UserGUID, Application, Username, Email, Description, Website, Passphrase);
+            return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5},{6},{7}", UniqueID, UserUuid, Application, Username, Email, Description, Website, Passphrase);
         }
 
         /*=================================================================================================

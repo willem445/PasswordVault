@@ -40,52 +40,34 @@ namespace PasswordVault.Models
         public string Token { get; set; }
 
         // Properties stored in database
-        public string GUID { get; } // unique Id assigned to each user, this unique id is the PK for password table
+        public string Uuid { get; } // unique Id assigned to each user, this unique id is the PK for password table
         public string EncryptedKey { get; } // encrypted version of randomly generated key, encrypted using the plaintext user password  
         public string Username { get; }
-        public string Iterations { get; }
-        public string Salt { get; }
         public string Hash { get; }
         public string FirstName { get; } // use randomly generated key to hash and store
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
-        public int? PasswordEncryptionService { get; }
-        public int? PasswordBlockSize { get; }
-        public int? PasswordKeySize { get; }
-        public int? PasswordIterations { get; }
 
-        public User(string uniqueID, 
+        public User(
+            string uniqueID, 
             string encryptedKey, 
             string username, 
-            string iterations, 
-            string salt, 
             string hash, 
             string firstName, 
             string lastName, 
             string phoneNumber, 
             string email,
-            int passwordEncryptionService,
-            int passwordBlockSize,
-            int passwordKeySize,
-            int passwordIterations,
             bool validUser = false)
         {
-            GUID = uniqueID;
+            Uuid = uniqueID;
             EncryptedKey = encryptedKey;
             Username = username;
-            Iterations = iterations;
-            Salt = salt;
             Hash = hash;
             FirstName = firstName;
             LastName = lastName;
             PhoneNumber = phoneNumber;
             Email = email;
-            PasswordEncryptionService = passwordEncryptionService;
-            PasswordBlockSize = passwordBlockSize;
-            PasswordKeySize = passwordKeySize;
-            PasswordIterations = passwordIterations;
-
             ValidUser = validUser;
         }
 
@@ -99,7 +81,7 @@ namespace PasswordVault.Models
             string email, 
             bool validUser = false)
         {
-            GUID = uniqueID;
+            Uuid = uniqueID;
             Username = username;
             PlainTextRandomKey = plainTextRandomKey;
             FirstName = firstName;
@@ -126,23 +108,9 @@ namespace PasswordVault.Models
             ValidUser = validUser;
         }
 
-        public User(string username)
-        {
-            Username = username;
-        }
-
         public User()
         {
 
-        }
-
-        public string GetUserString()
-        {
-            string userString = "";
-
-            userString = string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}", GUID, EncryptedKey, Username, Iterations, Salt, Hash, FirstName, LastName, PhoneNumber, Email);
-
-            return userString;
         }
 
         public bool VerifyUsernameRequirements()
@@ -207,23 +175,28 @@ namespace PasswordVault.Models
 
         public ValidateUserPasswordResult VerifyPlaintextPasswordRequirements()
         {
+            return User.VerifyPasswordRequirements(this.PlainTextPassword);
+        }
+
+        public static ValidateUserPasswordResult VerifyPasswordRequirements(string password)
+        {
             ValidateUserPasswordResult result = ValidateUserPasswordResult.Success;
 
             bool containsNumber = false;
             bool containsLowerCase = false;
             bool containsUpperCase = false;
 
-            if (string.IsNullOrEmpty(this.PlainTextPassword))
+            if (string.IsNullOrEmpty(password))
             {
                 return ValidateUserPasswordResult.Failed;
             }
 
-            if (this.PlainTextPassword.Length <= MINIMUM_PASSWORD_LENGTH)
+            if (password.Length <= MINIMUM_PASSWORD_LENGTH)
             {
                 result = ValidateUserPasswordResult.LengthRequirementNotMet;
             }
 
-            foreach (var character in this.PlainTextPassword)
+            foreach (var character in password)
             {
                 if (char.IsUpper(character))
                 {
@@ -254,7 +227,7 @@ namespace PasswordVault.Models
                 result = ValidateUserPasswordResult.NoNumber;
             }
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(this.PlainTextPassword, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(password, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
             {
                 result = ValidateUserPasswordResult.NoSpecialCharacter;
             }
@@ -283,6 +256,12 @@ namespace PasswordVault.Models
             str = str.Trim();
             System.Text.RegularExpressions.Regex pattern = new System.Text.RegularExpressions.Regex(regexstr);
             return pattern.IsMatch(str);
+        }
+
+        public static string GenerateUserUuid()
+        {
+            var uuid = Guid.NewGuid().ToString();
+            return uuid;
         }
 
     } // User CLASS

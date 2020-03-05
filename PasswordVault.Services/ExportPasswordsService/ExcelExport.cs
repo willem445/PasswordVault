@@ -25,7 +25,7 @@ namespace PasswordVault.Services
                     {
                         wb.Protection.SetPassword(encryptionPassword);
                         p.Encryption.IsEncrypted = true;
-                        p.Encryption.Algorithm = EncryptionAlgorithm.AES256;
+                        p.Encryption.Algorithm = OfficeOpenXml.EncryptionAlgorithm.AES256;
                     }
                     
                     int headerColCount = 1;
@@ -66,7 +66,9 @@ namespace PasswordVault.Services
                     }
                 }
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 result = ExportResult.Fail;
             }

@@ -1,5 +1,6 @@
 passwords.csv
 users.csv
+PasswordDb.sqlite
 
 # VS Code
 *.vscode

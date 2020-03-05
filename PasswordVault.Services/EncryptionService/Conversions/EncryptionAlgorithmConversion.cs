@@ -22,17 +22,17 @@ namespace PasswordVault.Services
         }
 
         /*PUBLIC METHODS***************************************************/
-        public void Convert(User user, string password, EncryptionServiceParameters originalParams, EncryptionServiceParameters newParams)
+        public void Convert(User user, string password, EncryptionParameters originalParams, EncryptionParameters newParams)
         {
-            List<Password> passwords = _passwordService.GetPasswords(user.GUID, user.PlainTextRandomKey, originalParams);
+            //List<Password> passwords = _passwordService.GetPasswords(user.Uuid, user.PlainTextRandomKey, originalParams);
 
-            _userService.ChangeUserPassword(user.GUID, password, password, password, user.PlainTextRandomKey, newParams);
-            _userService.ModifyUser(user.GUID, user, user.PlainTextRandomKey, newParams);
+            //_userService.ChangeUserPassword(user.Uuid, password, password, password, user.PlainTextRandomKey, newParams);
+            //_userService.ModifyUser(user.Uuid, user, user.PlainTextRandomKey, newParams);
 
-            foreach (var pass in passwords)
-            {
-                _passwordService.ModifyPassword(user.GUID, pass, user.PlainTextRandomKey, newParams);
-            }         
+            //foreach (var pass in passwords)
+            //{
+            //    _passwordService.ModifyPassword(user.Uuid, pass, user.PlainTextRandomKey, newParams);
+            //}         
         }
 
         /*PRIVATE METHODS**************************************************/

@@ -6,13 +6,13 @@ namespace PasswordVault.Services
 {
     class ExportFactory : IExportFactory
     {
-        public IExport Get(ExportFileTypes exportType)
+        public IExport Get(ExportFileType exportType)
         {
             IExport export = null;
 
             switch(exportType)
             {
-                case ExportFileTypes.Excel:
+                case ExportFileType.Excel:
                     export = new ExcelExport();
                     break;
 
