@@ -28,7 +28,7 @@ namespace PasswordVault.Desktop.Winforms
         private IPasswordService _passwordService;
         private IUserService _userService;
         private IAuthenticationService _authenticationService;
-        private IExportPasswords _exportPasswords;
+        private IImportExportPasswords _importExportPasswords;
 
         public event Action<AuthenticateResult> AuthenticationResultEvent;
         public event Action DoneLoadingPasswordsEvent;
@@ -40,12 +40,12 @@ namespace PasswordVault.Desktop.Winforms
             IAuthenticationService authenticationService, 
             IPasswordService passwordService, 
             IUserService userService, 
-            IExportPasswords exportPasswords)
+            IImportExportPasswords exportPasswords)
         {
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            _exportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
+            _importExportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -377,18 +377,62 @@ namespace PasswordVault.Desktop.Winforms
             return -1;
         }
 
-        public ExportResult ExportPasswords(ExportFileType fileType, string exportPath, string passwordProtection, bool passwordEnabled)
+        public ImportExportResult ExportPasswords(ImportExportFileType fileType, string exportPath, string passwordProtection, bool passwordEnabled)
         {
-            ExportResult result;
+            ImportExportResult result;
 
-            result = _exportPasswords.Export(fileType, exportPath, _passwordList, passwordProtection, passwordEnabled);
+            result = _importExportPasswords.Export(fileType, exportPath, _passwordList, passwordProtection, passwordEnabled);
+
+            return result;
+        }
+
+        public ImportExportResult ImportPasswords(ImportExportFileType fileType, string importPath, string passphrase, bool passwordEnabled)
+        {
+            ImportExportResult result = ImportExportResult.Fail;
+            List<Password> passwords;
+
+            ImportResult importresult = _importExportPasswords.Import(fileType, importPath, passphrase, passwordEnabled);
+
+            if (importresult.Result != ImportExportResult.Success)
+            {
+                return importresult.Result;
+            }
+            else
+            {
+                passwords = importresult.Passwords;
+            }
+
+            if (passwords == null || passwords.Count == 0)
+            {
+                result = ImportExportResult.Fail;
+            }
+            else
+            {
+                result = ImportExportResult.Success;
+
+                foreach (var password in passwords)
+                {
+                    // check if password exists
+                    int index = _passwordList.FindIndex(x => (x.Application == password.Application));
+                    if (index == -1)
+                    {
+                        var addresult = AddPassword(password);
+
+                        if (addresult != AddModifyPasswordResult.Success)
+                        {
+                            result = ImportExportResult.Fail;
+                            break; // TODO - On failure, need to report which password had an issue
+                        }
+                    }
+                }              
+            }
 
             return result;
         }
 
         public List<SupportedFileTypes> GetSupportedFileTypes()
         {
-            return _exportPasswords.GetSupportedFileTypes();
+            return _importExportPasswords.GetSupportedFileTypes();
         }
 
         /*PRIVATE METHODS**************************************************/
@@ -413,6 +457,8 @@ namespace PasswordVault.Desktop.Winforms
 
             _passwordList.Add(newPassword);
         }
+
+
 
         /*STATIC METHODS***************************************************/
 

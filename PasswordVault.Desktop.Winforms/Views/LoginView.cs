@@ -631,11 +631,29 @@ namespace PasswordVault.Desktop.Winforms
             createLoginButton.Enabled = false;
         }
 
+        private void loginPasswordTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                loginButton.PerformClick();
+                e.Handled = true;
+            }       
+        }
+
+        private void createEmailTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                createLoginButton.PerformClick();
+                e.Handled = true;
+            }
+        }
+
         /*=================================================================================================
         STATIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
 
 
-        } // LoginForm CLASS
+    } // LoginForm CLASS
 } // LoginForm NAMESPACE

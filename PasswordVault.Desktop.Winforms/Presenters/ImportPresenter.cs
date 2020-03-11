@@ -1,43 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PasswordVault.Services;
-using PasswordVault.Models;
-using System.IO;
 
 namespace PasswordVault.Desktop.Winforms
 {
-    class ExportPresenter
+    public class ImportPresenter
     {
-        private IExportView _exportView;
+        private IImportView _importView;
         private IDesktopServiceWrapper _serviceWrapper;
 
-        public ExportPresenter(IExportView exportView, IDesktopServiceWrapper serviceWrapper)
+        public ImportPresenter(IImportView importView, IDesktopServiceWrapper serviceWrapper)
         {
-            _exportView = exportView;
+            _importView = importView;
             _serviceWrapper = serviceWrapper;
 
-            _exportView.ExportPasswordsEvent += ExportPasswords;
-            _exportView.InitializeEvent += InitializeFileTypes;
-            _exportView.DataValidationEvent += DataValidation;
-
+            _importView.InitializeEvent += InitializeFileTypes;
+            _importView.ImportPasswordsEvent += ImportPasswords;
+            _importView.DataValidationEvent += DataValidation;
         }
 
         private void InitializeFileTypes()
         {
             List<SupportedFileTypes> supportedFileTypes = _serviceWrapper.GetSupportedFileTypes();
-            _exportView.DisplayFileTypes(supportedFileTypes);
+            _importView.DisplayFileTypes(supportedFileTypes);
         }
 
-        private void ExportPasswords(ImportExportFileType fileType, string path, string password, bool passwordEnabled)
+        private void ImportPasswords(ImportExportFileType fileType, string path, string password)
         {
-            ImportExportResult result = _serviceWrapper.ExportPasswords(fileType, path, password, passwordEnabled);
-            _exportView.DisplayExportResult(result);
+            bool passwordEnabled = true;
+
+            if (string.IsNullOrEmpty(password) || password == "Enter password..")
+            {
+                passwordEnabled = false;
+            }
+            ImportExportResult result = _serviceWrapper.ImportPasswords(fileType, path, password, passwordEnabled);
+            _importView.DisplayImportResult(result);
         }
 
-        private void DataValidation(string path, string password, bool passwordEnabled)
+        private void DataValidation(string path, string password)
         {
             ExportValidationResult result = ExportValidationResult.Invalid;
             ImportExportFileType fileType = ImportExportFileType.Unsupported;
@@ -48,7 +52,7 @@ namespace PasswordVault.Desktop.Winforms
             if (path.Contains('.'))
             {
                 supportedFile = supportedFileTypes.Where(x => x.Filter.Contains(path.Split('.')[1])).FirstOrDefault();
-            }          
+            }
 
             if (supportedFile != null)
             {
@@ -70,15 +74,9 @@ namespace PasswordVault.Desktop.Winforms
                 result = ExportValidationResult.FileNotSupported;
             }
 
-            if (passwordEnabled)
-            {
-                if (string.IsNullOrEmpty(password) || password == "Enter encryption password..")
-                {
-                    result = ExportValidationResult.InvalidPassword;
-                }
-            }        
-
-            _exportView.DisplayValidationResult(result, fileType);
+            _importView.DisplayValidationResult(result, fileType);
         }
     }
+
+
 }

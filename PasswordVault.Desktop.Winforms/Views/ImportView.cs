@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace PasswordVault.Desktop.Winforms
 {
-    public partial class ExportView : Form, IExportView
+    public partial class ImportView : Form, IImportView
     {
         /*=================================================================================================
         CONSTANTS
@@ -21,9 +21,10 @@ namespace PasswordVault.Desktop.Winforms
 		FIELDS
 		*================================================================================================*/
         /*PUBLIC******************************************************************************************/
-        public event Action<ImportExportFileType, string, string, bool> ExportPasswordsEvent;
+        public event Action<ImportExportFileType, string, string> ImportPasswordsEvent;
         public event Action InitializeEvent;
-        public event Action<string, string, bool> DataValidationEvent;
+        public event Action<string, string> DataValidationEvent;
+        public event Action<ImportExportResult> ImportPasswordsDoneEvent;
 
         /*PRIVATE*****************************************************************************************/
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
@@ -41,7 +42,7 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public ExportView()
+        public ImportView()
         {
             InitializeComponent();
 
@@ -59,12 +60,12 @@ namespace PasswordVault.Desktop.Winforms
             statusLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             statusLabel.Text = "";
 
-            exportButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            exportButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            exportButton.FlatStyle = FlatStyle.Flat;
-            exportButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
-            exportButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
-            exportButton.FlatAppearance.BorderSize = 1;
+            importButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            importButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            importButton.FlatStyle = FlatStyle.Flat;
+            importButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            importButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            importButton.FlatAppearance.BorderSize = 1;
 
             browseFoldersButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             browseFoldersButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
@@ -78,35 +79,39 @@ namespace PasswordVault.Desktop.Winforms
             filePathTextbox.BorderStyle = BorderStyle.FixedSingle;
             filePathTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
 
-            exportPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            exportPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            exportPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            exportPasswordTextbox.Text = "Enter encryption password..";
-            exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            exportPasswordTextbox.Enabled = false;
-
-            encryptionEnabledCheckbox.BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
-            encryptionEnabledCheckbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            encryptionEnabledCheckbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            importPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            importPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
+            importPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            importPasswordTextbox.Text = "Enter password..";
+            importPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
         }
 
         /*=================================================================================================
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
-        public void DisplayExportResult(ImportExportResult result)
+        public void DisplayImportResult(ImportExportResult result)
         {
+            ImportPasswordsDoneEvent?.Invoke(result);
             switch (result)
             {
                 case ImportExportResult.Success:
                     UIHelper.UpdateStatusLabel("Success.", statusLabel, ErrorLevel.Ok);
                     break;
 
+                case ImportExportResult.PasswordInvalid:
+                    UIHelper.UpdateStatusLabel("Invalid password!", statusLabel, ErrorLevel.Error);
+                    break;
+
+                case ImportExportResult.PasswordProtected:
+                    UIHelper.UpdateStatusLabel("Must provide password!", statusLabel, ErrorLevel.Error);
+                    break;
+
                 case ImportExportResult.Fail:                                    
                 default:
-                    UIHelper.UpdateStatusLabel("Error occured during export.", statusLabel, ErrorLevel.Error);
+                    UIHelper.UpdateStatusLabel("Error occured during import.", statusLabel, ErrorLevel.Error);
                     break;
-            }
+            }           
         }
 
         /*************************************************************************************************/
@@ -127,7 +132,7 @@ namespace PasswordVault.Desktop.Winforms
                     break;
 
                 case ExportValidationResult.Valid:
-                    ExportPasswordsEvent?.Invoke(fileType, filePathTextbox.Text, exportPasswordTextbox.Text, encryptionEnabledCheckbox.Checked);
+                    ImportPasswordsEvent?.Invoke(fileType, filePathTextbox.Text, importPasswordTextbox.Text);
                     break;              
 
                 case ExportValidationResult.Invalid:
@@ -146,7 +151,7 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void ShowExportView()
+        public void ShowImportView()
         {
             InitializeEvent?.Invoke();
             this.Show();
@@ -159,9 +164,8 @@ namespace PasswordVault.Desktop.Winforms
         private void ResetForm()
         {
             statusLabel.Text = "";
-            exportPasswordTextbox.Text = "";
+            importPasswordTextbox.Text = "";
             filePathTextbox.Text = "";
-            encryptionEnabledCheckbox.Checked = false;
         }
 
         /*************************************************************************************************/
@@ -234,8 +238,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void browseFoldersButton_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             string filter = "";
             foreach (var fileFilter in _fileFilters)
@@ -245,71 +249,60 @@ namespace PasswordVault.Desktop.Winforms
             filter = filter.TrimEnd('|');
 
 
-            sfd.Filter = filter;
+            ofd.Filter = filter;
 
-            if (sfd.ShowDialog() == DialogResult.OK)
+            if (ofd.ShowDialog() == DialogResult.OK)
             {
-                filePathTextbox.Text = sfd.FileName;
+                filePathTextbox.Text = ofd.FileName;
             }
 
-            sfd.Dispose();
+            ofd.Dispose();
         }
 
         /*************************************************************************************************/
-        private void exportButton_Click(object sender, EventArgs e)
+        private void importButton_Click(object sender, EventArgs e)
         {
-            DataValidationEvent?.Invoke(filePathTextbox.Text, exportPasswordTextbox.Text, encryptionEnabledCheckbox.Checked);           
+            DataValidationEvent?.Invoke(filePathTextbox.Text, importPasswordTextbox.Text);
         }
 
         /*************************************************************************************************/
-        private void ExportView_FormClosing(object sender, FormClosingEventArgs e)
+        private void ImportView_FormClosing(object sender, FormClosingEventArgs e)
         {
+            ResetForm();
             this.Hide();
             e.Cancel = true; // this cancels the close event.
         }
 
         /*************************************************************************************************/
-        private void encryptionEnabledCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void importPasswordTextbox_TextChanged(object sender, EventArgs e)
         {
-            if (encryptionEnabledCheckbox.Checked)
+            importPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+        }
+
+        /*************************************************************************************************/
+        private void importPasswordTextbox_Enter(object sender, EventArgs e)
+        {
+            if (importPasswordTextbox.Text == "Enter password..")
             {
-                exportPasswordTextbox.Enabled = true;
-            }
-            else
-            {
-                exportPasswordTextbox.Text = "Enter encryption password..";
-                exportPasswordTextbox.Enabled = false;
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+                importPasswordTextbox.PasswordChar = '•';
+                importPasswordTextbox.Text = "";
+                importPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             }
         }
 
         /*************************************************************************************************/
-        private void exportPasswordTextbox_TextChanged(object sender, EventArgs e)
+        private void importPasswordTextbox_Leave(object sender, EventArgs e)
         {
-            exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-        }
-
-        /*************************************************************************************************/
-        private void exportPasswordTextbox_Enter(object sender, EventArgs e)
-        {
-            if (exportPasswordTextbox.Text == "Enter encryption password..")
+            if (string.IsNullOrEmpty(importPasswordTextbox.Text))
             {
-                exportPasswordTextbox.PasswordChar = '•';
-                exportPasswordTextbox.Text = "";
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+                importPasswordTextbox.PasswordChar = '\0';
+                importPasswordTextbox.Text = "Enter password..";
+                importPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
             }
         }
 
-        /*************************************************************************************************/
-        private void exportPasswordTextbox_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(exportPasswordTextbox.Text))
-            {
-                exportPasswordTextbox.PasswordChar = '\0';
-                exportPasswordTextbox.Text = "Enter encryption password..";
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            }
-        }
+
+
 
 
         /*=================================================================================================

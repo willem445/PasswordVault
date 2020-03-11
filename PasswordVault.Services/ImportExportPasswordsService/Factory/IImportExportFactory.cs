@@ -4,8 +4,8 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    interface IExportFactory
+    interface IImportExportFactory
     {
-        IExport Get(ExportFileType exportType);
+        IImportExport Get(ImportExportFileType type);
     }
 }

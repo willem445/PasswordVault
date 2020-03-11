@@ -77,6 +77,7 @@ namespace PasswordVault.Desktop.Winforms
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.label7 = new System.Windows.Forms.Label();
             this.passwordCountLabel = new System.Windows.Forms.Label();
+            this.importPasswordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -104,7 +105,8 @@ namespace PasswordVault.Desktop.Winforms
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loginToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.exportPasswordsToolStripMenuItem});
+            this.exportPasswordsToolStripMenuItem,
+            this.importPasswordsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 26);
             this.fileToolStripMenuItem.Text = "File";
@@ -112,19 +114,19 @@ namespace PasswordVault.Desktop.Winforms
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loginToolStripMenuItem.Text = "Login";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(163, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // exportPasswordsToolStripMenuItem
             // 
             this.exportPasswordsToolStripMenuItem.Name = "exportPasswordsToolStripMenuItem";
-            this.exportPasswordsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.exportPasswordsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportPasswordsToolStripMenuItem.Text = "Export Passwords";
             this.exportPasswordsToolStripMenuItem.Click += new System.EventHandler(this.exportPasswordsToolStripMenuItem_Click);
             // 
@@ -444,6 +446,13 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordCountLabel.TabIndex = 37;
             this.passwordCountLabel.Text = "0";
             // 
+            // importPasswordsToolStripMenuItem
+            // 
+            this.importPasswordsToolStripMenuItem.Name = "importPasswordsToolStripMenuItem";
+            this.importPasswordsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importPasswordsToolStripMenuItem.Text = "Import Passwords";
+            this.importPasswordsToolStripMenuItem.Click += new System.EventHandler(this.importPasswordsToolStripMenuItem_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -534,6 +543,7 @@ namespace PasswordVault.Desktop.Winforms
         private Label passwordCountLabel;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem exportPasswordsToolStripMenuItem;
+        private ToolStripMenuItem importPasswordsToolStripMenuItem;
     }
 }
 

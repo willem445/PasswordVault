@@ -8,16 +8,16 @@ using PasswordVault.Models;
 
 namespace PasswordVault.Desktop.Winforms
 {
-    public interface IExportView
+    public interface IImportView
     {
         event Action InitializeEvent;
-        event Action<ImportExportFileType, string, string, bool> ExportPasswordsEvent;
-        event Action<string, string, bool> DataValidationEvent;
+        event Action<ImportExportFileType, string, string> ImportPasswordsEvent;
+        event Action<string, string> DataValidationEvent;
+        event Action<ImportExportResult> ImportPasswordsDoneEvent;
 
         void DisplayFileTypes(List<SupportedFileTypes> fileTypes);
-        void DisplayExportResult(ImportExportResult result);
+        void DisplayImportResult(ImportExportResult result);
         void DisplayValidationResult(ExportValidationResult result, ImportExportFileType fileType);
-        void ShowExportView();
-
+        void ShowImportView();
     }
 }

@@ -61,6 +61,7 @@ namespace PasswordVault.Desktop.Winforms
             _serviceWrapper = serviceWrapper;
 
             _mainView.FilterChangedEvent += FilterChanged;
+            _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
             _mainView.RequestPasswordsOnLoginEvent += UpdatePasswordsUI;
             _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
             _mainView.AddPasswordEvent += AddPassword;
