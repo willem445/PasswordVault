@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using PasswordVault.Utilities;
 
 namespace PasswordVault.Services
 {

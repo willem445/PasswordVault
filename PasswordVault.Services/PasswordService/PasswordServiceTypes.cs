@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using PasswordVault.Models;
 
 /*=================================================================================================
 DESCRIPTION
@@ -13,13 +14,13 @@ namespace PasswordVault.Services
 {
     public struct AddPasswordResult : IEquatable<AddPasswordResult>
     {
-        public AddPasswordResult(AddModifyPasswordResult result, Int64 uniquePasswordID)
+        public AddPasswordResult(ValidatePassword result, Int64 uniquePasswordID)
         {
             Result = result;
             UniquePasswordID = uniquePasswordID;
         }
 
-        public AddModifyPasswordResult Result { get; }
+        public ValidatePassword Result { get; }
         public Int64 UniquePasswordID { get; }
 
         public override bool Equals(object obj)
@@ -72,19 +73,6 @@ namespace PasswordVault.Services
 
             return true;
         }
-    }
-
-    public enum AddModifyPasswordResult
-    {
-        ApplicationError,
-        UsernameError,
-        EmailError,
-        DescriptionError,
-        WebsiteError,
-        PassphraseError,
-        DuplicatePassword,
-        Failed,
-        Success,
     }
 
     public enum DeletePasswordResult

@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.CompilerServices;
+using PasswordVault.Utilities;
 
 /* Encryption/Decryption logic is based on recommended practice written 
  * by Microsoft.

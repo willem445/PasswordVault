@@ -15,9 +15,7 @@ namespace PasswordVault.Services
         public int RandomKeySize { get; }
     }
 
-#pragma warning disable CA1815 // Override equals and operator equals on value types
     public struct UserEncrypedData
-#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public UserEncrypedData(KeyDerivationAlgorithm alg, int keysize, string salt, int saltsize, string hash, UInt32 iterations, int degreeOfParallelism, int memorySize, string randomGeneratedKey)
         {

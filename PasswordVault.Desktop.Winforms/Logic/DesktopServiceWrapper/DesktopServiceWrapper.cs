@@ -28,7 +28,7 @@ namespace PasswordVault.Desktop.Winforms
         private IPasswordService _passwordService;
         private IUserService _userService;
         private IAuthenticationService _authenticationService;
-        private IExportPasswords _exportPasswords;
+        private IImportExportPasswords _importExportPasswords;
 
         public event Action<AuthenticateResult> AuthenticationResultEvent;
         public event Action DoneLoadingPasswordsEvent;
@@ -40,12 +40,12 @@ namespace PasswordVault.Desktop.Winforms
             IAuthenticationService authenticationService, 
             IPasswordService passwordService, 
             IUserService userService, 
-            IExportPasswords exportPasswords)
+            IImportExportPasswords exportPasswords)
         {
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            _exportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
+            _importExportPasswords = exportPasswords ?? throw new ArgumentNullException(nameof(exportPasswords));
 
             _currentUser = new User(false);
             _passwordList = new List<Password>();
@@ -212,13 +212,13 @@ namespace PasswordVault.Desktop.Winforms
             return user;
         }
 
-        public AddModifyPasswordResult AddPassword(Password password)
+        public ValidatePassword AddPassword(Password password)
         {
-            AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
+            ValidatePassword result = ValidatePassword.Failed;
 
             if (password == null)
             {
-                return AddModifyPasswordResult.Failed;
+                return ValidatePassword.Failed;
             }
 
             if (IsLoggedIn())
@@ -231,10 +231,10 @@ namespace PasswordVault.Desktop.Winforms
                 {
                     AddPasswordResult addResult = _passwordService.AddPassword(_currentUser.Uuid, password, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
-                    if (addResult.Result == AddModifyPasswordResult.Success)
+                    if (addResult.Result == ValidatePassword.Success)
                     {
                         UpdatePasswordListFromDB(password, addResult.UniquePasswordID);
-                        result = AddModifyPasswordResult.Success;
+                        result = ValidatePassword.Success;
                     }
                     else
                     {
@@ -243,7 +243,7 @@ namespace PasswordVault.Desktop.Winforms
                 }
                 else
                 {
-                    result = AddModifyPasswordResult.DuplicatePassword;
+                    result = ValidatePassword.DuplicatePassword;
                 }
             }
 
@@ -283,13 +283,13 @@ namespace PasswordVault.Desktop.Winforms
             return result;
         }
 
-        public AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword)
+        public ValidatePassword ModifyPassword(Password originalPassword, Password modifiedPassword)
         {
-            AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
+            ValidatePassword result = ValidatePassword.Failed;
 
             if (originalPassword == null || modifiedPassword == null)
             {
-                return AddModifyPasswordResult.Failed;
+                return ValidatePassword.Failed;
             }
 
             if (IsLoggedIn())
@@ -316,12 +316,12 @@ namespace PasswordVault.Desktop.Winforms
                                                                      modifiedPassword.Website, 
                                                                      modifiedPassword.Passphrase);
 
-                        AddModifyPasswordResult addResult = _passwordService.ModifyPassword(_currentUser.Uuid, modifiedWithUniqueID, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
+                        ValidatePassword addResult = _passwordService.ModifyPassword(_currentUser.Uuid, modifiedWithUniqueID, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
-                        if (addResult == AddModifyPasswordResult.Success)
+                        if (addResult == ValidatePassword.Success)
                         {
                             _passwordList[index] = modifiedWithUniqueID;
-                            result = AddModifyPasswordResult.Success;
+                            result = ValidatePassword.Success;
                         }
                         else
                         {
@@ -330,12 +330,12 @@ namespace PasswordVault.Desktop.Winforms
                     }
                     else
                     {
-                        result = AddModifyPasswordResult.Failed;
+                        result = ValidatePassword.Failed;
                     }
                 }
                 else
                 {
-                    result = AddModifyPasswordResult.DuplicatePassword;
+                    result = ValidatePassword.DuplicatePassword;
                 }               
             }
 
@@ -352,11 +352,11 @@ namespace PasswordVault.Desktop.Winforms
             return null;
         }
 
-        public string GeneratePasswordKey()
+        public string GeneratePassword()
         {
             string result = "";
 
-            result = _passwordService.GeneratePasswordKey(GENERATED_PASSWORD_LENGTH);
+            result = _passwordService.GeneratePassword(GENERATED_PASSWORD_LENGTH);
 
             return result;
         }
@@ -377,18 +377,73 @@ namespace PasswordVault.Desktop.Winforms
             return -1;
         }
 
-        public ExportResult ExportPasswords(ExportFileType fileType, string exportPath, string passwordProtection, bool passwordEnabled)
+        public ImportExportResult ExportPasswords(ImportExportFileType fileType, string exportPath, string passphrase = null, bool passwordEnabled = false)
         {
-            ExportResult result;
+            ImportExportResult result;
 
-            result = _exportPasswords.Export(fileType, exportPath, _passwordList, passwordProtection, passwordEnabled);
+            result = _importExportPasswords.Export(fileType, exportPath, _passwordList, passphrase, passwordEnabled);
+
+            return result;
+        }
+
+        public ImportExportResult ImportPasswords(ImportExportFileType fileType, string importPath, string passphrase = null, bool passwordEnabled = false)
+        {
+            ImportExportResult result = ImportExportResult.Fail;
+            List<Password> passwords;
+
+            ImportResult importresult = _importExportPasswords.Import(fileType, importPath, passphrase, passwordEnabled);
+
+            if (importresult.Result != ImportExportResult.Success)
+            {
+                return importresult.Result;
+            }
+            else
+            {
+                passwords = importresult.Passwords;
+            }
+
+            if (passwords == null || passwords.Count == 0)
+            {
+                result = ImportExportResult.Fail;
+            }
+            else
+            {
+                result = ImportExportResult.Success;
+
+                // Authenticate passwords before adding them to DB
+                foreach (var password in passwords)
+                {
+                    var validated = Password.Validate(password);
+
+                    if (validated != ValidatePassword.Success)
+                    {
+                        return ImportExportResult.ProblemWithImportedPassword;
+                    }
+                }
+
+                foreach (var password in passwords)
+                {
+                    // check if password exists
+                    int index = _passwordList.FindIndex(x => (x.Application == password.Application));
+                    if (index == -1)
+                    {
+                        var addresult = AddPassword(password);
+
+                        if (addresult != ValidatePassword.Success)
+                        {
+                            result = ImportExportResult.Fail;
+                            break;
+                        }
+                    }
+                }              
+            }
 
             return result;
         }
 
         public List<SupportedFileTypes> GetSupportedFileTypes()
         {
-            return _exportPasswords.GetSupportedFileTypes();
+            return _importExportPasswords.GetSupportedFileTypes();
         }
 
         /*PRIVATE METHODS**************************************************/
@@ -413,6 +468,8 @@ namespace PasswordVault.Desktop.Winforms
 
             _passwordList.Add(newPassword);
         }
+
+
 
         /*STATIC METHODS***************************************************/
 

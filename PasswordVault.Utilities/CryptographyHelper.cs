@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Security.Cryptography;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace PasswordVault.Services
+namespace PasswordVault.Utilities
 {
     public static class CryptographyHelper
     {

@@ -30,7 +30,7 @@ namespace PasswordVault.Services
         /// and passphrase.</param>
         /// <param name="key">Plaintext key used to encrypt data to be stored.</param>
         /// <returns>Result of modifing password.</returns>
-        AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionParameters parameters);
+        ValidatePassword ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionParameters parameters);
 
         /// <summary>
         /// Deletes password from database
@@ -52,6 +52,6 @@ namespace PasswordVault.Services
         /// </summary>
         /// <param name="length">Desired length of password.</param>
         /// <returns>Password key.</returns>
-        string GeneratePasswordKey(int length);
+        string GeneratePassword(int length);
     }
 }

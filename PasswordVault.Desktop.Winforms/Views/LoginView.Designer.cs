@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.newUserButton = new System.Windows.Forms.Button();
             this.loginResultLabel = new System.Windows.Forms.Label();
             this.loginPasswordTextBox = new System.Windows.Forms.TextBox();
             this.loginUsernameTextBox = new System.Windows.Forms.TextBox();
@@ -53,9 +55,8 @@
             this.createLoginButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
-            this.newUserButton = new System.Windows.Forms.Button();
             this.newPasswordHelpLabel = new System.Windows.Forms.Label();
-            this.toolTip = new System.Windows.Forms.ToolTip();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -76,6 +77,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Login";
             // 
+            // newUserButton
+            // 
+            this.newUserButton.Location = new System.Drawing.Point(19, 149);
+            this.newUserButton.Name = "newUserButton";
+            this.newUserButton.Size = new System.Drawing.Size(218, 23);
+            this.newUserButton.TabIndex = 3;
+            this.newUserButton.Text = "New User";
+            this.newUserButton.UseVisualStyleBackColor = true;
+            this.newUserButton.Click += new System.EventHandler(this.newUserButton_Click);
+            // 
             // loginResultLabel
             // 
             this.loginResultLabel.AutoSize = true;
@@ -92,6 +103,7 @@
             this.loginPasswordTextBox.PasswordChar = '•';
             this.loginPasswordTextBox.Size = new System.Drawing.Size(218, 20);
             this.loginPasswordTextBox.TabIndex = 1;
+            this.loginPasswordTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.loginPasswordTextBox_KeyPress);
             // 
             // loginUsernameTextBox
             // 
@@ -160,6 +172,7 @@
             this.createEmailTextBox.TabIndex = 9;
             this.createEmailTextBox.TextChanged += new System.EventHandler(this.createEmailTextBox_TextChanged);
             this.createEmailTextBox.Enter += new System.EventHandler(this.createEmailTextBox_Enter);
+            this.createEmailTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.createEmailTextBox_KeyPress);
             this.createEmailTextBox.Leave += new System.EventHandler(this.createEmailTextBox_Leave);
             // 
             // createPhoneNumberTextBox
@@ -310,16 +323,6 @@
             this.moveWindowPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseDown);
             this.moveWindowPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseMove);
             this.moveWindowPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MoveWindowPanel_MouseUp);
-            // 
-            // newUserButton
-            // 
-            this.newUserButton.Location = new System.Drawing.Point(19, 149);
-            this.newUserButton.Name = "newUserButton";
-            this.newUserButton.Size = new System.Drawing.Size(218, 23);
-            this.newUserButton.TabIndex = 3;
-            this.newUserButton.Text = "New User";
-            this.newUserButton.UseVisualStyleBackColor = true;
-            this.newUserButton.Click += new System.EventHandler(this.newUserButton_Click);
             // 
             // newPasswordHelpLabel
             // 

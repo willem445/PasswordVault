@@ -46,9 +46,9 @@ namespace PasswordVault.Desktop.Winforms
         bool VerifyCurrentUserPassword(string password);
         DeleteUserResult DeleteUser(User user, int expectedPasswordCount);
         UserInformationResult EditUser(User user);
-        AddModifyPasswordResult AddPassword(Password password);
+        ValidatePassword AddPassword(Password password);
         DeletePasswordResult DeletePassword(Password password);
-        AddModifyPasswordResult ModifyPassword(Password originalPassword, Password modifiedPassword);
+        ValidatePassword ModifyPassword(Password originalPassword, Password modifiedPassword);
         List<Password> GetPasswords();
 
         /// <summary>
@@ -57,9 +57,11 @@ namespace PasswordVault.Desktop.Winforms
         /// <returns>Number of passwords. -1 if error.</returns>
         int GetPasswordCount();
         int GetMinimumPasswordLength();
-        string GeneratePasswordKey();
+        string GeneratePassword();
 
-        ExportResult ExportPasswords(ExportFileType fileType, string exportPath, string passwordProtection, bool passwordEnabled);
+        ImportExportResult ExportPasswords(ImportExportFileType fileType, string exportPath, string password = null, bool passwordEnabled = false);
+
+        ImportExportResult ImportPasswords(ImportExportFileType fileType, string importPath, string password = null, bool passwordEnabled = false);
 
         List<SupportedFileTypes> GetSupportedFileTypes();
     }

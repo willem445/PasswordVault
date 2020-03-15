@@ -53,6 +53,7 @@ namespace PasswordVault.Desktop.Winforms
         /*PUBLIC******************************************************************************************/
         public event Action<string, PasswordFilterOption> FilterChangedEvent;
         public event Action RequestPasswordsOnLoginEvent;
+        public event Action RequestPasswordsEvent;
         public event Action LogoutEvent;
         public event Action<string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
@@ -73,6 +74,7 @@ namespace PasswordVault.Desktop.Winforms
         private IEditUserView _editUserView;
         private IConfirmDeleteUserView _confirmDeleteUserView;
         private IExportView _exportView;
+        private IImportView _importView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -97,18 +99,20 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView, IExportView exportView)
+        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView, IExportView exportView, IImportView importView)
         {
             _loginView = loginView ?? throw new ArgumentNullException(nameof(loginView));
             _changePasswordView = changePasswordView ?? throw new ArgumentNullException(nameof(changePasswordView));
             _editUserView = editUserView ?? throw new ArgumentNullException(nameof(editUserView));
             _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
             _exportView = exportView ?? throw new ArgumentNullException(nameof(exportView));
+            _importView = importView ?? throw new ArgumentNullException(nameof(importView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _loginView.AuthenticationSuccessfulEvent += AuthenticationSuccessful;
             _confirmDeleteUserView.ConfirmPasswordSuccessEvent += DeleteAccountConfirmPasswordSuccess;
             _confirmDeleteUserView.DeleteSuccessEvent += DeleteAccountSuccess;
+            _importView.ImportPasswordsDoneEvent += DisplayImportResult;
 
             _dgvPasswordList = new BindingList<Password>();
             InitializeComponent();
@@ -178,6 +182,10 @@ namespace PasswordVault.Desktop.Winforms
             exportPasswordsToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             exportPasswordsToolStripMenuItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             exportPasswordsToolStripMenuItem.Enabled = false;
+            importPasswordsToolStripMenuItem.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            importPasswordsToolStripMenuItem.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            importPasswordsToolStripMenuItem.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            importPasswordsToolStripMenuItem.Enabled = false;
 
             // Configure buttons
             addButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
@@ -393,43 +401,43 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayAddEditPasswordResult(AddModifyPasswordResult result)
+        public void DisplayAddEditPasswordResult(ValidatePassword result)
         {
             switch(result)
             {
-                case AddModifyPasswordResult.DuplicatePassword:
+                case ValidatePassword.DuplicatePassword:
                     UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Failed:
+                case ValidatePassword.Failed:
                     UIHelper.UpdateStatusLabel("Modify password failed.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.UsernameError:
+                case ValidatePassword.UsernameError:
                     UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.ApplicationError:
+                case ValidatePassword.ApplicationError:
                     UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.PassphraseError:
+                case ValidatePassword.PassphraseError:
                     UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.EmailError:
+                case ValidatePassword.EmailError:
                     UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.DescriptionError:
+                case ValidatePassword.DescriptionError:
                     UIHelper.UpdateStatusLabel("Invalid description!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.WebsiteError:
+                case ValidatePassword.WebsiteError:
                     UIHelper.UpdateStatusLabel("Invalid website!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Success:
+                case ValidatePassword.Success:
                     addButton.Text = "Add";
                     _editMode = false;
                     editCancelButton.Enabled = false;
@@ -486,6 +494,7 @@ namespace PasswordVault.Desktop.Winforms
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
                     exportPasswordsToolStripMenuItem.Enabled = false;
+                    importPasswordsToolStripMenuItem.Enabled = false;
                     editToolStripMenuItem.Enabled = false;
                     label7.Visible = false;
                     passwordCountLabel.Visible = false;
@@ -508,39 +517,39 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayAddPasswordResult(AddModifyPasswordResult result)
+        public void DisplayAddPasswordResult(ValidatePassword result)
         {
             switch(result)
             {
-                case AddModifyPasswordResult.Failed:
+                case ValidatePassword.Failed:
                     UIHelper.UpdateStatusLabel("Add password failed.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.DuplicatePassword:
+                case ValidatePassword.DuplicatePassword:
                     UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.UsernameError:
+                case ValidatePassword.UsernameError:
                     UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.ApplicationError:
+                case ValidatePassword.ApplicationError:
                     UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.PassphraseError:
+                case ValidatePassword.PassphraseError:
                     UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.EmailError:
+                case ValidatePassword.EmailError:
                     UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.WebsiteError:
+                case ValidatePassword.WebsiteError:
                     UIHelper.UpdateStatusLabel("Invalid website!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Success:
+                case ValidatePassword.Success:
                     UIHelper.UpdateStatusLabel("Success.", userStatusLabel, ErrorLevel.Neutral);
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";
@@ -621,6 +630,7 @@ namespace PasswordVault.Desktop.Winforms
             deleteToolStripMenuItem.Enabled = true;
             changePasswordToolStripMenuItem.Enabled = true;
             exportPasswordsToolStripMenuItem.Enabled = true;
+            importPasswordsToolStripMenuItem.Enabled = true;
             editToolStripMenuItem.Enabled = true;
             label7.Visible = true;
             passwordCountLabel.Visible = true;
@@ -630,10 +640,28 @@ namespace PasswordVault.Desktop.Winforms
             RaiseRequestPasswordsOnLoginEvent();
         }
 
+        /*************************************************************************************************/
         private void AuthenticationSuccessful()
         {
             Cursor = Cursors.WaitCursor;
             UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral);
+        }
+
+        /*************************************************************************************************/
+        private void DisplayImportResult(ImportExportResult result)
+        {
+            switch (result)
+            {
+                case ImportExportResult.Success:
+                    UIHelper.UpdateStatusLabel("Success", userStatusLabel, ErrorLevel.Neutral);
+                    break;
+                case ImportExportResult.Fail:
+                default:
+                    UIHelper.UpdateStatusLabel("Import failed!", userStatusLabel, ErrorLevel.Error);
+                    break;
+            }
+
+            RaiseRequestPasswordsEvent();
         }
 
         /*************************************************************************************************/
@@ -651,6 +679,15 @@ namespace PasswordVault.Desktop.Winforms
             if (RequestPasswordsOnLoginEvent != null)
             {
                 RequestPasswordsOnLoginEvent();
+            }
+        }
+
+        /*************************************************************************************************/
+        private void RaiseRequestPasswordsEvent()
+        {
+            if (RequestPasswordsEvent != null)
+            {
+                RequestPasswordsEvent();
             }
         }
 
@@ -1150,11 +1187,19 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
+        private void importPasswordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _importView.ShowImportView();
+        }
+
+        /*************************************************************************************************/
         private void MainView_SizeChanged(object sender, EventArgs e)
         {
             // This should help with redrawing the form when minimizing
             this.Refresh();
         }
+
+
 
         /*=================================================================================================
         STATIC METHODS

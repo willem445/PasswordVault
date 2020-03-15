@@ -6,6 +6,8 @@ using PasswordVault.Models;
 using PasswordVault.Data;
 using System.Globalization;
 
+// TODO - Generate valid user password method
+
 namespace PasswordVault.Services
 {
     public class UserService : IUserService

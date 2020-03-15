@@ -98,7 +98,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void GeneratePassword()
         {
-            string generatedPassword = _serviceWrapper.GeneratePasswordKey();
+            string generatedPassword = _serviceWrapper.GeneratePassword();
             _changePasswordView.DisplayGeneratedPassword(generatedPassword);
         }
 

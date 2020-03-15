@@ -4,16 +4,16 @@ using System.Text;
 
 namespace PasswordVault.Services
 {
-    class ExportFactory : IExportFactory
+    class ImportExportFactory : IImportExportFactory
     {
-        public IExport Get(ExportFileType exportType)
+        public IImportExport Get(ImportExportFileType exportType)
         {
-            IExport export = null;
+            IImportExport export = null;
 
             switch(exportType)
             {
-                case ExportFileType.Excel:
-                    export = new ExcelExport();
+                case ImportExportFileType.Excel:
+                    export = new ExcelImportExport();
                     break;
 
                 default:

@@ -19,40 +19,24 @@ namespace PasswordVault.ServicesTests
         public IDesktopServiceWrapper passwordService;
         public AddUserResult createUserResult;
         public AuthenticateResult loginResult;
+        public AddPasswordResult addPasswordResult;
         public LogOutResult logoutResult;
-        public AddModifyPasswordResult addPasswordResult;
+        public ValidatePassword addModifyPasswordResult;
 
-        List<User> testUsers;
-        List<Password> validTestPasswords;
+        private List<User> testUsers;
+        private List<Password> validTestPasswords;
+        private Dictionary<string, User> invalidTestUsers;
+        private Dictionary<string, Password> invalidTestPasswords;
+        private int userAccountCount = 0;
+        private int passwordCount = 0;
+        private TestContext testContextInstance;
 
         public PasswordServiceTestBase()
         {
             testUsers = new List<User>();
-            testUsers.Add(new User("testAccount0", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"));
-            testUsers.Add(new User("testAccount1", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"));
-            testUsers.Add(new User("testAccount2", "testPassword1@aaaaaaaaa", "testFirstName", "testLastName", "222-111-1111", "test@test.com"));
-
             validTestPasswords = new List<Password>();
-            validTestPasswords.Add(new Password("App0", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App3", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App4", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App5", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App6", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App7", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App8", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App9", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App10", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
-            validTestPasswords.Add(new Password("App11", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase"));
         }
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
         public TestContext TestContext
         {
             get
@@ -69,7 +53,7 @@ namespace PasswordVault.ServicesTests
         {
             get
             {
-                return TestUsers;
+                return testUsers;
             }
         }
 
@@ -82,45 +66,105 @@ namespace PasswordVault.ServicesTests
         }
 
         #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
         [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext) 
         {
            
         }
 
-        // Use ClassCleanup to run code after all tests in a class have run
         [ClassCleanup()]
         public static void MyClassCleanup() 
         { 
 
         }
 
-        // Use TestInitialize to run code before running each test 
         [TestInitialize()]
         public void MyTestInitialize() 
         {
             db = DatabaseFactory.GetDatabase(Database.InMemory);
             passwordService = DesktopPasswordServiceBuilder.BuildDesktopServiceWrapper(db);
 
-            User testUserNumber = GetTestUser(0);
+            for (int i = 0; i < 20; i++)
+            {
+                testUsers.Add(GetRandomValidUser());
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                validTestPasswords.Add(GetRandomValidPassword());
+            }
+
+            invalidTestUsers = new Dictionary<string, User>()
+            {
+                // Usernames
+                { "UsernameAlreadyTaken", new User("testusername0", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "email@email.com")}, // this one assumes that it has already been added
+                { "UsernameEmpty", new User("", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "email@email.com")},
+                { "UsernameNull", new User(null, "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "email@email.com")},
+
+                // Emails
+                { "InvalidEmailNotIncludeAt", new User("username", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "emailemail.com")},
+                { "InvalidEmailNotIncludePeriod", new User("username", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "email@emailcom")},
+                { "EmptyEmail", new User("username", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "")},
+                { "NullEmail", new User("username", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", null)},
+                { "EmailMatchesGhostText", new User("username", "testPassword1@aaaaaaaaa", "Name", "Last", "222-222-2222", "example@provider.com")},
+            };
+
+            invalidTestPasswords = new Dictionary<string, Password>()
+            {
+                // Usernames
+                { "InvalidUsernameNull", new Password("app", null, "", "", "", "testPassword1@aaaaaaaaa") }
+            };
+
+            User testUserNumber = GetUser(0);
             CreateAccount(testUserNumber);
-            TestLogin(testUserNumber.Username, testUserNumber.PlainTextPassword);
+            Login(testUserNumber.Username, testUserNumber.PlainTextPassword);
+
+            foreach (var password in ValidTestPasswords)
+            {
+                AddPassword(password);
+            }
         }
 
-        // Use TestCleanup to run code after each test has run
         [TestCleanup()]
         public void MyTestCleanup() 
         {
-            TestLogout();
+            Logout();
             ((InMemoryDatabase)db).LocalPasswordDbAccess.Clear();
             ((InMemoryDatabase)db).LocalUserDbAccess.Clear();       
         }
 
         #endregion
+
+        public User GetRandomValidUser()
+        {
+            string usernamebase = "testusername";
+
+            User user = new User(
+                username: usernamebase + userAccountCount++,
+                "testPassword1@aaaaaaaaa", 
+                "testFirstName", 
+                "testLastName", 
+                "222-111-1111", 
+                "test@test.com");
+
+            return user;
+        }
+
+        public Password GetRandomValidPassword()
+        {
+            string appnamebase = "testappname";
+
+            Password password = new Password(
+                appnamebase + passwordCount++,
+                "username",
+                "email@email.com",
+                "description",
+                "https://fakesite.com",
+                passwordService.GeneratePassword()
+                );
+
+            return password;
+        }
 
         public void CreateAccount(User user)
         {
@@ -128,19 +172,35 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(AddUserResult.Successful, createUserResult);
         }
 
-        public void TestLogin(string username, string password)
+        public void DeleteUserPasswords()
+        {
+            List<Password> passwords = new List<Password>(passwordService.GetPasswords().ToArray());
+
+            foreach (var password in ValidTestPasswords)
+            {
+                passwordService.DeletePassword(password);
+            }
+        }
+
+        public void Login(string username, string password)
         {
             loginResult = passwordService.Login(username, password);
             Assert.AreEqual(AuthenticateResult.Successful, loginResult);
         }
 
-        public void TestLogout()
+        public void AddPassword(Password password)
+        {
+            addModifyPasswordResult = passwordService.AddPassword(password);
+            Assert.AreEqual(ValidatePassword.Success, addModifyPasswordResult);
+        }
+
+        public void Logout()
         {
             logoutResult = passwordService.Logout();
             Assert.AreEqual(LogOutResult.Success, logoutResult);
         }
 
-        public User GetTestUser(int userNum)
+        public User GetUser(int userNum)
         {
             if (userNum < testUsers.Count)
             {
@@ -151,7 +211,7 @@ namespace PasswordVault.ServicesTests
             return new User(false);
         }
 
-        public Password GetTestPassword(int passwordNum)
+        public Password GetPassword(int passwordNum)
         {
             if (passwordNum < validTestPasswords.Count)
             {
