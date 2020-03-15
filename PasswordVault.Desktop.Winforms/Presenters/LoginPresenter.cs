@@ -105,7 +105,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             string generatedPassword = "";
 
-            generatedPassword = _serviceWrapper.GeneratePasswordKey();
+            generatedPassword = _serviceWrapper.GeneratePassword();
 
             _loginView.DisplayGeneratePasswordResult(generatedPassword);
         }

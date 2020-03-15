@@ -11,6 +11,8 @@ namespace PasswordVault.Services
         Fail,
         PasswordInvalid,
         PasswordProtected,
+        ProblemWithImportedPassword,
+        InvalidPath,
     }
 
     public enum ImportExportFileType

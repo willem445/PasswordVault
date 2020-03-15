@@ -401,43 +401,43 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayAddEditPasswordResult(AddModifyPasswordResult result)
+        public void DisplayAddEditPasswordResult(ValidatePassword result)
         {
             switch(result)
             {
-                case AddModifyPasswordResult.DuplicatePassword:
+                case ValidatePassword.DuplicatePassword:
                     UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Failed:
+                case ValidatePassword.Failed:
                     UIHelper.UpdateStatusLabel("Modify password failed.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.UsernameError:
+                case ValidatePassword.UsernameError:
                     UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.ApplicationError:
+                case ValidatePassword.ApplicationError:
                     UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.PassphraseError:
+                case ValidatePassword.PassphraseError:
                     UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.EmailError:
+                case ValidatePassword.EmailError:
                     UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.DescriptionError:
+                case ValidatePassword.DescriptionError:
                     UIHelper.UpdateStatusLabel("Invalid description!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.WebsiteError:
+                case ValidatePassword.WebsiteError:
                     UIHelper.UpdateStatusLabel("Invalid website!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Success:
+                case ValidatePassword.Success:
                     addButton.Text = "Add";
                     _editMode = false;
                     editCancelButton.Enabled = false;
@@ -517,39 +517,39 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayAddPasswordResult(AddModifyPasswordResult result)
+        public void DisplayAddPasswordResult(ValidatePassword result)
         {
             switch(result)
             {
-                case AddModifyPasswordResult.Failed:
+                case ValidatePassword.Failed:
                     UIHelper.UpdateStatusLabel("Add password failed.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.DuplicatePassword:
+                case ValidatePassword.DuplicatePassword:
                     UIHelper.UpdateStatusLabel("Duplicate password.", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.UsernameError:
+                case ValidatePassword.UsernameError:
                     UIHelper.UpdateStatusLabel("Issue with username field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.ApplicationError:
+                case ValidatePassword.ApplicationError:
                     UIHelper.UpdateStatusLabel("Issue with application field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.PassphraseError:
+                case ValidatePassword.PassphraseError:
                     UIHelper.UpdateStatusLabel("Issue with passphrase field!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.EmailError:
+                case ValidatePassword.EmailError:
                     UIHelper.UpdateStatusLabel("Invalid email!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.WebsiteError:
+                case ValidatePassword.WebsiteError:
                     UIHelper.UpdateStatusLabel("Invalid website!", userStatusLabel, ErrorLevel.Error);
                     break;
 
-                case AddModifyPasswordResult.Success:
+                case ValidatePassword.Success:
                     UIHelper.UpdateStatusLabel("Success.", userStatusLabel, ErrorLevel.Neutral);
                     applicationTextBox.Text = "";
                     descriptionTextBox.Text = "";

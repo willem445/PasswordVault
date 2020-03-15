@@ -21,7 +21,7 @@ namespace PasswordVault.ServicesTests
         public AuthenticateResult loginResult;
         public AddPasswordResult addPasswordResult;
         public LogOutResult logoutResult;
-        public AddModifyPasswordResult addModifyPasswordResult;
+        public ValidatePassword addModifyPasswordResult;
 
         private List<User> testUsers;
         private List<Password> validTestPasswords;
@@ -160,7 +160,7 @@ namespace PasswordVault.ServicesTests
                 "email@email.com",
                 "description",
                 "https://fakesite.com",
-                passwordService.GeneratePasswordKey()
+                passwordService.GeneratePassword()
                 );
 
             return password;
@@ -191,7 +191,7 @@ namespace PasswordVault.ServicesTests
         public void AddPassword(Password password)
         {
             addModifyPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addModifyPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addModifyPasswordResult);
         }
 
         public void Logout()

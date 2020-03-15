@@ -10,9 +10,24 @@ namespace PasswordVault.Services
 {
     class ExcelImportExport : IImportExport
     {
-        public ImportExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword, bool passwordEnabled)
+        public ImportExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword=null, bool passwordEnabled=false)
         {
             ImportExportResult result = ImportExportResult.Success;
+
+            if (string.IsNullOrEmpty(exportPath))
+            {
+                return ImportExportResult.InvalidPath;
+            }
+
+            if (passwordEnabled && string.IsNullOrEmpty(encryptionPassword))
+            {
+                return ImportExportResult.PasswordInvalid;
+            }
+
+            if (passwords == null || passwords.Count == 0)
+            {
+                return ImportExportResult.Fail;
+            }
 
             try
             {
@@ -76,11 +91,21 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public ImportResult Import(string path, string passphrase, bool passwordEnabled)
+        public ImportResult Import(string path, string passphrase=null, bool passwordEnabled=false)
         {
             ImportExportResult result = ImportExportResult.Success;
             List<Password> passwords = new List<Password>();
             Dictionary<string, int> headerIdx = new Dictionary<string, int>();
+
+            if (!File.Exists(path))
+            {
+                return new ImportResult(ImportExportResult.InvalidPath, null);
+            }
+
+            if (passwordEnabled && string.IsNullOrEmpty(passphrase))
+            {
+                return new ImportResult(ImportExportResult.PasswordInvalid, null);
+            }
 
             FileInfo file = new FileInfo(path);
             ExcelPackage excel = null;

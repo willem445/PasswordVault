@@ -130,8 +130,8 @@ namespace PasswordVault.ServicesTests
             Int32 addedPasswordsCount = 1;
             foreach (var password in passwords)
             {
-                AddModifyPasswordResult result = passwordService.AddPassword(password);
-                Assert.AreEqual(AddModifyPasswordResult.Success, result);
+                ValidatePassword result = passwordService.AddPassword(password);
+                Assert.AreEqual(ValidatePassword.Success, result);
                 Assert.AreEqual(addedPasswordsCount, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
                 addedPasswordsCount++;
             }
@@ -188,8 +188,8 @@ namespace PasswordVault.ServicesTests
            
                 foreach (var password in passwords)
                 {
-                    AddModifyPasswordResult result = passwordService.AddPassword(password);
-                    Assert.AreEqual(AddModifyPasswordResult.Success, result);
+                    ValidatePassword result = passwordService.AddPassword(password);
+                    Assert.AreEqual(ValidatePassword.Success, result);
                     Assert.AreEqual(addedPasswordsCount, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
                     addedPasswordsCount++;
                 }

@@ -102,7 +102,17 @@ namespace PasswordVault.Desktop.Winforms
                     UIHelper.UpdateStatusLabel("Success.", statusLabel, ErrorLevel.Ok);
                     break;
 
-                case ImportExportResult.Fail:                                    
+                case ImportExportResult.PasswordInvalid:
+                    UIHelper.UpdateStatusLabel("Invalid password!", statusLabel, ErrorLevel.Error);
+                    break;
+
+                case ImportExportResult.InvalidPath:
+                    UIHelper.UpdateStatusLabel("Path is invalid!", statusLabel, ErrorLevel.Error);
+                    break;
+
+                case ImportExportResult.ProblemWithImportedPassword:
+                case ImportExportResult.PasswordProtected:
+                case ImportExportResult.Fail:
                 default:
                     UIHelper.UpdateStatusLabel("Error occured during export.", statusLabel, ErrorLevel.Error);
                     break;

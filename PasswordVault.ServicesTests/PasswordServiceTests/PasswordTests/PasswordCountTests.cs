@@ -31,7 +31,7 @@ namespace PasswordVault.ServicesTests
             {
                 Password password = GetPassword(i);
                 addModifyPasswordResult = passwordService.AddPassword(password);
-                Assert.AreEqual(AddModifyPasswordResult.Success, addModifyPasswordResult);
+                Assert.AreEqual(ValidatePassword.Success, addModifyPasswordResult);
                 Assert.AreEqual(i+1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
                 Assert.AreEqual(i+1, passwordService.GetPasswordCount());
             }

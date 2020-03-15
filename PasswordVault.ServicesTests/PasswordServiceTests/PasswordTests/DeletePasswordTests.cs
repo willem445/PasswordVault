@@ -20,7 +20,7 @@ namespace PasswordVault.ServicesTests
         AddUserResult createUserResult;
         AuthenticateResult loginResult;
         LogOutResult logoutResult;
-        AddModifyPasswordResult addPasswordResult;
+        ValidatePassword addPasswordResult;
         DeletePasswordResult deletePasswordResult;
         User user;
 
@@ -102,7 +102,7 @@ namespace PasswordVault.ServicesTests
         {
             Password password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             deletePasswordResult = passwordService.DeletePassword(null);
@@ -118,7 +118,7 @@ namespace PasswordVault.ServicesTests
             Assert.AreEqual(0, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             logoutResult = passwordService.Logout();
@@ -157,7 +157,7 @@ namespace PasswordVault.ServicesTests
             Password password2 = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
             Assert.AreEqual(2, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             logoutResult = passwordService.Logout();
@@ -168,7 +168,7 @@ namespace PasswordVault.ServicesTests
 
             addPasswordResult = passwordService.AddPassword(password);
             addPasswordResult = passwordService.AddPassword(password2);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
             Assert.AreEqual(4, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);
 
             deletePasswordResult = passwordService.DeletePassword(password);

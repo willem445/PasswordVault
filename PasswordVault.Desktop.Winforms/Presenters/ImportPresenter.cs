@@ -15,8 +15,8 @@ namespace PasswordVault.Desktop.Winforms
 
         public ImportPresenter(IImportView importView, IDesktopServiceWrapper serviceWrapper)
         {
-            _importView = importView;
-            _serviceWrapper = serviceWrapper;
+            _importView = importView ?? throw new ArgumentNullException(nameof(importView));
+            _serviceWrapper = serviceWrapper ?? throw new ArgumentNullException(nameof(serviceWrapper));
 
             _importView.InitializeEvent += InitializeFileTypes;
             _importView.ImportPasswordsEvent += ImportPasswords;

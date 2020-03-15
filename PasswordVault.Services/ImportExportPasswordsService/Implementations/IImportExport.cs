@@ -7,7 +7,7 @@ namespace PasswordVault.Services
 {
     interface IImportExport
     {
-        ImportExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword, bool passwordEnabled);
-        ImportResult Import(string path, string passphrase, bool passwordEnabled);
+        ImportExportResult Export(string exportPath, List<Password> passwords, string encryptionPassword = null, bool passwordEnabled = false);
+        ImportResult Import(string path, string passphrase = null, bool passwordEnabled = false);
     }
 }

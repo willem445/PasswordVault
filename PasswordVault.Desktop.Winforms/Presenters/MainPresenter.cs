@@ -151,9 +151,9 @@ namespace PasswordVault.Desktop.Winforms
         private void AddPassword(string application, string username, string email, string description, string website, string passphrase)
         {
             Password uiPassword = new Password(application, username, email, description, website, passphrase);
-            AddModifyPasswordResult result = _serviceWrapper.AddPassword(uiPassword);
+            ValidatePassword result = _serviceWrapper.AddPassword(uiPassword);
 
-            if (result == AddModifyPasswordResult.Success)
+            if (result == ValidatePassword.Success)
             {
                 UpdatePasswordsUI();
             }
@@ -195,9 +195,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, email, description, website, passphrase);
 
-            AddModifyPasswordResult result = _serviceWrapper.ModifyPassword(_editPassword, modifiedPassword);
+            ValidatePassword result = _serviceWrapper.ModifyPassword(_editPassword, modifiedPassword);
 
-            if (result == AddModifyPasswordResult.Success)
+            if (result == ValidatePassword.Success)
             {
                 _editPassword = null;
             }
@@ -292,7 +292,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             string result = "";
 
-            result = _serviceWrapper.GeneratePasswordKey();
+            result = _serviceWrapper.GeneratePassword();
             _mainView.DisplayGeneratePasswordResult(result);
         }
 

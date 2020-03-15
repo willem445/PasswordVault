@@ -93,6 +93,7 @@ namespace PasswordVault.Desktop.Winforms
         public void DisplayImportResult(ImportExportResult result)
         {
             ImportPasswordsDoneEvent?.Invoke(result);
+
             switch (result)
             {
                 case ImportExportResult.Success:
@@ -105,6 +106,14 @@ namespace PasswordVault.Desktop.Winforms
 
                 case ImportExportResult.PasswordProtected:
                     UIHelper.UpdateStatusLabel("Must provide password!", statusLabel, ErrorLevel.Error);
+                    break;
+
+                case ImportExportResult.ProblemWithImportedPassword:
+                    UIHelper.UpdateStatusLabel("Problem with imported password!", statusLabel, ErrorLevel.Error);
+                    break;
+
+                case ImportExportResult.InvalidPath:
+                    UIHelper.UpdateStatusLabel("Invalid path!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ImportExportResult.Fail:                                    

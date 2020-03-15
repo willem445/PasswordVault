@@ -4,6 +4,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using System.Globalization;
+using PasswordVault.Utilities;
 
 namespace PasswordVault.Services
 {

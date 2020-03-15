@@ -3,6 +3,7 @@ using PasswordVault.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using PasswordVault.Utilities;
 
 namespace PasswordVault.Services
 {
@@ -27,21 +28,21 @@ namespace PasswordVault.Services
         public AddPasswordResult AddPassword(string userUuid, Password password, string key, EncryptionParameters parameters)
         {
             AddPasswordResult result;
-            AddModifyPasswordResult addResult = AddModifyPasswordResult.Failed;
+            ValidatePassword addResult = ValidatePassword.Failed;
             Int64 uniqueId = -1;
 
             if (password == null)
             {
-                return new AddPasswordResult(AddModifyPasswordResult.Failed, uniqueId);
+                return new AddPasswordResult(ValidatePassword.Failed, uniqueId);
             }
 
-            AddModifyPasswordResult verifyResult = VerifyAddPasswordFields(password);
+            ValidatePassword verifyResult = VerifyAddPasswordFields(password);
 
-            if (verifyResult == AddModifyPasswordResult.Success)
+            if (verifyResult == ValidatePassword.Success)
             {
                 Password encryptPassword = ConvertPlaintextPasswordToEncryptedPassword(password, key, parameters); // Need to first encrypt the password
                 uniqueId = _dbContext.AddPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptPassword, key, parameters));
-                addResult = AddModifyPasswordResult.Success;
+                addResult = ValidatePassword.Success;
             }
             else
             {
@@ -66,27 +67,27 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public AddModifyPasswordResult ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionParameters parameters)
+        public ValidatePassword ModifyPassword(string userUuid, Password modifiedPassword, string key, EncryptionParameters parameters)
         {
             if (string.IsNullOrEmpty(userUuid) || modifiedPassword == null || string.IsNullOrEmpty(key) || parameters == null)
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Arguments cannot be null or empty."));
 
-            AddModifyPasswordResult result = AddModifyPasswordResult.Failed;
+            ValidatePassword result = ValidatePassword.Failed;
 
-            AddModifyPasswordResult verifyResult = VerifyAddPasswordFields(modifiedPassword);
+            ValidatePassword verifyResult = VerifyAddPasswordFields(modifiedPassword);
 
-            if (verifyResult == AddModifyPasswordResult.Success)
+            if (verifyResult == ValidatePassword.Success)
             {
                 Password encryptedPassword = ConvertPlaintextPasswordToEncryptedPassword(modifiedPassword, key, parameters);
                 bool dbResult = _dbContext.ModifyPassword(ConvertToEncryptedDatabasePassword(userUuid, encryptedPassword, key, parameters));
 
                 if (dbResult)
                 {
-                    result = AddModifyPasswordResult.Success;
+                    result = ValidatePassword.Success;
                 }
                 else
                 {
-                    result = AddModifyPasswordResult.Failed;
+                    result = ValidatePassword.Failed;
                 }
             }
             else
@@ -97,9 +98,9 @@ namespace PasswordVault.Services
             return result;
         }
 
-        public string GeneratePasswordKey(int length)
+        public string GeneratePassword(int length)
         {
-            string result = KeyGenerator.GetUniqueKey(length);
+            string result = KeyGenerator.GenerateRandomPassword(length);
 
             return result;
         }
@@ -131,58 +132,9 @@ namespace PasswordVault.Services
         }
 
         /*PRIVATE METHODS**************************************************/
-        private AddModifyPasswordResult VerifyAddPasswordFields(Password password)
+        private ValidatePassword VerifyAddPasswordFields(Password password)
         {
-            AddModifyPasswordResult result = AddModifyPasswordResult.Success;
-
-            if (password != null)
-            {
-                if (string.IsNullOrEmpty(password.Passphrase))
-                {
-                    result = AddModifyPasswordResult.PassphraseError;
-                }
-
-                if (string.IsNullOrEmpty(password.Username))
-                {
-                    result = AddModifyPasswordResult.UsernameError;
-                }
-
-                if (string.IsNullOrEmpty(password.Application))
-                {
-                    result = AddModifyPasswordResult.ApplicationError;
-                }
-
-                if (password.Description == null)
-                {
-                    result = AddModifyPasswordResult.DescriptionError;
-                }
-
-                if (password.Website == null)
-                {
-                    result = AddModifyPasswordResult.WebsiteError;
-                }
-                else if (password.Website.Length != 0)
-                {
-                    if (!UriUtilities.IsValidUri(password.Website))
-                    {
-                        result = AddModifyPasswordResult.WebsiteError;
-                    }
-                }
-
-                if (password.Email == null)
-                {
-                    result = AddModifyPasswordResult.EmailError;
-                }
-                else if (password.Email.Length != 0)
-                {
-                    if (!password.Email.Contains("@") || !password.Email.Contains("."))
-                    {
-                        result = AddModifyPasswordResult.EmailError;
-                    }
-                }
-            }
-
-            return result;
+            return Password.Validate(password);
         }
 
         private Password ConvertPlaintextPasswordToEncryptedPassword(Password password, string key, EncryptionParameters parameters)

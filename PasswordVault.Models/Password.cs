@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using PasswordVault.Utilities;
 
 namespace PasswordVault.Models
 {
@@ -9,6 +10,19 @@ namespace PasswordVault.Models
         Application = 0,
         Description = 1,
         Website = 2,
+    }
+
+    public enum ValidatePassword
+    {
+        ApplicationError,
+        UsernameError,
+        EmailError,
+        DescriptionError,
+        WebsiteError,
+        PassphraseError,
+        DuplicatePassword,
+        Failed,
+        Success,
     }
 
     public class Password : IEquatable<Password>
@@ -63,6 +77,60 @@ namespace PasswordVault.Models
         public virtual string GetPasswordString()
         {
             return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5}", Application, Username, Email, Description, Website, Passphrase);
+        }
+
+        public static ValidatePassword Validate(Password password)
+        {
+            ValidatePassword result = ValidatePassword.Success;
+
+            if (password != null)
+            {
+                if (string.IsNullOrEmpty(password.Passphrase))
+                {
+                    result = ValidatePassword.PassphraseError;
+                }
+
+                if (string.IsNullOrEmpty(password.Username))
+                {
+                    result = ValidatePassword.UsernameError;
+                }
+
+                if (string.IsNullOrEmpty(password.Application))
+                {
+                    result = ValidatePassword.ApplicationError;
+                }
+
+                if (password.Description == null)
+                {
+                    result = ValidatePassword.DescriptionError;
+                }
+
+                if (password.Website == null)
+                {
+                    result = ValidatePassword.WebsiteError;
+                }
+                else if (password.Website.Length != 0)
+                {
+                    if (!UriUtilities.IsValidUri(password.Website))
+                    {
+                        result = ValidatePassword.WebsiteError;
+                    }
+                }
+
+                if (password.Email == null)
+                {
+                    result = ValidatePassword.EmailError;
+                }
+                else if (password.Email.Length != 0)
+                {
+                    if (!password.Email.Contains("@") || !password.Email.Contains("."))
+                    {
+                        result = ValidatePassword.EmailError;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public bool Equals(Password other)

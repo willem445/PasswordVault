@@ -1,10 +1,11 @@
-﻿using System;
+﻿using PasswordVault.Services;
+using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-
-namespace PasswordVault.Services
+namespace PasswordVault.Desktop.Winforms
 {
     public sealed class AppSettings
     {
@@ -41,7 +42,7 @@ namespace PasswordVault.Services
                 saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
                 iterations: 1,
                 degreeofparallelism: 2,
-                memorySizeKb: 1024 
+                memorySizeKb: 1024
             );
 #else
             // tuned for about 15s
@@ -66,16 +67,16 @@ namespace PasswordVault.Services
 #endif
 
             DefaultMasterPasswordParameters = new MasterPasswordParameters(
-                keyDerivationParameters:DefaultKeyDerivationParameters,
-                randomKeySize:64
+                keyDerivationParameters: DefaultKeyDerivationParameters,
+                randomKeySize: 64
             );
 
             DefaultEncryptionParameters = new EncryptionParameters(
-                algorithm:EncryptionAlgorithm.Aes256CfbPkcs7,
-                mac:Mac.HMACSHA256,
-                keyDerivationParameters:DefaultEncryptionKeyDerivationParameters,
-                blocksize:16,
-                ivSize:16
+                algorithm: EncryptionAlgorithm.Aes256CfbPkcs7,
+                mac: Mac.HMACSHA256,
+                keyDerivationParameters: DefaultEncryptionKeyDerivationParameters,
+                blocksize: 16,
+                ivSize: 16
             );
         }
     }

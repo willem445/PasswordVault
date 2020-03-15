@@ -7,6 +7,7 @@ using PasswordVault.Services;
 using PasswordVault.Models;
 using System.Diagnostics;
 using PasswordVault.Desktop.Winforms;
+using PasswordVault.Utilities;
 
 namespace PasswordVault.ServicesTests
 {
@@ -21,7 +22,7 @@ namespace PasswordVault.ServicesTests
         AddUserResult createUserResult;
         AuthenticateResult loginResult;
         LogOutResult logoutResult;
-        AddModifyPasswordResult addPasswordResult;
+        ValidatePassword addPasswordResult;
         User user;
 
         public AddPasswordTests()
@@ -108,7 +109,7 @@ namespace PasswordVault.ServicesTests
         {
             Password password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
             Assert.AreEqual(1, ((InMemoryDatabase)db).LocalPasswordDbAccess.Count);      
             List<Password> passowrds = passwordService.GetPasswords();
             Assert.AreEqual("App1", passwordService.GetPasswords()[0].Application);
@@ -120,75 +121,75 @@ namespace PasswordVault.ServicesTests
 
             // Test null password
             addPasswordResult = passwordService.AddPassword(null);
-            Assert.AreEqual(AddModifyPasswordResult.Failed, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Failed, addPasswordResult);
             
             // Test duplicate password
             password = new Password("App1", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.DuplicatePassword, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.DuplicatePassword, addPasswordResult);
 
             // Test application field
             password = new Password("", "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.ApplicationError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.ApplicationError, addPasswordResult);
 
             password = new Password(null, "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.ApplicationError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.ApplicationError, addPasswordResult);
 
             // Test user name field
             password = new Password("App2", "", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.UsernameError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.UsernameError, addPasswordResult);
 
             password = new Password("App2", null, "email@email.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.UsernameError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.UsernameError, addPasswordResult);
 
             // Test email field
             password = new Password("App2", "username", "emailemail.com", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.EmailError, addPasswordResult);
 
             password = new Password("App2", "username", "email@emailcom", "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.EmailError, addPasswordResult);
 
             password = new Password("App2", "username", null, "descriptions", "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.EmailError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.EmailError, addPasswordResult);
 
             // Test description field
             password = new Password("App2", "username", "email@email.com", null, "https://www.website.com", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.DescriptionError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.DescriptionError, addPasswordResult);
 
             // Test website field
             password = new Password("App2", "username", "email@email.com", "descriptions", null, "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.WebsiteError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.WebsiteError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "descriptions", "w", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.WebsiteError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.WebsiteError, addPasswordResult);
 
             // Test passphrase field
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", "");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.PassphraseError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.PassphraseError, addPasswordResult);
 
             // Test valid combinations
             password = new Password("App2", "username", "email@email.com", "descriptions", "https://www.website.com", null);
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.PassphraseError, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.PassphraseError, addPasswordResult);
 
             password = new Password("App2", "username", "email@email.com", "descriptions", "", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
 
             password = new Password("App3", "username", "", "", "", "passphrase");
             addPasswordResult = passwordService.AddPassword(password);
-            Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+            Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
 
         }
 
@@ -212,7 +213,7 @@ namespace PasswordVault.ServicesTests
 
             for (int i = 0; i < 200; i++)
             {
-                string application = KeyGenerator.GetUniqueKey(10);
+                string application = KeyGenerator.GenerateRandomPassword(10);
                 Password password = new Password(application, "username", "email@email.com", "descriptions", "https://www.website.com", "passphrase");
                 passwords.Add(password);
             }
@@ -222,7 +223,7 @@ namespace PasswordVault.ServicesTests
                 stopWatch.Start();
                 addPasswordResult = passwordService.AddPassword(password);
                 stopWatch.Stop();
-                Assert.AreEqual(AddModifyPasswordResult.Success, addPasswordResult);
+                Assert.AreEqual(ValidatePassword.Success, addPasswordResult);
 
                 TimeSpan ts = stopWatch.Elapsed;
 

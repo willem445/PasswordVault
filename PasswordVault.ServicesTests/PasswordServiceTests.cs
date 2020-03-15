@@ -142,7 +142,7 @@ namespace PasswordVault.ServicesTests
         [TestMethod]
         public void GeneratePasswordKeyTest()
         {
-            string passphrase = passwordService.GeneratePasswordKey();
+            string passphrase = passwordService.GeneratePassword();
             Assert.AreEqual(20, passphrase.Length);
         }
 
