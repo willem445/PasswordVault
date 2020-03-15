@@ -88,6 +88,8 @@ namespace PasswordVault.Desktop.Winforms
 
         private BindingList<Password> _dgvPasswordList;
 
+        private GhostTextBoxHelper appGhost;
+
 
         /*=================================================================================================
 		PROPERTIES
@@ -238,6 +240,7 @@ namespace PasswordVault.Desktop.Winforms
             applicationTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             applicationTextBox.BorderStyle = BorderStyle.FixedSingle;
             applicationTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            appGhost = new GhostTextBoxHelper(applicationTextBox, "Application");
 
             usernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             usernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
