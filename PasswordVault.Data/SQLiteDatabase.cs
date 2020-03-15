@@ -92,7 +92,8 @@ namespace PasswordVault.Data
                                      FirstName, 
                                      LastName, 
                                      PhoneNumber, 
-                                     Email)
+                                     Email,
+                                     SwVersion)
                                  VALUES(
                                     @Uuid,
                                     @EncryptedKey,
@@ -101,7 +102,8 @@ namespace PasswordVault.Data
                                     @FirstName,
                                     @LastName,
                                     @PhoneNumber,
-                                    @Email)";
+                                    @Email,
+                                    @SwVersion)";
 
                     int dbresult = dbConn.Execute(query, new
                     {
@@ -113,6 +115,7 @@ namespace PasswordVault.Data
                         LastName = user.LastName,
                         PhoneNumber = user.PhoneNumber,
                         Email = user.Email,
+                        SwVersion = user.SwVersion
                     });
 
                     if (dbresult != 0)
@@ -185,7 +188,8 @@ namespace PasswordVault.Data
                                      FirstName = @FirstName,
                                      LastName = @LastName,
                                      PhoneNumber = @PhoneNumber,
-                                     Email = @Email
+                                     Email = @Email,
+                                     SwVersion = @SwVersion
                                  WHERE Uuid = @Uuid";
 
                     var dbResult = dbConn.Execute(query, new
@@ -196,7 +200,8 @@ namespace PasswordVault.Data
                         LastName = modifiedUser.LastName,
                         PhoneNumber = modifiedUser.PhoneNumber,
                         Email = modifiedUser.Email,
-                        Uuid = user.Uuid
+                        SwVersion = modifiedUser.SwVersion,
+                        Uuid = user.Uuid,
                     });
 
                     if (dbResult > 0)
@@ -487,7 +492,8 @@ namespace PasswordVault.Data
                         [FirstName] TEXT NOT NULL,
                         [LastName] TEXT NOT NULL,
                         [PhoneNumber] TEXT NOT NULL,
-                        [Email] TEXT NOT NULL
+                        [Email] TEXT NOT NULL,
+                        [SwVersion] TEXT NOT NULL
                     )");
 
                 dbConn.Execute(@"
