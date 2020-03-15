@@ -1,6 +1,7 @@
 passwords.csv
 users.csv
 PasswordDb.sqlite
+ExportTest.xlsx
 
 # VS Code
 *.vscode

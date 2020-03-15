@@ -75,30 +75,6 @@ namespace PasswordVault.ServicesTests
         //
         #endregion
 
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentNullException),"Expected database null exception.")]
-        //public void PasswordServiceConstructorDatabaseArgTest()
-        //{
-        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
-        //    PasswordService ps = new PasswordService(null, new MasterPassword(), new RijndaelManagedEncryption());
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentNullException), "Expected master password null exception.")]
-        //public void PasswordServiceConstructorMasterPasswordArgTest()
-        //{
-        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
-        //    PasswordService ps = new PasswordService(db, null, new RijndaelManagedEncryption());
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(ArgumentNullException), "Expected encryption null exception.")]
-        //public void PasswordServiceConstructorExcryptionArgTest()
-        //{
-        //    db = DatabaseFactory.GetDatabase(Database.InMemory);
-        //    PasswordService ps = new PasswordService(db, new MasterPassword(), null);
-        //}
-
         [TestMethod]
         public void GetCurrentUserTest()
         {

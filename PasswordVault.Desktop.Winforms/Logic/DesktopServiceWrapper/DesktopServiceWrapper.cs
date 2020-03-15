@@ -410,6 +410,8 @@ namespace PasswordVault.Desktop.Winforms
             {
                 result = ImportExportResult.Success;
 
+                // TODO - Authenticate all passwords before performing adding anything to the db
+
                 foreach (var password in passwords)
                 {
                     // check if password exists

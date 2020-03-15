@@ -11,7 +11,7 @@ namespace PasswordVault.Models
         Website = 2,
     }
 
-    public class Password
+    public class Password : IEquatable<Password>
     {
         [Browsable(false)]
         public Int64 UniqueID { get; set; }
@@ -65,17 +65,61 @@ namespace PasswordVault.Models
             return string.Format(CultureInfo.CurrentCulture, "{0},{1},{2},{3},{4},{5}", Application, Username, Email, Description, Website, Passphrase);
         }
 
+        public bool Equals(Password other)
+        {
+            bool result = false;
 
-        //public static explicit operator Password(DataGridViewRow dr)
-        //{
-        //    Password p = new Password();
-        //    p.Application = dr.Cells[0].Value.ToString();
-        //    p.Username = dr.Cells[1].Value.ToString();
-        //    p.Email = dr.Cells[2].Value.ToString();
-        //    p.Description = dr.Cells[3].Value.ToString();
-        //    p.Website = dr.Cells[4].Value.ToString();
-        //    return p;
-        //}
+            if (other == null)
+            {
+                return false;
+            }
 
+            if (other.Username == this.Username &&
+                other.Application == this.Application &&
+                other.Email == this.Email &&
+                other.Website == this.Website &&
+                other.Passphrase == this.Passphrase &&
+                other.Description == this.Description)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            bool result = false;
+
+            if (!(obj is Password))
+                return false;
+
+            Password mys = (Password)obj;
+
+            if (mys.Username == this.Username &&
+                mys.Application == this.Application &&
+                mys.Email == this.Email &&
+                mys.Website == this.Website &&
+                mys.Passphrase == this.Passphrase &&
+                mys.Description == this.Description)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            // Suitable nullity checks etc, of course :)
+            hash = hash * 23 + Username.GetHashCode();
+            hash = hash * 23 + Application.GetHashCode();
+            hash = hash * 23 + Email.GetHashCode();
+            hash = hash * 23 + Website.GetHashCode();
+            hash = hash * 23 + Passphrase.GetHashCode();
+            hash = hash * 23 + Description.GetHashCode();
+            return hash;
+        }
     } // Password CLASS
 }
