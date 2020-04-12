@@ -37,7 +37,7 @@ namespace PasswordVault.Desktop.Winforms
         private bool _draggingWindow = false;         // Variable to track whether the form is being moved
         private Point _start_point = new Point(0, 0); // Varaible to track where the form should be moved to
         private Size SmallSize = new Size(279, 222);
-        private Size LargeSize = new Size(549, 316);
+        private Size LargeSize = new Size(549, 320);
 
         private GhostTextBoxHelper ghostLoginUsername;
         private GhostTextBoxHelper ghostLoginPassword;

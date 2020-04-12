@@ -363,7 +363,7 @@ namespace PasswordVault.Data
                     dbConn.Open();
 
                     string query = @"INSERT INTO Passwords 
-                                    (UserUuid, Application, Username, Email, Description, Website, Passphrase)
+                                    (UserUuid, Application, Username, Email, Description, Website, Category, Passphrase)
                                  VALUES(
                                     @UserUuid,
                                     @Application,
@@ -371,6 +371,7 @@ namespace PasswordVault.Data
                                     @Email,
                                     @Description,
                                     @Website,
+                                    @Category,
                                     @Passphrase);
                                  SELECT last_insert_rowid()";
 
@@ -382,6 +383,7 @@ namespace PasswordVault.Data
                         Email = password.Email,
                         Description = password.Description,
                         Website = password.Website,
+                        Category = password.Category,
                         Passphrase = password.Passphrase,
                     }).Single();
 
@@ -412,6 +414,7 @@ namespace PasswordVault.Data
                                      Email = @Email,
                                      Description = @Description,
                                      Website = @Website,
+                                     Category = @Category,
                                      Passphrase = @Passphrase
                                  WHERE UniqueID = @UniqueID";
 
@@ -422,6 +425,7 @@ namespace PasswordVault.Data
                         Email = modifiedPassword.Email,
                         Description = modifiedPassword.Description,
                         Website = modifiedPassword.Website,
+                        Category = modifiedPassword.Category,
                         Passphrase = modifiedPassword.Passphrase,
                         UniqueID = modifiedPassword.UniqueID
                     });
@@ -505,6 +509,7 @@ namespace PasswordVault.Data
                         [Email] TEXT NOT NULL,
                         [Description] TEXT NOT NULL,
                         [Website] TEXT NOT NULL,
+                        [Category] TEXT NOT NULL,
                         [Passphrase] TEXT NOT NULL
                     )");
             }

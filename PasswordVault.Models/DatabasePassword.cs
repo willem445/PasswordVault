@@ -57,7 +57,16 @@ namespace PasswordVault.Models
 
         }
 
-        public DatabasePassword(Int64 uniqueID, string useruuid, string application, string username, string email, string description, string website, string passphrase)
+        public DatabasePassword(
+            Int64 uniqueID, 
+            string useruuid, 
+            string application, 
+            string username, 
+            string email, 
+            string description, 
+            string website, 
+            string passphrase, 
+            string category = "")
         {
             UniqueID = uniqueID;
             UserUuid = useruuid;
@@ -67,6 +76,7 @@ namespace PasswordVault.Models
             Description = description;
             Website = website;
             Passphrase = passphrase;
+            Category = category;
         }
 
         /*=================================================================================================

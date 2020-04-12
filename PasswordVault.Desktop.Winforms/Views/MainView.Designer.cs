@@ -53,26 +53,19 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordDataGridView = new System.Windows.Forms.DataGridView();
             this.addButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.applicationTextBox = new System.Windows.Forms.TextBox();
             this.websiteTextBox = new System.Windows.Forms.TextBox();
             this.descriptionTextBox = new System.Windows.Forms.TextBox();
             this.passphraseTextBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.deleteButton = new System.Windows.Forms.Button();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.closeButton = new System.Windows.Forms.Label();
             this.moveWindowPanel = new System.Windows.Forms.Panel();
             this.filterTextBox = new System.Windows.Forms.TextBox();
-            this.filterLabel = new System.Windows.Forms.Label();
             this.editCancelButton = new System.Windows.Forms.Button();
             this.filterComboBox = new PasswordVault.Desktop.Winforms.AdvancedComboBox();
             this.minimizeButton = new System.Windows.Forms.Label();
             this.emailTextBox = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.clearFilterButton = new System.Windows.Forms.Button();
             this.userStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -215,15 +208,6 @@ namespace PasswordVault.Desktop.Winforms
             this.editButton.UseVisualStyleBackColor = true;
             this.editButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 56);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Application (required)";
-            // 
             // applicationTextBox
             // 
             this.applicationTextBox.Enabled = false;
@@ -258,33 +242,6 @@ namespace PasswordVault.Desktop.Winforms
             this.passphraseTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.passphraseTextBox_KeyDown);
             this.passphraseTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PassphraseTextBox_KeyUp);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(557, 56);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(46, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Website";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(418, 56);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(60, 13);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Description";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(679, 56);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(109, 13);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "Passphrase (required)";
-            // 
             // deleteButton
             // 
             this.deleteButton.Enabled = false;
@@ -303,15 +260,6 @@ namespace PasswordVault.Desktop.Winforms
             this.usernameTextBox.Name = "usernameTextBox";
             this.usernameTextBox.Size = new System.Drawing.Size(129, 20);
             this.usernameTextBox.TabIndex = 21;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(144, 56);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(102, 13);
-            this.label5.TabIndex = 17;
-            this.label5.Text = "Username (required)";
             // 
             // closeButton
             // 
@@ -344,15 +292,6 @@ namespace PasswordVault.Desktop.Winforms
             this.filterTextBox.Size = new System.Drawing.Size(264, 20);
             this.filterTextBox.TabIndex = 30;
             this.filterTextBox.TextChanged += new System.EventHandler(this.filterChanged);
-            // 
-            // filterLabel
-            // 
-            this.filterLabel.AutoSize = true;
-            this.filterLabel.Location = new System.Drawing.Point(12, 103);
-            this.filterLabel.Name = "filterLabel";
-            this.filterLabel.Size = new System.Drawing.Size(29, 13);
-            this.filterLabel.TabIndex = 29;
-            this.filterLabel.Text = "Filter";
             // 
             // editCancelButton
             // 
@@ -398,15 +337,6 @@ namespace PasswordVault.Desktop.Winforms
             this.emailTextBox.Name = "emailTextBox";
             this.emailTextBox.Size = new System.Drawing.Size(133, 20);
             this.emailTextBox.TabIndex = 22;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(279, 56);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(32, 13);
-            this.label6.TabIndex = 34;
-            this.label6.Text = "Email";
             // 
             // clearFilterButton
             // 
@@ -462,27 +392,20 @@ namespace PasswordVault.Desktop.Winforms
             this.Controls.Add(this.passwordCountLabel);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.clearFilterButton);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.emailTextBox);
             this.Controls.Add(this.minimizeButton);
             this.Controls.Add(this.editCancelButton);
             this.Controls.Add(this.filterComboBox);
             this.Controls.Add(this.filterTextBox);
-            this.Controls.Add(this.filterLabel);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.usernameTextBox);
             this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.passphraseTextBox);
             this.Controls.Add(this.descriptionTextBox);
             this.Controls.Add(this.websiteTextBox);
             this.Controls.Add(this.applicationTextBox);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.editButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.passwordDataGridView);
@@ -511,27 +434,20 @@ namespace PasswordVault.Desktop.Winforms
         private System.Windows.Forms.DataGridView passwordDataGridView;
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button editButton;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox applicationTextBox;
         private System.Windows.Forms.TextBox websiteTextBox;
         private System.Windows.Forms.TextBox descriptionTextBox;
         private System.Windows.Forms.TextBox passphraseTextBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.TextBox usernameTextBox;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label closeButton;
         private System.Windows.Forms.Panel moveWindowPanel;
         private System.Windows.Forms.TextBox filterTextBox;
-        private System.Windows.Forms.Label filterLabel;
         private AdvancedComboBox filterComboBox;
         private Button editCancelButton;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private Label minimizeButton;
         private TextBox emailTextBox;
-        private Label label6;
         private ToolStripMenuItem accountToolStripMenuItem;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem deleteToolStripMenuItem;

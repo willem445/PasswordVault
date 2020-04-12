@@ -88,7 +88,7 @@
             // 
             // loginPasswordTextBox
             // 
-            this.loginPasswordTextBox.Location = new System.Drawing.Point(19, 55);
+            this.loginPasswordTextBox.Location = new System.Drawing.Point(19, 57);
             this.loginPasswordTextBox.Name = "loginPasswordTextBox";
             this.loginPasswordTextBox.PasswordChar = '•';
             this.loginPasswordTextBox.Size = new System.Drawing.Size(218, 20);
@@ -132,7 +132,7 @@
             // 
             // createEmailTextBox
             // 
-            this.createEmailTextBox.Location = new System.Drawing.Point(15, 159);
+            this.createEmailTextBox.Location = new System.Drawing.Point(15, 169);
             this.createEmailTextBox.Name = "createEmailTextBox";
             this.createEmailTextBox.Size = new System.Drawing.Size(218, 20);
             this.createEmailTextBox.TabIndex = 9;
@@ -143,7 +143,7 @@
             // 
             // createPhoneNumberTextBox
             // 
-            this.createPhoneNumberTextBox.Location = new System.Drawing.Point(15, 133);
+            this.createPhoneNumberTextBox.Location = new System.Drawing.Point(15, 141);
             this.createPhoneNumberTextBox.Name = "createPhoneNumberTextBox";
             this.createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 20);
             this.createPhoneNumberTextBox.TabIndex = 8;
@@ -153,14 +153,14 @@
             // 
             // createLastNameTextBox
             // 
-            this.createLastNameTextBox.Location = new System.Drawing.Point(15, 107);
+            this.createLastNameTextBox.Location = new System.Drawing.Point(15, 113);
             this.createLastNameTextBox.Name = "createLastNameTextBox";
             this.createLastNameTextBox.Size = new System.Drawing.Size(218, 20);
             this.createLastNameTextBox.TabIndex = 7;
             // 
             // createFirstNameTextBox
             // 
-            this.createFirstNameTextBox.Location = new System.Drawing.Point(15, 81);
+            this.createFirstNameTextBox.Location = new System.Drawing.Point(15, 85);
             this.createFirstNameTextBox.Name = "createFirstNameTextBox";
             this.createFirstNameTextBox.Size = new System.Drawing.Size(218, 20);
             this.createFirstNameTextBox.TabIndex = 6;
@@ -168,7 +168,7 @@
             // createNewUserResultLabel
             // 
             this.createNewUserResultLabel.AutoSize = true;
-            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 187);
+            this.createNewUserResultLabel.Location = new System.Drawing.Point(12, 206);
             this.createNewUserResultLabel.Name = "createNewUserResultLabel";
             this.createNewUserResultLabel.Size = new System.Drawing.Size(99, 13);
             this.createNewUserResultLabel.TabIndex = 60;
@@ -186,7 +186,7 @@
             // 
             // createPasswordTextBox
             // 
-            this.createPasswordTextBox.Location = new System.Drawing.Point(15, 55);
+            this.createPasswordTextBox.Location = new System.Drawing.Point(15, 57);
             this.createPasswordTextBox.Name = "createPasswordTextBox";
             this.createPasswordTextBox.Size = new System.Drawing.Size(218, 20);
             this.createPasswordTextBox.TabIndex = 5;
