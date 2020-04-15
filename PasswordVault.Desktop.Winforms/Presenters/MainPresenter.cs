@@ -73,7 +73,6 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.CopyUserNameEvent += CopyUsername;
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
-            _mainView.GeneratePasswordEvent += GenerateNewPassword;
         }
 
         /*=================================================================================================
@@ -285,15 +284,6 @@ namespace PasswordVault.Desktop.Winforms
             {
                 System.Windows.Forms.Clipboard.SetText(result.Username);
             }       
-        }
-
-        /*************************************************************************************************/
-        private void GenerateNewPassword()
-        {
-            string result = "";
-
-            result = _serviceWrapper.GeneratePassword();
-            _mainView.DisplayGeneratePasswordResult(result);
         }
 
         /*************************************************************************************************/

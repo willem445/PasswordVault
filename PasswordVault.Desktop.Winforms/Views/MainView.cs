@@ -59,7 +59,6 @@ namespace PasswordVault.Desktop.Winforms
         public event Action<int> MovePasswordDownEvent;
         public event Action<DataGridViewRow> EditPasswordEvent;
         public event Action<string, string, string, string, string, string> EditOkayEvent;
-        public event Action EditCancelEvent;
         public event Action<DataGridViewRow> DeletePasswordEvent;   
         public event Action<DataGridViewRow> CopyUserNameEvent;
         public event Action<DataGridViewRow> CopyPasswordEvent;
@@ -74,6 +73,7 @@ namespace PasswordVault.Desktop.Winforms
         private IConfirmDeleteUserView _confirmDeleteUserView;
         private IExportView _exportView;
         private IImportView _importView;
+        private IAddPasswordView _addPasswordView;
 
         private AdvancedContextMenuStrip passwordContextMenuStrip;                      // Context menu for right clicking on datagridview row
         private int _rowIndexCopy = 0;                // Index of row being right clicked on
@@ -87,20 +87,7 @@ namespace PasswordVault.Desktop.Winforms
 
         private BindingList<Password> _dgvPasswordList;
 
-        private readonly GhostTextBoxHelper _appGhost;
-        private readonly GhostTextBoxHelper _usernameGhost;
-        private readonly GhostTextBoxHelper _emailGhost;
-        private readonly GhostTextBoxHelper _descriptionGhost;
-        private readonly GhostTextBoxHelper _websiteGhost;
-        private readonly GhostTextBoxHelper _passphraseGhost;
         private readonly GhostTextBoxHelper _filterGhost;
-
-        private string _appGhostText = "Application (req)";
-        private string _usernameGhostText = "Username (req)";
-        private string _emailGhostText = "Email";
-        private string _descriptionGhostText = "Description";
-        private string _websiteGhostText = "Website";
-        private string _passphraseGhostText = "Password (req)";
         private string _filterGhostText = "Filter";
 
         /*=================================================================================================
@@ -113,7 +100,14 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public MainView(ILoginView loginView, IChangePasswordView changePasswordView, IEditUserView editUserView, IConfirmDeleteUserView confirmDeleteUserView, IExportView exportView, IImportView importView)
+        public MainView(
+            ILoginView loginView, 
+            IChangePasswordView changePasswordView, 
+            IEditUserView editUserView, 
+            IConfirmDeleteUserView confirmDeleteUserView, 
+            IExportView exportView, 
+            IImportView importView,
+            IAddPasswordView addPasswordView)
         {
             _loginView = loginView ?? throw new ArgumentNullException(nameof(loginView));
             _changePasswordView = changePasswordView ?? throw new ArgumentNullException(nameof(changePasswordView));
@@ -121,6 +115,7 @@ namespace PasswordVault.Desktop.Winforms
             _confirmDeleteUserView = confirmDeleteUserView ?? throw new ArgumentNullException(nameof(confirmDeleteUserView));
             _exportView = exportView ?? throw new ArgumentNullException(nameof(exportView));
             _importView = importView ?? throw new ArgumentNullException(nameof(importView));
+            _addPasswordView = addPasswordView ?? throw new ArgumentNullException(nameof(addPasswordView));
 
             _loginView.LoginSuccessfulEvent += DisplayLoginSuccessful;
             _loginView.AuthenticationSuccessfulEvent += AuthenticationSuccessful;
@@ -188,29 +183,6 @@ namespace PasswordVault.Desktop.Winforms
             addButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
             addButton.FlatAppearance.BorderSize = 1;
 
-            deleteButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            deleteButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            deleteButton.FlatStyle = FlatStyle.Flat;
-            deleteButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
-            deleteButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
-            deleteButton.FlatAppearance.BorderSize = 1;
-
-            editButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            editButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            editButton.FlatStyle = FlatStyle.Flat;
-            editButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
-            editButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
-            editButton.FlatAppearance.BorderSize = 1;
-
-            editCancelButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            editCancelButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            editCancelButton.FlatStyle = FlatStyle.Flat;
-            editCancelButton.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
-            editCancelButton.FlatAppearance.BorderColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
-            editCancelButton.FlatAppearance.BorderSize = 1;
-            editCancelButton.Enabled = false;
-            editCancelButton.Visible = false;
-
             clearFilterButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             clearFilterButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             clearFilterButton.FlatStyle = FlatStyle.Flat;
@@ -227,42 +199,6 @@ namespace PasswordVault.Desktop.Winforms
             minimizeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
             // Configure textbox
-            applicationTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            applicationTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            applicationTextBox.BorderStyle = BorderStyle.FixedSingle;
-            applicationTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _appGhost = new GhostTextBoxHelper(applicationTextBox, _appGhostText);
-
-            usernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            usernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            usernameTextBox.BorderStyle = BorderStyle.FixedSingle;
-            usernameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _usernameGhost = new GhostTextBoxHelper(usernameTextBox, _usernameGhostText);
-
-            emailTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            emailTextBox.BorderStyle = BorderStyle.FixedSingle;
-            emailTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _emailGhost = new GhostTextBoxHelper(emailTextBox, _emailGhostText);
-
-            descriptionTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            descriptionTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            descriptionTextBox.BorderStyle = BorderStyle.FixedSingle;
-            descriptionTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _descriptionGhost = new GhostTextBoxHelper(descriptionTextBox, _descriptionGhostText);
-
-            passphraseTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            passphraseTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            passphraseTextBox.BorderStyle = BorderStyle.FixedSingle;
-            passphraseTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _passphraseGhost = new GhostTextBoxHelper(passphraseTextBox, _passphraseGhostText);
-
-            websiteTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
-            websiteTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            websiteTextBox.BorderStyle = BorderStyle.FixedSingle;
-            websiteTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
-            _websiteGhost = new GhostTextBoxHelper(websiteTextBox, _websiteGhostText);
-
             filterTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             filterTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             filterTextBox.BorderStyle = BorderStyle.FixedSingle;
@@ -392,12 +328,7 @@ namespace PasswordVault.Desktop.Winforms
                 throw new ArgumentNullException(nameof(password));
             }
 
-            applicationTextBox.Text = password.Application;
-            usernameTextBox.Text = password.Username;
-            emailTextBox.Text = password.Email;
-            descriptionTextBox.Text = password.Description;
-            websiteTextBox.Text = password.Website;
-            passphraseTextBox.Text = password.Passphrase;
+            throw new NotImplementedException();
         }
 
         /*************************************************************************************************/
@@ -440,23 +371,7 @@ namespace PasswordVault.Desktop.Winforms
                 case ValidatePassword.Success:
                     addButton.Text = "Add";
                     _editMode = false;
-                    editCancelButton.Enabled = false;
-                    editCancelButton.Visible = false;
-                    applicationTextBox.Text = "";
-                    usernameTextBox.Text = "";
-                    emailTextBox.Text = "";
-                    descriptionTextBox.Text = "";
-                    websiteTextBox.Text = "";
-                    passphraseTextBox.Text = "";
 
-                    _appGhost.Reset();
-                    _usernameGhost.Reset();
-                    _emailGhost.Reset();
-                    _descriptionGhost.Reset();
-                    _websiteGhost.Reset();
-                    _passphraseGhost.Reset();
-
-                    applicationTextBox.Focus();
                     UIHelper.UpdateStatusLabel("Password modified.", userStatusLabel, ErrorLevel.Ok);
                     UpdateDataGridViewAfterEdit();
                     break;
@@ -481,31 +396,10 @@ namespace PasswordVault.Desktop.Winforms
                     passwordDataGridView.DataSource = null;
                     passwordDataGridView.Rows.Clear();
                     userStatusLabel.Text = "";
-                    applicationTextBox.Enabled = false;
-                    descriptionTextBox.Enabled = false;
-                    websiteTextBox.Enabled = false;
-                    passphraseTextBox.Enabled = false;
-                    usernameTextBox.Enabled = false;
-                    emailTextBox.Enabled = false;
                     filterTextBox.Enabled = false;
-                    applicationTextBox.Text = "";
-                    descriptionTextBox.Text = "";
-                    websiteTextBox.Text = "";
-                    passphraseTextBox.Text = "";
-                    usernameTextBox.Text = "";
-                    emailTextBox.Text = "";
                     filterTextBox.Text = "";
 
-                    _appGhost.Reset();
-                    _usernameGhost.Reset();
-                    _emailGhost.Reset();
-                    _descriptionGhost.Reset();
-                    _websiteGhost.Reset();
-                    _passphraseGhost.Reset();
-
                     addButton.Enabled = false;
-                    deleteButton.Enabled = false;
-                    editButton.Enabled = false;
                     clearFilterButton.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
                     changePasswordToolStripMenuItem.Enabled = false;
@@ -567,19 +461,6 @@ namespace PasswordVault.Desktop.Winforms
 
                 case ValidatePassword.Success:
                     UIHelper.UpdateStatusLabel("Success.", userStatusLabel, ErrorLevel.Neutral);
-                    applicationTextBox.Text = "";
-                    descriptionTextBox.Text = "";
-                    websiteTextBox.Text = "";
-                    passphraseTextBox.Text = "";
-                    usernameTextBox.Text = "";
-                    emailTextBox.Text = "";
-                    _appGhost.Reset();
-                    _usernameGhost.Reset();
-                    _emailGhost.Reset();
-                    _descriptionGhost.Reset();
-                    _websiteGhost.Reset();
-                    _passphraseGhost.Reset();
-                    applicationTextBox.Focus();
                     UpdateDataGridViewAfterEdit();
                     break;
             }
@@ -604,11 +485,6 @@ namespace PasswordVault.Desktop.Winforms
 
                     break;
             }   
-        }
-
-        public void DisplayGeneratePasswordResult(string generatedPassword)
-        {
-            passphraseTextBox.Text = generatedPassword;
         }
 
         public void DisplayPasswordCount(int count)
@@ -637,16 +513,8 @@ namespace PasswordVault.Desktop.Winforms
         {
             _loggedIn = true;
 
-            applicationTextBox.Enabled = true;
-            descriptionTextBox.Enabled = true;
-            websiteTextBox.Enabled = true;
-            passphraseTextBox.Enabled = true;
-            usernameTextBox.Enabled = true;
-            emailTextBox.Enabled = true;
             addButton.Enabled = true;
-            deleteButton.Enabled = true;
             clearFilterButton.Enabled = true;
-            editButton.Enabled = true;
             filterComboBox.Enabled = true;
             filterTextBox.Enabled = true;
             deleteToolStripMenuItem.Enabled = true;
@@ -757,26 +625,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void AddButton_Click(object sender, EventArgs e)
         {
-            if (!_editMode)
-            {
-                RaiseAddPasswordEvent(
-                    applicationTextBox.Text != _appGhostText ? applicationTextBox.Text : "",
-                    usernameTextBox.Text != _usernameGhostText ? usernameTextBox.Text : "",
-                    emailTextBox.Text != _emailGhostText ? emailTextBox.Text : "",
-                    descriptionTextBox.Text != _descriptionGhostText ? descriptionTextBox.Text : "",
-                    websiteTextBox.Text != _websiteGhostText ? websiteTextBox.Text : "",
-                    passphraseTextBox.Text != _passphraseGhostText ? passphraseTextBox.Text : "");
-            }
-            else
-            {
-                RaiseEditOkayEvent(
-                    applicationTextBox.Text != _appGhostText ? applicationTextBox.Text : "",
-                    usernameTextBox.Text != _usernameGhostText ? usernameTextBox.Text : "",
-                    emailTextBox.Text != _emailGhostText ? emailTextBox.Text : "",
-                    descriptionTextBox.Text != _descriptionGhostText ? descriptionTextBox.Text : "",
-                    websiteTextBox.Text != _websiteGhostText ? websiteTextBox.Text : "",
-                    passphraseTextBox.Text != _passphraseGhostText ? passphraseTextBox.Text : "");
-            }        
+            _addPasswordView.ShowMenu();
         }
 
         /*************************************************************************************************/
@@ -793,10 +642,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
             {
-                editCancelButton.Enabled = true;
-                editCancelButton.Visible = true;
                 _editMode = true;
-                addButton.Text = "Ok";
 
                 // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
                 _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
@@ -804,24 +650,6 @@ namespace PasswordVault.Desktop.Winforms
                 DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
                 RaiseEditPasswordEvent(row);
             }             
-        }
-
-        /*************************************************************************************************/
-        private void EditCancelButton_Click(object sender, EventArgs e)
-        {
-            addButton.Text = "Add";
-            _editMode = false;
-            editCancelButton.Enabled = false;
-            editCancelButton.Visible = false;
-
-            applicationTextBox.Text = "";
-            usernameTextBox.Text = "";
-            emailTextBox.Text = "";
-            descriptionTextBox.Text = "";
-            websiteTextBox.Text = "";
-            passphraseTextBox.Text = "";
-
-            RaiseEditCancelEvent();
         }
 
         /*************************************************************************************************/
@@ -839,15 +667,6 @@ namespace PasswordVault.Desktop.Winforms
             if (EditOkayEvent != null)
             {
                 EditOkayEvent(application, username, email, description, website, passphrase);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void RaiseEditCancelEvent()
-        {
-            if (EditCancelEvent != null)
-            {
-                EditCancelEvent();
             }
         }
 
@@ -1113,35 +932,6 @@ namespace PasswordVault.Desktop.Winforms
             AboutView about = new AboutView();
             about.ShowDialog();
             about.Dispose();
-        }
-
-        /*************************************************************************************************/
-        private void PassphraseTextBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) // submit password
-            {
-                if (!_editMode)
-                {
-                    RaiseAddPasswordEvent(applicationTextBox.Text,
-                                          usernameTextBox.Text,
-                                          emailTextBox.Text,
-                                          descriptionTextBox.Text,
-                                          websiteTextBox.Text,
-                                          passphraseTextBox.Text);
-                }
-                else
-                {
-                    RaiseEditOkayEvent(applicationTextBox.Text,
-                                       usernameTextBox.Text,
-                                       emailTextBox.Text,
-                                       descriptionTextBox.Text,
-                                       websiteTextBox.Text,
-                                       passphraseTextBox.Text);
-                }
-
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
         }
 
         /*************************************************************************************************/

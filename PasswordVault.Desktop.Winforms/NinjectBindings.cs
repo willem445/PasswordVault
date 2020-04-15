@@ -77,6 +77,7 @@ namespace PasswordVault.Desktop.Winforms
             Bind<IConfirmDeleteUserView>().To<ConfirmDeleteUserView>().InSingletonScope();
             Bind<IExportView>().To<ExportView>().InSingletonScope();
             Bind<IImportView>().To<ImportView>().InSingletonScope();
+            Bind<IAddPasswordView>().To<AddPasswordView>().InSingletonScope();
         }
 
         /*=================================================================================================
