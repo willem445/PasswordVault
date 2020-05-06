@@ -39,10 +39,10 @@ namespace PasswordVault.Models
         [Browsable(true)]
         public string Email { get; set; }
 
-        [Browsable(true)]
+        [Browsable(false)]
         public string Description { get; set; }
 
-        [Browsable(true)]
+        [Browsable(false)]
         public string Website { get; set; }
 
         [Browsable(true)]

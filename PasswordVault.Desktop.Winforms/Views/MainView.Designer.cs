@@ -214,6 +214,7 @@ namespace PasswordVault.Desktop.Winforms
             // filterTextBox
             // 
             this.filterTextBox.Enabled = false;
+            this.filterTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.filterTextBox.Location = new System.Drawing.Point(12, 68);
             this.filterTextBox.Name = "filterTextBox";
             this.filterTextBox.Size = new System.Drawing.Size(264, 20);

@@ -13,10 +13,9 @@ namespace PasswordVault.Desktop.Winforms
         event Action<Password> AddPasswordEvent;
         event Action<string> PasswordChangedEvent;
         event Action GenerateNewPasswordEvent;
-        event Action<AddPasswordResult> AddPasswordResultEvent;
 
         void DisplayGeneratePasswordResult(string generatedPassword);
-        void DisplayAddPasswordResult(AddPasswordResult result);
+        void DisplayAddPasswordResult(ValidatePassword result);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
         void ShowMenu();
     }

@@ -201,8 +201,10 @@ namespace PasswordVault.Desktop.Winforms
             // Configure textbox
             filterTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             filterTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            filterTextBox.BorderStyle = BorderStyle.FixedSingle;
-            filterTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            filterTextBox.BorderStyle = BorderStyle.None;
+            filterTextBox.AutoSize = false;
+            filterTextBox.Font = UIHelper.GetFont(9.0f);
+            filterTextBox.Size = new System.Drawing.Size(264, 22);
             _filterGhost = new GhostTextBoxHelper(filterTextBox, _filterGhostText);
 
             // Configure combo box
@@ -575,10 +577,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void RaiseRequestPasswordsEvent()
         {
-            if (RequestPasswordsEvent != null)
-            {
-                RequestPasswordsEvent();
-            }
+            RequestPasswordsEvent?.Invoke();
         }
 
         /*************************************************************************************************/

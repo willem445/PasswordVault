@@ -41,7 +41,7 @@ namespace PasswordVault.Desktop.Winforms
                 var editUserPresenter = new EditUserPresenter(editUserView, serviceWrapper);
                 var exportPresenter = new ExportPresenter(exportView, serviceWrapper);
                 var importPresenter = new ImportPresenter(importView, serviceWrapper);
-                var addPasswordPresenter = new AddPasswordPresenter(addPasswordView, serviceWrapper);
+                var addPasswordPresenter = new AddPasswordPresenter(addPasswordView, mainView, serviceWrapper);
             
                 var confirmDeleteUserPresenter = new ConfirmDeleteUserPresenter(confirmDeleteUserView, serviceWrapper);
 

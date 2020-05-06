@@ -108,54 +108,78 @@ namespace PasswordVault.Desktop.Winforms
             // Configure textbox
             loginUsernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             loginUsernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            loginUsernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            loginUsernameTextBox.BorderStyle = BorderStyle.None;
             loginUsernameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            loginUsernameTextBox.AutoSize = false;
+            loginUsernameTextBox.Font = UIHelper.GetFont(9.0f);
+            loginUsernameTextBox.Size = new System.Drawing.Size(218, 22);
             ghostLoginUsername = new GhostTextBoxHelper(loginUsernameTextBox, "Username");
 
             loginPasswordTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             loginPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            loginPasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
+            loginPasswordTextBox.BorderStyle = BorderStyle.None;
             loginPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            loginPasswordTextBox.AutoSize = false;
+            loginPasswordTextBox.Font = UIHelper.GetFont(9.0f);
+            loginPasswordTextBox.Size = new System.Drawing.Size(218, 22);
             ghostLoginPassword = new GhostTextBoxHelper(loginPasswordTextBox, "Password", true);
                     
             createUsernameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createUsernameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createUsernameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createUsernameTextBox.BorderStyle = BorderStyle.None;
             createUsernameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createUsernameTextBox.AutoSize = false;
+            createUsernameTextBox.Font = UIHelper.GetFont(9.0f);
+            createUsernameTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewUsername = new GhostTextBoxHelper(createUsernameTextBox, "Username");
 
             createPasswordTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createPasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createPasswordTextBox.BorderStyle = BorderStyle.None;
             createPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createPasswordTextBox.AutoSize = false;
+            createPasswordTextBox.Font = UIHelper.GetFont(9.0f);
+            createPasswordTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewPassword = new GhostTextBoxHelper(createPasswordTextBox, "Password");
 
             createFirstNameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createFirstNameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createFirstNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createFirstNameTextBox.BorderStyle = BorderStyle.None;
             createFirstNameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createFirstNameTextBox.AutoSize = false;
+            createFirstNameTextBox.Font = UIHelper.GetFont(9.0f);
+            createFirstNameTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewFirstName = new GhostTextBoxHelper(createFirstNameTextBox, "First Name");
 
             createLastNameTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createLastNameTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createLastNameTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createLastNameTextBox.BorderStyle = BorderStyle.None;
             createLastNameTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            createLastNameTextBox.AutoSize = false;
+            createLastNameTextBox.Font = UIHelper.GetFont(9.0f);
+            createLastNameTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewLastName = new GhostTextBoxHelper(createLastNameTextBox, "Last Name");
 
             createEmailTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createEmailTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createEmailTextBox.BorderStyle = BorderStyle.None;
             createEmailTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             createEmailTextBox.Text = "example@provider.com";
             createEmailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            createEmailTextBox.AutoSize = false;
+            createEmailTextBox.Font = UIHelper.GetFont(9.0f);
+            createEmailTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewEmail = new GhostTextBoxHelper(createEmailTextBox, "Email (example@provider.com)");
 
             createPhoneNumberTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            createPhoneNumberTextBox.BorderStyle = BorderStyle.FixedSingle;
+            createPhoneNumberTextBox.BorderStyle = BorderStyle.None;
             createPhoneNumberTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             createPhoneNumberTextBox.Text = "xxx-xxx-xxxx";
             createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+            createPhoneNumberTextBox.AutoSize = false;
+            createPhoneNumberTextBox.Font = UIHelper.GetFont(9.0f);
+            createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewPhoneNumber = new GhostTextBoxHelper(createPhoneNumberTextBox, "Phone Number (xxx-xxx-xxxx)");
 
             // Configure labels
