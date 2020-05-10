@@ -17,6 +17,7 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayGeneratePasswordResult(string generatedPassword);
         void DisplayAddPasswordResult(ValidatePassword result);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
+        void DisplayPassword(Password password);
         void ShowMenu();
     }
 }

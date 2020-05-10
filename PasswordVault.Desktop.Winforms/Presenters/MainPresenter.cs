@@ -147,9 +147,9 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private void AddPassword(string application, string username, string email, string description, string website, string passphrase)
+        private void AddPassword(string application, string username, string email, string description, string website, string category, string passphrase)
         {
-            Password uiPassword = new Password(application, username, email, description, website, passphrase);
+            Password uiPassword = new Password(application, username, email, description, website, passphrase, category);
             ValidatePassword result = _serviceWrapper.AddPassword(uiPassword);
 
             if (result == ValidatePassword.Success)
@@ -287,22 +287,6 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private Password QueryForFirstPassword(string application, string username, string email, string description, string website)
-        {
-            List<Password> passwords = _serviceWrapper.GetPasswords();
-
-            Password result = (from Password password in passwords
-                               where password.Application == application
-                               where password.Username == username
-                               where password.Email == email
-                               where password.Description == description
-                               where password.Website == website
-                               select password).FirstOrDefault();
-
-            return result;
-        }
-
-        /*************************************************************************************************/
         private Password QueryForFirstPassword(Password password)
         {
             List<Password> passwords = _serviceWrapper.GetPasswords();
@@ -311,8 +295,7 @@ namespace PasswordVault.Desktop.Winforms
                                where queryPassword.Application == password.Application
                                where queryPassword.Username == password.Username
                                where queryPassword.Email == password.Email
-                               where queryPassword.Description == password.Description
-                               where queryPassword.Website == password.Website
+                               where queryPassword.Category == password.Category
                                select queryPassword).FirstOrDefault();
 
             return result;
@@ -336,9 +319,10 @@ namespace PasswordVault.Desktop.Winforms
                 dgvrow.Cells[0].Value?.ToString(),
                 dgvrow.Cells[1].Value?.ToString(),
                 dgvrow.Cells[2].Value?.ToString(),
-                dgvrow.Cells[3].Value?.ToString(),
-                dgvrow.Cells[4].Value?.ToString(),
-                null
+                null,
+                null,
+                null,
+                dgvrow.Cells[3].Value?.ToString()
             );
 
             return p;

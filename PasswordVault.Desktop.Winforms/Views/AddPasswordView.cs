@@ -47,6 +47,8 @@ namespace PasswordVault.Desktop.Winforms
         string _passwordTextboxDefault = "Password";
         string _categoryTextboxDefault = "Category (optional)";
 
+        bool _editMode = false;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -70,6 +72,11 @@ namespace PasswordVault.Desktop.Winforms
             windowLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
             windowLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             windowLabel.Visible = true;
+
+            statusLabel.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
+            statusLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            statusLabel.Visible = true;
+            statusLabel.Text = "";
 
             // Configure buttons
             closeButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
@@ -182,22 +189,32 @@ namespace PasswordVault.Desktop.Winforms
             switch (result)
             {
                 case ValidatePassword.ApplicationError:
+                    UIHelper.UpdateStatusLabel("Invalid application.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.UsernameError:
+                    UIHelper.UpdateStatusLabel("Invalid username.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.EmailError:
+                    UIHelper.UpdateStatusLabel("Invalid email.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.DescriptionError:
+                    UIHelper.UpdateStatusLabel("Invalid description.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.WebsiteError:
+                    UIHelper.UpdateStatusLabel("Invalid website.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.PassphraseError:
+                    UIHelper.UpdateStatusLabel("Invalid password.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.DuplicatePassword:
+                    UIHelper.UpdateStatusLabel("Duplicate password.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.Failed:
+                    UIHelper.UpdateStatusLabel("Add password failed.", statusLabel, ErrorLevel.Error);
                     break;
                 case ValidatePassword.Success:
+                    UIHelper.UpdateStatusLabel("Success.", statusLabel, ErrorLevel.Error);
+                    this.CloseView();
                     break;
                 default:
                     break;
@@ -207,34 +224,49 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayGeneratePasswordResult(string generatedPassword)
         {
-
+            passwordTextbox.Text = generatedPassword;
         }
 
         /*************************************************************************************************/
         public void DisplayPasswordComplexity(PasswordComplexityLevel complexity)
         {
-            //switch (complexity)
-            //{
-            //    case PasswordComplexityLevel.Weak:
-            //        createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
-            //        break;
+            switch (complexity)
+            {
+                case PasswordComplexityLevel.Weak:
+                    passwordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
+                    break;
 
-            //    case PasswordComplexityLevel.Mediocre:
-            //        createPasswordTextBox.ForeColor = Color.Orange;
-            //        break;
+                case PasswordComplexityLevel.Mediocre:
+                    passwordTextbox.ForeColor = Color.Orange;
+                    break;
 
-            //    case PasswordComplexityLevel.Ok:
-            //        createPasswordTextBox.ForeColor = Color.YellowGreen;
-            //        break;
+                case PasswordComplexityLevel.Ok:
+                    passwordTextbox.ForeColor = Color.YellowGreen;
+                    break;
 
-            //    case PasswordComplexityLevel.Great:
-            //        createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusGreenColor);
-            //        break;
+                case PasswordComplexityLevel.Great:
+                    passwordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusGreenColor);
+                    break;
 
-            //    default:
-            //        createPasswordTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            //        break;
-            //}
+                default:
+                    passwordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+                    break;
+            }
+        }
+
+        /*************************************************************************************************/
+        public void DisplayPassword(Password password)
+        {
+            if (password != null)
+            {
+                applicationTextbox.Text = password.Application;
+                usernameTextbox.Text = password.Username;
+                emailTextbox.Text = password.Email;
+                websiteTextbox.Text = password.Website;
+                categoryCombobox.Text = password.Category;
+                descriptionTextbox.Text = descriptionTextbox.Text;
+                passwordTextbox.Text = password.Passphrase;
+            }         
         }
 
         /*************************************************************************************************/
@@ -277,9 +309,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            ClearView();
-            this.Close();
-            DialogResult = DialogResult.Cancel;
+            this.CloseView();   
         }
 
         /*************************************************************************************************/
@@ -309,45 +339,37 @@ namespace PasswordVault.Desktop.Winforms
 
         }
 
+        private void CloseView()
+        {
+            ClearView();
+            this.Close();
+            DialogResult = DialogResult.Cancel;
+        }
+
         /*************************************************************************************************/
         private void passwordTextbox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) // submit password
-            {
-                //if (!_editMode)
-                //{
-                //    RaiseAddPasswordEvent(applicationTextBox.Text,
-                //                          usernameTextBox.Text,
-                //                          emailTextBox.Text,
-                //                          descriptionTextBox.Text,
-                //                          websiteTextBox.Text,
-                //                          passphraseTextBox.Text);
-                //}
-                //else
-                //{
-                //    RaiseEditOkayEvent(applicationTextBox.Text,
-                //                       usernameTextBox.Text,
-                //                       emailTextBox.Text,
-                //                       descriptionTextBox.Text,
-                //                       websiteTextBox.Text,
-                //                       passphraseTextBox.Text);
-                //}
-
+            {         
                 e.Handled = true;
                 e.SuppressKeyPress = true;
+                AddPassword();
             }
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            string application = "";
-            string username = "";
+            AddPassword();
+        }
+
+        private void AddPassword()
+        {
             string email = "";
             string description = "";
             string website = "";
-            string pass = "";
             string category = "";
 
+            // if required fields are still default, set to red and return
             if (applicationTextbox.Text == _applicationTextboxDefault)
             {
                 applicationTextbox.ForeColor = Color.Red;
@@ -366,14 +388,35 @@ namespace PasswordVault.Desktop.Winforms
                 return;
             }
 
+            // Set optional fields to "" if still default values when submitted.
+            if (emailTextbox.Text != _emailTextboxDefault)
+            {
+                email = emailTextbox.Text;
+            }
+
+            if (descriptionTextbox.Text != _descriptionTextboxDefault)
+            {
+                description = descriptionTextbox.Text;
+            }
+
+            if (websiteTextbox.Text != _websiteTextboxDefault)
+            {
+                website = websiteTextbox.Text;
+            }
+
+            if (categoryCombobox.Text != _categoryTextboxDefault)
+            {
+                category = categoryCombobox.Text;
+            }
+
             Password password = new Password(
                 applicationTextbox.Text,
                 usernameTextbox.Text,
-                emailTextbox.Text,
-                descriptionTextbox.Text,
-                websiteTextbox.Text,
+                email,
+                description,
+                website,
                 passwordTextbox.Text,
-                categoryCombobox.Text
+                category
             );
             AddPasswordEvent?.Invoke(password);
         }
@@ -393,6 +436,14 @@ namespace PasswordVault.Desktop.Winforms
         private void generatePasswordButton_Click(object sender, EventArgs e)
         {
             GenerateNewPasswordEvent?.Invoke();
+        }
+
+        private void passwordTextbox_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(passwordTextbox.Text) && passwordTextbox.Text != _passwordTextboxDefault)
+            {
+                PasswordChangedEvent?.Invoke(passwordTextbox.Text);
+            }       
         }
 
 

@@ -54,7 +54,7 @@ namespace PasswordVault.Desktop.Winforms
         public event Action RequestPasswordsOnLoginEvent;
         public event Action RequestPasswordsEvent;
         public event Action LogoutEvent;
-        public event Action<string, string, string, string, string, string> AddPasswordEvent;
+        public event Action<string, string, string, string, string, string, string> AddPasswordEvent;
         public event Action<int> MovePasswordUpEvent;
         public event Action<int> MovePasswordDownEvent;
         public event Action<DataGridViewRow> EditPasswordEvent;
@@ -628,11 +628,11 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private void RaiseAddPasswordEvent(string application, string username, string email, string description, string website, string passphrase)
+        private void RaiseAddPasswordEvent(string application, string username, string email, string description, string website, string category, string passphrase)
         {
             if (AddPasswordEvent != null)
             {
-                AddPasswordEvent(application, username, email, description, website, passphrase);
+                AddPasswordEvent(application, username, email, description, website, category, passphrase);
             }
         }
 

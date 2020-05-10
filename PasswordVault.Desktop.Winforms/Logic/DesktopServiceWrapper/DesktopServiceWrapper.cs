@@ -471,7 +471,8 @@ namespace PasswordVault.Desktop.Winforms
                 password.Email,
                 password.Description,
                 password.Website,
-                password.Passphrase
+                password.Passphrase,
+                password.Category
             );
 
             _passwordList.Add(newPassword);

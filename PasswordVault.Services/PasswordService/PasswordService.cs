@@ -149,7 +149,8 @@ namespace PasswordVault.Services
                 password.Email,
                 password.Description,
                 password.Website,
-                encryptionService.Encrypt(password.Passphrase, key)
+                encryptionService.Encrypt(password.Passphrase, key),
+                password.Category
                 );
         }
 

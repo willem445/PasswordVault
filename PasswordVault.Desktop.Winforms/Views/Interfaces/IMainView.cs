@@ -17,7 +17,7 @@ namespace PasswordVault.Desktop.Winforms
         event Action RequestPasswordsEvent;
         event Action LogoutEvent;
 
-        event Action<string, string, string, string, string, string> AddPasswordEvent;
+        event Action<string, string, string, string, string, string, string> AddPasswordEvent;
         event Action<int> MovePasswordUpEvent;
         event Action<int> MovePasswordDownEvent;
         event Action<DataGridViewRow> EditPasswordEvent;

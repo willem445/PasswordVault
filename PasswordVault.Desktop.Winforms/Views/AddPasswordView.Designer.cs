@@ -43,6 +43,7 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.generatePasswordButton = new System.Windows.Forms.Button();
             this.categoryCombobox = new PasswordVault.Desktop.Winforms.AdvancedComboBox();
+            this.statusLabel = new System.Windows.Forms.Label();
             this.moveWindowPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -121,11 +122,12 @@
             this.passwordTextbox.Name = "passwordTextbox";
             this.passwordTextbox.Size = new System.Drawing.Size(198, 20);
             this.passwordTextbox.TabIndex = 6;
+            this.passwordTextbox.TextChanged += new System.EventHandler(this.passwordTextbox_TextChanged);
             this.passwordTextbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.passwordTextbox_KeyUp);
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(147, 310);
+            this.addButton.Location = new System.Drawing.Point(147, 334);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 8;
@@ -135,7 +137,7 @@
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(66, 310);
+            this.cancelButton.Location = new System.Drawing.Point(66, 334);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 9;
@@ -165,12 +167,22 @@
             this.categoryCombobox.TabIndex = 0;
             this.categoryCombobox.SelectedIndexChanged += new System.EventHandler(this.categoryCombobox_SelectedIndexChanged);
             // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(21, 311);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(35, 13);
+            this.statusLabel.TabIndex = 30;
+            this.statusLabel.Text = "status";
+            // 
             // AddPasswordView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(251, 346);
+            this.ClientSize = new System.Drawing.Size(251, 370);
+            this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.generatePasswordButton);
             this.Controls.Add(this.moveWindowPanel);
             this.Controls.Add(this.cancelButton);
@@ -209,5 +221,6 @@
         private System.Windows.Forms.Button addButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button generatePasswordButton;
+        private System.Windows.Forms.Label statusLabel;
     }
 }

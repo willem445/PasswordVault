@@ -37,6 +37,21 @@ namespace PasswordVault.Desktop.Winforms
             _mainView = mainView;
 
             _addPasswordView.AddPasswordEvent += AddPassword;
+            _addPasswordView.GenerateNewPasswordEvent += GeneratePassword;
+            _addPasswordView.PasswordChangedEvent += CalculatePasswordComplexity;
+        }
+
+        private void GeneratePassword()
+        {
+            string password = _serviceWrapper.GeneratePassword();
+            _addPasswordView.DisplayGeneratePasswordResult(password);
+        }
+
+        private void CalculatePasswordComplexity(string password)
+        {
+            PasswordComplexityLevel passwordComplexityLevel = PasswordComplexityLevel.Weak;
+            passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(password.Length, password);
+            _addPasswordView.DisplayPasswordComplexity(passwordComplexityLevel);
         }
 
         private void AddPassword(Password uiPassword)
