@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using PasswordVault.Models;
 using PasswordVault.Services;
 
@@ -39,6 +40,9 @@ namespace PasswordVault.Desktop.Winforms
             _addPasswordView.AddPasswordEvent += AddPassword;
             _addPasswordView.GenerateNewPasswordEvent += GeneratePassword;
             _addPasswordView.PasswordChangedEvent += CalculatePasswordComplexity;
+            _addPasswordView.SubmitEditPasswordEvent += SubmitEditPassword;
+
+            _mainView.EditPasswordEvent += EditPassword;
         }
 
         private void GeneratePassword()
@@ -76,6 +80,59 @@ namespace PasswordVault.Desktop.Winforms
             BindingList<Password> uiBindingList = new BindingList<Password>(passwords);
             _mainView.DisplayPasswords(uiBindingList);
             _mainView.DisplayPasswordCount(count);
+        }
+
+        private void EditPassword(DataGridViewRow dgvrow)
+        {
+            Password password = ConvertDgvRowToPassword(dgvrow);
+            Password result = QueryForFirstPassword(password);
+
+            if (result != null)
+            {
+                _addPasswordView.DisplayEditPassword(result);
+            }
+        }
+
+        private void SubmitEditPassword(Password editPassword, Password originalPassword)
+        {
+            ValidatePassword result = _serviceWrapper.ModifyPassword(originalPassword, editPassword);
+
+            _addPasswordView.DisplayEditPasswordResult(result);
+
+            if (result == ValidatePassword.Success)
+            {
+                _mainView.DisplayAddEditPasswordResult(result);
+            }
+        }
+
+        private static Password ConvertDgvRowToPassword(DataGridViewRow dgvrow)
+        {
+            Password p = new Password
+            (
+                dgvrow.Cells[0].Value?.ToString(),
+                dgvrow.Cells[1].Value?.ToString(),
+                dgvrow.Cells[2].Value?.ToString(),
+                null,
+                null,
+                null,
+                dgvrow.Cells[3].Value?.ToString()
+            );
+
+            return p;
+        }
+
+        private Password QueryForFirstPassword(Password password)
+        {
+            List<Password> passwords = _serviceWrapper.GetPasswords();
+
+            Password result = (from Password queryPassword in passwords
+                               where queryPassword.Application == password.Application
+                               where queryPassword.Username == password.Username
+                               where queryPassword.Email == password.Email
+                               where queryPassword.Category == password.Category
+                               select queryPassword).FirstOrDefault();
+
+            return result;
         }
     }
 }

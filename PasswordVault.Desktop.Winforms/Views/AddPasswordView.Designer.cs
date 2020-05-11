@@ -42,8 +42,8 @@
             this.addButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.generatePasswordButton = new System.Windows.Forms.Button();
-            this.categoryCombobox = new PasswordVault.Desktop.Winforms.AdvancedComboBox();
             this.statusLabel = new System.Windows.Forms.Label();
+            this.categoryCombobox = new PasswordVault.Desktop.Winforms.AdvancedComboBox();
             this.moveWindowPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,6 +143,7 @@
             this.cancelButton.TabIndex = 9;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // generatePasswordButton
             // 
@@ -153,6 +154,15 @@
             this.generatePasswordButton.Text = "Generate Password";
             this.generatePasswordButton.UseVisualStyleBackColor = true;
             this.generatePasswordButton.Click += new System.EventHandler(this.generatePasswordButton_Click);
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(21, 311);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(35, 13);
+            this.statusLabel.TabIndex = 30;
+            this.statusLabel.Text = "status";
             // 
             // categoryCombobox
             // 
@@ -166,15 +176,6 @@
             this.categoryCombobox.Size = new System.Drawing.Size(198, 21);
             this.categoryCombobox.TabIndex = 0;
             this.categoryCombobox.SelectedIndexChanged += new System.EventHandler(this.categoryCombobox_SelectedIndexChanged);
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.AutoSize = true;
-            this.statusLabel.Location = new System.Drawing.Point(21, 311);
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(35, 13);
-            this.statusLabel.TabIndex = 30;
-            this.statusLabel.Text = "status";
             // 
             // AddPasswordView
             // 

@@ -55,10 +55,7 @@ namespace PasswordVault.Desktop.Winforms
         public event Action RequestPasswordsEvent;
         public event Action LogoutEvent;
         public event Action<string, string, string, string, string, string, string> AddPasswordEvent;
-        public event Action<int> MovePasswordUpEvent;
-        public event Action<int> MovePasswordDownEvent;
         public event Action<DataGridViewRow> EditPasswordEvent;
-        public event Action<string, string, string, string, string, string> EditOkayEvent;
         public event Action<DataGridViewRow> DeletePasswordEvent;   
         public event Action<DataGridViewRow> CopyUserNameEvent;
         public event Action<DataGridViewRow> CopyPasswordEvent;
@@ -657,45 +654,6 @@ namespace PasswordVault.Desktop.Winforms
             if (EditPasswordEvent != null)
             {
                 EditPasswordEvent(dgvrow);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void RaiseEditOkayEvent(string application, string username, string email, string description, string website, string passphrase)
-        {
-            if (EditOkayEvent != null)
-            {
-                EditOkayEvent(application, username, email, description, website, passphrase);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void MoveUpButton_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        /*************************************************************************************************/
-        private void RaiseMovePasswordUpEvent(int index)
-        {
-            if (MovePasswordUpEvent != null)
-            {
-                MovePasswordUpEvent(index);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void MoveDownButton_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        /*************************************************************************************************/
-        private void RaiseMovePasswordDownEvent(int index)
-        {
-            if (MovePasswordDownEvent != null)
-            {
-                MovePasswordDownEvent(index);
             }
         }
 

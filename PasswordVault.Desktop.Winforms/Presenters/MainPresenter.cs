@@ -66,8 +66,6 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
             _mainView.AddPasswordEvent += AddPassword;
             _mainView.DeletePasswordEvent += DeletePassword;
-            _mainView.EditPasswordEvent += EditPasswordInit;
-            _mainView.EditOkayEvent += EditPasswordExecute;
             _mainView.LogoutEvent += Logout;
             _mainView.CopyPasswordEvent += CopyPassword;
             _mainView.CopyUserNameEvent += CopyUsername;
@@ -174,34 +172,6 @@ namespace PasswordVault.Desktop.Winforms
                 _mainView.DisplayDeletePasswordResult(deleteResult);
                 _mainView.DisplayPasswordCount(_serviceWrapper.GetPasswordCount());
             }        
-        }
-
-        /*************************************************************************************************/
-        private void EditPasswordInit(DataGridViewRow dgvrow)
-        {
-            Password password = ConvertDgvRowToPassword(dgvrow);
-            Password result = QueryForFirstPassword(password);
-
-            if (result != null)
-            {
-                _editPassword = result;
-                _mainView.DisplayPasswordToEdit(result);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void EditPasswordExecute(string application, string username, string email, string description, string website, string passphrase)
-        {
-            Password modifiedPassword = new Password(_editPassword.UniqueID, application, username, email, description, website, passphrase);
-
-            ValidatePassword result = _serviceWrapper.ModifyPassword(_editPassword, modifiedPassword);
-
-            if (result == ValidatePassword.Success)
-            {
-                _editPassword = null;
-            }
-
-            _mainView.DisplayAddEditPasswordResult(result);
         }
 
         /*************************************************************************************************/
