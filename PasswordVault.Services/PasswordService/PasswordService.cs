@@ -100,8 +100,16 @@ namespace PasswordVault.Services
 
         public string GeneratePassword(int length)
         {
-            string result = KeyGenerator.GenerateRandomPassword(length);
+            string result;
+            PasswordComplexityLevel passwordComplexityLevel = PasswordComplexityLevel.Weak;
 
+            do
+            {
+                result = KeyGenerator.GenerateRandomPassword(length);
+                passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(result.Length, result);
+            }
+            while (passwordComplexityLevel != PasswordComplexityLevel.Great);
+                   
             return result;
         }
 

@@ -66,6 +66,25 @@ namespace PasswordVault.Desktop.Winforms
             InitializeComponent();
 
             #region UI
+            applicationTextbox.KeyPress += AddPasswordView_KeyPress;
+            usernameTextbox.KeyPress += AddPasswordView_KeyPress;
+            emailTextbox.KeyPress += AddPasswordView_KeyPress;
+            categoryCombobox.KeyPress += AddPasswordView_KeyPress;
+            websiteTextbox.KeyPress += AddPasswordView_KeyPress;
+            descriptionTextbox.KeyPress += AddPasswordView_KeyPress;
+            passwordTextbox.KeyPress += AddPasswordView_KeyPress;
+
+            applicationTextbox.TabIndex = 0;
+            usernameTextbox.TabIndex = 1;
+            emailTextbox.TabIndex = 2;
+            categoryCombobox.TabIndex = 3;
+            descriptionTextbox.TabIndex = 4;
+            websiteTextbox.TabIndex = 5;
+            passwordTextbox.TabIndex = 6;
+            generatePasswordButton.TabIndex = 7;
+            addButton.TabIndex = 8;
+            cancelButton.TabIndex = 9;
+            
             // Configure form UI
             BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
@@ -320,6 +339,7 @@ namespace PasswordVault.Desktop.Winforms
         public void ShowMenu()
         {
             this.Show();
+            applicationTextbox.Focus();
         }
 
         /*=================================================================================================
@@ -517,7 +537,14 @@ namespace PasswordVault.Desktop.Winforms
             this.CloseView();
         }
 
-
+        private void AddPasswordView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter) // submit password
+            {
+                e.Handled = true;
+                AddPassword();
+            }
+        }
 
         /*=================================================================================================
         STATIC METHODS

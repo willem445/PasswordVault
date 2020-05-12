@@ -12,7 +12,7 @@ DESCRIPTION
 /* Source: https://www.codeproject.com/script/Articles/ViewDownloads.aspx?aid=4721
  ------------------------------------------------------------------------------------------------*/
 
-namespace PasswordVault.Desktop.Winforms
+namespace PasswordVault.Services
 {
     /*=================================================================================================
 	ENUMERATIONS

@@ -535,6 +535,7 @@ namespace PasswordVault.Desktop.Winforms
             ghostNewLastName.Reset();
             ghostNewPhoneNumber.Reset();
             ghostNewEmail.Reset();
+            loginUsernameTextBox.Focus();
         }
 
         /*************************************************************************************************/
