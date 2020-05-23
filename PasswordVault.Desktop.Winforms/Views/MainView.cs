@@ -988,7 +988,20 @@ namespace PasswordVault.Desktop.Winforms
             this.Refresh();
         }
 
+        private void passwordDataGridView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+                {
+                    // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
+                    _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
 
+                    DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                    RaiseDeletePasswordEvent(row);
+                }
+            }
+        }
 
         /*=================================================================================================
         STATIC METHODS
