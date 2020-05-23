@@ -283,6 +283,7 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void closeButton_Click(object sender, EventArgs e)
         {
+            ClearChangePasswordView();
             this.Close();
             DialogResult = DialogResult.Cancel;
         }
@@ -332,8 +333,8 @@ namespace PasswordVault.Desktop.Winforms
             passwordTextbox.Text = "";
             passwordStrengthProgressBar.ForeColor = Color.Red;
             passwordStrengthProgressBar.BackColor = Color.Red;
-            passwordStrengthProgressBar.Value = 25;
-            passwordStrengthLabel.Text = "Weak";
+            passwordStrengthProgressBar.Value = 0;
+            passwordStrengthLabel.Text = "";
             statusLabel.Text = "";
         }
 

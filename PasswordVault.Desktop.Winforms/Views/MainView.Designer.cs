@@ -169,12 +169,14 @@ namespace PasswordVault.Desktop.Winforms
             // 
             // passwordDataGridView
             // 
+            this.passwordDataGridView.AllowUserToDeleteRows = false;
             this.passwordDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.passwordDataGridView.Location = new System.Drawing.Point(12, 97);
             this.passwordDataGridView.Name = "passwordDataGridView";
             this.passwordDataGridView.Size = new System.Drawing.Size(674, 290);
             this.passwordDataGridView.TabIndex = 1;
             this.passwordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
+            this.passwordDataGridView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.passwordDataGridView_KeyUp);
             this.passwordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
             // 
             // addButton
