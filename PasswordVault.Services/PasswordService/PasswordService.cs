@@ -100,8 +100,16 @@ namespace PasswordVault.Services
 
         public string GeneratePassword(int length)
         {
-            string result = KeyGenerator.GenerateRandomPassword(length);
+            string result;
+            PasswordComplexityLevel passwordComplexityLevel = PasswordComplexityLevel.Weak;
 
+            do
+            {
+                result = KeyGenerator.GenerateRandomPassword(length);
+                passwordComplexityLevel = PasswordComplexity.checkEffectiveBitSize(result.Length, result);
+            }
+            while (passwordComplexityLevel != PasswordComplexityLevel.Great);
+                   
             return result;
         }
 
@@ -122,7 +130,8 @@ namespace PasswordVault.Services
                     encryptionService.Decrypt(databasePassword.Email,       key),
                     encryptionService.Decrypt(databasePassword.Description, key),
                     encryptionService.Decrypt(databasePassword.Website,     key),
-                    encryptionService.Decrypt(databasePassword.Passphrase,  key)
+                    encryptionService.Decrypt(databasePassword.Passphrase,  key),
+                    encryptionService.Decrypt(databasePassword.Category,    key)
                     );
 
                 passwords.Add(password);
@@ -148,7 +157,8 @@ namespace PasswordVault.Services
                 password.Email,
                 password.Description,
                 password.Website,
-                encryptionService.Encrypt(password.Passphrase, key)
+                encryptionService.Encrypt(password.Passphrase, key),
+                password.Category
                 );
         }
 
@@ -157,14 +167,15 @@ namespace PasswordVault.Services
             IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
 
             return new DatabasePassword(
-                password.UniqueID,
-                uuid,
-                encryptionService.Encrypt(password.Application, key),
-                encryptionService.Encrypt(password.Username,    key),
-                encryptionService.Encrypt(password.Email,       key),
-                encryptionService.Encrypt(password.Description, key),
-                encryptionService.Encrypt(password.Website,     key),
-                password.Passphrase // Password is already encrypted
+                uniqueID:    password.UniqueID,
+                useruuid:    uuid,
+                application: encryptionService.Encrypt(password.Application, key),
+                username:    encryptionService.Encrypt(password.Username,    key),
+                email:       encryptionService.Encrypt(password.Email,       key),
+                description: encryptionService.Encrypt(password.Description, key),
+                website:     encryptionService.Encrypt(password.Website,     key),
+                passphrase:  password.Passphrase, // Password is already encrypted
+                category:    encryptionService.Encrypt(password.Category,    key)
                 );
         }
 

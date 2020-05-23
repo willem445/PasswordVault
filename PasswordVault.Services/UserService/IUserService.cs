@@ -55,7 +55,7 @@ namespace PasswordVault.Services
         /// <param name="confirmPassword">Confirm password.</param>
         /// <param name="encryptionKey">Key used for encryption.</param>
         /// <returns>Returns change password result.</returns>
-        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, EncryptionParameters parameters, MasterPasswordParameters hashParameters);
+        ValidateUserPasswordResult ChangeUserPassword(string userUuid, string originalPassword, string newPassword, string confirmPassword, string encryptionKey, string swVersion, EncryptionParameters parameters, MasterPasswordParameters hashParameters);
 
         /// <summary>
         /// Gets a user from the database by the users unique ID.

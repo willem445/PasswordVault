@@ -60,7 +60,8 @@ namespace PasswordVault.Data
                     password.Email,
                     password.Description,
                     password.Website,
-                    password.Passphrase);
+                    password.Passphrase,
+                    password.Category);
 
                 _localPasswordDb.Add(newPassword);
             }

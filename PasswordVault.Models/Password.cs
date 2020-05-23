@@ -39,11 +39,14 @@ namespace PasswordVault.Models
         [Browsable(true)]
         public string Email { get; set; }
 
-        [Browsable(true)]
+        [Browsable(false)]
         public string Description { get; set; }
 
-        [Browsable(true)]
+        [Browsable(false)]
         public string Website { get; set; }
+
+        [Browsable(true)]
+        public string Category { get; set; }
 
         [Browsable(false)]
         public string Passphrase { get; set; }
@@ -53,7 +56,7 @@ namespace PasswordVault.Models
 
         }
 
-        public Password(string application, string username, string email, string description, string website, string passphrase)
+        public Password(string application, string username, string email, string description, string website, string passphrase, string category = "")
         {
             Passphrase = passphrase;
             Application = application;
@@ -61,9 +64,10 @@ namespace PasswordVault.Models
             Email = email;
             Description = description;
             Website = website;
+            Category = category;
         }
 
-        public Password(Int64 uniqueID, string application, string username, string email, string description, string website, string passphrase)
+        public Password(Int64 uniqueID, string application, string username, string email, string description, string website, string passphrase, string category = "")
         {
             UniqueID = uniqueID;
             Passphrase = passphrase;
@@ -72,6 +76,7 @@ namespace PasswordVault.Models
             Email = email;
             Description = description;
             Website = website;
+            Category = category;
         }
 
         public virtual string GetPasswordString()

@@ -121,7 +121,12 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         public AddUserResult CreateNewUser(User user)
-        {          
+        {
+            if (user != null)
+            {
+                user.SwVersion = VersionHelper.GetVersion().ToString();
+            }
+            
             AddUserResult result = _userService.AddUser(user, _settings.DefaultEncryptionParameters, _settings.DefaultMasterPasswordParameters);
             return result;
         }
@@ -137,9 +142,11 @@ namespace PasswordVault.Desktop.Winforms
                     originalPassword, 
                     newPassword, 
                     confirmPassword, 
-                    _currentUser.PlainTextRandomKey, 
+                    _currentUser.PlainTextRandomKey,
+                    VersionHelper.GetVersion().ToString(),
                     _settings.DefaultEncryptionParameters, 
-                    _settings.DefaultMasterPasswordParameters);
+                    _settings.DefaultMasterPasswordParameters
+                    );
             }
 
             return result;
@@ -161,13 +168,14 @@ namespace PasswordVault.Desktop.Winforms
         public UserInformationResult EditUser(User user)
         {
             UserInformationResult result = UserInformationResult.Failed;
-
+        
             if (IsLoggedIn())
             {
                 if (user != null &&
                 !string.IsNullOrEmpty(_currentUser.Uuid) &&
                 !string.IsNullOrEmpty(_currentUser.PlainTextRandomKey))
                 {
+                    user.SwVersion = VersionHelper.GetVersion().ToString();
                     result = _userService.ModifyUser(_currentUser.Uuid, user, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
                     if (result == UserInformationResult.Success)
@@ -304,7 +312,8 @@ namespace PasswordVault.Desktop.Winforms
                     int index = _passwordList.FindIndex(x => (x.Application == originalPassword.Application) &&
                                                              (x.Username == originalPassword.Username) && 
                                                              (x.Description == originalPassword.Description) && 
-                                                             (x.Website == originalPassword.Website));
+                                                             (x.Website == originalPassword.Website) &&
+                                                             (x.Category == originalPassword.Category));
 
                     if (index != -1)
                     {
@@ -314,7 +323,8 @@ namespace PasswordVault.Desktop.Winforms
                                                                      modifiedPassword.Email,
                                                                      modifiedPassword.Description, 
                                                                      modifiedPassword.Website, 
-                                                                     modifiedPassword.Passphrase);
+                                                                     modifiedPassword.Passphrase,
+                                                                     modifiedPassword.Category);
 
                         ValidatePassword addResult = _passwordService.ModifyPassword(_currentUser.Uuid, modifiedWithUniqueID, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
 
@@ -463,7 +473,8 @@ namespace PasswordVault.Desktop.Winforms
                 password.Email,
                 password.Description,
                 password.Website,
-                password.Passphrase
+                password.Passphrase,
+                password.Category
             );
 
             _passwordList.Add(newPassword);

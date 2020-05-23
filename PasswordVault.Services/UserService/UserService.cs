@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using PasswordVault.Models;
 using PasswordVault.Data;
+using PasswordVault.Utilities;
 using System.Globalization;
 
 // TODO - Generate valid user password method
@@ -59,7 +60,8 @@ namespace PasswordVault.Services
                         encryptionService.Encrypt(user.FirstName, masterHash.RandomGeneratedKey), // Encrypt with plaintext random key
                         encryptionService.Encrypt(user.LastName, masterHash.RandomGeneratedKey), // Encrypt with plaintext random key
                         encryptionService.Encrypt(user.PhoneNumber, masterHash.RandomGeneratedKey), // Encrypt with plaintext random key
-                        encryptionService.Encrypt(user.Email, masterHash.RandomGeneratedKey) // Encrypt with plaintext random key
+                        encryptionService.Encrypt(user.Email, masterHash.RandomGeneratedKey), // Encrypt with plaintext random key
+                        user.SwVersion
                         );
 
                 bool dbresult = _dbcontext.AddUser(newUser);
@@ -123,7 +125,8 @@ namespace PasswordVault.Services
                     firstName :    encryptionService.Encrypt(modifiedUser.FirstName,   encryptionKey),
                     lastName :     encryptionService.Encrypt(modifiedUser.LastName,    encryptionKey),
                     phoneNumber :  encryptionService.Encrypt(modifiedUser.PhoneNumber, encryptionKey),
-                    email :        encryptionService.Encrypt(modifiedUser.Email,       encryptionKey)
+                    email :        encryptionService.Encrypt(modifiedUser.Email,       encryptionKey),
+                    swVersion:     modifiedUser.SwVersion
                 );
 
                 bool success = _dbcontext.ModifyUser(dbUser, encryptedModifiedUser);
@@ -148,6 +151,7 @@ namespace PasswordVault.Services
             string newPassword, 
             string confirmPassword, 
             string encryptionKey, 
+            string swVersion,
             EncryptionParameters encParameters,
             MasterPasswordParameters hashParameters)
         {
@@ -189,7 +193,8 @@ namespace PasswordVault.Services
                             dbUser.FirstName,
                             dbUser.LastName,
                             dbUser.PhoneNumber,
-                            dbUser.Email
+                            dbUser.Email,
+                            swVersion
                         );
 
                         if (_dbcontext.ModifyUser(dbUser, newUser))

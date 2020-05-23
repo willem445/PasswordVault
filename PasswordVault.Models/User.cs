@@ -48,6 +48,7 @@ namespace PasswordVault.Models
         public string LastName { get; } // use randomly generated key to hash and store
         public string PhoneNumber { get; } // use randomly generated key to hash and store
         public string Email { get; } // use randomly generated key to hash and store
+        public string SwVersion { get; set; }
 
         public User(
             string uniqueID, 
@@ -58,6 +59,7 @@ namespace PasswordVault.Models
             string lastName, 
             string phoneNumber, 
             string email,
+            string swVersion,
             bool validUser = false)
         {
             Uuid = uniqueID;
@@ -68,6 +70,7 @@ namespace PasswordVault.Models
             LastName = lastName;
             PhoneNumber = phoneNumber;
             Email = email;
+            SwVersion = swVersion;
             ValidUser = validUser;
         }
 
