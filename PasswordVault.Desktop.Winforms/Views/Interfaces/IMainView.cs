@@ -28,6 +28,7 @@ namespace PasswordVault.Desktop.Winforms
 
         event Action GeneratePasswordEvent;
 
+        void SetTimeoutTime(int minutes);
         void DisplayPasswords(BindingList<Password> passwordList);
         void DisplayUserID(string userID);
         void DisplayPasswordToEdit(Password password);

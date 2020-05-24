@@ -87,6 +87,8 @@ namespace PasswordVault.Desktop.Winforms
         private readonly GhostTextBoxHelper _filterGhost;
         private string _filterGhostText = "Filter";
 
+        private System.Timers.Timer logoutTimeoutTimer;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -299,12 +301,24 @@ namespace PasswordVault.Desktop.Winforms
 
             userStatusLabel.Text = "Not logged in.";
             passwordCountLabel.Text = "0";
+
+            logoutTimeoutTimer = new System.Timers.Timer();
+            logoutTimeoutTimer.Interval = 900000; // 15 minutes
+            logoutTimeoutTimer.Enabled = false;
+            logoutTimeoutTimer.Elapsed += TimerExpired;
+            logoutTimeoutTimer.AutoReset = false;
         }
 
         /*=================================================================================================
         PUBLIC METHODS
         *================================================================================================*/
         /*************************************************************************************************/
+        public void SetTimeoutTime(int minutes)
+        {
+            int milliseconds = minutes * 60 * 1000;
+            logoutTimeoutTimer.Interval = milliseconds;
+        }
+
         public void DisplayPasswords(BindingList<Password> passwordList)
         {
             _dgvPasswordList = new BindingList<Password>(passwordList);
@@ -387,29 +401,29 @@ namespace PasswordVault.Desktop.Winforms
             switch (result)
             {
                 case LogOutResult.Failed:
-                    UIHelper.UpdateStatusLabel("Log out failed!", userStatusLabel, ErrorLevel.Neutral);
+                    this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Log out failed!", userStatusLabel, ErrorLevel.Error)));
                     break;
 
                 case LogOutResult.Success:
                     _loggedIn = false;
-                    passwordDataGridView.DataSource = null;
-                    passwordDataGridView.Rows.Clear();
-                    userStatusLabel.Text = "";
-                    filterTextBox.Enabled = false;
-                    filterTextBox.Text = "";
-
-                    addButton.Enabled = false;
-                    clearFilterButton.Enabled = false;
-                    deleteToolStripMenuItem.Enabled = false;
-                    changePasswordToolStripMenuItem.Enabled = false;
-                    exportPasswordsToolStripMenuItem.Enabled = false;
-                    importPasswordsToolStripMenuItem.Enabled = false;
-                    editToolStripMenuItem.Enabled = false;
-                    label7.Visible = false;
-                    passwordCountLabel.Visible = false;
-                    passwordCountLabel.Text = "";
-                    loginToolStripMenuItem.Text = "Login";
-                    UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral);
+                    this.BeginInvoke((Action)(() => passwordDataGridView.DataSource = null));
+                    this.BeginInvoke((Action)(() => passwordDataGridView.Rows.Clear()));            
+                    this.BeginInvoke((Action)(() => userStatusLabel.Text = ""));
+                    this.BeginInvoke((Action)(() => filterTextBox.Enabled = false));
+                    this.BeginInvoke((Action)(() => filterTextBox.Text = ""));
+                    this.BeginInvoke((Action)(() => addButton.Enabled = false));
+                    this.BeginInvoke((Action)(() => clearFilterButton.Enabled = false));
+                    this.BeginInvoke((Action)(() => deleteToolStripMenuItem.Enabled = false));
+                    this.BeginInvoke((Action)(() => changePasswordToolStripMenuItem.Enabled = false));
+                    this.BeginInvoke((Action)(() => exportPasswordsToolStripMenuItem.Enabled = false));
+                    this.BeginInvoke((Action)(() => importPasswordsToolStripMenuItem.Enabled = false));
+                    this.BeginInvoke((Action)(() => editToolStripMenuItem.Enabled = false));
+                    this.BeginInvoke((Action)(() => label7.Visible = false));
+                    this.BeginInvoke((Action)(() => passwordCountLabel.Visible = false));
+                    this.BeginInvoke((Action)(() => passwordCountLabel.Text = ""));
+                    this.BeginInvoke((Action)(() => loginToolStripMenuItem.Text = "Login"));
+                    this.BeginInvoke((Action)(() => logoutTimeoutTimer.Enabled = false));
+                    this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral)));
                     break;
             }
         }
@@ -525,6 +539,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordCountLabel.Visible = true;
             loginToolStripMenuItem.Text = "Logoff";
             Cursor = Cursors.Arrow;
+            logoutTimeoutTimer.Enabled = true;
 
             RaiseRequestPasswordsOnLoginEvent();
         }
@@ -1001,6 +1016,20 @@ namespace PasswordVault.Desktop.Winforms
                     RaiseDeletePasswordEvent(row);
                 }
             }
+        }
+
+        private void MainView_MouseMove(object sender, MouseEventArgs e)
+        {   
+            if (_loggedIn)
+            {
+                logoutTimeoutTimer.Stop();
+                logoutTimeoutTimer.Start();
+            }  
+        }
+
+        private void TimerExpired(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            RaiseLogoutEvent();
         }
 
         /*=================================================================================================
