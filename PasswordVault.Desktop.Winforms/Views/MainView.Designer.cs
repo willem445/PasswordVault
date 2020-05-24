@@ -317,6 +317,7 @@ namespace PasswordVault.Desktop.Winforms
             this.Name = "MainView";
             this.Text = "Password Vault";
             this.SizeChanged += new System.EventHandler(this.MainView_SizeChanged);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainView_MouseMove);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.passwordDataGridView)).EndInit();
