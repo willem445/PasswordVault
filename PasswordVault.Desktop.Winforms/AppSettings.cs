@@ -1,12 +1,22 @@
-﻿using PasswordVault.Services;
+﻿using Newtonsoft.Json;
+using PasswordVault.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PasswordVault.Desktop.Winforms
 {
+    public class Settings
+    {
+        public MasterPasswordParameters MasterPasswordParameters { get; set; }
+        public EncryptionParameters EncryptionParameters { get; set; }
+        public int TimeoutMinutes { get; set; }
+    }
+
     public sealed class AppSettings
     {
         private static readonly Lazy<AppSettings>
@@ -22,6 +32,13 @@ namespace PasswordVault.Desktop.Winforms
         private KeyDerivationParameters DefaultEncryptionKeyDerivationParameters { get; }
         public MasterPasswordParameters DefaultMasterPasswordParameters { get; }
         public EncryptionParameters DefaultEncryptionParameters { get; }
+        public int DefaultTimeoutMinutes { get; }
+
+#if DEBUG
+        private string SETTINGS_FILE = Path.Combine(Environment.CurrentDirectory, @"..\..\..\PasswordVault.Data\TestDb") + "\\PasswordVaultSettings.json";
+#else
+        private string SETTINGS_FILE = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PasswordVault") + "\\PasswordVaultSettings.json";
+#endif
 
         private AppSettings()
         {
@@ -78,6 +95,23 @@ namespace PasswordVault.Desktop.Winforms
                 blocksize: 16,
                 ivSize: 16
             );
+
+            DefaultTimeoutMinutes = 15;
+
+            if (File.Exists(SETTINGS_FILE))
+            {
+                try
+                {
+                    Settings settingsOverride = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE));
+                    DefaultMasterPasswordParameters = settingsOverride.MasterPasswordParameters;
+                    DefaultEncryptionParameters = settingsOverride.EncryptionParameters;
+                    DefaultTimeoutMinutes = settingsOverride.TimeoutMinutes;
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }           
+            }
         }
     }
 }

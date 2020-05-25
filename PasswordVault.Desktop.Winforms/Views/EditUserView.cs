@@ -59,7 +59,7 @@ namespace PasswordVault.Desktop.Winforms
             InitializeComponent();
 
             // Configure form UI
-            BackColor = UIHelper.GetColorFromCode(UIColors.DefaultBackgroundColor);
+            BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
 
             // Configure labels
