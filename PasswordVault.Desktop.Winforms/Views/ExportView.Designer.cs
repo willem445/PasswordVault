@@ -109,9 +109,6 @@
             this.exportPasswordTextbox.Name = "exportPasswordTextbox";
             this.exportPasswordTextbox.Size = new System.Drawing.Size(361, 20);
             this.exportPasswordTextbox.TabIndex = 37;
-            this.exportPasswordTextbox.TextChanged += new System.EventHandler(this.exportPasswordTextbox_TextChanged);
-            this.exportPasswordTextbox.Enter += new System.EventHandler(this.exportPasswordTextbox_Enter);
-            this.exportPasswordTextbox.Leave += new System.EventHandler(this.exportPasswordTextbox_Leave);
             // 
             // encryptionEnabledCheckbox
             // 

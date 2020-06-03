@@ -31,6 +31,9 @@ namespace PasswordVault.Desktop.Winforms
         List<SupportedFileTypes> _fileTypes;
         private List<string> _fileFilters;
 
+        private GhostTextBoxHelper _passwordTextboxGhost;
+        private string _passwordGhostText = "Enter encryption password..";
+
         /*=================================================================================================
         PROPERTIES
         *================================================================================================*/
@@ -88,6 +91,8 @@ namespace PasswordVault.Desktop.Winforms
             encryptionEnabledCheckbox.BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             encryptionEnabledCheckbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             encryptionEnabledCheckbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+
+            _passwordTextboxGhost = new GhostTextBoxHelper(exportPasswordTextbox, _passwordGhostText, true);
         }
 
         /*=================================================================================================
@@ -169,7 +174,7 @@ namespace PasswordVault.Desktop.Winforms
         private void ResetForm()
         {
             statusLabel.Text = "";
-            exportPasswordTextbox.Text = "";
+            _passwordTextboxGhost.Reset();
             filePathTextbox.Text = "";
             encryptionEnabledCheckbox.Checked = false;
         }
@@ -286,41 +291,11 @@ namespace PasswordVault.Desktop.Winforms
                 exportPasswordTextbox.Enabled = true;
             }
             else
-            {
-                exportPasswordTextbox.Text = "Enter encryption password..";
+            {           
                 exportPasswordTextbox.Enabled = false;
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
+                _passwordTextboxGhost.Reset();
             }
         }
-
-        /*************************************************************************************************/
-        private void exportPasswordTextbox_TextChanged(object sender, EventArgs e)
-        {
-            exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-        }
-
-        /*************************************************************************************************/
-        private void exportPasswordTextbox_Enter(object sender, EventArgs e)
-        {
-            if (exportPasswordTextbox.Text == "Enter encryption password..")
-            {
-                exportPasswordTextbox.PasswordChar = '•';
-                exportPasswordTextbox.Text = "";
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
-            }
-        }
-
-        /*************************************************************************************************/
-        private void exportPasswordTextbox_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(exportPasswordTextbox.Text))
-            {
-                exportPasswordTextbox.PasswordChar = '\0';
-                exportPasswordTextbox.Text = "Enter encryption password..";
-                exportPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.GhostTextColor);
-            }
-        }
-
 
         /*=================================================================================================
 		STATIC METHODS

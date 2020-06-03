@@ -42,7 +42,7 @@ namespace PasswordVault.Desktop.Winforms
         /*PRIVATE*****************************************************************************************/
         private IMainView _mainView;
         private IDesktopServiceWrapper _serviceWrapper;
-
+        private AppSettings _settings = AppSettings.Instance;
         private Password _editPassword;
 
         /*=================================================================================================
@@ -71,6 +71,8 @@ namespace PasswordVault.Desktop.Winforms
             _mainView.CopyUserNameEvent += CopyUsername;
             _mainView.NavigateToWebsiteEvent += NavigateToWebsite;
             _mainView.ShowPasswordEvent += ViewPassword;
+
+            _mainView.SetTimeoutTime(_settings.DefaultTimeoutMinutes);
         }
 
         /*=================================================================================================
