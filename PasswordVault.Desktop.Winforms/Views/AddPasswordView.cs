@@ -544,6 +544,11 @@ namespace PasswordVault.Desktop.Winforms
                 e.Handled = true;
                 AddPassword();
             }
+            else if (((Control.ModifierKeys & Keys.Control) == Keys.Control) && (e.KeyChar == 7)) // 7 is char for 'g'
+            {
+                e.Handled = true;
+                GenerateNewPasswordEvent?.Invoke();
+            }
         }
 
         /*=================================================================================================

@@ -176,6 +176,7 @@ namespace PasswordVault.Desktop.Winforms
             this.passwordDataGridView.Size = new System.Drawing.Size(674, 290);
             this.passwordDataGridView.TabIndex = 1;
             this.passwordDataGridView.SelectionChanged += new System.EventHandler(this.PasswordDataGridView_SelectionChanged);
+            this.passwordDataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.passwordDataGridView_KeyPress);
             this.passwordDataGridView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.passwordDataGridView_KeyUp);
             this.passwordDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PasswordDataGridView_MouseUp);
             // 

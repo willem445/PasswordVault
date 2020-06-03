@@ -640,15 +640,6 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private void RaiseAddPasswordEvent(string application, string username, string email, string description, string website, string category, string passphrase)
-        {
-            if (AddPasswordEvent != null)
-            {
-                AddPasswordEvent(application, username, email, description, website, category, passphrase);
-            }
-        }
-
-        /*************************************************************************************************/
         private void EditButton_Click(object sender, EventArgs e)
         {
             if (passwordDataGridView.Rows.Count > EMPTY_DGV)
@@ -907,26 +898,6 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        private void passphraseTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.G) // generate password
-            {
-                RaiseAddPasswordEvent();
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        /*************************************************************************************************/
-        private void RaiseAddPasswordEvent()
-        {
-            if (GeneratePasswordEvent != null)
-            {
-                GeneratePasswordEvent();
-            }
-        }
-
-        /*************************************************************************************************/
         private void UpdateDataGridViewAfterDelete()
         {
             // Use _selectedDgvIndexPriorToPasswordListModification instead of _selectedDgvIndex because _selectedDgvIndex gets
@@ -1030,6 +1001,15 @@ namespace PasswordVault.Desktop.Winforms
         private void TimerExpired(Object source, System.Timers.ElapsedEventArgs e)
         {
             RaiseLogoutEvent();
+        }
+
+        private void passwordDataGridView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (((Control.ModifierKeys & Keys.Control) == Keys.Control) && (e.KeyChar == 1)) // 7 is char for 'g'
+            {
+                e.Handled = true;
+                _addPasswordView.ShowMenu();
+            }
         }
 
         /*=================================================================================================
