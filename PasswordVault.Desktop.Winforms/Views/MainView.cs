@@ -666,14 +666,19 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+            var confirmDelete = new ConfirmDeletePasswordView();
+            if (confirmDelete.ShowDialog() == DialogResult.OK)
             {
-                // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
-                _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
+                if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+                {
+                    // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
+                    _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
 
-                DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
-                RaiseDeletePasswordEvent(row);
+                    DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                    RaiseDeletePasswordEvent(row);
+                }
             }
+            confirmDelete.Dispose();
         }
 
         /*************************************************************************************************/
@@ -978,14 +983,19 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (e.KeyCode == Keys.Delete)
             {
-                if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+                var confirmDelete = new ConfirmDeletePasswordView();
+                if (confirmDelete.ShowDialog() == DialogResult.OK)
                 {
-                    // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
-                    _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
+                    if (passwordDataGridView.Rows.Count > EMPTY_DGV)
+                    {
+                        // Save DGV index prior to reloading password list etc. which changes _selectedDgvIndex.
+                        _selectedDgvIndexPriorToPasswordListModification = _selectedDgvIndex;
 
-                    DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
-                    RaiseDeletePasswordEvent(row);
+                        DataGridViewRow row = passwordDataGridView.Rows[_selectedDgvIndex];
+                        RaiseDeletePasswordEvent(row);
+                    }
                 }
+                confirmDelete.Dispose();
             }
         }
 
