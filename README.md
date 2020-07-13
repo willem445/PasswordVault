@@ -16,6 +16,7 @@ Simple password manager using Argon2 and AES for password protection.
     - [Installation](#installation)
     - [Building](#building)
     - [Unit Tests](#unit-tests)
+  - [Release](#release)
 
 ## About The Project
 
@@ -102,3 +103,12 @@ Right click on `PasswordVault.Desktop.Winforms` and select `Rebuild`.
 ### Unit Tests
 
 Run `GenerateUnitTestingMetrics.bat`
+
+## Release
+
+1. Click on `PasswordVault.Winforms.Installer` & browse to `Version` property. Update this to release version.
+2. Right click on `PasswordVault.Desktop.Winforms` and select `Properties`.
+3. Under `Application`, click on `Assembly Information`. Update `Assembly version` and `File version` to release version.
+4. Under `Publish`, change publish version to release version.
+5. Change solution configuration to `Release`.
+6. Right click on `PasswordVault.Winforms.Installer` and select `Rebuild`
