@@ -219,17 +219,18 @@ namespace PasswordVault.Desktop.Winforms
             {
                 case AuthenticateResult.PasswordIncorrect:
                     loginResultLabel.Visible = true;
-                    loginResultLabel.Text = "Password incorrect.";
+                    UIHelper.UpdateStatusLabel("Password incorrect.", loginResultLabel, ErrorLevel.Error);
                     break;
 
                 case AuthenticateResult.UsernameDoesNotExist:
                     loginResultLabel.Visible = true;
-                    loginResultLabel.Text = "Username doesn't exist.";
+                    UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
                     break;
 
                 case AuthenticateResult.Failed:
                     loginResultLabel.Visible = true;
                     loginResultLabel.Text = "Login failed.";
+                    UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
                     break;
 
                 case AuthenticateResult.Successful:
@@ -242,7 +243,7 @@ namespace PasswordVault.Desktop.Winforms
 
                 default:
                     loginResultLabel.Visible = true;
-                    loginResultLabel.Text = "Login failed.";
+                    UIHelper.UpdateStatusLabel("Login failed.", loginResultLabel, ErrorLevel.Error);
                     break;
             }
         }
@@ -397,6 +398,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void LoginButton_Click(object sender, EventArgs e)
         {
+            loginResultLabel.Visible = true;
+            UIHelper.UpdateStatusLabel("Authenticating..", loginResultLabel, ErrorLevel.Neutral);
             RaiseLoginEvent(loginUsernameTextBox.Text, loginPasswordTextBox.Text);
         }
 
