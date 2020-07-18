@@ -22,6 +22,8 @@ namespace PasswordVault.Desktop.Winforms
         /// <returns>Returns AuthenticateResult enum.</returns>
         AuthenticateResult Login(string username, string password);
 
+        Task<AuthenticateResult> LoginAsync(string username, string password);
+
         /// <summary>
         /// Logs the current user out and clears user data from memory.
         /// </summary>

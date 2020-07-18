@@ -524,31 +524,33 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void DisplayLoginSuccessful()
         {
-            _loggedIn = true;
+            this.BeginInvoke((Action)(() => {
+                _loggedIn = true;
 
-            addButton.Enabled = true;
-            clearFilterButton.Enabled = true;
-            filterComboBox.Enabled = true;
-            filterTextBox.Enabled = true;
-            deleteToolStripMenuItem.Enabled = true;
-            changePasswordToolStripMenuItem.Enabled = true;
-            exportPasswordsToolStripMenuItem.Enabled = true;
-            importPasswordsToolStripMenuItem.Enabled = true;
-            editToolStripMenuItem.Enabled = true;
-            label7.Visible = true;
-            passwordCountLabel.Visible = true;
-            loginToolStripMenuItem.Text = "Logoff";
-            Cursor = Cursors.Arrow;
-            logoutTimeoutTimer.Enabled = true;
+                addButton.Enabled = true;
+                clearFilterButton.Enabled = true;
+                filterComboBox.Enabled = true;
+                filterTextBox.Enabled = true;
+                deleteToolStripMenuItem.Enabled = true;
+                changePasswordToolStripMenuItem.Enabled = true;
+                exportPasswordsToolStripMenuItem.Enabled = true;
+                importPasswordsToolStripMenuItem.Enabled = true;
+                editToolStripMenuItem.Enabled = true;
+                label7.Visible = true;
+                passwordCountLabel.Visible = true;
+                loginToolStripMenuItem.Text = "Logoff";
+                Cursor = Cursors.Arrow;
+                logoutTimeoutTimer.Enabled = true;
 
-            RaiseRequestPasswordsOnLoginEvent();
+                RaiseRequestPasswordsOnLoginEvent();
+            }));
         }
 
         /*************************************************************************************************/
         private void AuthenticationSuccessful()
         {
-            Cursor = Cursors.WaitCursor;
-            UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral);
+            this.BeginInvoke((Action)(() => Cursor = Cursors.WaitCursor));
+            this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral)));
         }
 
         /*************************************************************************************************/

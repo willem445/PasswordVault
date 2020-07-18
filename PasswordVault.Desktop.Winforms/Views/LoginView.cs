@@ -215,37 +215,40 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayLoginResult(AuthenticateResult result)
         {
-            switch(result)
+            this.BeginInvoke((Action)(() =>
             {
-                case AuthenticateResult.PasswordIncorrect:
-                    loginResultLabel.Visible = true;
-                    UIHelper.UpdateStatusLabel("Password incorrect.", loginResultLabel, ErrorLevel.Error);
-                    break;
+                switch (result)
+                {
+                    case AuthenticateResult.PasswordIncorrect:
+                        loginResultLabel.Visible = true;
+                        UIHelper.UpdateStatusLabel("Password incorrect.", loginResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AuthenticateResult.UsernameDoesNotExist:
-                    loginResultLabel.Visible = true;
-                    UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
-                    break;
+                    case AuthenticateResult.UsernameDoesNotExist:
+                        loginResultLabel.Visible = true;
+                        UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AuthenticateResult.Failed:
-                    loginResultLabel.Visible = true;
-                    loginResultLabel.Text = "Login failed.";
-                    UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
-                    break;
+                    case AuthenticateResult.Failed:
+                        loginResultLabel.Visible = true;
+                        loginResultLabel.Text = "Login failed.";
+                        UIHelper.UpdateStatusLabel("Username doesn't exist.", loginResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AuthenticateResult.Successful:
-                    AuthenticationSuccessfulEvent?.Invoke();
-                    ClearLoginView();
-                    DialogResult = DialogResult.OK;
-                    DisableCreateUserForm();
-                    this.Close();               
-                    break;
+                    case AuthenticateResult.Successful:
+                        AuthenticationSuccessfulEvent?.Invoke();
+                        ClearLoginView();
+                        DialogResult = DialogResult.OK;
+                        DisableCreateUserForm();
+                        this.Close();
+                        break;
 
-                default:
-                    loginResultLabel.Visible = true;
-                    UIHelper.UpdateStatusLabel("Login failed.", loginResultLabel, ErrorLevel.Error);
-                    break;
-            }
+                    default:
+                        loginResultLabel.Visible = true;
+                        UIHelper.UpdateStatusLabel("Login failed.", loginResultLabel, ErrorLevel.Error);
+                        break;
+                }
+            }));
         }
 
         /*************************************************************************************************/
@@ -263,85 +266,88 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void DisplayCreateNewUserResult(AddUserResult result, int minimumPasswordLength)
         {
-            switch(result)
+            this.BeginInvoke((Action)(() =>
             {
-                case AddUserResult.UsernameTaken:
-                    UIHelper.UpdateStatusLabel("Username taken!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                switch (result)
+                {
+                    case AddUserResult.UsernameTaken:
+                        UIHelper.UpdateStatusLabel("Username taken!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.Failed:
-                    UIHelper.UpdateStatusLabel("Unsuccessful!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.Failed:
+                        UIHelper.UpdateStatusLabel("Unsuccessful!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.PasswordNotValid:
-                    UIHelper.UpdateStatusLabel("Password does not meet requirements!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.PasswordNotValid:
+                        UIHelper.UpdateStatusLabel("Password does not meet requirements!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.UsernameNotValid:
-                    UIHelper.UpdateStatusLabel("Invalid username!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.UsernameNotValid:
+                        UIHelper.UpdateStatusLabel("Invalid username!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.FirstNameNotValid:
-                    UIHelper.UpdateStatusLabel("First name not valid!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.FirstNameNotValid:
+                        UIHelper.UpdateStatusLabel("First name not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.LastNameNotValid:
-                    UIHelper.UpdateStatusLabel("Last name not valid!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.LastNameNotValid:
+                        UIHelper.UpdateStatusLabel("Last name not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.PhoneNumberNotValid:
-                    UIHelper.UpdateStatusLabel("Phone number not valid!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.PhoneNumberNotValid:
+                        UIHelper.UpdateStatusLabel("Phone number not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.EmailNotValid:
-                    UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.EmailNotValid:
+                        UIHelper.UpdateStatusLabel("Email not valid!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.NoLowerCaseCharacter:
-                    UIHelper.UpdateStatusLabel("Password must have lower case!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.NoLowerCaseCharacter:
+                        UIHelper.UpdateStatusLabel("Password must have lower case!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.LengthRequirementNotMet:
-                    UIHelper.UpdateStatusLabel(string.Format(CultureInfo.CurrentCulture, "Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.LengthRequirementNotMet:
+                        UIHelper.UpdateStatusLabel(string.Format(CultureInfo.CurrentCulture, "Password must have length: {0}!", minimumPasswordLength), createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.NoNumber:
-                    UIHelper.UpdateStatusLabel("Password must have number!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.NoNumber:
+                        UIHelper.UpdateStatusLabel("Password must have number!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.NoSpecialCharacter:
-                    UIHelper.UpdateStatusLabel("Password must have special character!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.NoSpecialCharacter:
+                        UIHelper.UpdateStatusLabel("Password must have special character!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.NoUpperCaseCharacter:
-                    UIHelper.UpdateStatusLabel("Password must have upper case!", createNewUserResultLabel, ErrorLevel.Error);
-                    break;
+                    case AddUserResult.NoUpperCaseCharacter:
+                        UIHelper.UpdateStatusLabel("Password must have upper case!", createNewUserResultLabel, ErrorLevel.Error);
+                        break;
 
-                case AddUserResult.Successful:
-                    UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
-                    createUsernameTextBox.Text = "";
-                    createPasswordTextBox.Text = "";
-                    createFirstNameTextBox.Text = "";
-                    createLastNameTextBox.Text = "";
-                    createPhoneNumberTextBox.Text = "";
-                    createEmailTextBox.Text = "";
+                    case AddUserResult.Successful:
+                        UIHelper.UpdateStatusLabel("Success. Please log in.", createNewUserResultLabel, ErrorLevel.Ok);
+                        createUsernameTextBox.Text = "";
+                        createPasswordTextBox.Text = "";
+                        createFirstNameTextBox.Text = "";
+                        createLastNameTextBox.Text = "";
+                        createPhoneNumberTextBox.Text = "";
+                        createEmailTextBox.Text = "";
 
-                    ghostNewUsername.Reset();
-                    ghostNewPassword.Reset();
-                    ghostNewFirstName.Reset();
-                    ghostNewLastName.Reset();
-                    ghostNewPhoneNumber.Reset();
-                    ghostNewEmail.Reset();
+                        ghostNewUsername.Reset();
+                        ghostNewPassword.Reset();
+                        ghostNewFirstName.Reset();
+                        ghostNewLastName.Reset();
+                        ghostNewPhoneNumber.Reset();
+                        ghostNewEmail.Reset();
 
-                    break;
+                        break;
 
-                default:       
-                    createNewUserResultLabel.Text = "Unsuccessful.";
-                    createNewUserResultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
-                    break;
-            }
+                    default:
+                        createNewUserResultLabel.Text = "Unsuccessful.";
+                        createNewUserResultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.StatusRedColor);
+                        break;
+                }
 
-            createNewUserResultLabel.Visible = true;
+                createNewUserResultLabel.Visible = true;
+            }));
         }
 
         /*************************************************************************************************/
@@ -519,26 +525,26 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void ClearLoginView()
         {
-            loginResultLabel.Visible = false;
-            loginResultLabel.Text = "";
-            loginUsernameTextBox.Text = "";
-            loginPasswordTextBox.Text = "";
-            createNewUserResultLabel.Visible = false;
-            createNewUserResultLabel.Text = "";
-            createUsernameTextBox.Text = "";
-            createPasswordTextBox.Text = "";
-            createPhoneNumberTextBox.Text = "";
-            createEmailTextBox.Text = "";
+            this.BeginInvoke((Action)(() => loginResultLabel.Visible = false));
+            this.BeginInvoke((Action)(() => loginResultLabel.Text = ""));
+            this.BeginInvoke((Action)(() => loginUsernameTextBox.Text = ""));
+            this.BeginInvoke((Action)(() => loginPasswordTextBox.Text = ""));
+            this.BeginInvoke((Action)(() => createNewUserResultLabel.Visible = false));
+            this.BeginInvoke((Action)(() => createNewUserResultLabel.Text = ""));
+            this.BeginInvoke((Action)(() => createUsernameTextBox.Text = ""));
+            this.BeginInvoke((Action)(() => createPasswordTextBox.Text = ""));
+            this.BeginInvoke((Action)(() => createPhoneNumberTextBox.Text = ""));
+            this.BeginInvoke((Action)(() => createEmailTextBox.Text = ""));
 
-            ghostLoginUsername.Reset();
-            ghostLoginPassword.Reset();
-            ghostNewUsername.Reset();
-            ghostNewPassword.Reset();
-            ghostNewFirstName.Reset();
-            ghostNewLastName.Reset();
-            ghostNewPhoneNumber.Reset();
-            ghostNewEmail.Reset();
-            loginUsernameTextBox.Focus();
+            this.BeginInvoke((Action)(() => ghostLoginUsername.Reset()));
+            this.BeginInvoke((Action)(() => ghostLoginPassword.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewUsername.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewPassword.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewFirstName.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewLastName.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewPhoneNumber.Reset()));
+            this.BeginInvoke((Action)(() => ghostNewEmail.Reset()));
+            this.BeginInvoke((Action)(() => loginUsernameTextBox.Focus()));
         }
 
         /*************************************************************************************************/

@@ -79,6 +79,35 @@ namespace PasswordVault.Desktop.Winforms
             return loginResult;
         }
 
+        public async Task<AuthenticateResult> LoginAsync(string username, string password)
+        {
+            AuthenticateResult loginResult = AuthenticateResult.Failed;
+
+            return await Task.Run<AuthenticateResult>(() =>
+            {
+                if (!IsLoggedIn())
+                {
+                    AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _settings.DefaultEncryptionParameters);
+                    AuthenticationResultEvent?.Invoke(authenticateResult.Result);
+
+                    if (authenticateResult.Result == AuthenticateResult.Successful)
+                    {
+                        _currentUser = authenticateResult.User;
+
+                        var t = Task.Run(() => UpdatePasswordListFromDB());
+                    }
+                    else
+                    {
+                        // If user credentials are incorrect, clear user and parameters from memory
+                        _currentUser = new User(false);
+                    }
+                    loginResult = authenticateResult.Result;
+                }
+
+                return loginResult;
+            }).ConfigureAwait(true);
+        }
+
         public bool VerifyCurrentUserPassword(string password)
         {
             bool result = false;
@@ -460,7 +489,8 @@ namespace PasswordVault.Desktop.Winforms
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            _passwordList = _passwordService.GetPasswords(_currentUser.Uuid, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);         
+            _passwordList = _passwordService.GetPasswords(_currentUser.Uuid, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);
+            DoneLoadingPasswordsEvent?.Invoke();
         }
 
         private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)
