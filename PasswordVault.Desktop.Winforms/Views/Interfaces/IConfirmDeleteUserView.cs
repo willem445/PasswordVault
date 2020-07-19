@@ -53,5 +53,6 @@ namespace PasswordVault.Desktop.Winforms
         /// Shows the confirm delete user form.
         /// </summary>
         void ShowView();
+        void CloseView();
     }
 }

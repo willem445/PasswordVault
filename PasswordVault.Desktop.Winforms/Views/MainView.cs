@@ -89,6 +89,8 @@ namespace PasswordVault.Desktop.Winforms
 
         private System.Timers.Timer logoutTimeoutTimer;
 
+        private ShowPasswordView showPasswordView;
+
         /*=================================================================================================
 		PROPERTIES
 		*================================================================================================*/
@@ -406,25 +408,28 @@ namespace PasswordVault.Desktop.Winforms
 
                 case LogOutResult.Success:
                     _loggedIn = false;
-                    this.BeginInvoke((Action)(() => passwordDataGridView.DataSource = null));
-                    this.BeginInvoke((Action)(() => passwordDataGridView.Rows.Clear()));            
-                    this.BeginInvoke((Action)(() => userStatusLabel.Text = ""));
-                    this.BeginInvoke((Action)(() => filterTextBox.Enabled = false));
-                    this.BeginInvoke((Action)(() => filterTextBox.Text = ""));
-                    this.BeginInvoke((Action)(() => addButton.Enabled = false));
-                    this.BeginInvoke((Action)(() => clearFilterButton.Enabled = false));
-                    this.BeginInvoke((Action)(() => deleteToolStripMenuItem.Enabled = false));
-                    this.BeginInvoke((Action)(() => changePasswordToolStripMenuItem.Enabled = false));
-                    this.BeginInvoke((Action)(() => exportPasswordsToolStripMenuItem.Enabled = false));
-                    this.BeginInvoke((Action)(() => importPasswordsToolStripMenuItem.Enabled = false));
-                    this.BeginInvoke((Action)(() => editToolStripMenuItem.Enabled = false));
-                    this.BeginInvoke((Action)(() => label7.Visible = false));
-                    this.BeginInvoke((Action)(() => passwordCountLabel.Visible = false));
-                    this.BeginInvoke((Action)(() => passwordCountLabel.Text = ""));
-                    this.BeginInvoke((Action)(() => loginToolStripMenuItem.Text = "Login"));
-                    this.BeginInvoke((Action)(() => logoutTimeoutTimer.Enabled = false));
-                    this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral)));
-                    break;
+                    this.BeginInvoke((Action)(() =>
+                    {
+                        passwordDataGridView.DataSource = null;
+                        passwordDataGridView.Rows.Clear();
+                        userStatusLabel.Text = "";
+                        filterTextBox.Enabled = false;
+                        filterTextBox.Text = "";
+                        addButton.Enabled = false;
+                        clearFilterButton.Enabled = false;
+                        deleteToolStripMenuItem.Enabled = false;
+                        changePasswordToolStripMenuItem.Enabled = false;
+                        exportPasswordsToolStripMenuItem.Enabled = false;
+                        importPasswordsToolStripMenuItem.Enabled = false;
+                        editToolStripMenuItem.Enabled = false;
+                        label7.Visible = false;
+                        passwordCountLabel.Visible = false;
+                        passwordCountLabel.Text = "";
+                        loginToolStripMenuItem.Text = "Login";
+                        logoutTimeoutTimer.Enabled = false;
+                        UIHelper.UpdateStatusLabel("Logged off.", userStatusLabel, ErrorLevel.Neutral);
+                    }));
+                    break;                
             }
         }
 
@@ -433,7 +438,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (!string.IsNullOrEmpty(password))
             {
-                ShowPasswordView showPasswordView = new ShowPasswordView(password, description);
+                showPasswordView = new ShowPasswordView(password, description);
                 showPasswordView.ShowDialog();
                 showPasswordView.Dispose();
             }       
@@ -825,6 +830,16 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void CloseButton_MouseClick(object sender, MouseEventArgs e)
         {
+            if (logoutTimeoutTimer != null)
+            {
+                logoutTimeoutTimer.Dispose();
+            }
+
+            if (showPasswordView != null)
+            {
+                showPasswordView.Dispose();
+            }
+                
             this.Close();
         }
 
@@ -1010,6 +1025,22 @@ namespace PasswordVault.Desktop.Winforms
 
         private void TimerExpired(Object source, System.Timers.ElapsedEventArgs e)
         {
+            this.BeginInvoke((Action)(() =>
+            {
+                if (showPasswordView != null && showPasswordView.Visible)
+                {
+                    showPasswordView.Close();
+                    showPasswordView.Dispose();
+                }
+
+                _changePasswordView.CloseView();
+                _editUserView.CloseView();
+                _confirmDeleteUserView.CloseView();
+                _exportView.CloseView();
+                _importView.CloseView();
+                _addPasswordView.CloseView();
+            }));
+
             RaiseLogoutEvent();
         }
 

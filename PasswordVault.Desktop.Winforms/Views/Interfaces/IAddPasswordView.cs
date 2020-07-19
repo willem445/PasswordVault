@@ -21,5 +21,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayEditPassword(Password password);
         void DisplayEditPasswordResult(ValidatePassword result);
         void ShowMenu();
+        void CloseView();
     }
 }

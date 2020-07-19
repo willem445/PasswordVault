@@ -342,6 +342,13 @@ namespace PasswordVault.Desktop.Winforms
             applicationTextbox.Focus();
         }
 
+        public void CloseView()
+        {
+            ClearView();
+            this.Hide();
+            DialogResult = DialogResult.Cancel;
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/
@@ -415,13 +422,6 @@ namespace PasswordVault.Desktop.Winforms
             origPassword = null;
             UIHelper.UpdateStatusLabel("", statusLabel, ErrorLevel.Ok);
             applicationTextbox.Focus();
-        }
-
-        private void CloseView()
-        {
-            ClearView();
-            this.Close();
-            DialogResult = DialogResult.Cancel;
         }
 
         /*************************************************************************************************/
