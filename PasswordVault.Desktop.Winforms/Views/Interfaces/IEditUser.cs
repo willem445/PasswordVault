@@ -15,5 +15,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayModifyResult(UserInformationResult result);
         void DisplayUser(User user);
         void ShowEditUserMenu();
+        void CloseView();
     }
 }

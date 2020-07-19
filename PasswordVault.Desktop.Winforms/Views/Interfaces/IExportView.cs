@@ -18,6 +18,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayExportResult(ImportExportResult result);
         void DisplayValidationResult(ExportValidationResult result, ImportExportFileType fileType);
         void ShowExportView();
-
+        void CloseView();
     }
 }

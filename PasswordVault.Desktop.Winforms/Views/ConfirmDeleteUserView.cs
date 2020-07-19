@@ -140,6 +140,17 @@ namespace PasswordVault.Desktop.Winforms
             this.Show();
         }
 
+        public void CloseView()
+        {
+            confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            confirmPasswordTextbox.Text = "";
+            resultLabel.Text = "";
+            resultLabel.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+
+            FormClosingEvent?.Invoke();
+            this.Hide();
+        }
+
         /*=================================================================================================
 		PRIVATE METHODS
 		*================================================================================================*/

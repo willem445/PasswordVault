@@ -23,5 +23,6 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayGeneratePasswordResult(string generatedPassword);
         void DisplayPasswordComplexity(PasswordComplexityLevel complexity);
         void DisplayPasswordRequirements(int passwordLength);
+        void Close();
     }
 }
