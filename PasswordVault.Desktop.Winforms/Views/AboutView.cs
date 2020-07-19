@@ -61,11 +61,11 @@ namespace PasswordVault.Desktop.Winforms
             string display;
             if (!string.IsNullOrEmpty(attribute.Description))
             {
-                display = $"{version} {attribute.Description} ({buildDate})";
+                display = $"{version} {attribute.Description}";
             }
             else
             {
-                display = $"{version} ({buildDate})";
+                display = $"{version}";
             }
             
 
