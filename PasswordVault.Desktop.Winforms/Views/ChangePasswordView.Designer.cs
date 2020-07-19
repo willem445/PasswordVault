@@ -138,7 +138,7 @@
             // passwordStrengthLabel
             // 
             this.passwordStrengthLabel.AutoSize = true;
-            this.passwordStrengthLabel.Location = new System.Drawing.Point(118, 172);
+            this.passwordStrengthLabel.Location = new System.Drawing.Point(123, 172);
             this.passwordStrengthLabel.Name = "passwordStrengthLabel";
             this.passwordStrengthLabel.Size = new System.Drawing.Size(38, 13);
             this.passwordStrengthLabel.TabIndex = 41;

@@ -188,52 +188,45 @@ namespace PasswordVault.Desktop.Winforms
             switch(result)
             {
                 case ValidateUserPasswordResult.Failed:
-                    statusLabel.Text = "Failed!";
+                    UIHelper.UpdateStatusLabel("Failed!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.PasswordsDoNotMatch:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Passwords do not match!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.LengthRequirementNotMet:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password not long enough!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.NoLowerCaseCharacter:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password does not contain lower case!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.NoNumber:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password does not contain number!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.NoSpecialCharacter:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password does not contain special char!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.NoUpperCaseCharacter:
-                    statusLabel.Text = "Passwords do not match!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Password does not contain upper case!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.InvalidPassword:
-                    statusLabel.Text = "Password not correct!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Invalid password!", statusLabel, ErrorLevel.Error);
                     break;
 
                 case ValidateUserPasswordResult.Success:
+                    UIHelper.UpdateStatusLabel("Success!", statusLabel, ErrorLevel.Ok);
                     ClearChangePasswordView();
                     this.Close();
                     break;
 
                 default:
-                    statusLabel.Text = "Failed!";
-                    statusLabel.ForeColor = Color.Red;
+                    UIHelper.UpdateStatusLabel("Failed!", statusLabel, ErrorLevel.Error);
                     break;
             }
         }

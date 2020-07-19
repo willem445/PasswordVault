@@ -326,6 +326,7 @@ namespace PasswordVault.Desktop.Winforms
 
                 _editMode = true;
                 addButton.Text = "Edit";
+                this.windowLabel.Text = "Edit Password";
                 ShowMenu();
             }         
         }
@@ -419,6 +420,7 @@ namespace PasswordVault.Desktop.Winforms
             ghostPasswordTextBox.Reset();
             _editMode = false;
             addButton.Text = "Add";
+            this.windowLabel.Text = "Add Password";
             origPassword = null;
             UIHelper.UpdateStatusLabel("", statusLabel, ErrorLevel.Ok);
             applicationTextbox.Focus();
