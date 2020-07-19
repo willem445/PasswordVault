@@ -34,7 +34,7 @@ namespace PasswordVault.Desktop.Winforms
         void DisplayPasswordToEdit(Password password);
         void DisplayAddEditPasswordResult(ValidatePassword result);
         void DisplayLogOutResult(LogOutResult result);
-        void DisplayPassword(string password);
+        void DisplayPassword(string password, string description);
         void DisplayAddPasswordResult(ValidatePassword result);
         void DisplayDeletePasswordResult(DeletePasswordResult result);
         void DisplayPasswordCount(int count);

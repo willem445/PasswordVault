@@ -220,13 +220,15 @@ namespace PasswordVault.Desktop.Winforms
             Password password = ConvertDgvRowToPassword(dgvrow);
             Password result = QueryForFirstPassword(password);
             string passphrase = "";
+            string description = "";
 
             if (result != null)
             {
                 passphrase = result.Passphrase;
+                description = result.Description;
             }
             
-            _mainView.DisplayPassword(passphrase);
+            _mainView.DisplayPassword(passphrase, description);
         }
 
         /*************************************************************************************************/

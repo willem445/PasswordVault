@@ -33,6 +33,7 @@
             this.showPasswordTextbox = new System.Windows.Forms.TextBox();
             this.okButton = new System.Windows.Forms.Button();
             this.copyButton = new System.Windows.Forms.Button();
+            this.descriptionTextbox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // closeButton
@@ -61,14 +62,14 @@
             // showPasswordTextbox
             // 
             this.showPasswordTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.showPasswordTextbox.Location = new System.Drawing.Point(12, 39);
+            this.showPasswordTextbox.Location = new System.Drawing.Point(12, 107);
             this.showPasswordTextbox.Name = "showPasswordTextbox";
             this.showPasswordTextbox.Size = new System.Drawing.Size(322, 26);
             this.showPasswordTextbox.TabIndex = 34;
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(287, 76);
+            this.okButton.Location = new System.Drawing.Point(287, 144);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 35;
@@ -78,7 +79,7 @@
             // 
             // copyButton
             // 
-            this.copyButton.Location = new System.Drawing.Point(338, 39);
+            this.copyButton.Location = new System.Drawing.Point(338, 107);
             this.copyButton.Name = "copyButton";
             this.copyButton.Size = new System.Drawing.Size(24, 26);
             this.copyButton.TabIndex = 36;
@@ -87,12 +88,22 @@
             this.copyButton.MouseEnter += new System.EventHandler(this.copyButton_MouseEnter);
             this.copyButton.MouseLeave += new System.EventHandler(this.copyButton_MouseLeave);
             // 
+            // descriptionTextbox
+            // 
+            this.descriptionTextbox.Location = new System.Drawing.Point(12, 35);
+            this.descriptionTextbox.Multiline = true;
+            this.descriptionTextbox.Name = "descriptionTextbox";
+            this.descriptionTextbox.ReadOnly = true;
+            this.descriptionTextbox.Size = new System.Drawing.Size(351, 66);
+            this.descriptionTextbox.TabIndex = 37;
+            // 
             // ShowPasswordView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(375, 110);
+            this.ClientSize = new System.Drawing.Size(375, 177);
+            this.Controls.Add(this.descriptionTextbox);
             this.Controls.Add(this.copyButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.showPasswordTextbox);
@@ -113,5 +124,6 @@
         private System.Windows.Forms.TextBox showPasswordTextbox;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button copyButton;
+        private System.Windows.Forms.TextBox descriptionTextbox;
     }
 }

@@ -36,7 +36,7 @@ namespace PasswordVault.Desktop.Winforms
         /*=================================================================================================
 		CONSTRUCTORS
 		*================================================================================================*/
-        public ShowPasswordView(string password)
+        public ShowPasswordView(string password, string description)
         {
             InitializeComponent();
 
@@ -47,7 +47,6 @@ namespace PasswordVault.Desktop.Winforms
             closeButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             closeButton.Font = UIHelper.GetFont(UIFontSizes.CloseButtonFontSize);
 
-
             showPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             showPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             showPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
@@ -56,6 +55,14 @@ namespace PasswordVault.Desktop.Winforms
             showPasswordTextbox.Text = password;
             showPasswordTextbox.SelectionStart = 0;
             showPasswordTextbox.SelectionLength = 0;
+
+            descriptionTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
+            descriptionTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
+            descriptionTextbox.BorderStyle = BorderStyle.None;
+            descriptionTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            descriptionTextbox.AutoSize = false;
+            descriptionTextbox.Font = UIHelper.GetFont(9.0f);
+            descriptionTextbox.Text = description;
 
             okButton.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             okButton.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);

@@ -429,11 +429,11 @@ namespace PasswordVault.Desktop.Winforms
         }
 
         /*************************************************************************************************/
-        public void DisplayPassword(string password)
+        public void DisplayPassword(string password, string description)
         {
             if (!string.IsNullOrEmpty(password))
             {
-                ShowPasswordView showPasswordView = new ShowPasswordView(password);
+                ShowPasswordView showPasswordView = new ShowPasswordView(password, description);
                 showPasswordView.ShowDialog();
                 showPasswordView.Dispose();
             }       
