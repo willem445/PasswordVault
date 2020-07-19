@@ -321,10 +321,13 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswords(BindingList<Password> passwordList)
         {
-            _dgvPasswordList = new BindingList<Password>(passwordList);
-            passwordDataGridView.DataSource = _dgvPasswordList;
-            passwordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            passwordDataGridView.RowHeadersVisible = false;
+            this.BeginInvoke((Action)(() =>
+            {
+                _dgvPasswordList = new BindingList<Password>(passwordList);
+                passwordDataGridView.DataSource = _dgvPasswordList;
+                passwordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                passwordDataGridView.RowHeadersVisible = false;
+            }));
         }
 
         /*************************************************************************************************/
@@ -502,7 +505,10 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswordCount(int count)
         {
-            passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
+            this.BeginInvoke((Action)(() =>
+            {
+                passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
+            }));
         }
 
         /*=================================================================================================
