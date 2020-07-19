@@ -61,6 +61,7 @@ namespace PasswordVault.Desktop.Winforms
             _serviceWrapper = serviceWrapper;
 
             _serviceWrapper.DoneLoadingPasswordsEvent += UpdatePasswordsUI;
+            _serviceWrapper.PasswordReady += UpdatePasswordsUI;
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
             _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
@@ -84,10 +85,6 @@ namespace PasswordVault.Desktop.Winforms
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void LoadingPasswordComplete()
-        {
-
-        }
 
         /*************************************************************************************************/
         private void FilterChanged(string filterText, PasswordFilterOption passwordFilterOption)

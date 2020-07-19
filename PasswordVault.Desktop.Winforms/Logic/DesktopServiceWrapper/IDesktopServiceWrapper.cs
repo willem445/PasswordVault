@@ -12,6 +12,7 @@ namespace PasswordVault.Desktop.Winforms
     {
         event Action<AuthenticateResult> AuthenticationResultEvent;
         event Action DoneLoadingPasswordsEvent;
+        event Action PasswordReady;
 
         /// <summary>
         /// Verifies that a users password is correct, retrieves user information with

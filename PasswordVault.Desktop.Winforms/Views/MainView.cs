@@ -545,7 +545,6 @@ namespace PasswordVault.Desktop.Winforms
                 label7.Visible = true;
                 passwordCountLabel.Visible = true;
                 loginToolStripMenuItem.Text = "Logoff";
-                Cursor = Cursors.Arrow;
                 logoutTimeoutTimer.Enabled = true;
 
                 RaiseRequestPasswordsOnLoginEvent();
@@ -555,7 +554,6 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void AuthenticationSuccessful()
         {
-            this.BeginInvoke((Action)(() => Cursor = Cursors.WaitCursor));
             this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral)));
         }
 

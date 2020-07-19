@@ -46,6 +46,7 @@ namespace PasswordVault.Services
         /// <param name="decryptionKey">Plaintext key used to decrypt stored data.</param>
         /// <returns>List of plaintext password objects.</returns>
         List<Password> GetPasswords(string userUuid, string decryptionKey, EncryptionParameters parameters);
+        void ChunkGetPasswords(string userUuid, string key, EncryptionParameters parameters, Func<List<Password>, bool> process, int chunksize);
 
         /// <summary>
         /// Generates a random password key of given length.
