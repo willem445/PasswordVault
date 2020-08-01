@@ -323,10 +323,13 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswords(BindingList<Password> passwordList)
         {
-            _dgvPasswordList = new BindingList<Password>(passwordList);
-            passwordDataGridView.DataSource = _dgvPasswordList;
-            passwordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            passwordDataGridView.RowHeadersVisible = false;
+            this.BeginInvoke((Action)(() =>
+            {
+                _dgvPasswordList = new BindingList<Password>(passwordList);
+                passwordDataGridView.DataSource = _dgvPasswordList;
+                passwordDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                passwordDataGridView.RowHeadersVisible = false;
+            }));
         }
 
         /*************************************************************************************************/
@@ -507,7 +510,10 @@ namespace PasswordVault.Desktop.Winforms
 
         public void DisplayPasswordCount(int count)
         {
-            passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
+            this.BeginInvoke((Action)(() =>
+            {
+                passwordCountLabel.Text = count.ToString(CultureInfo.CurrentCulture);
+            }));
         }
 
         /*=================================================================================================
@@ -529,31 +535,31 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         private void DisplayLoginSuccessful()
         {
-            _loggedIn = true;
+            this.BeginInvoke((Action)(() => {
+                _loggedIn = true;
 
-            addButton.Enabled = true;
-            clearFilterButton.Enabled = true;
-            filterComboBox.Enabled = true;
-            filterTextBox.Enabled = true;
-            deleteToolStripMenuItem.Enabled = true;
-            changePasswordToolStripMenuItem.Enabled = true;
-            exportPasswordsToolStripMenuItem.Enabled = true;
-            importPasswordsToolStripMenuItem.Enabled = true;
-            editToolStripMenuItem.Enabled = true;
-            label7.Visible = true;
-            passwordCountLabel.Visible = true;
-            loginToolStripMenuItem.Text = "Logoff";
-            Cursor = Cursors.Arrow;
-            logoutTimeoutTimer.Enabled = true;
+                addButton.Enabled = true;
+                clearFilterButton.Enabled = true;
+                filterComboBox.Enabled = true;
+                filterTextBox.Enabled = true;
+                deleteToolStripMenuItem.Enabled = true;
+                changePasswordToolStripMenuItem.Enabled = true;
+                exportPasswordsToolStripMenuItem.Enabled = true;
+                importPasswordsToolStripMenuItem.Enabled = true;
+                editToolStripMenuItem.Enabled = true;
+                label7.Visible = true;
+                passwordCountLabel.Visible = true;
+                loginToolStripMenuItem.Text = "Logoff";
+                logoutTimeoutTimer.Enabled = true;
 
-            RaiseRequestPasswordsOnLoginEvent();
+                RaiseRequestPasswordsOnLoginEvent();
+            }));
         }
 
         /*************************************************************************************************/
         private void AuthenticationSuccessful()
         {
-            Cursor = Cursors.WaitCursor;
-            UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral);
+            this.BeginInvoke((Action)(() => UIHelper.UpdateStatusLabel("Loading passwords...", userStatusLabel, ErrorLevel.Neutral)));
         }
 
         /*************************************************************************************************/

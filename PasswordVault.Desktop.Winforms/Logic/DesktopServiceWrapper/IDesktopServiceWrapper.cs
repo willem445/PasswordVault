@@ -12,6 +12,7 @@ namespace PasswordVault.Desktop.Winforms
     {
         event Action<AuthenticateResult> AuthenticationResultEvent;
         event Action DoneLoadingPasswordsEvent;
+        event Action PasswordReady;
 
         /// <summary>
         /// Verifies that a users password is correct, retrieves user information with
@@ -21,6 +22,8 @@ namespace PasswordVault.Desktop.Winforms
         /// <param name="password"></param>
         /// <returns>Returns AuthenticateResult enum.</returns>
         AuthenticateResult Login(string username, string password);
+
+        Task<AuthenticateResult> LoginAsync(string username, string password);
 
         /// <summary>
         /// Logs the current user out and clears user data from memory.

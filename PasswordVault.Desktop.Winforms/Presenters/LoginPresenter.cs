@@ -71,9 +71,9 @@ namespace PasswordVault.Desktop.Winforms
 		PRIVATE METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        private void Login(string username, string password)
+        private async void Login(string username, string password)
         {
-            _serviceWrapper.Login(username, password);          
+            await _serviceWrapper.LoginAsync(username, password).ConfigureAwait(true);          
         }
 
         /*************************************************************************************************/

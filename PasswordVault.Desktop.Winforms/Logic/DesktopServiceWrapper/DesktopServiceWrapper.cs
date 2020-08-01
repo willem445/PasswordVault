@@ -19,6 +19,7 @@ namespace PasswordVault.Desktop.Winforms
     {
         /*CONSTANTS********************************************************/
         private const int GENERATED_PASSWORD_LENGTH = 20;
+        private const int LOADING_CHUNK_SIZE = 1;
 
         /*FIELDS***********************************************************/
         private User _currentUser;                       // Current user's username and password
@@ -32,6 +33,7 @@ namespace PasswordVault.Desktop.Winforms
 
         public event Action<AuthenticateResult> AuthenticationResultEvent;
         public event Action DoneLoadingPasswordsEvent;
+        public event Action PasswordReady;
 
         /*PROPERTIES*******************************************************/
 
@@ -77,6 +79,35 @@ namespace PasswordVault.Desktop.Winforms
                 loginResult = authenticateResult.Result;
             }         
             return loginResult;
+        }
+
+        public async Task<AuthenticateResult> LoginAsync(string username, string password)
+        {
+            AuthenticateResult loginResult = AuthenticateResult.Failed;
+
+            return await Task.Run<AuthenticateResult>(() =>
+            {
+                if (!IsLoggedIn())
+                {
+                    AuthenticateReturn authenticateResult = _authenticationService.Authenticate(username, password, _settings.DefaultEncryptionParameters);
+                    AuthenticationResultEvent?.Invoke(authenticateResult.Result);
+
+                    if (authenticateResult.Result == AuthenticateResult.Successful)
+                    {
+                        _currentUser = authenticateResult.User;
+
+                        var t = Task.Run(() => UpdatePasswordListFromDB());
+                    }
+                    else
+                    {
+                        // If user credentials are incorrect, clear user and parameters from memory
+                        _currentUser = new User(false);
+                    }
+                    loginResult = authenticateResult.Result;
+                }
+
+                return loginResult;
+            }).ConfigureAwait(true);
         }
 
         public bool VerifyCurrentUserPassword(string password)
@@ -460,7 +491,21 @@ namespace PasswordVault.Desktop.Winforms
         private void UpdatePasswordListFromDB()
         {
             _passwordList.Clear();
-            _passwordList = _passwordService.GetPasswords(_currentUser.Uuid, _currentUser.PlainTextRandomKey, _settings.DefaultEncryptionParameters);         
+            _passwordService.ChunkGetPasswords(
+                _currentUser.Uuid, 
+                _currentUser.PlainTextRandomKey, 
+                _settings.DefaultEncryptionParameters, 
+                ProcessPasswordLoadingChunks,
+                LOADING_CHUNK_SIZE);
+            
+            DoneLoadingPasswordsEvent?.Invoke();
+        }
+
+        private bool ProcessPasswordLoadingChunks(List<Password> passwords)
+        {
+            _passwordList.AddRange(passwords);
+            PasswordReady?.Invoke();
+            return true;
         }
 
         private void UpdatePasswordListFromDB(Password password, Int64 uniqueID)

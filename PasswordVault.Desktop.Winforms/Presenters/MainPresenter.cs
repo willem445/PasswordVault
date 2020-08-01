@@ -60,9 +60,10 @@ namespace PasswordVault.Desktop.Winforms
             _mainView = mainView;
             _serviceWrapper = serviceWrapper;
 
+            _serviceWrapper.DoneLoadingPasswordsEvent += UpdatePasswordsUI;
+            _serviceWrapper.PasswordReady += UpdatePasswordsUI;
             _mainView.FilterChangedEvent += FilterChanged;
             _mainView.RequestPasswordsEvent += UpdatePasswordsUI;
-            _mainView.RequestPasswordsOnLoginEvent += UpdatePasswordsUI;
             _mainView.RequestPasswordsOnLoginEvent += UpdateUsernameWelcomeUI;
             _mainView.AddPasswordEvent += AddPassword;
             _mainView.DeletePasswordEvent += DeletePassword;

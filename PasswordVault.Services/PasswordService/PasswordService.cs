@@ -14,6 +14,7 @@ namespace PasswordVault.Services
         /*FIELDS***********************************************************/
         private IDatabase _dbContext;
         private IEncryptionServiceFactory _encryptionServiceFactory;
+        public delegate void ProcessPasswords(List<Password> passwords);
 
         /*PROPERTIES*******************************************************/
 
@@ -138,6 +139,40 @@ namespace PasswordVault.Services
             }
 
             return passwords;
+        }
+
+        public void ChunkGetPasswords(string userUuid, string key, EncryptionParameters parameters, Func<List<Password>, bool> process, int chunksize)
+        {
+            List<DatabasePassword> databasePasswords = null;
+            List<Password> passwords = new List<Password>();
+            int count = 0;
+
+            databasePasswords = _dbContext.GetUserPasswordsByUuid(userUuid);
+            IEncryptionService encryptionService = _encryptionServiceFactory.GetEncryptionService(parameters);
+
+            foreach (var databasePassword in databasePasswords)
+            {
+                Password password = new Password(
+                    databasePassword.UniqueID,
+                    encryptionService.Decrypt(databasePassword.Application, key),
+                    encryptionService.Decrypt(databasePassword.Username, key),
+                    encryptionService.Decrypt(databasePassword.Email, key),
+                    encryptionService.Decrypt(databasePassword.Description, key),
+                    encryptionService.Decrypt(databasePassword.Website, key),
+                    encryptionService.Decrypt(databasePassword.Passphrase, key),
+                    encryptionService.Decrypt(databasePassword.Category, key)
+                    );
+
+                passwords.Add(password);
+                count++;
+
+                if (count == chunksize)
+                {
+                    process(passwords);
+                    passwords.Clear();
+                    count = 0;
+                }
+            }
         }
 
         /*PRIVATE METHODS**************************************************/
