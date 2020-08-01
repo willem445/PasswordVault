@@ -62,7 +62,6 @@ namespace PasswordVault.Desktop.Winforms
                 memorySizeKb: 1024
             );
 #else
-            // tuned for about 5s on Ryzen2700
             DefaultKeyDerivationParameters = new KeyDerivationParameters(
                 algorithm:KeyDerivationAlgorithm.Argon2Id, 
                 keysize:32, // 256 bit key for AES
@@ -72,13 +71,12 @@ namespace PasswordVault.Desktop.Winforms
                 memorySizeKb:1048576 // 1gb
             );
 
-            // tuned for about 100ms
             DefaultEncryptionKeyDerivationParameters = new KeyDerivationParameters(
                 algorithm: KeyDerivationAlgorithm.Argon2Id,
                 keysize: 32, // 256 bit key for AES
                 saltsize: 16, // 128 bits of salt is recommended for hashing (https://www.alexedwards.net/blog/how-to-hash-and-verify-passwords-with-argon2-in-go)
-                iterations: 40,
-                degreeofparallelism: 4,
+                iterations: 1,
+                degreeofparallelism: 1,
                 memorySizeKb: 1024 // 1mb
             );
 #endif
