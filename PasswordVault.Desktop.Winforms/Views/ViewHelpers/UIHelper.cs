@@ -98,9 +98,16 @@ namespace PasswordVault.Desktop.Winforms
 		STATIC METHODS
 		*================================================================================================*/
         /*************************************************************************************************/
-        public static Font GetFont(float fontSize)
+        public static Font GetFont(float fontSize, bool distinguishChars = false)
         {
-            return new Font("Segoe UI", fontSize, FontStyle.Bold);
+            if (!distinguishChars)
+            {
+                return new Font("Segoe UI", fontSize, FontStyle.Bold);
+            }
+            else
+            {
+                return new Font("Consolas", fontSize, FontStyle.Bold);
+            }
         }
 
         /*************************************************************************************************/
