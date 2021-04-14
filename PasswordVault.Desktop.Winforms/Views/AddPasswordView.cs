@@ -325,7 +325,7 @@ namespace PasswordVault.Desktop.Winforms
                 }                      
 
                 _editMode = true;
-                addButton.Text = "Edit";
+                addButton.Text = "Save";
                 this.windowLabel.Text = "Edit Password";
                 ShowMenu();
             }         
@@ -341,6 +341,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.Show();
             applicationTextbox.Focus();
+            applicationTextbox.SelectionLength = 0;
         }
 
         public void CloseView()
@@ -544,7 +545,10 @@ namespace PasswordVault.Desktop.Winforms
             if (e.KeyChar == (char)Keys.Enter) // submit password
             {
                 e.Handled = true;
-                AddPassword();
+                if (!descriptionTextbox.Focused)
+                {
+                    AddPassword();
+                }
             }
             else if (((Control.ModifierKeys & Keys.Control) == Keys.Control) && (e.KeyChar == 7)) // 7 is char for 'g'
             {

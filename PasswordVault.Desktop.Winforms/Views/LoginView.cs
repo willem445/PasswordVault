@@ -397,6 +397,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.Show();
             loginUsernameTextBox.Focus();
+            loginUsernameTextBox.SelectionLength = 0;
         }
 
         /*=================================================================================================
