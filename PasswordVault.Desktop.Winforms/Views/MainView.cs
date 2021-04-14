@@ -528,6 +528,7 @@ namespace PasswordVault.Desktop.Winforms
             }
             else // logout
             {
+                ClearAllMenus();
                 RaiseLogoutEvent();
             }
         }
@@ -1033,18 +1034,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.BeginInvoke((Action)(() =>
             {
-                if (showPasswordView != null && showPasswordView.Visible)
-                {
-                    showPasswordView.Close();
-                    showPasswordView.Dispose();
-                }
-
-                _changePasswordView.CloseView();
-                _editUserView.CloseView();
-                _confirmDeleteUserView.CloseView();
-                _exportView.CloseView();
-                _importView.CloseView();
-                _addPasswordView.CloseView();
+                ClearAllMenus();
             }));
 
             RaiseLogoutEvent();
@@ -1057,6 +1047,22 @@ namespace PasswordVault.Desktop.Winforms
                 e.Handled = true;
                 _addPasswordView.ShowMenu();
             }
+        }
+
+        private void ClearAllMenus()
+        {
+            if (showPasswordView != null && showPasswordView.Visible)
+            {
+                showPasswordView.Close();
+                showPasswordView.Dispose();
+            }
+
+            _changePasswordView.CloseView();
+            _editUserView.CloseView();
+            _confirmDeleteUserView.CloseView();
+            _exportView.CloseView();
+            _importView.CloseView();
+            _addPasswordView.CloseView();
         }
 
         /*=================================================================================================
