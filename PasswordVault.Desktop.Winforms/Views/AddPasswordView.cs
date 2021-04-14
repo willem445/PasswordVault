@@ -176,7 +176,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordTextbox.BorderStyle = BorderStyle.None;
             passwordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             passwordTextbox.AutoSize = false;
-            passwordTextbox.Font = UIHelper.GetFont(9.0f);
+            passwordTextbox.Font = UIHelper.GetFont(9.0f, true);
             passwordTextbox.Size = new System.Drawing.Size(198, 22);
             ghostPasswordTextBox = new GhostTextBoxHelper(passwordTextbox, _passwordTextboxDefault);
 

@@ -138,7 +138,7 @@ namespace PasswordVault.Desktop.Winforms
             createPasswordTextBox.BorderStyle = BorderStyle.None;
             createPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             createPasswordTextBox.AutoSize = false;
-            createPasswordTextBox.Font = UIHelper.GetFont(9.0f);
+            createPasswordTextBox.Font = UIHelper.GetFont(9.0f, true);
             createPasswordTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewPassword = new GhostTextBoxHelper(createPasswordTextBox, "Password");
 
@@ -237,9 +237,9 @@ namespace PasswordVault.Desktop.Winforms
 
                     case AuthenticateResult.Successful:
                         AuthenticationSuccessfulEvent?.Invoke();
-                        ClearLoginView();
-                        DialogResult = DialogResult.OK;
                         DisableCreateUserForm();
+                        ClearLoginView();
+                        DialogResult = DialogResult.OK;                 
                         this.Close();
                         break;
 
@@ -396,6 +396,7 @@ namespace PasswordVault.Desktop.Winforms
         public void ShowLoginMenu()
         {
             this.Show();
+            loginUsernameTextBox.Focus();
         }
 
         /*=================================================================================================
