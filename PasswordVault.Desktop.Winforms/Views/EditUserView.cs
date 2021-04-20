@@ -122,7 +122,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowEditUserMenu()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
             RaiseRequestUserEvent();
         }
 

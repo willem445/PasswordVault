@@ -339,7 +339,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowMenu()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
             applicationTextbox.Focus();
             applicationTextbox.SelectionLength = 0;
         }

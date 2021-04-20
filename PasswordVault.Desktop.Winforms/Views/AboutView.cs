@@ -38,6 +38,7 @@ namespace PasswordVault.Desktop.Winforms
         public AboutView()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterParent;
 
             BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;

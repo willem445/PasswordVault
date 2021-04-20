@@ -131,7 +131,8 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowChangePassword()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
             currentPasswordTextbox.Focus();
         }
 

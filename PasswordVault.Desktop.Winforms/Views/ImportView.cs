@@ -163,7 +163,8 @@ namespace PasswordVault.Desktop.Winforms
         public void ShowImportView()
         {
             InitializeEvent?.Invoke();
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
         }
 
         public void CloseView()
