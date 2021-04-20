@@ -341,7 +341,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.StartPosition = FormStartPosition.CenterParent;
             this.ShowDialog();
-            applicationTextbox.Focus();
+            applicationTextbox.Select();
             applicationTextbox.SelectionLength = 0;
         }
 
@@ -545,9 +545,9 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (e.KeyChar == (char)Keys.Enter) // submit password
             {
-                e.Handled = true;
                 if (!descriptionTextbox.Focused)
                 {
+                    e.Handled = true;
                     AddPassword();
                 }
             }

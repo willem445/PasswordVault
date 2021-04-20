@@ -133,7 +133,8 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.StartPosition = FormStartPosition.CenterParent;
             this.ShowDialog();
-            currentPasswordTextbox.Focus();
+            currentPasswordTextbox.Select();
+            currentPasswordTextbox.SelectionLength = 0;
         }
 
         /*************************************************************************************************/

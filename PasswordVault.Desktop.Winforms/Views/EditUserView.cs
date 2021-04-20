@@ -124,6 +124,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.StartPosition = FormStartPosition.CenterParent;
             this.ShowDialog();
+            firstNameTextbox.Select();
             RaiseRequestUserEvent();
         }
 

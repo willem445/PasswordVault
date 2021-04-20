@@ -399,7 +399,7 @@ namespace PasswordVault.Desktop.Winforms
         {
             this.StartPosition = FormStartPosition.CenterParent;
             this.ShowDialog();
-            loginUsernameTextBox.Focus();
+            loginUsernameTextBox.Select();
             loginUsernameTextBox.SelectionLength = 0;
         }
 
