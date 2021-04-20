@@ -87,7 +87,7 @@ namespace PasswordVault.Desktop.Winforms
             );
 
             DefaultEncryptionParameters = new EncryptionParameters(
-                algorithm: EncryptionAlgorithm.Aes256CfbPkcs7,
+                cipherSuite: CipherSuite.Aes256CbcPkcs7,
                 mac: Mac.HMACSHA256,
                 keyDerivationParameters: DefaultEncryptionKeyDerivationParameters,
                 blocksize: 16,
@@ -100,7 +100,7 @@ namespace PasswordVault.Desktop.Winforms
             {
                 try
                 {
-                    Settings settingsOverride = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE));
+                    Settings settingsOverride = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SETTINGS_FILE)); // TODO - add verification for settings
                     DefaultMasterPasswordParameters = settingsOverride.MasterPasswordParameters;
                     DefaultEncryptionParameters = settingsOverride.EncryptionParameters;
                     DefaultTimeoutMinutes = settingsOverride.TimeoutMinutes;
