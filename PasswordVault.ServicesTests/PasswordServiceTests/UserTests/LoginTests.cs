@@ -24,9 +24,7 @@ namespace PasswordVault.ServicesTests
 
         public LoginTests()
         {
-            //
-            // TODO: Add constructor logic here
-            //
+
         }
 
         private TestContext testContextInstance;

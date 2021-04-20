@@ -26,9 +26,7 @@ namespace PasswordVault.ServicesTests
 
         public DeletePasswordTests()
         {
-            //
-            // TODO: Add constructor logic here
-            //
+
         }
 
         private TestContext testContextInstance;
