@@ -114,7 +114,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (CipherSuite)bytes[(int)CipherSuiteParametersIndex.EncryptionAlgorithmIndex];
+            return (CipherSuite)bytes[(int)PackedCipherSuiteParametersIndex.EncryptionAlgorithmIndex];
         }
 
         public static Mac GetMacFromPackedBytes(byte[] bytes)
@@ -124,7 +124,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (Mac)bytes[(int)CipherSuiteParametersIndex.MACAlgorithmIndex];
+            return (Mac)bytes[(int)PackedCipherSuiteParametersIndex.MACAlgorithmIndex];
         }
 
         public static KeyDerivationAlgorithm GetKDFFromPackedBytes(byte[] bytes)
@@ -134,7 +134,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (KeyDerivationAlgorithm)bytes[(int)CipherSuiteParametersIndex.KDFAlgorithmIndex];
+            return (KeyDerivationAlgorithm)bytes[(int)PackedCipherSuiteParametersIndex.KDFAlgorithmIndex];
         }
 
         public static UInt32 GetKDFIterationsFromPackedBytes(byte[] bytes)
@@ -144,10 +144,10 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            UInt32 keyderivationiterations = (UInt32)((bytes[((int)CipherSuiteParametersIndex.KDFInterationsIndex) + 3] << 24) |
-                (bytes[((int)CipherSuiteParametersIndex.KDFInterationsIndex) + 2] << 16) |
-                (bytes[((int)CipherSuiteParametersIndex.KDFInterationsIndex) + 1] << 8) |
-                bytes[(int)CipherSuiteParametersIndex.KDFInterationsIndex]);
+            UInt32 keyderivationiterations = (UInt32)((bytes[((int)PackedCipherSuiteParametersIndex.KDFInterationsIndex) + 3] << 24) |
+                (bytes[((int)PackedCipherSuiteParametersIndex.KDFInterationsIndex) + 2] << 16) |
+                (bytes[((int)PackedCipherSuiteParametersIndex.KDFInterationsIndex) + 1] << 8) |
+                bytes[(int)PackedCipherSuiteParametersIndex.KDFInterationsIndex]);
 
             return keyderivationiterations;
         }
@@ -159,10 +159,10 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            int keyderivationmemory = (int)((bytes[((int)CipherSuiteParametersIndex.KDFMemoryIndex) + 3] << 24) |
-                (bytes[((int)CipherSuiteParametersIndex.KDFMemoryIndex) + 2] << 16) |
-                (bytes[((int)CipherSuiteParametersIndex.KDFMemoryIndex) + 1] << 8) |
-                bytes[(int)CipherSuiteParametersIndex.KDFMemoryIndex]);
+            int keyderivationmemory = (int)((bytes[((int)PackedCipherSuiteParametersIndex.KDFMemoryIndex) + 3] << 24) |
+                (bytes[((int)PackedCipherSuiteParametersIndex.KDFMemoryIndex) + 2] << 16) |
+                (bytes[((int)PackedCipherSuiteParametersIndex.KDFMemoryIndex) + 1] << 8) |
+                bytes[(int)PackedCipherSuiteParametersIndex.KDFMemoryIndex]);
 
             return keyderivationmemory;
         }
@@ -174,7 +174,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (int)bytes[(int)CipherSuiteParametersIndex.KDFParallelizationIndex];
+            return (int)bytes[(int)PackedCipherSuiteParametersIndex.KDFParallelizationIndex];
         }
 
         public static int GetKDFSaltSizeInBytesFromPackedBytes(byte[] bytes)
@@ -184,7 +184,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (int)bytes[(int)CipherSuiteParametersIndex.KDFSaltSizeIndex];
+            return (int)bytes[(int)PackedCipherSuiteParametersIndex.KDFSaltSizeIndex];
         }
 
         public static int GetIVSizeInBytesFromPackedBytes(byte[] bytes)
@@ -194,7 +194,7 @@ namespace PasswordVault.Services
                 throw new ArgumentNullException(nameof(bytes));
             }
 
-            return (int)bytes[(int)CipherSuiteParametersIndex.IVSizeIndex];
+            return (int)bytes[(int)PackedCipherSuiteParametersIndex.IVSizeIndex];
         }
     }
 }

@@ -96,7 +96,7 @@ namespace PasswordVault.Services
 
                 // Perform MAC over all of the parameters & ciphertext to guarantee data is not tampered with at a later time
                 // Encrypt + MAC recommended, especially for AES CBC mode, to prevent vulnerbilities
-                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[(int)CipherSuiteParametersIndex.MACAlgorithmIndex], hmackey, cipherSuite, salt, iv, cipherBytes);
+                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[(int)PackedCipherSuiteParametersIndex.MACAlgorithmIndex], hmackey, cipherSuite, salt, iv, cipherBytes);
             }
 
             int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherBytes.Length;
@@ -132,7 +132,7 @@ namespace PasswordVault.Services
 
             using (SymmetricAlgorithm cipher = Aes.Create())
             {
-                int headerSizeInBytes = (int)CipherSuiteParametersIndex.NumCipherSuiteParameterBytes;
+                int headerSizeInBytes = (int)PackedCipherSuiteParametersIndex.NumCipherSuiteParameterBytes;
                 int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(macalg).ToNumBytes();
                 int hmacKeySizeInBytes = _integrityVerification.GetHMACKeySizeInBits(macalg).ToNumBytes();
                 int saltSizeInBytes = EncryptionHelpers.GetKDFSaltSizeInBytesFromPackedBytes(cipherRaw);

@@ -1,6 +1,6 @@
 ﻿namespace PasswordVault.Services
 {
-    public enum CipherSuiteParametersIndex
+    public enum PackedCipherSuiteParametersIndex
     {
         EncryptionAlgorithmIndex = 0,
         KDFAlgorithmIndex=1,
