@@ -107,11 +107,13 @@ namespace PasswordVault.Desktop.Winforms
             emailTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             emailTextBox.BorderStyle = BorderStyle.FixedSingle;
             emailTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            emailTextBox.Enabled = false;
 
             phoneNumberTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             phoneNumberTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             phoneNumberTextbox.BorderStyle = BorderStyle.FixedSingle;
             phoneNumberTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
+            phoneNumberTextbox.Enabled = false;
         }
 
         /*=================================================================================================
@@ -120,7 +122,9 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowEditUserMenu()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
+            firstNameTextbox.Select();
             RaiseRequestUserEvent();
         }
 

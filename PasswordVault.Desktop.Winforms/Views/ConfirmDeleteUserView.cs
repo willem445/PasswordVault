@@ -137,7 +137,8 @@ namespace PasswordVault.Desktop.Winforms
 
         public void ShowView()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
         }
 
         public void CloseView()

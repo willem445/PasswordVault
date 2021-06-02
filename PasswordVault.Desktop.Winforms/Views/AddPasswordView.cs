@@ -176,7 +176,7 @@ namespace PasswordVault.Desktop.Winforms
             passwordTextbox.BorderStyle = BorderStyle.None;
             passwordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             passwordTextbox.AutoSize = false;
-            passwordTextbox.Font = UIHelper.GetFont(9.0f);
+            passwordTextbox.Font = UIHelper.GetFont(9.0f, true);
             passwordTextbox.Size = new System.Drawing.Size(198, 22);
             ghostPasswordTextBox = new GhostTextBoxHelper(passwordTextbox, _passwordTextboxDefault);
 
@@ -325,7 +325,7 @@ namespace PasswordVault.Desktop.Winforms
                 }                      
 
                 _editMode = true;
-                addButton.Text = "Edit";
+                addButton.Text = "Save";
                 this.windowLabel.Text = "Edit Password";
                 ShowMenu();
             }         
@@ -339,8 +339,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowMenu()
         {
-            this.Show();
-            applicationTextbox.Focus();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
+            applicationTextbox.Select();
+            applicationTextbox.SelectionLength = 0;
         }
 
         public void CloseView()
@@ -543,8 +545,11 @@ namespace PasswordVault.Desktop.Winforms
         {
             if (e.KeyChar == (char)Keys.Enter) // submit password
             {
-                e.Handled = true;
-                AddPassword();
+                if (!descriptionTextbox.Focused)
+                {
+                    e.Handled = true;
+                    AddPassword();
+                }
             }
             else if (((Control.ModifierKeys & Keys.Control) == Keys.Control) && (e.KeyChar == 7)) // 7 is char for 'g'
             {

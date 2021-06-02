@@ -143,34 +143,37 @@ namespace PasswordVault.Models
                 {
                     result = UserInformationResult.InvalidLastName;
                 }
+                
+                // NOTE: email and phone number are not going to be required for now as they are not needed
+                // and as little user information should be collected as possible. This code can be uncommented
+                // if phone number or email is ever required for account recovery or 2FA.
+                //if (string.IsNullOrEmpty(this.Email) || this.Email == "example@provider.com")
+                //{
+                //    result = UserInformationResult.InvalidEmail;
+                //}
+                //else
+                //{
+                //    var regex = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
 
-                if (string.IsNullOrEmpty(this.Email) || this.Email == "example@provider.com")
-                {
-                    result = UserInformationResult.InvalidEmail;
-                }
-                else
-                {
-                    var regex = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" + "@" + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
+                //    Match match = Regex.Match(this.Email, regex, RegexOptions.IgnoreCase);
 
-                    Match match = Regex.Match(this.Email, regex, RegexOptions.IgnoreCase);
+                //    if (!match.Success)
+                //    {
+                //        result = UserInformationResult.InvalidEmail;
+                //    }
+                //}
 
-                    if (!match.Success)
-                    {
-                        result = UserInformationResult.InvalidEmail;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(this.PhoneNumber) || this.PhoneNumber == "xxx-xxx-xxxx")
-                {
-                    result = UserInformationResult.InvalidPhoneNumber;
-                }
-                else
-                {
-                    if (!IsValidUSPhoneNumber(this.PhoneNumber))
-                    {
-                        result = UserInformationResult.InvalidPhoneNumber;
-                    }
-                }
+                //if (string.IsNullOrEmpty(this.PhoneNumber) || this.PhoneNumber == "xxx-xxx-xxxx")
+                //{
+                //    result = UserInformationResult.InvalidPhoneNumber;
+                //}
+                //else
+                //{
+                //    if (!IsValidUSPhoneNumber(this.PhoneNumber))
+                //    {
+                //        result = UserInformationResult.InvalidPhoneNumber;
+                //    }
+                //}
             }
 
             return result;

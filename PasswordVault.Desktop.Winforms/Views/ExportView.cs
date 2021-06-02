@@ -164,7 +164,8 @@ namespace PasswordVault.Desktop.Winforms
         public void ShowExportView()
         {
             InitializeEvent?.Invoke();
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
         }
 
         /*************************************************************************************************/

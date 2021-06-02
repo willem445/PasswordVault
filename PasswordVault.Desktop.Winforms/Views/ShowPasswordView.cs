@@ -39,6 +39,7 @@ namespace PasswordVault.Desktop.Winforms
         public ShowPasswordView(string password, string description)
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterParent;
 
             BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);
             FormBorderStyle = FormBorderStyle.None;
@@ -50,7 +51,7 @@ namespace PasswordVault.Desktop.Winforms
             showPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             showPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             showPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            showPasswordTextbox.Font = UIHelper.GetFont(12.0f);
+            showPasswordTextbox.Font = UIHelper.GetFont(12.0f, true);
             showPasswordTextbox.ReadOnly = true;
             showPasswordTextbox.Text = password;
             showPasswordTextbox.SelectionStart = 0;

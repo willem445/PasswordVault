@@ -85,17 +85,17 @@ namespace PasswordVault.Desktop.Winforms
             currentPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             currentPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             currentPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            currentPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            currentPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize, true);
 
             passwordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             passwordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             passwordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            passwordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            passwordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize, true);
 
             confirmPasswordTextbox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             confirmPasswordTextbox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
             confirmPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
-            confirmPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.ButtonFontSize);
+            confirmPasswordTextbox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize, true);
 
             // Configure labels
             label1.Font = UIHelper.GetFont(UIFontSizes.DefaultFontSize);
@@ -131,7 +131,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowChangePassword()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
+            currentPasswordTextbox.Select();
+            currentPasswordTextbox.SelectionLength = 0;
         }
 
         /*************************************************************************************************/

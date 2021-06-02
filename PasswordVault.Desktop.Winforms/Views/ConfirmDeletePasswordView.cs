@@ -38,6 +38,7 @@ namespace PasswordVault.Desktop.Winforms
         public ConfirmDeletePasswordView()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterParent;
 
             #region UI
             BackColor = UIHelper.GetColorFromCode(UIColors.SecondaryFromBackgroundColor);

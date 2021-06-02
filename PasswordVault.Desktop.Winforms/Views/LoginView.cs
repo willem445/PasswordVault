@@ -138,7 +138,7 @@ namespace PasswordVault.Desktop.Winforms
             createPasswordTextBox.BorderStyle = BorderStyle.None;
             createPasswordTextBox.Font = UIHelper.GetFont(UIFontSizes.TextBoxFontSize);
             createPasswordTextBox.AutoSize = false;
-            createPasswordTextBox.Font = UIHelper.GetFont(9.0f);
+            createPasswordTextBox.Font = UIHelper.GetFont(9.0f, true);
             createPasswordTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewPassword = new GhostTextBoxHelper(createPasswordTextBox, "Password");
 
@@ -170,6 +170,7 @@ namespace PasswordVault.Desktop.Winforms
             createEmailTextBox.Font = UIHelper.GetFont(9.0f);
             createEmailTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewEmail = new GhostTextBoxHelper(createEmailTextBox, "Email (example@provider.com)");
+            createEmailTextBox.Enabled = false;
 
             createPhoneNumberTextBox.BackColor = UIHelper.GetColorFromCode(UIColors.ControlBackgroundColor);
             createPhoneNumberTextBox.ForeColor = UIHelper.GetColorFromCode(UIColors.DefaultFontColor);
@@ -181,6 +182,7 @@ namespace PasswordVault.Desktop.Winforms
             createPhoneNumberTextBox.Font = UIHelper.GetFont(9.0f);
             createPhoneNumberTextBox.Size = new System.Drawing.Size(218, 22);
             ghostNewPhoneNumber = new GhostTextBoxHelper(createPhoneNumberTextBox, "Phone Number (xxx-xxx-xxxx)");
+            createPhoneNumberTextBox.Enabled = false;
 
             // Configure labels
 
@@ -237,9 +239,9 @@ namespace PasswordVault.Desktop.Winforms
 
                     case AuthenticateResult.Successful:
                         AuthenticationSuccessfulEvent?.Invoke();
-                        ClearLoginView();
-                        DialogResult = DialogResult.OK;
                         DisableCreateUserForm();
+                        ClearLoginView();
+                        DialogResult = DialogResult.OK;                 
                         this.Close();
                         break;
 
@@ -395,7 +397,10 @@ namespace PasswordVault.Desktop.Winforms
         /*************************************************************************************************/
         public void ShowLoginMenu()
         {
-            this.Show();
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.ShowDialog();
+            loginUsernameTextBox.Select();
+            loginUsernameTextBox.SelectionLength = 0;
         }
 
         /*=================================================================================================
@@ -633,8 +638,6 @@ namespace PasswordVault.Desktop.Winforms
             createPasswordTextBox.Enabled = true;
             createFirstNameTextBox.Enabled = true;
             createLastNameTextBox.Enabled = true;
-            createEmailTextBox.Enabled = true;
-            createPhoneNumberTextBox.Enabled = true;
             generatePasswordButton.Enabled = true;
             createLoginButton.Enabled = true;
         }
@@ -648,8 +651,6 @@ namespace PasswordVault.Desktop.Winforms
             createPasswordTextBox.Enabled = false;
             createFirstNameTextBox.Enabled = false;
             createLastNameTextBox.Enabled = false;
-            createEmailTextBox.Enabled = false;
-            createPhoneNumberTextBox.Enabled = false;
             generatePasswordButton.Enabled = false;
             createLoginButton.Enabled = false;
         }
