@@ -20,7 +20,7 @@ namespace PasswordVault.Services
 
         /*FIELDS***********************************************************/
         private EncryptionParameters _defaultParameters = new EncryptionParameters(
-            EncryptionAlgorithm.Aes256CfbPkcs7,
+            CipherSuite.Aes256CbcPkcs7,
             Mac.HMACSHA256,
             new KeyDerivationParameters(
                 KeyDerivationAlgorithm.Argon2Id,
@@ -56,58 +56,30 @@ namespace PasswordVault.Services
         /*PUBLIC METHODS***************************************************/
         public string Encrypt(string plainText, string passPhrase)
         {
-            var salt = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.KeyDerivationParameters.SaltSizeBytes);
-            var iv = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.IvSizeBytes);
+            var salt = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.KeyDerivationParameters.SaltSizeBytes); // dont allow configurable salt size for AES
+            var iv = CryptographyHelper.GenerateRandomEntropy(_encryptionParameters.IvSizeInBytes); // dont allow configurable iv size for AES
             var plaintext = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] cipherSuite = 
-            { 
-                (byte)_encryptionParameters.Algorithm,
-                (byte)_encryptionParameters.KeyDerivationParameters.Algorithm,
-                (byte)_encryptionParameters.KeyDerivationParameters.Iterations,
-                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 8),
-                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 16),
-                (byte)(_encryptionParameters.KeyDerivationParameters.Iterations >> 24),
-                (byte)_encryptionParameters.KeyDerivationParameters.MemorySizeKb,
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 8),
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 16),
-                (byte)(_encryptionParameters.KeyDerivationParameters.MemorySizeKb >> 24),
-                (byte)_encryptionParameters.KeyDerivationParameters.DegreeOfParallelism,
-                (byte)_encryptionParameters.Mac, 
-                
-            };
+            byte[] cipherSuite = EncryptionHelpers.PackCipherParamsIntoBytes(_encryptionParameters);
             byte[] authenticateHash;
             byte[] cipherBytes;
             byte[] cipherkey;
             byte[] hmackey;
-
-            var keysize = _encryptionParameters.KeyDerivationParameters.KeySizeBytes;
+            var keysize = _encryptionParameters.KeyDerivationParameters.KeySizeBytes; // dont allow configurable key size for AES
             var hmacsize = _integrityVerification.GetHMACKeySizeInBits(_encryptionParameters.Mac).ToNumBytes();
+
+            // Derive keys for AES and HMAC
             IKeyDerivation keyDerivation = KeyDerivationFactory.Get(_encryptionParameters.KeyDerivationParameters.Algorithm);
-            var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, _encryptionParameters.KeyDerivationParameters, keysize + hmacsize); // hash a key for both aes and hmac
+            var combinedKey = keyDerivation.DeriveKey(passPhrase, salt, _encryptionParameters.KeyDerivationParameters, keysize + hmacsize);
             cipherkey = combinedKey.Take(keysize).ToArray();
             hmackey = combinedKey.Skip(keysize).Take(hmacsize).ToArray();
             
-            using (SymmetricAlgorithm cipher = Aes.Create())
+            // Encrypt data using AES
+            using (SymmetricAlgorithm cipher = Aes.Create()) // Use Aes.Create to get the best implementation of AES
             {      
-                cipher.BlockSize = _encryptionParameters.BlockSizeBytes.ToNumBits();
-
-                switch(_encryptionParameters.Algorithm)
-                {
-                    case EncryptionAlgorithm.Aes128CfbPkcs7:
-                    case EncryptionAlgorithm.Aes256CfbPkcs7:
-                        cipher.Mode = CipherMode.CFB;
-                        cipher.Padding = PaddingMode.PKCS7;
-                        break;
-                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
-                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
-                        cipher.Mode = CipherMode.CBC;
-                        cipher.Padding = PaddingMode.PKCS7;
-                        break;
-                    case EncryptionAlgorithm.Unknown:
-                    default:
-                        throw new Exception();
-                }
+                cipher.BlockSize = _encryptionParameters.BlockSizeInBytes.ToNumBits();
+                cipher.Mode = EncryptionHelpers.GetCipherModeFromCipherSuite(_encryptionParameters.CipherSuite);
+                cipher.Padding = EncryptionHelpers.GetPaddingModeFromCipherSuite(_encryptionParameters.CipherSuite);
                 
                 using (ICryptoTransform encryptor = cipher.CreateEncryptor(cipherkey, iv))
                 {
@@ -122,7 +94,9 @@ namespace PasswordVault.Services
                     }                                      
                 }
 
-                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[(int)CipherSuiteIdx.MacAlg], hmackey, cipherSuite, salt, iv, cipherBytes);
+                // Perform MAC over all of the parameters & ciphertext to guarantee data is not tampered with at a later time
+                // Encrypt + MAC recommended, especially for AES CBC mode, to prevent vulnerbilities
+                authenticateHash = _integrityVerification.GenerateIntegrityHash((Mac)cipherSuite[(int)PackedCipherSuiteParametersIndex.MACAlgorithmIndex], hmackey, cipherSuite, salt, iv, cipherBytes);
             }
 
             int totalLength = cipherSuite.Length + authenticateHash.Length + salt.Length + iv.Length + cipherBytes.Length;
@@ -148,53 +122,23 @@ namespace PasswordVault.Services
             var cipherRaw = Convert.FromBase64String(cipherText);
 
             // get parameters from cipher
-            EncryptionAlgorithm encryptionalg = (EncryptionAlgorithm)cipherRaw[(int)CipherSuiteIdx.EncryptionAlg];
-            Mac macalg = (Mac)cipherRaw[(int)CipherSuiteIdx.MacAlg];
-            KeyDerivationAlgorithm keyderivationalg = (KeyDerivationAlgorithm)cipherRaw[(int)CipherSuiteIdx.KeyDevAlg];
-            UInt32 keyderivationiterations = (UInt32)((cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+3] << 24) | 
-                (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+2] << 16) | 
-                (cipherRaw[((int)CipherSuiteIdx.KeyDevItr)+1] << 8) | 
-                cipherRaw[(int)CipherSuiteIdx.KeyDevItr]);
-            int keyderivationmemory = (int)((cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 3] << 24) | 
-                (cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 2] << 16) | 
-                (cipherRaw[((int)CipherSuiteIdx.KeyDevMem) + 1] << 8) | 
-                cipherRaw[(int)CipherSuiteIdx.KeyDevMem]);
-            int keyderivationparallelism = (int)cipherRaw[(int)CipherSuiteIdx.KeyDevParallel];
-  
+            CipherSuite encryptionalg = EncryptionHelpers.GetCipherSuiteFromPackedBytes(cipherRaw);
+            Mac macalg = EncryptionHelpers.GetMacFromPackedBytes(cipherRaw);
+            KeyDerivationAlgorithm keyderivationalg = EncryptionHelpers.GetKDFFromPackedBytes(cipherRaw);
+            UInt32 keyderivationiterations = EncryptionHelpers.GetKDFIterationsFromPackedBytes(cipherRaw);
+            int keyderivationmemory = EncryptionHelpers.GetKDFMemoryFromPackedBytes(cipherRaw);
+            int keyderivationparallelism = EncryptionHelpers.GetKDFParallelizationFromPackedBytes(cipherRaw);
+
+
             using (SymmetricAlgorithm cipher = Aes.Create())
             {
-                int headerSizeInBytes = (int)CipherSuiteIdx.NumCipherSuiteBytes;
+                int headerSizeInBytes = (int)PackedCipherSuiteParametersIndex.NumCipherSuiteParameterBytes;
                 int authSizeInBytes = _integrityVerification.GetHMACHashSizeInBits(macalg).ToNumBytes();
                 int hmacKeySizeInBytes = _integrityVerification.GetHMACKeySizeInBits(macalg).ToNumBytes();
-                int saltSizeInBytes = -1; // use the configured salt size, should be 128 bits
-                int ivSizeInBytes = cipher.BlockSize.ToNumBytes(); // iv should match blocksize in AES
+                int saltSizeInBytes = EncryptionHelpers.GetKDFSaltSizeInBytesFromPackedBytes(cipherRaw);
+                int ivSizeInBytes = EncryptionHelpers.GetIVSizeInBytesFromPackedBytes(cipherRaw);
                 int blockSizeInBytes = cipher.BlockSize.ToNumBytes(); // 128 bits for AES               
-                int keySizeInBytes = -1;
-
-                switch (encryptionalg) // key size is based on the algorithm being used
-                {
-                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
-                    case EncryptionAlgorithm.Aes256CfbPkcs7:
-                        keySizeInBytes = 32;
-                        break;
-                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
-                    case EncryptionAlgorithm.Aes128CfbPkcs7:
-                        keySizeInBytes = 16;
-                        break;
-                    case EncryptionAlgorithm.Unknown:
-                    default:
-                        throw new CryptographicException();
-                }
-
-                switch (keyderivationalg)
-                {
-                    case KeyDerivationAlgorithm.Argon2Id:
-                    case KeyDerivationAlgorithm.Pbkdf2:
-                        saltSizeInBytes = 16;
-                        break;
-                    default:
-                        throw new CryptographicException();
-                }
+                int keySizeInBytes = EncryptionHelpers.GetKeySizeFromCipherSuite(encryptionalg);
 
                 int authOffset = headerSizeInBytes;
                 int saltOffset = authOffset + authSizeInBytes;
@@ -225,23 +169,8 @@ namespace PasswordVault.Services
                 byte[] iv = new byte[ivSizeInBytes];
                 Buffer.BlockCopy(cipherRaw, ivOffset, iv, 0, ivSizeInBytes);
                 cipher.BlockSize = blockSizeInBytes*8;
-
-                switch (_encryptionParameters.Algorithm)
-                {
-                    case EncryptionAlgorithm.Aes128CfbPkcs7:
-                    case EncryptionAlgorithm.Aes256CfbPkcs7:
-                        cipher.Mode = CipherMode.CFB;
-                        cipher.Padding = PaddingMode.PKCS7;
-                        break;
-                    case EncryptionAlgorithm.Rijndael128CbcPkcs7:
-                    case EncryptionAlgorithm.Rijndael256CbcPkcs7:
-                        cipher.Mode = CipherMode.CBC;
-                        cipher.Padding = PaddingMode.PKCS7;
-                        break;
-                    case EncryptionAlgorithm.Unknown:
-                    default:
-                        throw new Exception();
-                }
+                cipher.Mode = EncryptionHelpers.GetCipherModeFromCipherSuite(encryptionalg);
+                cipher.Padding = EncryptionHelpers.GetPaddingModeFromCipherSuite(encryptionalg);
 
                 using (ICryptoTransform decryptor = cipher.CreateDecryptor(cipherkey, iv))
                 {

@@ -14,15 +14,15 @@ namespace PasswordVault.Services
 
             IEncryptionService encryptionService = null;
 
-            switch (parameters.Algorithm)
+            switch (parameters.CipherSuite)
             {
-                case EncryptionAlgorithm.Rijndael256CbcPkcs7:
-                case EncryptionAlgorithm.Rijndael128CbcPkcs7:
+                case CipherSuite.Rijndael256CbcPkcs7:
+                case CipherSuite.Rijndael128CbcPkcs7:
                     encryptionService = new RijndaelManagedEncryption();
                     break;
 
-                case EncryptionAlgorithm.Aes256CfbPkcs7:
-                case EncryptionAlgorithm.Aes128CfbPkcs7:
+                case CipherSuite.Aes256CfbPkcs7:
+                case CipherSuite.Aes128CfbPkcs7:
                     encryptionService = new AesEncryption(parameters);
                     break;
 
